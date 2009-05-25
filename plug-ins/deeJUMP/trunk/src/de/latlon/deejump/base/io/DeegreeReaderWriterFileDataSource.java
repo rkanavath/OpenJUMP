@@ -38,7 +38,7 @@
  53115 Bonn
  Germany
  E-Mail: greve@giub.uni-bonn.de
- 
+
  ---------------------------------------------------------------------------*/
 
 package de.latlon.deejump.base.io;
@@ -129,4 +129,22 @@ public class DeegreeReaderWriterFileDataSource {
         }
 
     }
+
+    /**
+     * <code>DeeGPXFile</code>
+     * 
+     * @author <a href="mailto:schmitz@lat-lon.de">Andreas Schmitz</a>
+     * @author last edited by: $Author:$
+     * 
+     * @version $Revision:$, $Date:$
+     */
+    public static class DeeGPXFile extends StandardReaderWriterFileDataSource {
+        /**
+         * 
+         */
+        public DeeGPXFile() {
+            super( new DeegreeGPXReader(), null, new String[] { "gpx" } );
+        }
+    }
+
 }

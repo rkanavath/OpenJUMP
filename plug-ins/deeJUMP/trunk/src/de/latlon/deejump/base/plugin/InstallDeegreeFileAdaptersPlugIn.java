@@ -33,6 +33,7 @@ import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
 
 import de.latlon.deejump.base.io.DeegreeReaderWriterFileDataSource.DeeCSVFile;
 import de.latlon.deejump.base.io.DeegreeReaderWriterFileDataSource.DeeGMLFile;
+import de.latlon.deejump.base.io.DeegreeReaderWriterFileDataSource.DeeGPXFile;
 import de.latlon.deejump.base.io.DeegreeReaderWriterFileDataSource.DeeMapInfoFile;
 import de.latlon.deejump.base.io.DeegreeReaderWriterFileDataSource.DeeShapefile;
 import de.latlon.deejump.base.ui.CSVSelectionPanel;
@@ -66,6 +67,10 @@ public class InstallDeegreeFileAdaptersPlugIn extends AbstractPlugIn {
         registry.createEntry( KEY, new DataSourceFileLayerLoader( context.getWorkbenchContext(), DeeMapInfoFile.class,
                                                                   "deegree MapInfo adapter",
                                                                   asList( extensions( DeeMapInfoFile.class ) ) ) );
+
+        registry.createEntry( KEY, new DataSourceFileLayerLoader( context.getWorkbenchContext(), DeeGPXFile.class,
+                                                                  "deegree GPX adapter",
+                                                                  asList( extensions( DeeGPXFile.class ) ) ) );
 
         registry.createEntry( KEY, new DataSourceFileLayerLoader( context.getWorkbenchContext(), DeeCSVFile.class,
                                                                   "deegree CSV adapter",
