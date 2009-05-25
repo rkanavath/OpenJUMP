@@ -40,8 +40,8 @@ import de.latlon.deejump.base.ui.CSVSelectionPanel;
 /**
  * @author hamammi
  * 
- * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code
- * Templates
+ *         TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style -
+ *         Code Templates
  */
 public class InstallDeegreeFileAdaptersPlugIn extends AbstractPlugIn {
 
@@ -76,7 +76,7 @@ public class InstallDeegreeFileAdaptersPlugIn extends AbstractPlugIn {
                 CSVReader reader;
                 try {
                     String fileRoot = uri.toURL().getFile();
-                    reader = new CSVReader( ',', fileRoot );
+                    reader = new CSVReader( fileRoot, true );
                 } catch ( IOException e ) {
                     LOG.logError( "Unknown error", e );
                     WorkbenchFrame workbenchFrame = context.getWorkbenchFrame();

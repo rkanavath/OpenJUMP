@@ -55,6 +55,7 @@ import de.latlon.deejump.base.plugin.AVLStylePlugin;
 import de.latlon.deejump.base.plugin.InstallDeegreeFileAdaptersPlugIn;
 import de.latlon.deejump.base.plugin.LayerAndWMSFeatureInfoTool;
 import de.latlon.deejump.base.plugin.MapInfoStylePlugin;
+import de.latlon.deejump.base.plugin.ReprojectionPlugIn;
 
 /**
  * ...
@@ -69,18 +70,15 @@ public class DeeJUMPExtension extends Extension {
     public void configure( PlugInContext context )
                             throws Exception {
 
-        LOG.debug( "Initializing old DeeJUMP plugins" );
-        LOG.debug( "Adding deegree file adapters..." );
+        LOG.debug( "Initializing old deeJUMP plugins" );
         new InstallDeegreeFileAdaptersPlugIn().initialize( context );
-        LOG.debug( "Adding MapInfo styles importer..." );
         new MapInfoStylePlugin().initialize( context );
-        LOG.debug( "Adding AVL styles importer..." );
         new AVLStylePlugin().initialize( context );
+        new ReprojectionPlugIn().initialize( context );
 
         WorkbenchContext wbcontext = context.getWorkbenchContext();
         WorkbenchToolBar toolbar = wbcontext.getWorkbench().getFrame().getToolBar();
 
-        LOG.debug( "Adding FeatureInfo tool for WMS GetFeatureInfo requests..." );
         toolbar.addCursorTool( new LayerAndWMSFeatureInfoTool() );
     }
 
