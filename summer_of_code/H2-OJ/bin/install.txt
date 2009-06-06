@@ -1,0 +1,60 @@
+Erwan Bocher, 06/01/2007
+
+Installation de H2-Spatial et de l'extension geoSQLBuilder pour gvSIG 1.0 stable
+Intalling H2-Spatial and geoSQLBuilder for gvSIG 1.0
+
+
+Copiez le repertoire ext.GeoSQLBuilder dans le repertoire extensiones de gvSIG
+Unzip ext.GeoSQLBuilder and copy-paste it into gvSIG extensiones folder.
+Copy paste jars file in the lib folder in com.iver.cit.gvsig lib folder.
+
+
+Utilisation
+
+Démarrez gvSIG
+Ouvrez une vue
+Chargez dans cette vue une couche vectorielle.
+Allez dans le menu DataBase et selectionnez le sous-menu geoSQLBuilder
+Cliquez sur le bouton de connexion à une base de données,
+Selectionnez H2, laissez les paramêtres par défaut
+cliquez sur connecter
+
+Dans la zone de saisie d'une requête, chargez le script geoSpatial.sql
+Executez-le.
+
+Tapez la requête suivante pour verifier si les fonctions sont bien importées.
+
+SELECT * FROM INFORMATION_SCHEMA.FUNCTION_ALIASES
+
+Une fenêtre avec la liste des fonctions doit s'ouvrir.
+
+Votre base de données spatiales est prête.
+
+
+Selectionnez votre couche géographique dans la vue,
+Allez dans le menu DataBase/Export to H2
+Donnez un nom à la table
+Puis attendez
+
+Maintenant retournez dans l'editeur de requête.
+Cliquez sur le bouton pour visualiser les tables
+
+Tapez la requête suivante :
+
+select * from mytable
+
+Votre couche géographique est importée dans gvSIG.
+
+Vous pouvez ensuite tester les fonctions spatiales
+
+Par exemple pour un buffer
+
+select buffer(the_geom, 20) as the_geom from mytable.
+
+
+Attention : Les traitements n'utilisent pas d'indexes spatiaux.
+
+
+
+
+

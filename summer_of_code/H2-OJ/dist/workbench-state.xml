@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench-state>
+  <properties>
+    <mapping>
+      <key class="java.lang.String">com.vividsolutions.jump.workbench.datastore.ConnectionManager - CONNECTION DESCRIPTORS</key>
+      <value class="java.util.ArrayList" />
+    </mapping>
+    <mapping>
+      <key class="java.lang.String">org.openjump.core.ui.plugin.file.OpenRecentPlugIn.PROJECTS</key>
+      <value class="java.util.LinkedHashSet" />
+    </mapping>
+    <mapping>
+      <key class="java.lang.String">class com.vividsolutions.jump.workbench.ui.snap.GridRenderer - ENABLED</key>
+      <value class="java.lang.Boolean">false</value>
+    </mapping>
+    <mapping>
+      <key class="java.lang.String">org.openjump.core.ui.plugin.file.OpenRecentPlugIn.FILES</key>
+      <value class="java.util.LinkedHashSet" />
+    </mapping>
+  </properties>
+</workbench-state>
+
