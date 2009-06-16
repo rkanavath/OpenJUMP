@@ -22,7 +22,7 @@ public class H2Plugin implements PlugIn {
   public void initialize(PlugInContext context) {
 
 	  System.out.println("H2Plugin-init");
-    context.getWorkbenchContext().getRegistry().createEntry(DataStoreDriver.REGISTRY_CLASSIFICATION, new H2DataStoreDriver());
+	  
 
   }
 
@@ -36,3 +36,14 @@ public class H2Plugin implements PlugIn {
    */
   public String getName() { return("H2 Driver" ); }
 }
+
+
+/*
+public void initialize(PlugInContext context) throws Exception {
+    super.initialize(context);
+    
+    context.getWorkbenchContext().getRegistry().createEntry(
+            DataStoreDriver.REGISTRY_CLASSIFICATION,
+            new SISDBDataStoreDriver());
+}
+*/

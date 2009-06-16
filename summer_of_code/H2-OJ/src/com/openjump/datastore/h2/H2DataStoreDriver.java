@@ -4,6 +4,7 @@ import com.vividsolutions.jump.datastore.DataStoreConnection;
 import com.vividsolutions.jump.datastore.DataStoreDriver;
 import com.vividsolutions.jump.parameter.ParameterList;
 import com.vividsolutions.jump.parameter.ParameterListSchema;
+import org.h2.Driver;
 
 import java.sql.*;
 
@@ -13,8 +14,9 @@ import java.sql.*;
 public class H2DataStoreDriver implements DataStoreDriver {
 
 	public static final String DRIVER_NAME = "H2Spatial";
-	public static final String JDBC_CLASS = "org.H2.Driver";
-	public static final String URL_PREFIX = "jdbc:H2:";
+	public static final String JDBC_CLASS = "org.h2.Driver";
+	public static final String URL_PREFIX = "jdbc:H2:tcp";
+	//public static final String URL_PREFIX = "jdbc:H2:";
 	public static final String OPTIONS = ";AUTO_SERVER=TRUE";
 	public static final String PARAM_Server = "Server";
 	public static final String PARAM_Port = "Port";
@@ -53,9 +55,11 @@ public class H2DataStoreDriver implements DataStoreDriver {
 		= String.valueOf(new StringBuffer(URL_PREFIX).append
 				(host).append
 				(":").append
-				(port).append
-				("/").append
-				(database).append(OPTIONS));
+				//(port).append
+				("//").append
+				//(database).append(OPTIONS));
+				(database));
+
 
 		Driver driver = (Driver) Class.forName(JDBC_CLASS).newInstance();
 		DriverManager.registerDriver(driver);
