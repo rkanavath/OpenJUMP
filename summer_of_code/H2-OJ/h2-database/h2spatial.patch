@@ -1,0 +1,2336 @@
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/bin/h2.sh h2spatial/h2/bin/h2.sh
+2c2,3
+< cp=h2.jar
+---
+> cp=h2.jar:../ext/jts-1.10.jar
+> # cp=h2.jar
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/build.xml h2spatial/h2/build.xml
+21a22
+> 		    <classpath location="ext/jts-1.10.jar" />
+62a64
+> 				<available file="ext/jts-1.10.jar" />
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/expression/Function.java h2spatial/h2/src/main/org/h2/expression/Function.java
+8a9
+> import java.io.FileNotFoundException;
+25a27,28
+> import javax.xml.stream.XMLStreamException;
+> 
+54a58,62
+> //Geospatial
+> import org.h2.util.GeoSpatialFunctions;
+> import org.h2.util.io.ReadGML;
+> import org.h2.value.ValueGeometry;
+> //Geospatial end
+70a79,85
+> //Geospatial
+> import org.h2.value.ValueGeometry;
+> 
+> import com.vividsolutions.jts.io.ParseException;
+> //Geospatial end
+> 
+> 
+102a118,127
+>     
+>     //Geospatial
+>     public static final int GETSPATIALTABLES = 250, ADDGEOMETRYCOLUMN = 251, INTERSECTION = 252, GEOMFROMTEXT = 253, 
+>     		ASEWKT = 254, GEOVERSION = 255, NUMPOINTS = 256, AREA = 257, LASTGEOVERSION = 258, GEOLENGTH = 259, 
+>     		DIMENSION = 260, GETSRID = 261, ASBINARY = 262, GEOMETRYTYPE = 263, ISEMPTY = 264, ISSIMPLE = 265, BOUNDARY = 266,
+>     		ENVELOPE = 267, NUMGEOMETRIES = 268, GEOMETRYN = 269, EQUALS = 270, DISJOINT = 271, TOUCHES = 272, WITHIN = 273,
+>     		OVERLAPS = 274, CROSSES = 275, INTERSECTS = 276, CONTAINS = 277, RELATE = 278, DISTANCE = 279, GEODIFFERENCE = 280,
+>     		GEOUNION = 281, SYMDIFFERENCE = 282, BUFFER = 283, CONVEXHULL = 284, ISWITHINDISTANCE = 285, ISVALID = 286, 
+>     		READGML = 287;    
+>     //Geospatial end
+325a351,393
+>         
+>         //Geospatial
+> 		// Erwan 
+> 		addFunction("GETSPATIALTABLES", GETSPATIALTABLES, 0, Value.STRING);
+> 		addFunction("ADDGEOMETRYCOLUMN", ADDGEOMETRYCOLUMN, 5, Value.NULL);
+> 		addFunction("GEOMFROMTEXT", GEOMFROMTEXT, 2, Value.GEOMETRY);		
+> 		addFunction("ASEWKT", ASEWKT, 1, Value.STRING);
+> 		addFunction("INTERSECTION", INTERSECTION, 2, Value.GEOMETRY);
+> 		addFunction("GEOVERSION", GEOVERSION, 0, Value.STRING);
+> 		addFunction("LASTGEOVERSION", LASTGEOVERSION, 0, Value.STRING);
+> 		addFunction("GEOLENGTH", GEOLENGTH, 1, Value.DOUBLE);
+> 		addFunction("AREA", AREA, 1, Value.DOUBLE);
+> 		addFunction("NUMPOINTS", NUMPOINTS, 1, Value.INT);
+> 		addFunction("DIMENSION", DIMENSION, 1, Value.INT);
+> 		addFunction("GEOMETRYTYPE", GEOMETRYTYPE, 1, Value.STRING);
+> 		addFunction("ASBINARY", ASBINARY, 1, Value.GEOMETRY);
+> 		addFunction("GETSRID", GETSRID, 1, Value.INT);
+> 		addFunction("ISEMPTY", ISEMPTY, 1, Value.BOOLEAN);
+> 		addFunction("ISSIMPLE", ISSIMPLE, 1, Value.BOOLEAN);
+> 		addFunction("BOUNDARY", BOUNDARY, 1, Value.GEOMETRY);
+> 		addFunction("ENVELOPE", ENVELOPE, 1, Value.GEOMETRY);
+> 		addFunction("NUMGEOMETRIES", NUMGEOMETRIES, 1, Value.INT);
+> 		addFunction("GEOMETRYN", GEOMETRYN, 2, Value.GEOMETRY);
+> 		addFunction("EQUALS", EQUALS, 2, Value.BOOLEAN);
+> 		addFunction("DISJOINT", DISJOINT, 2, Value.BOOLEAN);
+> 		addFunction("TOUCHES", TOUCHES, 2, Value.BOOLEAN);
+> 		addFunction("WITHIN", WITHIN, 2, Value.BOOLEAN);
+> 		addFunction("OVERLAPS", OVERLAPS, 2, Value.BOOLEAN);
+> 		addFunction("CROSSES", CROSSES, 2, Value.BOOLEAN);
+> 		addFunction("INTERSECTS", INTERSECTS, 2, Value.BOOLEAN);
+> 		addFunction("CONTAINS", CONTAINS, 2, Value.BOOLEAN);
+> 		addFunction("RELATE", RELATE, 2, Value.STRING);
+> 		addFunction("DISTANCE", DISTANCE, 2, Value.DOUBLE);
+> 		addFunction("INTERSECTION", INTERSECTION, 2, Value.GEOMETRY);
+> 		addFunction("GEODIFFERENCE", GEODIFFERENCE, 2, Value.GEOMETRY);
+> 		addFunction("GEOUNION", GEOUNION, 2, Value.GEOMETRY);
+> 		addFunction("SYMDIFFERENCE", SYMDIFFERENCE, 2, Value.GEOMETRY);
+> 		addFunction("BUFFER", BUFFER, 2, Value.GEOMETRY);
+> 		addFunction("CONVEXHULL", CONVEXHULL, 1, Value.GEOMETRY);
+> 		addFunction("ISWITHINDISTANCE", ISWITHINDISTANCE, 3, Value.BOOLEAN);
+> 		addFunction("ISVALID", ISVALID, 1, Value.BOOLEAN);
+> 		addFunction("READGML", READGML, 1, Value.NULL);
+> 		//Geospatial end
+1124a1193,1778
+>         
+>         //Geospatial
+> 		// Erwan Bocher 12/03/2007 start
+> 		
+> 		case GEOVERSION:{
+> 			ValueString.get(GeoSpatialFunctions.GeoVersion());
+> 		}
+> 		
+> 		case LASTGEOVERSION:{
+> 			ValueString.get(GeoSpatialFunctions.GeoVersion());
+> 		}
+> 		
+> 		case GEOLENGTH:{
+> 			
+> 			try {
+> 				return ValueDouble.get(GeoSpatialFunctions.Length(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case AREA:{
+> 			
+> 			try {
+> 				return ValueDouble.get(GeoSpatialFunctions.Area(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case NUMPOINTS:{
+> 			
+> 			try {
+> 				return ValueInt.get(GeoSpatialFunctions.NumPoints(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case DIMENSION:{
+> 			
+> 			try {
+> 				return ValueInt.get(GeoSpatialFunctions.NumPoints(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case GEOMETRYTYPE:{
+> 			
+> 			try {
+> 				return ValueString.get(GeoSpatialFunctions.GeometryType(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case ASBINARY:{
+> 			
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.AsBinary(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		
+> 		case GETSRID:{
+> 			
+> 			try {
+> 				return ValueInt.get(GeoSpatialFunctions.SRID(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case ISEMPTY:{
+> 			
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.IsEmpty(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case ISSIMPLE:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.IsSimple(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case BOUNDARY:{
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.Boundary(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case ENVELOPE:{
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.Envelope(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		case NUMGEOMETRIES:{
+> 			try {
+> 				return ValueInt.get(GeoSpatialFunctions.NumGeometries(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		
+> 		case GEOMETRYN:{
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.GeometryN(v0.getBytes(),v1.getInt()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		
+> 		case EQUALS:{
+> 			return ValueBoolean.get(GeoSpatialFunctions.Equals(v0.getBytes(), v1.getBytes()));
+> 		}
+> 		
+> 		
+> 		case GETSPATIALTABLES: {
+> 						
+> 			return ValueString.get(GeoSpatialFunctions.getSpatialTables(session));
+> 		}
+> 		
+> 		
+> 		case DISJOINT:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.Disjoint(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case TOUCHES:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.Touches(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case WITHIN:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.Within(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case OVERLAPS:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.Overlaps(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case CROSSES:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.Crosses(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case INTERSECTS:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.Intersects(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case CONTAINS:{
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.Contains(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case RELATE:{
+> 			try {
+> 				return ValueString.get(GeoSpatialFunctions.Relate(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case DISTANCE:{
+> 			try {
+> 				return ValueDouble.get(GeoSpatialFunctions.Distance(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 			
+> 		}
+> 		
+> 		case INTERSECTION: {
+> 
+> 			
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.Intersection(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		
+> 		case GEODIFFERENCE: {
+> 
+> 			
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.Difference(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		
+> 		
+> 		case GEOUNION: {
+> 
+> 			
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.Union(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		case SYMDIFFERENCE: {
+> 
+> 			
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.SymDifference(v0.getBytes(), v1.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		case BUFFER: {
+> 
+> 			
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.Buffer(v0.getBytes(), v1.getDouble()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		case CONVEXHULL: {
+> 
+> 			
+> 			try {
+> 				return ValueGeometry.get(GeoSpatialFunctions.ConvexHull(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		
+> 		case ISWITHINDISTANCE: {
+> 
+> 			
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.IsWithinDistance(v0.getBytes(), v1.getBytes(),v2.getDouble()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		case ISVALID: {
+> 
+> 			
+> 			try {
+> 				return ValueBoolean.get(GeoSpatialFunctions.IsValid(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 
+> 		}
+> 		
+> 		
+> 
+> 		case ADDGEOMETRYCOLUMN: {
+> 			
+> 			String tableName = v0.getString();
+> 			String columnName = v1.getString();
+> 			int srid = v2.getInt();
+> 			String geomType = v3.getString();
+> 			int geomDimension = v4.getInt();
+> 			
+> 			GeoSpatialFunctions.AddGeometryColumn(session, tableName, columnName, geomType, srid, geomType, geomDimension);
+> 
+> 
+> 			return ValueNull.INSTANCE;
+> 		}
+> 			
+> 
+> 		case ASEWKT: {
+> 			
+> 			try {
+> 				return ValueString.get(GeoSpatialFunctions.AseWKT(v0.getBytes()));
+> 			} catch (IOException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ParseException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			} catch (ClassNotFoundException e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 
+> 		case GEOMFROMTEXT: {
+> 
+> 			try {
+> 				return ValueBytes.get(GeoSpatialFunctions.GeomFromText(v0
+> 						.getString(), v1.getInt()));
+> 			} catch (Exception e) {
+> 				// TODO Auto-generated catch block
+> 				e.printStackTrace();
+> 			}
+> 		}
+> 		
+> 		 case READGML:
+> 	        {
+> 	        	
+> 	        		String fileName = new String(v0.getString());
+> 	        		new ReadGML(fileName);
+> 	        		
+> 	        		/*
+> 					try {
+> 						new ReadGML(fileName);
+> 					} catch (FileNotFoundException e) {
+> 						// TODO Auto-generated catch block
+> 						e.printStackTrace();
+> 					} catch (XMLStreamException e) {
+> 						// TODO Auto-generated catch block
+> 						e.printStackTrace();
+> 					}	
+> 					*/			
+> 			
+> 				return ValueNull.INSTANCE;
+> 	        }
+> 
+> 			// Erwan end
+> 	        // Geospatial end
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/store/DataPage.java h2spatial/h2/src/main/org/h2/store/DataPage.java
+460a461,464
+>         //Geospatial
+>     	//Christophe Benoit        	
+>         case Value.GEOMETRY:
+>         //Geospatial end
+545a550,553
+>         //Geospatial
+>     	//Christophe Benoit    
+>         case Value.GEOMETRY:
+>         //Geospatial end
+632a641,644
+>         //Geospatial
+>     	//Christophe Benoit    
+>         case Value.GEOMETRY:
+>         //Geospatial end
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/util/GeoSpatialFunctions.java h2spatial/h2/src/main/org/h2/util/GeoSpatialFunctions.java
+0a1,674
+> //Geospatial
+> 
+> package org.h2.util;
+> 
+> import java.io.ByteArrayInputStream;
+> import java.io.IOException;
+> 
+> import java.sql.Connection;
+> import java.sql.DatabaseMetaData;
+> import java.sql.PreparedStatement;
+> import java.sql.ResultSet;
+> import java.sql.ResultSetMetaData;
+> import java.sql.SQLException;
+> import java.sql.Statement;
+> import java.util.ArrayList;
+> import java.util.List;
+> 
+> import com.vividsolutions.jts.geom.Geometry;
+> 
+> import com.vividsolutions.jts.io.ByteOrderValues;
+> import com.vividsolutions.jts.io.ParseException;
+> import com.vividsolutions.jts.io.WKBReader;
+> import com.vividsolutions.jts.io.WKBWriter;
+> import com.vividsolutions.jts.io.WKTReader;
+> 
+> import org.h2.engine.Session;
+> import org.h2.expression.Function;
+> import org.h2.value.Value;
+> 
+> /**
+>  * 
+>  * @author Bocher Erwan, IngÃ©nieur de recherche IRSTV
+>  * 
+>  * http://www.irstv.cnrs.fr/
+>  * 
+>  * Note
+>  * 
+>  * Cette extension pour la base de donnÃ©es H2 a Ã©tÃ© crÃ©Ã©e entre septembre et
+>  * novembre 2006 pendant une courte periode de chÃ´mage ou le docteur est nulle
+>  * part :-(
+>  * 
+>  * Aujourd'hui en poste Ã  l'IRSTV, H2-spatial s'officialise :-)
+>  * 
+>  * http://www.projet-sigle.org
+>  * 
+>  * @contact erwan.bocher@ec-nantes.fr
+>  * @version 1.0
+>  * @date 13/11/2006
+>  * @licence CeCILL
+>  * @see http://www.cecill.info/
+>  * 
+>  * Introduction
+>  * 
+>  * This class allows to add spatial functions to H2 database. H2 is the free SQL
+>  * database under Mozilla Public Licence 1.1. See :
+>  * http://www.h2database.com/html/frame.html and http://www.mozilla.org/MPL.
+>  * 
+>  * This class is based on an original method presented by David Blasby and Chris
+>  * Holmes for Hsql adn Derby databases. See
+>  * http://docs.codehaus.org/display/GEOS/SpatialDBBox
+>  * 
+>  * 
+>  * 1. Why
+>  * 
+>  * In some case we need to use a simple and portable spatial database.
+>  * 
+>  * 
+>  * eSDI (embedded Spatial Data Infrastructure) es un nuevo concepto y soluciÃ³n
+>  * para construir y administrar una IDE. Se basa en una observaciÃ³n simple. A
+>  * veces, especialmente en las pequeÃ±as administraciones locales, se necesita de
+>  * disponer de un dispositivo mas flexible y mas portÃ¡til. Esta soluciÃ³n ya
+>  * existe en partido con la Geodatabase del software ArcGIS. Sin 6embargo su
+>  * utilizaciÃ³n se limita principalmente al almacenamiento de datos o entonces
+>  * deben comprar extensiones especializadas como ArcSDE. Si el mundo del GIS
+>  * libre dispone de base de datos espaciales robustos y potentes (PostgreSQL,
+>  * MySQL) en cambio en muchas situaciones estas herramientas estÃ¡n demasiado
+>  * completas con relaciÃ³n a las necesidades y a las utilizaciones que se hacen.
+>  * Por eso, presentaremos un nuevo tipo de base de datos espaciales quien esta
+>  * basada sobre la base de datos libre en Java H2-Database. Acoplada con el SIG
+>  * gvSIG, H2-Espacial permite disponer de un primer nivel de IDE totalmente
+>  * mÃ³vil : eSDI.
+>  * 
+>  * H2-spatial is build for multiscale SDI.
+>  * 
+>  * 
+>  * 2.Method
+>  * 
+>  * Idea is to bind the JTS library with H2 database. See
+>  * http://jump-project.org/project.php?PID=JTS&SID=OVER
+>  * 
+>  * 
+>  * 
+>  * The database spatial architecture was definied by David Blasby and Chris
+>  * Holmes.
+>  * 
+>  * Technical architecture (Java for spatial DB) JAVA Spatial Algorthims (JTS) | |
+>  * GeoSpatialFunctions (java) | | SQLCodegenerator : auto-Generated spatial DB
+>  * Bindings and SQL CREATE FUNCTION Bindings (java) | | JAVA DB
+>  * 
+>  * 
+>  * 3.Spatial storage
+>  * 
+>  * Spatial data are stored in WKb format in a BLOB datatype
+>  * 
+>  * 
+>  * 
+>  * 4.Database schema
+>  * 
+>  * Database schema is basic. A table corresponds to a geographical layer.
+>  * Geometry is stored in clob data types.
+>  * 
+>  * In the futur work, I'd like to implement OGC simple feature SQL
+>  * specifications. Database schema will be definied by : - a GEOMETRY_COLUMNS
+>  * table which describes the available feature tables and their Geometry
+>  * properties, - a SPATIAL_REF_SYS table which describes the coordinate system
+>  * and transformations for Geometry.
+>  * 
+>  * See : Figure 1 - Schema for features tables using predefinied data types in
+>  * "Implementation Specification for Geographic information - Simple feature
+>  * access - Part 2: SQL option"
+>  * 
+>  * 
+>  * 5.Technical choices
+>  * 
+>  * Database constraints - Easy to use - Easy to move - Easy to customize - Fast -
+>  * Written in Java - Good documentation - Clear roadmap - Dynamic community -
+>  * Licence GPL or compatible
+>  * 
+>  * Databases tested
+>  * 
+>  * Derby : http://db.apache.org/derby/ HSQLDB : http://www.hsqldb.org/ McKoi :
+>  * http://mckoi.com/database/ H2 database :
+>  * http://www.h2database.com/html/frame.html
+>  * 
+>  * 
+>  * 6.Installation
+>  * 
+>  * Unzip H2-Spatial
+>  * 
+>  * Run h2spatial.bat
+>  * 
+>  * 
+>  * 
+>  * 7.Using
+>  * 
+>  * Create a database see H2 documentation.
+>  * 
+>  * Create a table like
+>  * 
+>  * CREATE TABLE mySpatialTable(gid INT primary key, the_geom geometry);
+>  * 
+>  * Populate table
+>  * 
+>  * INSERT INTO mySpatialTable VALUES(1, GeomFromText('POINT(12,1)','1')
+>  * 
+>  * Where GeomFromText(arg0,arg1)
+>  * 
+>  * arg0 = geometry in WKT format arg1 = EPSG code
+>  * 
+>  * Load geospatialFunctions files (copy-paste) and execute it.
+>  * 
+>  * Test buffer function using :
+>  * 
+>  * SELECT buffer(the_geom, 20) FROM mySpatialTable;
+>  * 
+>  * Display available functions :
+>  * 
+>  * SELECT * FROM INFORMATION_SCHEMA.FUNCTION_ALIASES
+>  * 
+>  * 
+>  * 
+>  * 8.Work in progress
+>  * 
+>  * Create an independant tool to load gml file into H2 spatial. Currently you
+>  * can use geoSQLBuilder.
+>  * 
+>  * Improve spatial queries using spatial indexes.
+>  * 
+>  * Add geometry datatype in H2 database. Geometry in eWKB format.
+>  * 
+>  * 
+>  * 
+>  * 
+>  * 9.License
+>  * 
+>  * Don't forget this library is under CeCILL license see http://www.cecill.info/
+>  * 
+>  * 
+>  * 10. Download
+>  * 
+>  * Go to http://r1.bocher.free.fr
+>  * 
+>  * 
+>  * 11. References
+>  * 
+>  * http://docs.codehaus.org/display/GEOS/SpatialDBBox H2 database :
+>  * http://h2database.com PostGIS : http://postgis.refractions.net/ GeoTools :
+>  * http://geotools.codehaus.org/ JTS :
+>  * http://www.vividsolutions.com/jts/jtshome.htm SpÃ©cifications pour le stockage
+>  * de la gÃ©omÃ©trie dans une base de donnÃ©es :
+>  * http://www.opengeospatial.org/standards/sfs
+>  * 
+>  * 
+>  */
+> 
+> public class GeoSpatialFunctions {
+> 
+> 	static WKBReader wkbreader = new WKBReader();
+> 
+> 	public static String GeoVersion() {
+> 
+> 		return "1.0";
+> 
+> 	}
+> 
+> 	public static String LastGeoVersion() {
+> 
+> 		return "1.0";
+> 
+> 	}
+> 
+> 	/**
+> 	 * 
+> 	 * @param arg0
+> 	 *            geometry
+> 	 * @param arg1
+> 	 *            SRID
+> 	 * @return
+> 	 * @throws IOException
+> 	 */
+> 
+> 	public static byte[] setWKBGeometry(Geometry arg0, int arg1)
+> 			throws IOException {
+> 
+> 		Geometry geom = arg0;
+> 		geom.setSRID(arg1);
+> 
+> 		WKBWriter wkbWriter = new WKBWriter(2, ByteOrderValues.LITTLE_ENDIAN);
+> 
+> 		return wkbWriter.write(geom);
+> 
+> 	}
+> 
+> 	public static String setWKTGeometry(Geometry arg0, int arg1)
+> 			throws IOException {
+> 
+> 		String geomString = arg0.toString();
+> 
+> 		String geomWithSRID = "SRID=" + arg1 + ";" + geomString;
+> 
+> 		return geomWithSRID;
+> 
+> 	}
+> 
+> 	/**
+> 	 * This method is used to read a BLOB datatype in a H2 database and
+> 	 * tranformed it into a JTS geometry
+> 	 * 
+> 	 * @param inputStream
+> 	 * @return geometry
+> 	 * @throws IOException
+> 	 * @throws IOException
+> 	 * @throws ParseException
+> 	 * @throws ParseException
+> 	 * @throws ClassNotFoundException 
+> 	 */
+> 
+> 	public static Geometry getGeometry(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 
+> 		
+> 		
+> 		if (Class.forName("[B").isInstance(arg0)) {
+> 			System.out.println(arg0.toString());
+> 			System.out.println(((byte[]) arg0).length);
+> 			for(byte item : (byte[]) arg0)
+> 				System.out.printf("%d ", item);
+> 			System.out.println();
+> 
+> 			return wkbreader.read((byte[]) arg0);
+> 		}
+> 
+> 		else {
+> 			ByteArrayInputStream bais = (ByteArrayInputStream) arg0;
+> 			byte[] bytes = new byte[bais.available()];
+> 			bais.read(bytes, 0, bais.available());
+> 			return wkbreader.read(bytes);
+> 		}
+> 
+> 	}
+> 
+> 	/**
+> 	 * 
+> 	 * @param geometry
+> 	 *            in WKT
+> 	 * @param srid
+> 	 * @return
+> 	 * @throws ParseException
+> 	 * @throws IOException
+> 	 */
+> 
+> 	public static byte[] GeomFromText(String arg0, int arg1)
+> 			throws ParseException, IOException {
+> 
+> 		Geometry geom = new WKTReader().read(arg0);
+> 
+> 		return setWKBGeometry(geom, arg1);
+> 
+> 	}
+> 
+> 	/**
+> 	 * 
+> 	 * @param schemaName
+> 	 * @param tableName
+> 	 * @param columnName
+> 	 * @param srid
+> 	 * @param geomType
+> 	 * @param geomDimension
+> 	 * 
+> 	 * Example: SELECT AddGeometryColumn('public', 'roads_geom', 'geom', 423,
+> 	 * 'LINESTRING', 2) See :
+> 	 * http://postgis.refractions.net/docs/ch04.html#id2523246
+> 	 * @throws SQLException
+> 	 */
+> 	public static void AddGeometryColumn(Session session, String schemaName,
+> 			String tableName, String columnName, int srid, String geomType,
+> 			int geomDimension) throws SQLException {
+> 
+> 		Connection conn = session.createConnection(false);
+> 		Statement stat = conn.createStatement();
+> 
+> 		stat.execute("ALTER TABLE " + tableName + " ADD " + columnName
+> 				+ " geometry;");
+> 
+> 		String insertIntoGeometry_columns = "INSERT INTO geometry_columns  VALUES(?,?,?,?,?,?,?);";
+> 
+> 		PreparedStatement prep = conn
+> 				.prepareStatement(insertIntoGeometry_columns);
+> 		prep.setString(1, "");
+> 		prep.setString(2, "");
+> 		prep.setString(3, tableName);
+> 		prep.setString(4, columnName);
+> 		prep.setInt(5, srid);
+> 		prep.setString(6, geomType);
+> 		prep.setInt(7, geomDimension);
+> 		prep.execute();
+> 
+> 		prep.close();
+> 		stat.close();
+> 
+> 	}
+> 
+> 	/*
+> 	 * We need also to add SPATIAL_REF_SYS table CREATE TABLE spatial_ref_sys (
+> 	 * srid integer not null primary key, auth_name varchar(256), auth_srid
+> 	 * integer, srtext varchar(2048), proj4text varchar(2048) ); Source :
+> 	 * PostGIS
+> 	 */
+> 
+> 	/*
+> 	 * Format transformation
+> 	 */
+> 
+> 	public static String ToString(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.toString();
+> 	}
+> 
+> 	public static String AseWKT(Object arg0) throws IOException, ParseException, ClassNotFoundException {
+> 
+> 		Geometry geom = getGeometry(arg0);
+> 
+> 		return geom.toText();
+> 	}
+> 
+> 	/*
+> 	 * Geometry properties
+> 	 */
+> 
+> 	public static double Length(Object arg0) throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.getLength();
+> 	}
+> 
+> 	public static double Area(Object arg0) throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.getArea();
+> 	}
+> 
+> 	public static int NumPoints(Object arg0) throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.getNumPoints();
+> 	}
+> 
+> 	/*
+> 	 * OGC 05-134 Table 9 : SQL functions on type Geometry
+> 	 * 
+> 	 */
+> 
+> 	public static int Dimension(Object arg0) throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.getDimension();
+> 	}
+> 
+> 	public static String GeometryType(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.getGeometryType();
+> 	}
+> 
+> 	public static String AsText(Object arg0) throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.toText();
+> 	}
+> 
+> 	public static byte[] AsBinary(Object arg0) throws IOException,
+> 			ParseException {
+> 
+> 		return (byte[]) arg0;
+> 	}
+> 
+> 	public static int SRID(Object arg0) throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.getSRID();
+> 	}
+> 
+> 	public static boolean IsEmpty(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		;
+> 		return geom.isEmpty();
+> 	}
+> 
+> 	public static boolean IsSimple(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.isSimple();
+> 	}
+> 
+> 	public static byte[] Boundary(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return setWKBGeometry(geom.getBoundary(), geom.getSRID());
+> 
+> 	}
+> 
+> 	public static byte[] Envelope(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return setWKBGeometry(geom.getEnvelope(), geom.getSRID());
+> 
+> 	}
+> 
+> 	/*
+> 	 * OGC 05-134 Table 15 : SQL functions on type GeomCollection
+> 	 * 
+> 	 */
+> 
+> 	public static int NumGeometries(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.getNumGeometries();
+> 	}
+> 
+> 	public static byte[] GeometryN(Object arg0, int arg1) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return setWKBGeometry(geom.getGeometryN(arg1), geom.getSRID());
+> 
+> 	}
+> 
+> 	/*
+> 	 * OGC 05-134 Table 18 : SQL functions that test spatial relationships
+> 	 * Spatial predicats
+> 	 */
+> 
+> 	public static boolean Equals(Object arg0, Object arg1) {
+> 
+> 		return arg0.equals(arg1);
+> 	}
+> 
+> 	public static boolean Disjoint(Object arg0,Object arg1)
+> 			throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 		return geom.disjoint(geom2);
+> 	}
+> 
+> 	public static boolean Touches(Object arg0, Object arg1) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 		return geom.touches(geom2);
+> 	}
+> 
+> 	public static boolean Within(Object arg0, Object arg1) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 		return geom.within(geom2);
+> 	}
+> 
+> 	public static boolean Overlaps(Object arg0,Object arg1)
+> 			throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 		return geom.overlaps(geom2);
+> 	}
+> 
+> 	public static boolean Crosses(Object arg0, Object arg1) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 		return geom.crosses(geom2);
+> 	}
+> 
+> 	public static boolean Intersects(Object arg0, Object arg1)
+> 			throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 
+> 		return geom.intersects(geom2);
+> 	}
+> 
+> 	public static boolean Contains(Object arg0, Object arg1)
+> 			throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 
+> 		return geom.contains(geom2);
+> 	}
+> 
+> 	public static String Relate(Object arg0, Object arg1) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 		return geom.relate(geom2).toString();
+> 	}
+> 
+> 	/*
+> 	 * OGC 05-134 Table 19 : SQL functions for distance relationships
+> 	 * 
+> 	 */
+> 
+> 	public static double Distance(Object arg0, Object arg1) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 
+> 		return geom.distance(geom2);
+> 	}
+> 
+> 	/*
+> 	 * OGC 05-134 Table 20 : SQL functions for distance relationships Spatial
+> 	 * operators
+> 	 */
+> 
+> 	public static byte[] Intersection(Object arg0, Object arg1)
+> 			throws IOException, ParseException, SQLException, ClassNotFoundException {
+> 
+> 		Geometry geom = getGeometry(arg0);
+> 
+> 		return setWKBGeometry(geom.intersection(getGeometry(arg1)), geom
+> 				.getSRID());
+> 
+> 	}
+> 
+> 	public static byte[] Difference(Object arg0, Object arg1)
+> 			throws IOException, ParseException, SQLException, ClassNotFoundException {
+> 
+> 		Geometry geom = getGeometry(arg0);
+> 
+> 		return setWKBGeometry(geom.difference(getGeometry(arg1)), geom
+> 				.getSRID());
+> 
+> 	}
+> 
+> 	public static byte[] Union(Object arg0, Object arg1) throws IOException,
+> 			ParseException, SQLException, ClassNotFoundException {
+> 
+> 		Geometry geom = getGeometry(arg0);
+> 
+> 		return setWKBGeometry(geom.union(getGeometry(arg1)), geom.getSRID());
+> 
+> 	}
+> 
+> 	public static byte[] SymDifference(Object arg0, Object arg1)
+> 			throws IOException, ParseException, SQLException, ClassNotFoundException {
+> 
+> 		Geometry geom = getGeometry(arg0);
+> 
+> 		return setWKBGeometry(geom.symDifference(getGeometry(arg1)), geom
+> 				.getSRID());
+> 
+> 	}
+> 
+> 	public static byte[] Buffer(Object arg0, double arg1) throws IOException,
+> 			ParseException, SQLException, ClassNotFoundException {
+> 
+> 		Geometry geom = getGeometry(arg0);
+> 
+> 		Geometry geomBuffer = geom.buffer(arg1);
+> 
+> 		return setWKBGeometry(geomBuffer, geom.getSRID());
+> 
+> 	}
+> 
+> 	public static byte[] ConvexHull(Object arg0) throws IOException,
+> 			ParseException, SQLException, ClassNotFoundException {
+> 
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry result = geom.convexHull();
+> 
+> 		return setWKBGeometry(result, geom.getSRID());
+> 
+> 	}
+> 
+> 	/*
+> 	 * Continued
+> 	 */
+> 
+> 	public static boolean IsWithinDistance(Object arg0, Object arg1, double arg2)
+> 			throws IOException, ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		Geometry geom2 = getGeometry(arg1);
+> 		return geom.isWithinDistance(geom2, arg2);
+> 	}
+> 
+> 	public static boolean IsValid(Object arg0) throws IOException,
+> 			ParseException, ClassNotFoundException {
+> 		Geometry geom = getGeometry(arg0);
+> 		return geom.isValid();
+> 
+> 	}
+> 
+> 	public static String getSpatialTables(Session session) throws SQLException {
+> 
+> 		Connection con = session.createConnection(false);
+> 		DatabaseMetaData databaseMeta = con.getMetaData();
+> 		String[] type = { "TABLE", "VIEW" };
+> 		ResultSet tables = databaseMeta.getTables(con.getCatalog(), null, "%",
+> 				type);
+> 		String tableName;
+> 
+> 		List<String> spatialTableName = new ArrayList<String>();
+> 
+> 		while (tables.next()) {
+> 			tableName = tables.getString("TABLE_NAME");
+> 
+> 			String query = "select * from " + tableName;
+> 			Statement stmt = con.createStatement();
+> 			ResultSet rs = stmt.executeQuery(query);
+> 			ResultSetMetaData rsmd = rs.getMetaData();
+> 			int nbCols = rsmd.getColumnCount();
+> 
+> 			String typeSQL;
+> 			for (int i = 1; i <= nbCols; i++) {
+> 				typeSQL = rsmd.getColumnTypeName(i);
+> 
+> 				if (typeSQL.equals("GEOMETRY")) {
+> 					spatialTableName.add(tableName);
+> 
+> 				} else {
+> 
+> 				}
+> 			}
+> 
+> 		}
+> 		return spatialTableName.toString();
+> 
+> 	}
+> 
+> }
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/util/io/PostGIS.java h2spatial/h2/src/main/org/h2/util/io/PostGIS.java
+0a1,54
+> //Geospatial
+> 
+> package org.h2.util.io;
+> 
+> 
+> 
+> import java.sql.Connection;
+> import java.sql.DriverManager;
+> import java.sql.ResultSet;
+> import java.sql.SQLException;
+> import java.sql.Statement;
+> 
+> import org.h2.engine.Session;
+> 
+> public class PostGIS {
+> 
+> 	
+> 	public void ImportPostGISTable(Session session, String url,String login, String password, String query) throws SQLException, ClassNotFoundException{
+> 		
+> 		
+> 		Connection conn = session.createConnection(false);
+> 		Statement stat = conn.createStatement();
+> 		
+> 		String jdbcurl = "jdbc:postgresql:"+url;
+> 		
+> 	
+> 		String driver ="org.postgresql.Driver";
+> 		Connection postgisCon = null;
+> 
+> 	
+> 		Class.forName(driver); //.newInstance();
+> 				
+> 		postgisCon =DriverManager.getConnection(jdbcurl, login, password);
+> 		
+> 		
+> 		Statement postgisStat = postgisCon.createStatement();
+> 		
+> 		ResultSet postgisRS = postgisStat.executeQuery(query + "LIKE 0");
+> 		
+> 				
+> 		while( postgisRS.next()){
+> 			
+> 			
+> 			
+> 			
+> 		}
+> 		
+> 		
+> 		
+> 		
+> 	}
+> 	
+> 	
+> }
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/util/io/ReadGML.java h2spatial/h2/src/main/org/h2/util/io/ReadGML.java
+0a1,633
+> //Geospatial
+> 
+> package org.h2.util.io;
+> 
+> import java.io.FileNotFoundException;
+> import java.sql.Connection;
+> import java.sql.SQLException;
+> import java.sql.Statement;
+> import java.util.HashMap;
+> import java.util.LinkedList;
+> import java.util.StringTokenizer;
+> import javax.xml.stream.XMLInputFactory;
+> import javax.xml.stream.XMLStreamException;
+> import javax.xml.stream.XMLStreamReader;
+> 
+> /**
+>  * 
+>  * @author Christophe le principe de la classe ReadGML est de parcourir un
+>  *         fichier GML et de remplir une table de H2 avec les informations
+>  *         contenues dans le fichier.
+>  * 
+>  */
+> public class ReadGML {
+> 	// Le fichier contenant les donnees a extraire
+> 	protected XMLStreamReader reader;
+> 
+> 	// contient le type SQL de la geometry en cours d'extraction. En SQL
+> 	// lineString et
+> 	// linearString sont identiques
+> 	protected String geomTypeSQL;
+> 
+> 	// contient le type reel de la geometry en cours d'extraction
+> 	protected String geomRealType;
+> 
+> 	// contient le nom de la table dans laquelle on souhaite recuperer les
+> 	// geometry
+> 	protected String tableName;
+> 
+> 	// contient le chemin du fichier gml
+> 	protected String gmlFileName;
+> 
+> 	// contient le chemin du fichier xsd
+> 	protected String schemaFileName;
+> 
+> 	// statement servant a l'envoi des requetes SQL
+> 	protected Statement st;
+> 
+> 	// liste des attributs et de leur type
+> 	protected HashMap<String, String> listeAttributes;
+> 
+> 	// nom de l'element indiquant une geometry
+> 	protected String geometryDelimiter;
+> 
+> 	
+> 	// Hack job of a constructor to get H2Spatial to build see Funciton.java
+> 	public ReadGML(String gmlFileName) {
+> 		this(gmlFileName, "", "", null);
+> 	}
+> 	
+> 	// Le constructeur se charge de creer le XMLStreamReader en faisant appelle
+> 	// a la methode loadAndParseSource. Il créer aussi la table de récupération
+> 	// des
+> 	// geometry avec la méthode createTableForGeometry
+> 	public ReadGML(String gmlFileName, String schemaFileName, String tableName,
+> 			Connection conn) {
+> 		super();
+> 		this.tableName = new String(tableName);
+> 		this.gmlFileName = new String(gmlFileName);
+> 		this.schemaFileName = new String(schemaFileName);
+> 		this.listeAttributes = new HashMap<String, String>();
+> 		try {
+> 
+> 			this.st = conn.createStatement();
+> 
+> 		} catch (SQLException e) {
+> 			// TODO Auto-generated catch block
+> 			e.printStackTrace();
+> 		}
+> 	}
+> 
+> 	/**
+> 	 * cette methode cree l'objet XMLStreamReader qui sert a parcourir le
+> 	 * fichier gml
+> 	 * 
+> 	 * @param nameFile
+> 	 */
+> 	public void loadGMLFile() {
+> 		// creation du XMLStreamReader
+> 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+> 		try {
+> 			this.reader = inputFactory
+> 					.createXMLStreamReader(new java.io.FileInputStream(
+> 							this.gmlFileName));
+> 		} catch (FileNotFoundException e) {
+> 
+> 			e.printStackTrace();
+> 		} catch (XMLStreamException e) {
+> 
+> 			e.printStackTrace();
+> 		}
+> 	}
+> 
+> 	/**
+> 	 * permet de recuperer les informations sur les attributs contenus dans le
+> 	 * fichier gml (nom et type) en faisant appel a la classe ReadShema
+> 	 * 
+> 	 */
+> 	public void loadAttributes() {
+> 		try {
+> 			ReadSchema schema = new ReadSchema();
+> 			this.listeAttributes = new HashMap<String, String>(schema
+> 					.readSchema(this.schemaFileName));
+> 			this.geometryDelimiter = schema.getGeometryDelimiter();
+> 		} catch (XMLStreamException e) {
+> 			// TODO Auto-generated catch block
+> 			e.printStackTrace();
+> 		}
+> 	}
+> 
+> 	/**
+> 	 * cette methode parcours le fichier gml en faisant : recuperation de la
+> 	 * geometry puis des attributs (il serait tres simple d'inverser cet ordre
+> 	 * si necessaire)
+> 	 * 
+> 	 */
+> 	public void parseGMLFile() {
+> 		try {
+> 			while (this.reader.hasNext()) {
+> 				String geom = new String(extractGeometry());
+> 				System.out.println(geom);
+> 				HashMap<String, String> attributes = new HashMap<String, String>(
+> 						extractAttributes());
+> 				System.out.println(attributes);
+> 				SQLcommand(geom, attributes);
+> 			}
+> 		} catch (XMLStreamException e) {
+> 			// TODO Auto-generated catch block
+> 			e.printStackTrace();
+> 		}
+> 	}
+> 
+> 	/**
+> 	 * Cette methode parcour le fichier GML, repere certains mots cles
+> 	 * definissant des geometry particulieres et lance en consequence la
+> 	 * fonction appropriee au type de geometry trouvee
+> 	 * 
+> 	 * @param nameFile
+> 	 * @throws FileNotFoundException
+> 	 * @throws XMLStreamException
+> 	 */
+> 	private String extractGeometry() {
+> 		String result = new String();
+> 		try {
+> 			boolean exitLoop = false;
+> 			while (!exitLoop && this.reader.hasNext()) {
+> 				if (this.reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 					this.geomRealType = new String(this.reader.getLocalName());
+> 					String commandeSQL = new String();
+> 
+> 					// les geometry ont ete separee en trois famille de geometry
+> 					// :
+> 					// les simpleGeometry(les point, les linestring, les
+> 					// linearRing et les multipoint)
+> 					// les complexGeometry(les polygon, les multiLineString et
+> 					// les multiLinearRing)
+> 					// les veryComplexGeometry(les multipolygon)
+> 					// cette separation a ete faite car la notation est la meme
+> 					// pour chaque famille de geometry
+> 					// seule le nom de la geometry change
+> 					if (this.geomRealType.equalsIgnoreCase("point")
+> 							|| this.geomRealType.equalsIgnoreCase("lineString")
+> 							|| this.geomRealType.equalsIgnoreCase("linearRing")
+> 							|| this.geomRealType.equalsIgnoreCase("multiPoint")) {
+> 						if (this.geomRealType.equalsIgnoreCase("linearRing")) {
+> 							this.geomTypeSQL = new String("lineString");
+> 						} else {
+> 							this.geomTypeSQL = new String(this.geomRealType);
+> 						}
+> 						commandeSQL = new String(
+> 								getSimpleCommandeSQL(getSimpleGeometry()));
+> 						exitLoop = true;
+> 					} else if (this.geomRealType.equalsIgnoreCase("polygon")
+> 							|| this.geomRealType
+> 									.equalsIgnoreCase("multiLineString")
+> 							|| this.geomRealType
+> 									.equalsIgnoreCase("multiLinearRing")) {
+> 						if (this.geomRealType
+> 								.equalsIgnoreCase("multiLinearRing")) {
+> 							this.geomTypeSQL = new String("multiLineString");
+> 						} else {
+> 							this.geomTypeSQL = new String(this.geomRealType);
+> 						}
+> 						commandeSQL = new String(
+> 								getComplexCommandeSQL(getComplexGeometry()));
+> 						exitLoop = true;
+> 					} else if (this.geomRealType
+> 							.equalsIgnoreCase("multiPolygon")) {
+> 						this.geomTypeSQL = new String(this.geomRealType);
+> 						commandeSQL = new String(
+> 								getVeryComplexCommandeSQL(getVeryComplexGeometry()));
+> 						exitLoop = true;
+> 					} else if (this.geomRealType
+> 							.equalsIgnoreCase("geometryCollection")
+> 							|| this.geomRealType
+> 									.equalsIgnoreCase("multiGeometry")) {
+> 						if (this.geomRealType.equalsIgnoreCase("multiGeometry")) {
+> 							this.geomTypeSQL = new String("geometryCollection");
+> 						} else {
+> 							this.geomTypeSQL = new String(this.geomRealType);
+> 						}
+> 
+> 						commandeSQL = new String(
+> 								getGeometryCollectionCommandeSQL(getGeometryCollection()));
+> 						exitLoop = true;
+> 					}
+> 					result = new String(commandeSQL);
+> 				}
+> 				this.reader.next();
+> 			}
+> 		} catch (XMLStreamException e) {
+> 
+> 			e.printStackTrace();
+> 		}
+> 		return result;
+> 	}
+> 
+> 	/**
+> 	 * met en forme les coordonnees d'une geometry simple afin qu'elles puissent
+> 	 * directement être utilisees par la fonction GEOMFROMTEXT.Le but est donc
+> 	 * de renvoyer un String sous la forme : (coord1 coord2,coord3 coord4,coord5
+> 	 * coord6 ....). La methode suivante se chargera de rajouter
+> 	 * POINT,LINESTRING ou MULTIPOINT en fonction de la geometry consideree.
+> 	 * 
+> 	 * @param coordinates
+> 	 * @return
+> 	 */
+> 	private String getSimpleCommandeSQL(LinkedList<String> coordinates) {
+> 		String commandeSQL = new String(coordinates.get(0));
+> 		for (int i = 1; i < coordinates.size(); i++) {
+> 			commandeSQL = new String(commandeSQL + "," + coordinates.get(i));
+> 		}
+> 		commandeSQL = new String("(" + commandeSQL + ")");
+> 
+> 		return commandeSQL;
+> 	}
+> 
+> 	/**
+> 	 * met en forme les coordonnees d'une geometry complex afin qu'elles
+> 	 * puissent directement être utilisees par la fonction GEOMFROMTEXT.Le but
+> 	 * est donc de renvoyer un String sous la forme : ((coord1 coord2,coord3
+> 	 * coord4),(coord5 coord6, ....)). La methode suivante se chargera de
+> 	 * rajouter MULTILINESTRING ou POLYGON en fonction de la geometry
+> 	 * consideree.
+> 	 * 
+> 	 * @param coordinates
+> 	 * @return
+> 	 */
+> 	private String getComplexCommandeSQL(
+> 			LinkedList<LinkedList<String>> coordinates) {
+> 		String commandeSQL = new String(
+> 				getSimpleCommandeSQL(coordinates.get(0)));
+> 		for (int i = 1; i < coordinates.size(); i++) {
+> 			commandeSQL = new String(commandeSQL + ","
+> 					+ getSimpleCommandeSQL(coordinates.get(i)));
+> 		}
+> 		commandeSQL = new String("(" + commandeSQL + ")");
+> 
+> 		return commandeSQL;
+> 	}
+> 
+> 	/**
+> 	 * met en forme les coordonnees d'une geometry veryComplex afin qu'elles
+> 	 * puissent directement être utilisees par la fonction GEOMFROMTEXT.Le but
+> 	 * est donc de renvoyer un String sous la forme : (((coord1 coord2,coord3
+> 	 * coord4),(coord5 coord6, coord7 coord8)),((coord9 coord10,coord11
+> 	 * coord12),(coord13 coord14, coord15 coord16)), ...).
+> 	 * 
+> 	 * @param coordinates
+> 	 * @return
+> 	 */
+> 	private String getVeryComplexCommandeSQL(
+> 			LinkedList<LinkedList<LinkedList<String>>> coordinates) {
+> 		String commandeSQL = new String(getComplexCommandeSQL(coordinates
+> 				.get(0)));
+> 		for (int i = 1; i < coordinates.size(); i++) {
+> 			commandeSQL = new String(commandeSQL + ","
+> 					+ getComplexCommandeSQL(coordinates.get(i)));
+> 		}
+> 		commandeSQL = new String("(" + commandeSQL + ")");
+> 
+> 		return commandeSQL;
+> 
+> 	}
+> 
+> 	/**
+> 	 * met en forme les coordonnees d'une collectionGeometry afin qu'elles
+> 	 * puissent directement être utilisees par la fonction GEOMFROMTEXT.Le but
+> 	 * est donc de renvoyer un String sous la forme : (LINESTRING(coord1
+> 	 * coord2,coord3 coord4),POINT(coord5 coord6),POLYGON((coord9
+> 	 * coord10,coord11 coord12),(coord13 coord14, coord15 coord16)), ...).
+> 	 * 
+> 	 * @param geometries
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	private String getGeometryCollectionCommandeSQL(
+> 			LinkedList<String> geometries) throws XMLStreamException {
+> 		String commandeSQL = new String(geometries.get(0));
+> 		for (int i = 1; i < geometries.size(); i++) {
+> 			commandeSQL = new String(commandeSQL + "," + geometries.get(i));
+> 		}
+> 		commandeSQL = new String("(" + commandeSQL + ")");
+> 
+> 		return commandeSQL;
+> 	}
+> 
+> 	/**
+> 	 * cette methode permet de recuperer les coordonnees contenues entre les
+> 	 * deux premieres balises <gml:coordinates> et </gml:coordinates>
+> 	 * rencontrees a partie du moment ou cette methode est declenchee et de les
+> 	 * renvoyer sous la forme d'une liste de String.
+> 	 * 
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	private LinkedList<String> getSimpleGeometry() throws XMLStreamException {
+> 		LinkedList<String> result = new LinkedList<String>();
+> 		boolean exitLoop = false;
+> 		while (!exitLoop && this.reader.hasNext()) {
+> 			// recherche de la premiere balise <gml:coordinates>
+> 			if (this.reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 				if (this.reader.getLocalName().equalsIgnoreCase("coordinates")) {
+> 					// on recupere l'ensemble des coordonnées
+> 					String data = new String(this.reader.getElementText());
+> 					// on isole les points de la geometry
+> 					StringTokenizer token = new StringTokenizer(data);
+> 
+> 					while (token.hasMoreTokens()) {
+> 						// on isole les valeurs numeriques
+> 						String[] value = token.nextToken().split(",");
+> 
+> 						String oneCoordinate = new String();
+> 						oneCoordinate = new String(value[0]);
+> 						for (int i = 1; i < value.length; i++) {
+> 							oneCoordinate = new String(oneCoordinate + " "
+> 									+ value[i]);
+> 						}
+> 
+> 						// on stocke le resultat sous la forme d'un couple de
+> 						// float separe par un espace
+> 						result.addLast(oneCoordinate);
+> 					}
+> 					exitLoop = true;
+> 				} else {
+> 					this.reader.next();
+> 				}
+> 			} else {
+> 				this.reader.next();
+> 			}
+> 		}
+> 		return result;
+> 	}
+> 
+> 	/**
+> 	 * cette methode recupere l'ensemble des elements d'une multiLineString,
+> 	 * multiLinearRing ou d'un poligon et les renvoie sous la forme d'une liste
+> 	 * de liste de String (soit une liste de simpleGeometry) Pour chaque sous
+> 	 * geometry, cette methode fait appelle a la methode getSimpleGeometry
+> 	 * 
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	private LinkedList<LinkedList<String>> getComplexGeometry()
+> 			throws XMLStreamException {
+> 		LinkedList<LinkedList<String>> result = new LinkedList<LinkedList<String>>();
+> 
+> 		boolean exitLoop = false;
+> 		while (!exitLoop) {
+> 			// on ne sort de la boucle que lorsque la fin de la multiGeometry
+> 			// que l'on veut recuperer est reperer
+> 			if (this.reader.getEventType() == XMLStreamReader.END_ELEMENT) {
+> 				if (this.reader.getLocalName().equalsIgnoreCase(
+> 						"multiLinearRing")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"multiLineString")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"polygon")) {
+> 					exitLoop = true;
+> 				}
+> 			} else if (this.reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 				// pour chaque sous element de la multiGeometry, on recupere ses
+> 				// coordonnees grace a la methode getSimpleGeometry
+> 				if (this.reader.getLocalName().equalsIgnoreCase("coordinates")) {
+> 					result.add(getSimpleGeometry());
+> 				}
+> 			}
+> 			this.reader.next();
+> 		}
+> 		return result;
+> 	}
+> 
+> 	/**
+> 	 * Cette méthode fonctionne de la meme maniere que getComplexGeometry, sauf
+> 	 * qu'elle sert à extraire la multiPolygon (soit des multi-multiGeometry).
+> 	 * Il suffit de transposer les remarques precedentes a cette fonction en
+> 	 * augmentant le degre geometrique de 1.
+> 	 * 
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	private LinkedList<LinkedList<LinkedList<String>>> getVeryComplexGeometry()
+> 			throws XMLStreamException {
+> 		LinkedList<LinkedList<LinkedList<String>>> result = new LinkedList<LinkedList<LinkedList<String>>>();
+> 
+> 		boolean exitLoop = false;
+> 		while (!exitLoop) {
+> 
+> 			if (this.reader.getEventType() == XMLStreamReader.END_ELEMENT) {
+> 				if (this.reader.getLocalName().equalsIgnoreCase("multiPolygon")) {
+> 					exitLoop = true;
+> 				}
+> 			} else if (this.reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 				if (this.reader.getLocalName().equalsIgnoreCase("coordinates")) {
+> 					result.add(getComplexGeometry());
+> 				}
+> 			}
+> 			this.reader.next();
+> 		}
+> 		return result;
+> 	}
+> 
+> 	/**
+> 	 * Permet de recuperer les geometry de type GeometryCollection
+> 	 * 
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	private LinkedList<String> getGeometryCollection()
+> 			throws XMLStreamException {
+> 		LinkedList<String> result = new LinkedList<String>();
+> 
+> 		boolean exitLoop = false;
+> 		while (!exitLoop) {
+> 			// on ne sort de la boucle que lorsque la fin de la
+> 			// geometryCollection que l'on veut recuperer est reperer
+> 			if (this.reader.getEventType() == XMLStreamReader.END_ELEMENT) {
+> 				if (this.reader.getLocalName().equalsIgnoreCase(
+> 						"geometryCollection")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"multiGeometry")) {
+> 					exitLoop = true;
+> 				}
+> 			} else if (this.reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 				// stocke le type de la geometry contenue dans la
+> 				// geometryCollection
+> 				String geomN = new String();
+> 				if (this.reader.getLocalName().equalsIgnoreCase("point")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"lineString")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"linearRing")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"multiPoint")) {
+> 					if (this.reader.getLocalName().equalsIgnoreCase(
+> 							"linearRing")) {
+> 						geomN = new String("lineString");
+> 					} else {
+> 						geomN = new String(this.reader.getLocalName());
+> 					}
+> 					result.addLast(new String(geomN.toUpperCase()
+> 							+ getSimpleCommandeSQL(getSimpleGeometry())));
+> 				} else if (this.reader.getLocalName().equalsIgnoreCase(
+> 						"polygon")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"multiLineString")
+> 						|| this.reader.getLocalName().equalsIgnoreCase(
+> 								"multiLinearRing")) {
+> 					if (this.reader.getLocalName().equalsIgnoreCase(
+> 							"multiLinearRing")) {
+> 						geomN = new String("multiLineString");
+> 					} else {
+> 						geomN = new String(this.reader.getLocalName());
+> 					}
+> 					result.addLast(new String(geomN.toUpperCase()
+> 							+ getComplexCommandeSQL(getComplexGeometry())));
+> 				} else if (this.reader.getLocalName().equalsIgnoreCase(
+> 						"multiPolygon")) {
+> 					geomN = new String(this.reader.getLocalName());
+> 					result
+> 							.addLast(new String(
+> 									geomN.toUpperCase()
+> 											+ getVeryComplexCommandeSQL(getVeryComplexGeometry())));
+> 				}
+> 			}
+> 			this.reader.next();
+> 		}
+> 		return result;
+> 	}
+> 
+> 	/**
+> 	 * Cette fonction cree une table avec le nom donne en argument (si ce nom de
+> 	 * table existe deja dans la base, la table existante est droppee). La
+> 	 * fonction cree une colonne pour chaque type de geometry possible : point,
+> 	 * linestring, polygon...
+> 	 * 
+> 	 * @param name
+> 	 */
+> 	public void createTableForGeometry() {
+> 		// drop la table dont le nom est passe en argument si elle existe
+> 		String commandeSQL = new String("DROP TABLE IF EXISTS "
+> 				+ this.tableName);
+> 
+> 		// execution de la requete
+> 		try {
+> 			st.executeUpdate(commandeSQL);
+> 
+> 			// requete de creation de la nouvelle table
+> 			commandeSQL = new String("CREATE TABLE " + this.tableName
+> 					+ " (geom geometry");
+> 			// la nouvelle table comporte une colonne pour chaque attribut
+> 			// specifie dans le schema
+> 			for (String attributeName : this.listeAttributes.keySet()) {
+> 				if (this.listeAttributes.get(attributeName).equalsIgnoreCase(
+> 						"String")) {
+> 					commandeSQL = new String(commandeSQL + "," + attributeName
+> 							+ " " + "varchar");
+> 				} else {
+> 					commandeSQL = new String(commandeSQL + "," + attributeName
+> 							+ " " + "float");
+> 				}
+> 			}
+> 			commandeSQL = new String(commandeSQL + ");");
+> 			// execution de la requete
+> 			System.out.println(commandeSQL);
+> 			st.executeUpdate(commandeSQL);
+> 		} catch (SQLException e) {
+> 
+> 			e.printStackTrace();
+> 		}
+> 	}
+> 
+> 	/**
+> 	 * recupere la valeur des attributs specifie dans le schema
+> 	 * 
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	private HashMap<String, String> extractAttributes()
+> 			throws XMLStreamException {
+> 		HashMap<String, String> result = new HashMap<String, String>();
+> 
+> 		boolean exitLoop = false;
+> 		while (!exitLoop && this.reader.hasNext()) {
+> 			// on ne sort de la boucle que lorsque l'on atteint le debut d'une
+> 			// nouvelle geometry, signe que la liste des attributs
+> 			// est finie
+> 			if (this.reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 				if (this.reader.getLocalName().equalsIgnoreCase(
+> 						this.geometryDelimiter)) {
+> 					exitLoop = true;
+> 				} else {
+> 					for (String attributeName : this.listeAttributes.keySet()) {
+> 						if (this.reader.getLocalName().equalsIgnoreCase(
+> 								attributeName)) {
+> 							result.put(attributeName, this.reader
+> 									.getElementText());
+> 						}
+> 					}
+> 				}
+> 			}
+> 			this.reader.next();
+> 		}
+> 		return result;
+> 	}
+> 
+> 	/**
+> 	 * genere et execute la commandeSQL inserant une geometry dans la base
+> 	 * 
+> 	 * @param geom
+> 	 * @param attributes
+> 	 */
+> 	private void SQLcommand(String geom, HashMap<String, String> attributes) {
+> 		String commandeSQL1 = new String(geom);
+> 		// met en forme la partie insertion de la geometry pure
+> 		commandeSQL1 = new String("GEOMFROMTEXT('"
+> 				+ this.geomTypeSQL.toUpperCase() + commandeSQL1 + "',-1)");
+> 		System.out.println(commandeSQL1);
+> 
+> 		String commandeSQL2 = new String();
+> 		String commandeSQL3 = new String();
+> 
+> 		// genere le morceau de requete SQL permettant d'inserer egalement les
+> 		// valeurs des attributs (dans les
+> 		// bonnes colonnes)
+> 		for (String attributeName : this.listeAttributes.keySet()) {
+> 			if (attributes.containsKey(attributeName)) {
+> 				commandeSQL2 = new String(commandeSQL2 + "," + attributeName);
+> 				if (this.listeAttributes.get(attributeName).equalsIgnoreCase(
+> 						"String")) {
+> 					if (attributes.get(attributeName).equals("")) {
+> 						commandeSQL3 = new String(commandeSQL3 + ",null");
+> 					} else {
+> 						// au passage on supprime les apostrophes et on les
+> 						// remplace par des "_"
+> 						commandeSQL3 = new String(commandeSQL3
+> 								+ ",'"
+> 								+ attributes.get(attributeName).replace("'",
+> 										"_") + "'");
+> 					}
+> 				} else {
+> 					if (attributes.get(attributeName).equals("")) {
+> 						commandeSQL3 = new String(commandeSQL3 + ",null");
+> 					} else {
+> 						commandeSQL3 = new String(commandeSQL3
+> 								+ ","
+> 								+ Double.parseDouble(attributes
+> 										.get(attributeName)));
+> 					}
+> 				}
+> 			}
+> 		}
+> 
+> 		// execute la commande SQL : rempli la table
+> 		try {
+> 			st.executeUpdate("INSERT INTO " + this.tableName + " (geom"
+> 					+ commandeSQL2 + ") VALUES (" + commandeSQL1 + commandeSQL3
+> 					+ ")");
+> 		} catch (SQLException e) {
+> 			// TODO Auto-generated catch block
+> 			e.printStackTrace();
+> 		}
+> 	}
+> }
+\ No newline at end of file
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/util/io/ReadSchema.java h2spatial/h2/src/main/org/h2/util/io/ReadSchema.java
+0a1,129
+> //Geospatial
+> 
+> package org.h2.util.io;
+> 
+> import java.io.FileNotFoundException;
+> import java.util.HashMap;
+> import javax.xml.stream.XMLInputFactory;
+> import javax.xml.stream.XMLStreamException;
+> import javax.xml.stream.XMLStreamReader;
+> 
+> public class ReadSchema {
+> 	// attribut indiquant le nom du delimiteur de geometry dans la schema. Ex :
+> 	// en generale la balise
+> 	// <cit:the_geom> annonce une nouvelle geometry. Ici notre attribut vaudra
+> 	// donc 'the_geom'
+> 	private String geometryDelimiter = null;
+> 
+> 	public ReadSchema() {
+> 		this.geometryDelimiter = new String();
+> 	}
+> 
+> 	public String getGeometryDelimiter() {
+> 		return geometryDelimiter;
+> 	}
+> 
+> 	/**
+> 	 * parcours le schema donne jusqu'a trouver la balise sequence qui indique
+> 	 * le debut de l'enonciation des attributs contenus dans le fichier gml
+> 	 * 
+> 	 * @param nameFile
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	public HashMap<String, String> readSchema(String nameFile)
+> 			throws XMLStreamException {
+> 		HashMap<String, String> listeAttributes = new HashMap<String, String>();
+> 
+> 		// creation du XMLStreamReader
+> 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+> 		try {
+> 			XMLStreamReader reader = inputFactory
+> 					.createXMLStreamReader(new java.io.FileInputStream(nameFile));
+> 
+> 			boolean exitLoop = false;
+> 			while (!exitLoop && reader.hasNext()) {
+> 				// recherche de la balise sequence
+> 				if (reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 					if (reader.getLocalName().equalsIgnoreCase("sequence")) {
+> 						// on recupere le nom des attributs
+> 						listeAttributes = new HashMap<String, String>(
+> 								extractAttributes(reader));
+> 						exitLoop = true;
+> 					}
+> 				}
+> 				reader.next();
+> 			}
+> 		} catch (FileNotFoundException e) {
+> 
+> 			e.printStackTrace();
+> 		} catch (XMLStreamException e) {
+> 
+> 			e.printStackTrace();
+> 		}
+> 		return listeAttributes;
+> 	}
+> 
+> 	/**
+> 	 * (une fois la balise sequence atteinte) recupere le nom et le type de
+> 	 * chaque attribut contenu dans le fichier gml
+> 	 * 
+> 	 * @param reader
+> 	 * @return
+> 	 * @throws XMLStreamException
+> 	 */
+> 	public HashMap<String, String> extractAttributes(XMLStreamReader reader)
+> 			throws XMLStreamException {
+> 		HashMap<String, String> listeAttributes = new HashMap<String, String>();
+> 		boolean exitLoop = false;
+> 		while (!exitLoop && reader.hasNext()) {
+> 			// recherche de la balise sequence
+> 			if (reader.getEventType() == XMLStreamReader.END_ELEMENT) {
+> 				if (reader.getLocalName().equalsIgnoreCase("sequence")) {
+> 					// on sort de la boucle
+> 					exitLoop = true;
+> 				}
+> 			} else if (reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+> 				if (reader.getLocalName().equalsIgnoreCase("element")) {
+> 					// memorise la valeur de l'attribut name de chaque element
+> 					String attributeName = new String();
+> 					// memorise la valeur de l'attribut type de chaque element
+> 					String attributeType = new String();
+> 					for (int i = 0; i < reader.getAttributeCount(); i++) {
+> 						if (reader.getAttributeLocalName(i).equalsIgnoreCase(
+> 								"name")) {
+> 							attributeName = new String(reader
+> 									.getAttributeValue(i));
+> 						} else if (reader.getAttributeLocalName(i)
+> 								.equalsIgnoreCase("type")) {
+> 							attributeType = new String(reader
+> 									.getAttributeValue(i));
+> 						}
+> 					}
+> 					// si attributeType contient "gml" c'est qu'il s'agit de la
+> 					// geometry et nom d'un attribut. il ne faut donc pas
+> 					// l'ajouter a la liste
+> 					if (!attributeType.contains("gml")) {
+> 						listeAttributes.put(attributeName, attributeType
+> 								.substring(attributeType.indexOf(":") + 1));
+> 					} else {
+> 						geometryDelimiter = new String(attributeName);
+> 					}
+> 				}
+> 			}
+> 			reader.next();
+> 		}
+> 		return listeAttributes;
+> 	}
+> 
+> 	/**
+> 	 * Pour faire des tests
+> 	 * 
+> 	 * @param args
+> 	 * @throws XMLStreamException
+> 	 */
+> 	public static void main(String[] args) throws XMLStreamException {
+> 		ReadSchema schema = new ReadSchema();
+> 		schema.readSchema("../datas2tests/gml/surface/eau.xsd");
+> 	}
+> }
+\ No newline at end of file
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/value/DataType.java h2spatial/h2/src/main/org/h2/value/DataType.java
+335a336,341
+>         //Geospatial
+>         //Erwan
+>         add(Value.GEOMETRY, Types.VARBINARY, "Geometry", 
+>         		createString(false), new String[]{"GEOMETRY"},
+>         		8);
+>         //Geospatial end
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/value/Value.java h2spatial/h2/src/main/org/h2/value/Value.java
+141a142,148
+>     //Geospatial
+>     //Erwan Start
+>     /**
+>      * The value type for GEOMETRY values.
+>      */
+>     public static final int GEOMETRY = 20;
+> 
+145c152
+<     public static final int UUID = 20;
+---
+>     public static final int UUID = 21;
+150,151c157,160
+<     public static final int STRING_FIXED = 21;
+< 
+---
+>     public static final int STRING_FIXED = 22;
+>     //Erwan End
+>     //Geospatial End
+>     
+291a301,304
+>         //Geospatial
+>         case GEOMETRY:
+>         	return 44;
+>         //Geospatial end
+691a705,708
+>             //Geospatial
+>             //Christophe Benoit               	
+>             case GEOMETRY:
+>             //Geospatial end
+693a711
+>  
+701a720,723
+>             //Geospatial
+>             //Christophe Benoit               	
+>             case GEOMETRY:
+>             //Geospatial end
+703c725
+<                 return ValueBytes.getNoCopy(getBytesNoCopy());
+---
+>             	return ValueBytes.getNoCopy(getBytesNoCopy());
+713a736,745
+>         //Geospatial
+>         //Christophe Benoit  
+>         case GEOMETRY: {
+>             switch(getType()) {
+>             case BYTES:
+>                 return ValueGeometry.createSmallLob(Value.GEOMETRY, getBytesNoCopy());
+>             }           
+>             break;
+>         }
+>         //Geospatial end
+770a803,807
+>             //Geospatial
+>             //Christophe Benoit  
+>             case GEOMETRY:
+>                 return ValueLob.createSmallLob(GEOMETRY, ByteUtils.convertStringToBytes(s.trim()));
+>             //Geospatial end
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/value/ValueGeometry.java h2spatial/h2/src/main/org/h2/value/ValueGeometry.java
+0a1,64
+> package org.h2.value;
+> 
+> import java.sql.SQLException;
+> 
+> import org.h2.engine.Constants;
+> import org.h2.store.DataHandler;
+> import org.h2.util.ByteUtils;
+> import org.h2.constant.SysProperties;
+> 
+> 
+> public class ValueGeometry extends ValueLob
+> {
+> 	
+> 	private static final ValueBytes EMPTY = new ValueBytes(new byte[0]);
+> 	 
+> 	
+> 	public ValueGeometry(int type, byte[] small) throws SQLException {
+> 		super(type,small);
+> 		// TODO Auto-generated constructor stub
+> 	}
+> 	
+> 	public ValueGeometry(int type, DataHandler handler, String fileName, int tableId, int objectId, boolean linked, long precision, boolean compression)
+> 	throws SQLException {
+> 		super(type, handler, fileName,tableId,objectId,linked,precision,compression);
+> 		// TODO Auto-generated constructor stub
+> 	}
+> 	public static ValueGeometry createGeometry(byte[] value) throws SQLException
+> 	{
+> 		return new ValueGeometry(20,value);
+> 	}
+> 
+> 	public String getString() 
+> 	{
+> 		String resultat = new String();
+> 		for(byte hash : getSmall())
+> 		{
+> 			resultat = new String(resultat+String.valueOf(hash));
+> 		}
+> 		return resultat;
+> 	}
+> 
+> 	
+> 	public int getType() 
+> 	{
+> 		return Value.GEOMETRY;
+> 	}
+> 
+> 	public static Value get(byte[] bs) {
+> 		 bs = ByteUtils.cloneByteArray(bs);
+> 	     return getNoCopy(bs);
+> 		
+> 	}
+> 	
+> 	 public static ValueBytes getNoCopy(byte[] b) {
+> 	        if (b.length == 0) {
+> 	            return EMPTY;
+> 	        }
+> 	        ValueBytes obj = new ValueBytes(b);
+> 	        if (b.length > SysProperties.OBJECT_CACHE_MAX_PER_ELEMENT_SIZE) {
+> 	            return obj;
+> 	        }
+> 	        return (ValueBytes) Value.cache(obj);
+> 	    }
+> }
+diff -Nra --exclude .svn --exclude '*.class' --exclude '*.jar' --exclude '*.zip' --exclude .DS_Store h2reference/h2/src/main/org/h2/value/ValueLob.java h2spatial/h2/src/main/org/h2/value/ValueLob.java
+76c76,79
+<     private ValueLob(int type, DataHandler handler, String fileName, int tableId, int objectId, boolean linked,
+---
+>     
+>     // Geospatial begin 
+>     //Changed constructors from private to protected
+>     protected ValueLob(int type, DataHandler handler, String fileName, int tableId, int objectId, boolean linked,
+88c91
+<     private ValueLob(int type, byte[] small) {
+---
+>     protected ValueLob(int type, byte[] small) {
+98a102
+>     // Geospatial end
