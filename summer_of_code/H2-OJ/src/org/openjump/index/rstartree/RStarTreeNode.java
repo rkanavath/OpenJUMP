@@ -19,4 +19,18 @@ public interface RStarTreeNode {
 	boolean hasOnlyLeafChildren(); 
 	 
 	List<RStarTreeNode> getChildren();
+
+	boolean isFull();
+	
+	int getLevel();
+	
+	RStarTreeNode getParent();
+
+	// update level for all newNode and all its children
+	// update newNode's parent entry
+	void addChild(RStarTreeNode newNode);
+
+	void minimizeEnvelope();
+
+
 }

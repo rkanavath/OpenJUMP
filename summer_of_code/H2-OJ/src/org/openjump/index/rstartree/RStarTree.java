@@ -21,7 +21,12 @@
 
 package org.openjump.index.rstartree;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.index.ItemVisitor;
@@ -30,11 +35,14 @@ import com.vividsolutions.jts.util.Assert;
 
 public class RStarTree implements SpatialIndex {
 
-	private static final int DEFAULT_MAX_OBJECTS_PER_NODE = 10;
-	private static final int DEFAULT_MIN_OBJECTS_PER_NODE = 5;
-	private static final int DEFAULT_FORCED_REINSERTION_RATE = 30;
+	private static final int DEFAULT_MAX_OBJECTS_PER_NODE = 128;
+	private static final int DEFAULT_MIN_OBJECTS_PER_NODE = 64;
+	private static final int DEFAULT_FORCED_REINSERTION_NUMBER = 38;
+	private static final int LARGE_NODE_SUBSET = 32; // performance variable for chooseMinimumOverlap
+	private static final int ROOT_LEVEL = 0;
 	
-	private int maxObjectsPerNode, minObjectsPerNode, forcedReinsertionRate;
+	private int maxObjectsPerNode, minObjectsPerNode, forcedReinsertionNumber;
+	private int leafLevel;
 	
 	protected RStarTreeNode root;
 
@@ -43,9 +51,10 @@ public class RStarTree implements SpatialIndex {
 	 * Creates a new tree with the given parameters.
 	 * 
 	 * @param maxObjectsPerNode is the node capacity of the tree
-	 * @param minObjectsPerNode is how empty nodes are allowed to get before the tree is rebalanced
+	 * @param minObjectsPerNode is how empty nodes are allowed to get before the tree is re-balanced
+	 * @param forcedReinsertionNumber is how many children will be reinserted into the tree due to overflows during insert
 	 */
-	public RStarTree(int maxObjectsPerNode, int minObjectsPerNode, int forcedReinsertionRate) {
+	public RStarTree(int maxObjectsPerNode, int minObjectsPerNode, int forcedReinsertionNumber) {
 	    Assert.isTrue(maxObjectsPerNode >= 4, "Node capacity must be greater than or equal to 4");
 	    this.maxObjectsPerNode = maxObjectsPerNode;
 	    
@@ -54,15 +63,18 @@ public class RStarTree implements SpatialIndex {
 	    		"Minimum number of objects per node must be less than or equal to half of the node capacity");
 	    this.maxObjectsPerNode = maxObjectsPerNode;
 	    
-	    Assert.isTrue(forcedReinsertionRate >= 0 || forcedReinsertionRate <= 100, 
-	    		"Forced Reinsertion rate must be between 0 and 100");
-	    this.forcedReinsertionRate = forcedReinsertionRate;
+	    Assert.isTrue(forcedReinsertionNumber >= 0 || forcedReinsertionNumber <= this.maxObjectsPerNode, 
+	    		"Forced Reinsertion rate must be between 0 and "+this.maxObjectsPerNode);
+	    this.forcedReinsertionNumber = forcedReinsertionNumber;
+	    
+	    this.root = new RStarTreeLeafNode(this.maxObjectsPerNode, ROOT_LEVEL, null);
+	    this.leafLevel = ROOT_LEVEL;
 	}
 	/**
 	 * Default Constructor
 	 */
 	public RStarTree() {
-		this(DEFAULT_MAX_OBJECTS_PER_NODE, DEFAULT_MIN_OBJECTS_PER_NODE, DEFAULT_FORCED_REINSERTION_RATE);
+		this(DEFAULT_MAX_OBJECTS_PER_NODE, DEFAULT_MIN_OBJECTS_PER_NODE, DEFAULT_FORCED_REINSERTION_NUMBER);
 	}
 	
 
@@ -70,9 +82,109 @@ public class RStarTree implements SpatialIndex {
 	 * Adds a spatial item with an extent specified by the given {@link Envelope} to the index
 	 */
 	public void insert(Envelope itemEnv, Object item) {
-		RStarTreeNode subtree = ChooseSubtree(this.root, itemEnv);
+		insertNode(new RStarTreeItemNode(item, itemEnv), this.leafLevel);
 	}
 
+	/**
+	 * 
+	 * @param node
+	 */
+	protected void insertNode (RStarTreeNode node, int levelMask) {
+		
+		RStarTreeNode subtree = chooseSubtree(this.root, node, levelMask);
+		
+		subtree.addChild(node);
+
+		// if subtree is full, we must either split or reinsert
+		if (subtree.isFull()) {
+			boolean[] levelsVisited = new boolean[subtree.getLevel()+1];
+			Arrays.fill(levelsVisited, false);
+			RStarTreeNode insertionPathRoot = overflowEqualize(subtree, levelsVisited);
+			
+			// adjust all envelopes in the insertion path such that they are the minimum bounding boxes required to enclose all children		
+			for (RStarTreeNode inode = subtree; inode != insertionPathRoot; inode = inode.getParent()) 
+				inode.minimizeEnvelope();
+			insertionPathRoot.minimizeEnvelope();
+			if (insertionPathRoot.getParent() != null)
+				insertionPathRoot.getParent().minimizeEnvelope();
+		}	
+	}
+	
+	protected RStarTreeNode overflowEqualize(RStarTreeNode subtree, boolean[] levelsVisited) {
+
+		// if subtree isn't the root && this is the first call of overflowEqualize in the given level
+		if (subtree != this.root && levelsVisited[subtree.getLevel()] == false) {
+			levelsVisited[subtree.getLevel()] = true;
+			reInsert(subtree, this.forcedReinsertionNumber);
+			return subtree;
+		}
+		else {
+			RStarTreeNode newNodeFromSplit = split(subtree);
+			
+			// if overflowTreatment caused a split of the root, create a new root
+			if (subtree.getParent() == null) {
+				RStarTreeBranchNode newRoot = new RStarTreeBranchNode(this.maxObjectsPerNode, ROOT_LEVEL, null);
+				newRoot.addChildNode(this.root);
+				newRoot.addChildNode(subtree);
+				//this.leafLevel = newRoot.propagateLevels(ROOT_LEVEL);   //should roll this into addChilNode
+				this.root = newRoot;
+				return this.root;
+			}
+			
+			// if split wasn't of the root ...
+			else {
+				// ... add new node to parent ...
+				subtree.getParent().addChild(newNodeFromSplit);
+				
+				// ... if parent is full, propagate overflowEqualize up the tree
+				if (subtree.getParent().isFull())  {
+					return overflowEqualize(subtree.getParent(), levelsVisited);
+				}
+				else {
+					return subtree.getParent();
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Split subtree. The items in subtree are distributed into two groups, one group remains within subtree,
+	 * the other group is placed in a new node that is returned to the caller.
+	 * 
+	 * @param subtree
+	 * @return
+	 */
+	protected RStarTreeNode split(RStarTreeNode subtree) {
+		// determine the axis that is perpendicular to which the split is preformed
+		
+		// determine the best distribution into two groups along that axis
+		
+		// distribute the entries
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param subtree
+	 * @param reinsertionNumber
+	 */
+	private void reInsert(RStarTreeNode subtree, int reinsertionNumber) {
+		
+		// for all children in subtree, compute the distance between the center 
+		// of the child's envelope and the center of subtree's envelope
+		
+		// sort in increasing order the centroid distances
+		
+		// remove the first 'reinsertionNumber' of children
+		
+		// adjust subTree's envelope to accommodate the current set of children
+		
+		// reinsert all the removed children into the tree
+		
+	}
+	
+	
 	/**
 	 * Finds the most suitable subtree to insert an object with the given Envelope.
 	 * Suitability based on which subtree requires the minimal amount of envelope growth to include
@@ -81,10 +193,14 @@ public class RStarTree implements SpatialIndex {
 	 * @param itemEnv is the {@link Envelope} of the item that is being inserted into the tree
 	 * @return the non-leaf node that would be the best fit for an item with the given Envelope
 	 */
-	protected RStarTreeNode ChooseSubtree(RStarTreeNode currentRoot, Envelope itemEnv) {
+	protected RStarTreeNode chooseSubtree(RStarTreeNode currentRoot, RStarTreeNode newNode, int levelMask) {
 		
 		// if currentRoot is a leaf node, return it as the best subtree
-		if (!currentRoot.hasChildren())
+		if (currentRoot instanceof RStarTreeLeafNode)
+			return currentRoot;
+		
+		// if currentRoot is at the level described by levelMask, it is the best subtree
+		if (currentRoot.getLevel() == levelMask)
 			return currentRoot;
 		
 		// if the currentRoot only has leaves as children nodes, 
@@ -93,7 +209,7 @@ public class RStarTree implements SpatialIndex {
 		// envelope. Resolve ties by choosing the child that needs the least area enlargement of its
 		// envelope.
 		else if (currentRoot.hasOnlyLeafChildren()){
-			return chooseMinimumOverlap(currentRoot.getChildren(), itemEnv);
+			return chooseSubtree(chooseMinimumOverlap(currentRoot.getChildren(), newNode), newNode, levelMask);
 		}
 		
 		// the children of currentRoot aren't leaves...
@@ -101,46 +217,139 @@ public class RStarTree implements SpatialIndex {
 		// Choose the child whose envelope needs the least area enlargement to include the new data
 		// envelope. Resolve ties by choosing the child that has the smallest envelope area.
 		else {
-			return chooseMinimumArea(currentRoot.getChildren(), itemEnv);
+			return chooseSubtree(chooseMinimumArea(currentRoot.getChildren(), newNode), newNode, levelMask);
+		}		
+	}
+	
+
+	
+	/**
+	 * Determine the minimum overlap cost.
+	 * Choose the child whose envelope needs the least overlap enlargement to include the new data
+	 * envelope. Resolve ties by choosing the child that needs the least area enlargement of its
+	 * envelope.
+	 */
+	protected RStarTreeNode chooseMinimumOverlap(List<RStarTreeNode> children, RStarTreeNode node) {
+		if (children == null)
+			return null;	
+		RStarTreeNode currentMin = null;
+		double currentMinOverlapCost = -1.0;
+		double tempOverlapCost = 0.0;
+		Envelope tempExpandedEnvelope = new Envelope();
+		Envelope currentMinExpandedEnvelope = new Envelope();
+		List<RStarTreeNode> childSubset;
+		
+		// performance hack for very large nodes
+		// sort the envelopes in children in increasing order of their area enlargement needed to include the 
+		// new envelope then select the LARGE_NODE_SUBSET number of smallest children
+		if (children.size() > LARGE_NODE_SUBSET) {
+			childSubset = new ArrayList<RStarTreeNode>(LARGE_NODE_SUBSET);
+			TreeMap<Double, RStarTreeNode> childrenSortedByAreaEnlargement = new TreeMap<Double, RStarTreeNode>();
+			// sort children by the amount of area enlargement
+			for (RStarTreeNode child : children) {
+				tempExpandedEnvelope.init(child.getEnvelope());
+				tempExpandedEnvelope.expandToInclude(node.getEnvelope());
+				childrenSortedByAreaEnlargement.put(new Double(tempExpandedEnvelope.getArea() - child.getEnvelope().getArea()), 
+													child);
+			}
+			// add the first LARGE_NODE_SUBSET number of children to childSubset
+			for (Map.Entry<Double, RStarTreeNode> child = childrenSortedByAreaEnlargement.pollFirstEntry(); 
+				 child != null && childSubset.size() <= LARGE_NODE_SUBSET; 
+				 child = childrenSortedByAreaEnlargement.pollFirstEntry()) {
+				childSubset.add(child.getValue());
+			}
 		}
-		
-		
+		else {
+			childSubset = children;
+		}
+
+		// find the child that has the least overlap cost once expanded to include the new envelope
+		for (RStarTreeNode child : childSubset) {
+			// expand child's envelope to encompass itemEnv
+			tempExpandedEnvelope.init(child.getEnvelope());
+			tempExpandedEnvelope.expandToInclude(node.getEnvelope());			
+			
+			// sum up the intersection between this child's enlarged envelope and all the other children's envelopes
+			for (RStarTreeNode otherChild : children) {
+				if (otherChild != child)
+					tempOverlapCost += child.getEnvelope().intersection(otherChild.getEnvelope()).getArea();
+			}
+			
+			// if this is the first time through, or the current child has less overlap cost than the currentMin
+			if (currentMin == null || tempOverlapCost < currentMinOverlapCost) {
+				currentMin = child;
+				currentMinOverlapCost = tempOverlapCost;
+				currentMinExpandedEnvelope = tempExpandedEnvelope;
+				continue;
+			}
+			// tie breaker
+			else if (tempOverlapCost == currentMinOverlapCost) {
+				if (tempExpandedEnvelope.getArea() - child.getEnvelope().getArea() < 
+						currentMinExpandedEnvelope.getArea() - currentMin.getEnvelope().getArea()) {
+					currentMin = child;
+					currentMinOverlapCost = tempOverlapCost;
+					currentMinExpandedEnvelope = tempExpandedEnvelope;
+					continue;
+				}
+			}
+			// current min is less than the current child
+		}
+
+		return currentMin;
 	}
 	
-	protected RStarTreeNode chooseMinimumOverlap(List<RStarTreeNode> children, Envelope itemEnv) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
-	// the children of currentRoot aren't leaves...
-	// Determine the minimum area cost.
-	// Choose the child whose envelope needs the least area enlargement to include the new data
-	// envelope. Resolve ties by choosing the child that has the smallest envelope area.
-	protected RStarTreeNode chooseMinimumArea(List<RStarTreeNode> children, Envelope itemEnv) {
+
+
+	/**
+	 * the children of currentRoot aren't leaves...
+	 * Determine the minimum area cost.
+	 * Choose the child whose envelope needs the least area enlargement to include the new data
+	 * envelope. Resolve ties by choosing the child that has the smallest envelope area.
+	 */
+	protected RStarTreeNode chooseMinimumArea(List<RStarTreeNode> children, RStarTreeNode node) {
 		if (children == null)
 			return null;	
 		RStarTreeNode currentMin = null;
 		Envelope currentMinExpandedEnv = new Envelope();
 		Envelope tempExpandedEnv = new Envelope();
+		double currentMinAreaIncrease = -1.0, tempAreaIncrease = -1.0;
 		
 		for (RStarTreeNode child : children) {
+			// first time through the for loop
 			if (currentMin == null) {
 				currentMin = child;
 				currentMinExpandedEnv.init(child.getEnvelope());
-				currentMinExpandedEnv.expandToInclude(itemEnv);
+				currentMinExpandedEnv.expandToInclude(node.getEnvelope());
+				currentMinAreaIncrease = currentMinExpandedEnv.getArea() - child.getEnvelope().getArea();
+				continue;
 			}
+			// compare the current child with the previously found minimum
 			else {
 				tempExpandedEnv.init(child.getEnvelope());
-				tempExpandedEnv.expandToInclude(itemEnv);
-				if (tempExpandedEnv.getArea() < currentMinExpandedEnv.getArea()) {
+				tempExpandedEnv.expandToInclude(node.getEnvelope());
+				tempAreaIncrease = tempExpandedEnv.getArea() - child.getEnvelope().getArea();
+				// current child of the for loop is smaller than our previous minimum
+				if (tempAreaIncrease < currentMinAreaIncrease) {
 					currentMin = child;
 					currentMinExpandedEnv.init(tempExpandedEnv);
+					currentMinAreaIncrease = tempAreaIncrease;
+					continue;
 				}
-				else if (tempExpandedEnv.getArea() == currentMinExpandedEnv.getArea()) {
-
+				// break ties by looking at total area increase
+				else if (tempAreaIncrease == currentMinAreaIncrease) {
+					if (child.getEnvelope().getArea() < currentMin.getEnvelope().getArea()) {
+						currentMin = child;
+						currentMinExpandedEnv.init(tempExpandedEnv);
+						currentMinAreaIncrease = tempAreaIncrease;
+						continue;
+					} 
+					// currentMin has a smaller area than the challenger
 				}
+				// currentMin's area increase is smaller than the challenger 
 			}
-		}
+		} // end for loop
+		
 		return currentMin;
 	}
 	

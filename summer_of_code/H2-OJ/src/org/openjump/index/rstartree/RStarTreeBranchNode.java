@@ -34,4 +34,9 @@ public class RStarTreeBranchNode extends AbstractRStarTreeNode implements
 		return false;
 	}
 
+	public int propagateLevels(int root_level) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

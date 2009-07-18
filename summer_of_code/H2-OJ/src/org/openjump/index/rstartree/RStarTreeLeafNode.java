@@ -34,4 +34,9 @@ public class RStarTreeLeafNode extends AbstractRStarTreeNode implements
 		return false;
 	}
 
+	public void addItem(Object item) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
