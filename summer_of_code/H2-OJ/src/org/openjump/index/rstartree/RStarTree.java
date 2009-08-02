@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.index.ItemVisitor;
 import com.vividsolutions.jts.index.SpatialIndex;
@@ -35,7 +35,7 @@ import com.vividsolutions.jts.util.Assert;
 
 public class RStarTree implements SpatialIndex {
 
-	private static final int DEFAULT_MAX_OBJECTS_PER_NODE = 128;
+	private static final int DEFAULT_MAX_OBJECTS_PER_NODE = 256;
 	private static final int DEFAULT_MIN_OBJECTS_PER_NODE = 64;
 	private static final int DEFAULT_FORCED_REINSERTION_NUMBER = 38;
 	private static final int LARGE_NODE_SUBSET = 32; // performance variable for chooseMinimumOverlap
@@ -61,13 +61,13 @@ public class RStarTree implements SpatialIndex {
 	    Assert.isTrue(minObjectsPerNode >= 2, "Minimum number of objects per node must be greater than or equal to 2");
 	    Assert.isTrue(minObjectsPerNode <= this.maxObjectsPerNode/2, 
 	    		"Minimum number of objects per node must be less than or equal to half of the node capacity");
-	    this.maxObjectsPerNode = maxObjectsPerNode;
+	    this.minObjectsPerNode = minObjectsPerNode;
 	    
 	    Assert.isTrue(forcedReinsertionNumber >= 0 || forcedReinsertionNumber <= this.maxObjectsPerNode, 
 	    		"Forced Reinsertion rate must be between 0 and "+this.maxObjectsPerNode);
 	    this.forcedReinsertionNumber = forcedReinsertionNumber;
 	    
-	    this.root = new RStarTreeLeafNode(this.maxObjectsPerNode, ROOT_LEVEL, null);
+	    this.root = new RStarTreeLeafNode(null, this.maxObjectsPerNode, ROOT_LEVEL);
 	    this.leafLevel = ROOT_LEVEL;
 	}
 	/**
@@ -82,7 +82,7 @@ public class RStarTree implements SpatialIndex {
 	 * Adds a spatial item with an extent specified by the given {@link Envelope} to the index
 	 */
 	public void insert(Envelope itemEnv, Object item) {
-		insertNode(new RStarTreeItemNode(item, itemEnv), this.leafLevel);
+		insertNode(new RStarTreeItemNode(null, this.leafLevel, item, itemEnv), this.leafLevel);
 	}
 
 	/**
@@ -110,6 +110,12 @@ public class RStarTree implements SpatialIndex {
 		}	
 	}
 	
+	/**
+	 * 
+	 * @param subtree
+	 * @param levelsVisited
+	 * @return
+	 */
 	protected RStarTreeNode overflowEqualize(RStarTreeNode subtree, boolean[] levelsVisited) {
 
 		// if subtree isn't the root && this is the first call of overflowEqualize in the given level
@@ -123,10 +129,9 @@ public class RStarTree implements SpatialIndex {
 			
 			// if overflowTreatment caused a split of the root, create a new root
 			if (subtree.getParent() == null) {
-				RStarTreeBranchNode newRoot = new RStarTreeBranchNode(this.maxObjectsPerNode, ROOT_LEVEL, null);
-				newRoot.addChildNode(this.root);
-				newRoot.addChildNode(subtree);
-				//this.leafLevel = newRoot.propagateLevels(ROOT_LEVEL);   //should roll this into addChilNode
+				RStarTreeBranchNode newRoot = new RStarTreeBranchNode(null, this.maxObjectsPerNode, ROOT_LEVEL);
+				newRoot.addChild(this.root);
+				newRoot.addChild(subtree);
 				this.root = newRoot;
 				return this.root;
 			}
@@ -156,14 +161,55 @@ public class RStarTree implements SpatialIndex {
 	 * @return
 	 */
 	protected RStarTreeNode split(RStarTreeNode subtree) {
-		// determine the axis that is perpendicular to which the split is preformed
 		
-		// determine the best distribution into two groups along that axis
+		RStarTreeNode newNode = null;
+		if (subtree instanceof RStarTreeBranchNode)
+			newNode = new RStarTreeBranchNode(subtree.getParent(), subtree.getCapacity(), subtree.getLevel());
+		else if (subtree instanceof RStarTreeLeafNode)
+			newNode = new RStarTreeLeafNode(subtree.getParent(), subtree.getCapacity(), subtree.getLevel());
+		else
+			Assert.shouldNeverReachHere("RStarTree::split -- can only split branch or leaf nodes");
 		
+		// determine the axis that is perpendicular to which the split is performed
+		TreeMap<Double, RStarTreeNode> sortedMinX = new TreeMap<Double, RStarTreeNode>();
+		TreeMap<Double, RStarTreeNode> sortedMaxX = new TreeMap<Double, RStarTreeNode>();
+		TreeMap<Double, RStarTreeNode> sortedMinY = new TreeMap<Double, RStarTreeNode>();
+		TreeMap<Double, RStarTreeNode> sortedMaxY = new TreeMap<Double, RStarTreeNode>();
+		for (RStarTreeNode child : subtree.getChildren()) {
+			sortedMinX.put(child.getEnvelope().getMinX(), child);
+			sortedMaxX.put(child.getEnvelope().getMaxX(), child);
+			sortedMinY.put(child.getEnvelope().getMinY(), child);
+			sortedMaxY.put(child.getEnvelope().getMaxY(), child);
+		}
+		SplitDistributions minXdistributions = new SplitDistributions(sortedMinX, minObjectsPerNode, maxObjectsPerNode);
+		SplitDistributions minYdistributions = new SplitDistributions(sortedMinY, minObjectsPerNode, maxObjectsPerNode);
+		SplitDistributions maxXdistributions = new SplitDistributions(sortedMaxX, minObjectsPerNode, maxObjectsPerNode);
+		SplitDistributions maxYdistributions = new SplitDistributions(sortedMaxY, minObjectsPerNode, maxObjectsPerNode);
+		
+		//System.err.println("MarginSums -- minX = "+minXdistributions.getMarginSum()+"\tmaxX = "+maxXdistributions.getMarginSum()+
+		//		"\tminY = "+minYdistributions.getMarginSum()+"\tmaxY = "+maxYdistributions.getMarginSum());
+		SplitDistributions bestXdistributions = (minXdistributions.getMarginSum() < maxXdistributions.getMarginSum()) ? 
+				                                 minXdistributions : maxXdistributions;
+		SplitDistributions bestYdistributions = (minYdistributions.getMarginSum() < maxYdistributions.getMarginSum()) ? 
+                                                 minYdistributions : maxYdistributions;
+
+		Distribution bestDistribution = (bestXdistributions.getMarginSum() < bestYdistributions.getMarginSum()) ? 
+				                          bestXdistributions.minOverlapDistribution() : 
+				                          bestYdistributions.minOverlapDistribution();
+		
+		
+
+					
 		// distribute the entries
-		return null;
+		//Assert.isTrue(returnSplit != null);
+		for (RStarTreeNode node : bestDistribution.firstGroup()) {
+			newNode.addChild(node);
+			subtree.removeChild(node);
+		}
+		return newNode;
 	}
 	
+
 	/**
 	 * 
 	 * @param subtree
@@ -171,17 +217,32 @@ public class RStarTree implements SpatialIndex {
 	 */
 	private void reInsert(RStarTreeNode subtree, int reinsertionNumber) {
 		
+		ArrayList<RStarTreeNode> removedNodes = new ArrayList<RStarTreeNode>(reinsertionNumber);
 		// for all children in subtree, compute the distance between the center 
 		// of the child's envelope and the center of subtree's envelope
-		
 		// sort in increasing order the centroid distances
+		TreeMap<Double, RStarTreeNode> nodesSortedByCentroid = new TreeMap<Double, RStarTreeNode>();
+		Coordinate subtreeCenter = subtree.getEnvelope().centre();
+		List<RStarTreeNode> children = subtree.getChildren();
+		for (RStarTreeNode child : children) {
+			nodesSortedByCentroid.put(subtreeCenter.distance(child.getEnvelope().centre()), child);
+		}
 		
-		// remove the first 'reinsertionNumber' of children
+		// remove the first 'reinsertionNumber' of sorted children from subtree 
+		RStarTreeNode tmpNode;
+		for (int i = 0; i < reinsertionNumber; i++) {
+			tmpNode = nodesSortedByCentroid.pollFirstEntry().getValue();
+			removedNodes.add(tmpNode);
+			subtree.removeChild(tmpNode);
+		}
 		
 		// adjust subTree's envelope to accommodate the current set of children
+		subtree.minimizeEnvelope();
 		
 		// reinsert all the removed children into the tree
-		
+		for (RStarTreeNode child : removedNodes) {
+			insertNode(child, subtree.getLevel()+1);
+		}
 	}
 	
 	
@@ -363,9 +424,37 @@ public class RStarTree implements SpatialIndex {
 	 * @param searchEnv the envelope to query for
 	 * @return a list of the items found by the query
 	 */
-	public List query(Envelope searchEnv) {
-		return null;
+	public List<Object> query(Envelope searchEnv) {
+		
+		// if the query envelope doesn't intersect with the root envelope, there are no matches
+		if (!searchEnv.intersects(root.getEnvelope()))
+			return null;
+		
+		ArrayList<Object> matches = new ArrayList<Object>();
+		
+		query(searchEnv, root, matches);
+		return matches;
 	}
+	
+	protected void query (Envelope searchEnv, RStarTreeNode node, List matches) {
+		for (RStarTreeNode child : node.getChildren()) {
+			// if current child doesn't intersect the search envelope, continue to the next child
+			if (!searchEnv.intersects(child.getEnvelope()))
+				continue;
+			
+			// if the current child contains just an item, add that item to matches and continue
+			if (child instanceof RStarTreeItemNode) {
+				matches.add(((RStarTreeItemNode)child).getItem());
+				continue;
+			}
+			
+			// current child is a branch node or leaf node, thus recursion down to the item is needed
+			else {
+				query (searchEnv, child, matches);
+			}
+		}
+	}
+	
 
 	/**
 	 * Queries the index for all items whose extents intersect the given search {@link Envelope},
@@ -377,9 +466,32 @@ public class RStarTree implements SpatialIndex {
 	 * @param visitor a visitor object to apply to the items found
 	 */
 	public void query(Envelope searchEnv, ItemVisitor visitor) {
-
+		
+		if (searchEnv.intersects(root.getEnvelope()))
+			query(searchEnv, root, visitor);
 	}
+	
+	protected void query (Envelope searchEnv, RStarTreeNode node, ItemVisitor visitor) {
+		for (RStarTreeNode child : node.getChildren()) {
+			// if current child doesn't intersect the search envelope, continue to the next child
+			if (!searchEnv.intersects(child.getEnvelope()))
+				continue;
+			
+			// if the current child contains just an item, visit that item 
+			if (child instanceof RStarTreeItemNode) {
+		        visitor.visitItem(((RStarTreeItemNode)child).getItem());
+				continue;
+			}
+			
+			// current child is a branch node or leaf node, thus recursion down to the item is needed
+			else {
+				query (searchEnv, child, visitor);
+			}
+		}
+	}
+	
 
+	
 	/**
 	 * Removes a single item from the tree.
 	 *
@@ -388,7 +500,82 @@ public class RStarTree implements SpatialIndex {
 	 * @return <code>true</code> if the item was found
 	 */
 	public boolean remove(Envelope itemEnv, Object item) {
-		return false;
+		if (itemEnv.intersects(root.getEnvelope()))
+			return false;
+		
+		// get the location of the item within the tree
+		RStarTreeLeafNode leafNode = findLeafNode(root, itemEnv, item);
+		
+		// item not found within the tree
+		if (leafNode == null)
+			return false;
+		
+		// item found, delete item..
+		else {
+			leafNode.deleteItem(item);
+			condenseTree(leafNode);
+			return true;
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param currentNode
+	 * @param itemEnv
+	 * @param item
+	 * @return
+	 */
+	protected RStarTreeLeafNode findLeafNode(RStarTreeNode currentNode, Envelope itemEnv, Object item) {
+		
+		if (currentNode instanceof RStarTreeLeafNode) {
+			if (((RStarTreeLeafNode)currentNode).containsItem(item))
+				return (RStarTreeLeafNode)currentNode;
+			else
+				return null;
+		}
+		
+		for (RStarTreeNode child : currentNode.getChildren()) {
+			if (child.getEnvelope().intersects(itemEnv)) {
+				RStarTreeLeafNode tmpNode = findLeafNode(child, itemEnv, item);
+				if (tmpNode != null) {
+					return tmpNode;
+				}
+			}
+		}
+
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param node
+	 */
+	protected void condenseTree(RStarTreeNode node) {
+		// if node is root, minimize envelope and stop recursion
+		if (node.equals(root)) {
+			node.minimizeEnvelope();
+		}
+		// node has above the minimum number of children, minimize envelope then
+		// recurse up the tree with the assumption that all the porents will hit 
+		// this condition or the above
+		else if (node.numberOfChildren() >= this.minObjectsPerNode) {
+			node.minimizeEnvelope();
+			condenseTree(node.getParent());
+		}
+		// node has less than minimum number of children
+		// delete node and re-insert its children into the 
+		// tree and recurse up the tree with condenseTree.
+		// that recursion could result in another deletion-reinsertion or 
+		else {
+			List<RStarTreeNode> children = node.getChildren();
+			RStarTreeNode parent = node.getParent();
+			parent.removeChild(node);
+			for (RStarTreeNode child : children) {
+				this.insertNode(child, child.getLevel());
+			}
+			condenseTree(parent);
+		}		
 	}
 
 

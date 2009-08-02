@@ -3,66 +3,45 @@ package org.openjump.index.rstartree;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.util.Assert;
 
 public class RStarTreeItemNode extends AbstractRStarTreeNode implements
 		RStarTreeNode {
+	
+	private Object item;
+	private Envelope itemEnvelope;
 
-	public RStarTreeItemNode(Object item, Envelope itemEnv) {
-		// TODO Auto-generated constructor stub
+	public RStarTreeItemNode(RStarTreeNode parent, int level, Object item, Envelope itemEnv) {
+		super(parent, 0, level);
+		this.item = item;
+		this.itemEnvelope = itemEnv;
 	}
-
-	@Override
-	protected Envelope computeBounds() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public Object getItem() {
+		return item;
 	}
+	
+	public Envelope getEnvelope() { return this.itemEnvelope; }
 
-	@Override
-	public void addChild(RStarTreeNode newNode) {
-		// TODO Auto-generated method stub
+	public boolean hasChildren() { return false; }
+	
+	public boolean hasOnlyLeafChildren() { return false; }
+	 
+	public List<RStarTreeNode> getChildren() { return null; }
 
-	}
+	public boolean isFull() { return true; }
+		
 
-	@Override
-	public List<RStarTreeNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public void addChild(RStarTreeNode newNode) { Assert.shouldNeverReachHere(); }
 
-	@Override
-	public int getLevel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public void minimizeEnvelope() { return; }
 
-	@Override
-	public RStarTreeNode getParent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public boolean hasChildren() {
-		// TODO Auto-generated method stub
+	public boolean removeChild(RStarTreeNode tmpNode) {
+		Assert.shouldNeverReachHere();
 		return false;
 	}
 
-	@Override
-	public boolean hasOnlyLeafChildren() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isFull() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void minimizeEnvelope() {
-		// TODO Auto-generated method stub
-
-	}
+	public int numberOfChildren() { return 0; }
 
 }

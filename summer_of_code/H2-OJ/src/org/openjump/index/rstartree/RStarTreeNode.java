@@ -33,4 +33,16 @@ public interface RStarTreeNode {
 	void minimizeEnvelope();
 
 
+	boolean removeChild(RStarTreeNode tmpNode);
+
+	int numberOfChildren();
+
+	void setParent(RStarTreeNode node);
+
+	void setLevel(int i);
+
+	int getCapacity();
+
+
+
 }

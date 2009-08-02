@@ -1,42 +1,29 @@
 package org.openjump.index.rstartree;
 
-import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.util.Assert;
+
 
 public class RStarTreeLeafNode extends AbstractRStarTreeNode implements
 		RStarTreeNode {
 
-	public RStarTreeLeafNode(int nodeCapacity) {
-		super(nodeCapacity);
-		// TODO Auto-generated constructor stub
+	public RStarTreeLeafNode(RStarTreeNode parent, int nodeCapacity, int level) {
+		super(parent, nodeCapacity, level);
 	}
 
-	@Override
-	protected Envelope computeBounds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Envelope getEnvelope() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean hasChildren() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean hasOnlyLeafChildren() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void addItem(Object item) {
-		// TODO Auto-generated method stub
+	public void deleteItem(Object item) {
+		for (RStarTreeNode child : getChildren()) {
+			if (child instanceof RStarTreeItemNode) {
+				if (((RStarTreeItemNode)child).getItem() == item)
+					removeChild(child);
+			}
+			else
+				Assert.shouldNeverReachHere("RStarLeafNode has a child other than an RStarTreeItemNode");
+		}
 		
 	}
 
+	public boolean containsItem(Object item) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
