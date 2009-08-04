@@ -43,6 +43,7 @@ import com.vividsolutions.jump.workbench.model.FeatureEvent;
 import com.vividsolutions.jump.workbench.model.FeatureEventType;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerEvent;
+import com.vividsolutions.jump.workbench.model.LayerEventType;
 import com.vividsolutions.jump.workbench.model.LayerListener;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 
@@ -80,11 +81,10 @@ public class WFSLayerListener implements LayerListener {
 
     /**
      * Keeps tracks of changes to the associated layer (the layer is associated using its display name). The four
-     * <code>FeatureEventType</code>s are treated separatedly.
-     * <code>GEOMETRY_MODIFIED</code> <code>ATTRIBUTE_MODIFIED</code> are combined by the
-     * <code>TransactionFactory</code> into one UPDATE statement.<br/> Changed features (and the reference to their
-     * riginal features) can be retrieved with the methods getChangedFeaturesMap(), getOldGeomFeaturesMap() and
-     * getAttrGeomFeaturesMap(). <br/>
+     * <code>FeatureEventType</code>s are treated separatedly. <code>GEOMETRY_MODIFIED</code>
+     * <code>ATTRIBUTE_MODIFIED</code> are combined by the <code>TransactionFactory</code> into one UPDATE statement.<br/>
+     * Changed features (and the reference to their riginal features) can be retrieved with the methods
+     * getChangedFeaturesMap(), getOldGeomFeaturesMap() and getAttrGeomFeaturesMap(). <br/>
      * 
      * @see com.vividsolutions.jump.workbench.model.LayerListener#featuresChanged(com.vividsolutions.jump.workbench.model.FeatureEvent)
      */
@@ -185,7 +185,9 @@ public class WFSLayerListener implements LayerListener {
     }
 
     public void layerChanged( LayerEvent e ) {
-        // unused
+        if ( e.getType().equals( LayerEventType.REMOVED ) ) {
+            e.getLayerable().getLayerManager().removeLayerListener( this );
+        }
     }
 
     public void categoryChanged( CategoryEvent e ) {
