@@ -1,3 +1,7 @@
+2009-08-04  Andreas Schmitz <schmitz@lat-lon.de>
+        * src/de/latlon/deejump/wfs/data/JUMPFeatureFactory.java:
+        Fix problem of getting multiple features when only one was digitized.
+
 2008-10-06  Andreas Schmitz <schmitz@lat-lon.de>
 
         * src/de/latlon/deejump/wfs/transaction/TransactionFactory.java:
