@@ -171,7 +171,7 @@ public class WFSPlugIn extends ThreadedBasePlugIn {
                                        ftName, geoQN, crs, wfs );
 
         synchronized ( layerManager ) {
-            WFSLayerListener listener = new WFSLayerListener( layer.getName() );
+            WFSLayerListener listener = new WFSLayerListener( layer );
             layer.setLayerListener( listener );
             layerManager.addLayerListener( listener );
             layer.setServerURL( this.wfsUrl );

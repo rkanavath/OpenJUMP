@@ -43,7 +43,6 @@ import com.vividsolutions.jump.workbench.model.FeatureEvent;
 import com.vividsolutions.jump.workbench.model.FeatureEventType;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerEvent;
-import com.vividsolutions.jump.workbench.model.LayerEventType;
 import com.vividsolutions.jump.workbench.model.LayerListener;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 
@@ -65,18 +64,16 @@ public class WFSLayerListener implements LayerListener {
 
     private ArrayList<Feature> changedAddFeatures = new ArrayList<Feature>();
 
-    /** the JUMP layer name */
-    private String layerName;
+    private WFSLayer layer;
 
     /**
-     * Creates a WfsLayerListener using the layer name. This layer name is the JUMP layer name and <b>not<b/> the
-     * original WFS layer name.
+     * Creates a WfsLayerListener using the layer.
      * 
-     * @param layerName
-     *            the JUMP layer name
+     * @param layer
+     *            the JUMP layer
      */
-    public WFSLayerListener( String layerName ) {
-        this.layerName = layerName;
+    public WFSLayerListener( WFSLayer layer ) {
+        this.layer = layer;
     }
 
     /**
@@ -90,10 +87,7 @@ public class WFSLayerListener implements LayerListener {
      */
     public void featuresChanged( FeatureEvent e ) {
 
-        if ( !( e.getLayer() instanceof WFSLayer ) ) {
-            return;
-        }
-        if ( !( (WFSLayer) e.getLayer() ).getName().equals( layerName ) ) {
+        if ( e.getLayer() != layer ) {
             return;
         }
 
@@ -185,9 +179,7 @@ public class WFSLayerListener implements LayerListener {
     }
 
     public void layerChanged( LayerEvent e ) {
-        if ( e.getType().equals( LayerEventType.REMOVED ) ) {
-            e.getLayerable().getLayerManager().removeLayerListener( this );
-        }
+        // unused
     }
 
     public void categoryChanged( CategoryEvent e ) {
