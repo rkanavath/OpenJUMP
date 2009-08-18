@@ -23,8 +23,6 @@ public class SplitDistributions extends ArrayList<Distribution> {
 	 */
 	public SplitDistributions(TreeMap<Double, RStarTreeNode> sortedNodes, int minChildren, int maxChildren) {
 		super(maxChildren - (2 * minChildren) + 2);
-		//System.err.println("SplitDistributions:: sortedNodes.size() = "+sortedNodes.size()+"\tminChildren = "+minChildren+"\tmaxChildren = "+maxChildren);
-		//System.err.println("SplitDistributions:: sortedNodes = "+sortedNodes);
 		//Assert.isTrue(super.size() > 1, "maxChildren must be greater than 2*minChildren+2");
 		
 		ArrayList<RStarTreeNode> tmpFirstGroup = new ArrayList<RStarTreeNode>(maxChildren - minChildren);
@@ -35,11 +33,11 @@ public class SplitDistributions extends ArrayList<Distribution> {
 		RStarTreeNode[] firstNodes = new RStarTreeNode[0];
 		RStarTreeNode[] lastNodes = new RStarTreeNode[0];
 		
-		while (sortedNodes.size() >= minChildren) {
+		do {
 			super.add(new Distribution(tmpFirstGroup.toArray(firstNodes), sortedNodes.values().toArray(lastNodes)));
-			//System.err.println("sortedNodes.size = "+sortedNodes.size());
 			tmpFirstGroup.add(sortedNodes.pollFirstEntry().getValue());
 		}
+		while (sortedNodes.size() >= minChildren);
 	}
 
 	/**

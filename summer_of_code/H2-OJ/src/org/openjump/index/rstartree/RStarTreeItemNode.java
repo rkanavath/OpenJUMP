@@ -9,19 +9,19 @@ public class RStarTreeItemNode extends AbstractRStarTreeNode implements
 		RStarTreeNode {
 	
 	private Object item;
-	private Envelope itemEnvelope;
+	//private Envelope itemEnvelope;
 
 	public RStarTreeItemNode(RStarTreeNode parent, int level, Object item, Envelope itemEnv) {
 		super(parent, 0, level);
 		this.item = item;
-		this.itemEnvelope = itemEnv;
+		this.envelope = itemEnv;
 	}
 	
 	public Object getItem() {
 		return item;
 	}
 	
-	public Envelope getEnvelope() { return this.itemEnvelope; }
+	//public Envelope getEnvelope() { return this.itemEnvelope; }
 
 	public boolean hasChildren() { return false; }
 	
@@ -43,5 +43,9 @@ public class RStarTreeItemNode extends AbstractRStarTreeNode implements
 	}
 
 	public int numberOfChildren() { return 0; }
+	
+	public String toString() {
+		return "(Item Node)\n+Level = "+this.level+ "\nItem = "+item+"\nEnvelope = "+envelope;
+	}
 
 }

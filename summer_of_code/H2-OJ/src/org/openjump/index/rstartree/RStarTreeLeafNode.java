@@ -26,4 +26,8 @@ public class RStarTreeLeafNode extends AbstractRStarTreeNode implements
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public String toString() {
+		return "(Leaf Level)\n"+super.toString();
+	}
 }

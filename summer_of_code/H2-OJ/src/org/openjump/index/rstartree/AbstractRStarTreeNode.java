@@ -23,7 +23,8 @@ public abstract class AbstractRStarTreeNode implements RStarTreeNode {
 		this.nodeCapacity = nodeCapacity;
 		this.level = level;
 		this.parent = parent;
-		this.childNodes = new ArrayList<RStarTreeNode>(this.nodeCapacity);
+		//if (nodeCapacity > 0)
+			this.childNodes = new ArrayList<RStarTreeNode>(this.nodeCapacity);
 		this.envelope = null;
 	}
 
@@ -70,6 +71,7 @@ public abstract class AbstractRStarTreeNode implements RStarTreeNode {
 		Assert.isTrue(level >= 0, "level must be a positive number");
 		this.level = treeLevel;
 		// Recursively alter the levels of this node's children
+		if (childNodes != null)
 		for (RStarTreeNode child : this.childNodes) {
 			child.setLevel(this.level+1);
 		}
@@ -127,8 +129,8 @@ public abstract class AbstractRStarTreeNode implements RStarTreeNode {
 	public void addChild(RStarTreeNode child) {
 		if (child != null) {
 			child.setParent(this);
-			child.setLevel(this.level + 1);
-			this.childNodes.add(child);
+			child.setLevel(level + 1);
+			childNodes.add(child);
 			if (envelope == null)
 				envelope = child.getEnvelope();
 			else
@@ -178,5 +180,16 @@ public abstract class AbstractRStarTreeNode implements RStarTreeNode {
 		return true;
 	}
 	
+	/**
+	 * 
+	 */
+	public String toString() {
+		String returnString = "=====================================\n";
+		returnString.concat("Level = "+level+"\nChildren:\n");
+		for (RStarTreeNode child : this.childNodes) {
+			returnString.concat(child.toString()+"\n");
+		}
+		return returnString;
+	}
 	
 }

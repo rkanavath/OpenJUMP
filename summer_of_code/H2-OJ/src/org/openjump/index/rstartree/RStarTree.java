@@ -55,6 +55,7 @@ public class RStarTree implements SpatialIndex {
 	 * @param forcedReinsertionNumber is how many children will be reinserted into the tree due to overflows during insert
 	 */
 	public RStarTree(int maxObjectsPerNode, int minObjectsPerNode, int forcedReinsertionNumber) {
+
 	    Assert.isTrue(maxObjectsPerNode >= 4, "Node capacity must be greater than or equal to 4");
 	    this.maxObjectsPerNode = maxObjectsPerNode;
 	    
@@ -82,14 +83,16 @@ public class RStarTree implements SpatialIndex {
 	 * Adds a spatial item with an extent specified by the given {@link Envelope} to the index
 	 */
 	public void insert(Envelope itemEnv, Object item) {
-		insertNode(new RStarTreeItemNode(null, this.leafLevel, item, itemEnv), this.leafLevel);
+		boolean[] levelsVisited = new boolean[this.leafLevel+1];
+		Arrays.fill(levelsVisited, false);
+		insertNode(new RStarTreeItemNode(null, this.leafLevel, item, itemEnv), this.leafLevel, levelsVisited);
 	}
 
 	/**
 	 * 
 	 * @param node
 	 */
-	protected void insertNode (RStarTreeNode node, int levelMask) {
+	protected void insertNode (RStarTreeNode node, int levelMask, boolean[] levelsVisited) {
 		
 		RStarTreeNode subtree = chooseSubtree(this.root, node, levelMask);
 		
@@ -97,8 +100,6 @@ public class RStarTree implements SpatialIndex {
 
 		// if subtree is full, we must either split or reinsert
 		if (subtree.isFull()) {
-			boolean[] levelsVisited = new boolean[subtree.getLevel()+1];
-			Arrays.fill(levelsVisited, false);
 			RStarTreeNode insertionPathRoot = overflowEqualize(subtree, levelsVisited);
 			
 			// adjust all envelopes in the insertion path such that they are the minimum bounding boxes required to enclose all children		
@@ -119,11 +120,13 @@ public class RStarTree implements SpatialIndex {
 	protected RStarTreeNode overflowEqualize(RStarTreeNode subtree, boolean[] levelsVisited) {
 
 		// if subtree isn't the root && this is the first call of overflowEqualize in the given level
+		// then reinsert
 		if (subtree != this.root && levelsVisited[subtree.getLevel()] == false) {
 			levelsVisited[subtree.getLevel()] = true;
-			reInsert(subtree, this.forcedReinsertionNumber);
+			reInsert(subtree, this.forcedReinsertionNumber, levelsVisited);
 			return subtree;
 		}
+		// otherwise split
 		else {
 			RStarTreeNode newNodeFromSplit = split(subtree);
 			
@@ -133,6 +136,7 @@ public class RStarTree implements SpatialIndex {
 				newRoot.addChild(this.root);
 				newRoot.addChild(subtree);
 				this.root = newRoot;
+				this.leafLevel++;
 				return this.root;
 			}
 			
@@ -160,8 +164,7 @@ public class RStarTree implements SpatialIndex {
 	 * @param subtree
 	 * @return
 	 */
-	protected RStarTreeNode split(RStarTreeNode subtree) {
-		
+	protected RStarTreeNode split(RStarTreeNode subtree) {		
 		RStarTreeNode newNode = null;
 		if (subtree instanceof RStarTreeBranchNode)
 			newNode = new RStarTreeBranchNode(subtree.getParent(), subtree.getCapacity(), subtree.getLevel());
@@ -186,8 +189,7 @@ public class RStarTree implements SpatialIndex {
 		SplitDistributions maxXdistributions = new SplitDistributions(sortedMaxX, minObjectsPerNode, maxObjectsPerNode);
 		SplitDistributions maxYdistributions = new SplitDistributions(sortedMaxY, minObjectsPerNode, maxObjectsPerNode);
 		
-		//System.err.println("MarginSums -- minX = "+minXdistributions.getMarginSum()+"\tmaxX = "+maxXdistributions.getMarginSum()+
-		//		"\tminY = "+minYdistributions.getMarginSum()+"\tmaxY = "+maxYdistributions.getMarginSum());
+		
 		SplitDistributions bestXdistributions = (minXdistributions.getMarginSum() < maxXdistributions.getMarginSum()) ? 
 				                                 minXdistributions : maxXdistributions;
 		SplitDistributions bestYdistributions = (minYdistributions.getMarginSum() < maxYdistributions.getMarginSum()) ? 
@@ -197,12 +199,13 @@ public class RStarTree implements SpatialIndex {
 				                          bestXdistributions.minOverlapDistribution() : 
 				                          bestYdistributions.minOverlapDistribution();
 		
-		
+				                          
 
-					
 		// distribute the entries
 		//Assert.isTrue(returnSplit != null);
+		int i =0;
 		for (RStarTreeNode node : bestDistribution.firstGroup()) {
+
 			newNode.addChild(node);
 			subtree.removeChild(node);
 		}
@@ -215,8 +218,8 @@ public class RStarTree implements SpatialIndex {
 	 * @param subtree
 	 * @param reinsertionNumber
 	 */
-	private void reInsert(RStarTreeNode subtree, int reinsertionNumber) {
-		
+	private void reInsert(RStarTreeNode subtree, int reinsertionNumber, boolean[] levelsVisited) {
+
 		ArrayList<RStarTreeNode> removedNodes = new ArrayList<RStarTreeNode>(reinsertionNumber);
 		// for all children in subtree, compute the distance between the center 
 		// of the child's envelope and the center of subtree's envelope
@@ -225,7 +228,8 @@ public class RStarTree implements SpatialIndex {
 		Coordinate subtreeCenter = subtree.getEnvelope().centre();
 		List<RStarTreeNode> children = subtree.getChildren();
 		for (RStarTreeNode child : children) {
-			nodesSortedByCentroid.put(subtreeCenter.distance(child.getEnvelope().centre()), child);
+			if (child != null && child.getEnvelope() != null)
+				nodesSortedByCentroid.put(subtreeCenter.distance(child.getEnvelope().centre()), child);
 		}
 		
 		// remove the first 'reinsertionNumber' of sorted children from subtree 
@@ -241,7 +245,7 @@ public class RStarTree implements SpatialIndex {
 		
 		// reinsert all the removed children into the tree
 		for (RStarTreeNode child : removedNodes) {
-			insertNode(child, subtree.getLevel()+1);
+			insertNode(child, subtree.getLevel()+1, levelsVisited);
 		}
 	}
 	
@@ -255,7 +259,7 @@ public class RStarTree implements SpatialIndex {
 	 * @return the non-leaf node that would be the best fit for an item with the given Envelope
 	 */
 	protected RStarTreeNode chooseSubtree(RStarTreeNode currentRoot, RStarTreeNode newNode, int levelMask) {
-		
+
 		// if currentRoot is a leaf node, return it as the best subtree
 		if (currentRoot instanceof RStarTreeLeafNode)
 			return currentRoot;
@@ -291,6 +295,7 @@ public class RStarTree implements SpatialIndex {
 	 * envelope.
 	 */
 	protected RStarTreeNode chooseMinimumOverlap(List<RStarTreeNode> children, RStarTreeNode node) {
+
 		if (children == null)
 			return null;	
 		RStarTreeNode currentMin = null;
@@ -369,6 +374,7 @@ public class RStarTree implements SpatialIndex {
 	 * envelope. Resolve ties by choosing the child that has the smallest envelope area.
 	 */
 	protected RStarTreeNode chooseMinimumArea(List<RStarTreeNode> children, RStarTreeNode node) {
+
 		if (children == null)
 			return null;	
 		RStarTreeNode currentMin = null;
@@ -513,7 +519,9 @@ public class RStarTree implements SpatialIndex {
 		// item found, delete item..
 		else {
 			leafNode.deleteItem(item);
-			condenseTree(leafNode);
+			boolean[] levelsVisited = new boolean[this.leafLevel+1];
+			Arrays.fill(levelsVisited, false);
+			condenseTree(leafNode, levelsVisited);
 			return true;
 		}
 	}
@@ -527,7 +535,7 @@ public class RStarTree implements SpatialIndex {
 	 * @return
 	 */
 	protected RStarTreeLeafNode findLeafNode(RStarTreeNode currentNode, Envelope itemEnv, Object item) {
-		
+
 		if (currentNode instanceof RStarTreeLeafNode) {
 			if (((RStarTreeLeafNode)currentNode).containsItem(item))
 				return (RStarTreeLeafNode)currentNode;
@@ -551,17 +559,18 @@ public class RStarTree implements SpatialIndex {
 	 * 
 	 * @param node
 	 */
-	protected void condenseTree(RStarTreeNode node) {
+	protected void condenseTree(RStarTreeNode node, boolean[] levelsVisited) {
+
 		// if node is root, minimize envelope and stop recursion
 		if (node.equals(root)) {
 			node.minimizeEnvelope();
 		}
 		// node has above the minimum number of children, minimize envelope then
-		// recurse up the tree with the assumption that all the porents will hit 
+		// recurse up the tree with the assumption that all the parents will hit 
 		// this condition or the above
 		else if (node.numberOfChildren() >= this.minObjectsPerNode) {
 			node.minimizeEnvelope();
-			condenseTree(node.getParent());
+			condenseTree(node.getParent(), levelsVisited);
 		}
 		// node has less than minimum number of children
 		// delete node and re-insert its children into the 
@@ -572,9 +581,9 @@ public class RStarTree implements SpatialIndex {
 			RStarTreeNode parent = node.getParent();
 			parent.removeChild(node);
 			for (RStarTreeNode child : children) {
-				this.insertNode(child, child.getLevel());
+				this.insertNode(child, child.getLevel(), levelsVisited);
 			}
-			condenseTree(parent);
+			condenseTree(parent, levelsVisited);
 		}		
 	}
 
