@@ -192,8 +192,4 @@ public class WFServiceWrapper_1_1_0 extends AbstractWFSWrapper {
         return descrFtUrl;
     }
 
-    protected String createCapabilitiesOnlineResource() {
-        throw new UnsupportedOperationException( "TODO" );
-    }
-
 }
