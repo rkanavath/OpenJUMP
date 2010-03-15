@@ -71,8 +71,8 @@ import de.latlon.deejump.wfs.data.JUMPFeatureFactory;
 
 /**
  * 
- * This class is basically copied from FeatureInfoTool to extend functionality so as to provide
- * FeatureInfo on WMSLayers.
+ * This class is basically copied from FeatureInfoTool to extend functionality so as to provide FeatureInfo on
+ * WMSLayers.
  * 
  * @author <a href="mailto:taddei@lat-lon.de">Ugo Taddei</a>
  * 
@@ -171,7 +171,7 @@ public class LayerAndWMSFeatureInfoTool extends SpecifyFeaturesTool {
         url += "&QUERY_LAYERS=" + StringTools.listToString( wmsLayer.getLayerNames(), ',' );
         url += "&X=" + (int) clickXY.getX();
         url += "&Y=" + (int) clickXY.getY();
-        url += "&feature_count=1000";
+        url += "&feature_count=1000&info_format=application/vnd.ogc.gml";
         return url;
     }
 
