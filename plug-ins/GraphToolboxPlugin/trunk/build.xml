@@ -85,6 +85,12 @@
              <include name="${dist}/graph-toolbox-${version}.jar"/>
              <include name="build.xml"/>
         </zip>
+        <copy todir="${dist}">
+            <fileset dir="${lib}">
+                <include name="jump-jgrapht*.jar"/>
+                <include name="jgrapht*.jar"/>
+            </fileset>
+        </copy>
     </target>
 
 </project>
