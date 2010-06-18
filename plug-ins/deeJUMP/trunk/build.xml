@@ -25,6 +25,7 @@
   <property name="build" value="bin" />
   <property name="deegree.base" value="${user.home}/workspace/base" />
   <property name="openjump.base" value="${user.home}/workspace/openjump" />
+  <property name="wfsplugin.base" value="${user.home}/workspace/wfsplugin" />
   <property name="dist" value="dist" />
 
   <path id="classpath">
@@ -32,6 +33,9 @@
       <include name="**/*.jar" />
     </fileset>
     <fileset dir="${openjump.base}">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${wfsplugin.base}">
       <include name="**/*.jar" />
     </fileset>
   </path>
