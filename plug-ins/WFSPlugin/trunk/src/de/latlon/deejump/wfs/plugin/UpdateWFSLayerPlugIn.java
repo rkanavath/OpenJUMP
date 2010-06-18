@@ -311,7 +311,7 @@ public class UpdateWFSLayerPlugIn extends ThreadedBasePlugIn {
 
         HttpClient client = new HttpClient();
         PostMethod post = new PostMethod( wfsUrl );
-        post.setRequestEntity( new StringRequestEntity( xmlRequest ) );
+        post.setRequestEntity( new StringRequestEntity( xmlRequest, "text/xml", "UTF-8" ) );
 
         int code = client.executeMethod( post );
         if ( code == 200 ) {

@@ -69,7 +69,7 @@ public class TransactionFactory {
     private static String crs = "-1";
 
     /** common transaction header */
-    private static final String REQUEST_HEADER = "<?xml version='1.0' encoding='ISO-8859-1'?>"
+    private static final String REQUEST_HEADER = "<?xml version='1.0'?>"
                                                  + "<wfs:Transaction version='1.1.0' service='WFS' "
                                                  + "xmlns:gml='http://www.opengis.net/gml' "
                                                  + "xmlns:ogc='http://www.opengis.net/ogc' xmlns:wfs='http://www.opengis.net/wfs' ";
