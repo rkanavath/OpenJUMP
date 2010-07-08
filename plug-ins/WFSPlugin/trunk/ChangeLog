@@ -1,3 +1,6 @@
+2010-07-08  Andreas Schmitz <schmitz@lat-lon.de>
+        Do not consider newly loaded WFS layers 'modified'.
+
 2010-06-18  Andreas Schmitz <schmitz@lat-lon.de>
         Fixed character encoding of response, removed XML preamble to enable encoding of UTF-8.
 

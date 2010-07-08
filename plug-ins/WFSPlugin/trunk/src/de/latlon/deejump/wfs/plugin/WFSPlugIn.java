@@ -177,6 +177,8 @@ public class WFSPlugIn extends ThreadedBasePlugIn {
             layer.setServerURL( this.wfsUrl );
             layerManager.addLayer( StandardCategoryNames.SYSTEM, layer );
             layer.setEditable( true );
+            // do not consider feature collection modified after just loading it
+            layer.setFeatureCollectionModified( false );
         }
 
         if ( dataset.size() == JUMPFeatureFactory.getMaxFeatures() ) {
