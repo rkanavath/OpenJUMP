@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ *
+ * Copyright 2004 Edgar Soldin
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+-->
+<optionspanel layout="GridBagLayout">
+	<panel id="p_gpsoptions" layout="GridBagLayout">
+		<gridbagconstraints insets="1,5,1,5" gridx="0" gridy="0"/>
+		
+		<panel layout="GridBagLayout" border="TitledBorder(EtchedBorder,GPS Receiver Settings)">
+			<gridbagconstraints gridx="0" gridy="0" insets="5,5,5,5"/>
+
+			<panel layout="GridBagLayout">
+				<gridbagconstraints gridx="0" gridy="0"/>			
+					<label text="Processing Format:">
+						<gridbagconstraints gridx="0" gridy="0" insets="5,5,5,5" anchor="GridBagConstraints.WEST"/>
+					</label>
+					<combobox id="cbox_processor">
+						<gridbagconstraints gridx="1" gridy="0" anchor="GridBagConstraints.WEST"/>			
+					</combobox>
+					
+					<label id="lbl_update" text="Update">
+						<gridbagconstraints gridx="0" gridy="1" insets="5,5,5,5" anchor="GridBagConstraints.WEST"/>
+					</label>
+					<slider id="sld_update" Minimum="0" Maximum="600" MinorTickSpacing="60" MajorTickSpacing="120" PaintLabels="true" PaintTicks="true" PreferredSize="200,50">
+						<gridbagconstraints gridx="1" gridy="1"/>	
+					</slider>
+			</panel>
+			
+			<panel id="p_cts" layout="GridBagLayout">
+				<gridbagconstraints gridx="0" gridy="1"/>		
+				<label text="GPS Receiver Output CS:">
+					<gridbagconstraints gridx="0" gridy="0" insets="5,5,5,5" anchor="GridBagConstraints.WEST"/>
+				</label>
+				<combobox id="cbox_cs_in">
+					<gridbagconstraints gridx="1" gridy="0" gridwidth="3" fill="GridBagConstraints.HORIZONTAL"/>			
+				</combobox>
+				<label text="Tracking CS:">
+					<gridbagconstraints gridx="0" gridy="1" insets="5,5,5,5" anchor="GridBagConstraints.WEST"/>
+				</label>
+				<combobox id="cbox_cs_out">
+					<gridbagconstraints gridx="1" gridy="1" gridwidth="3" fill="GridBagConstraints.HORIZONTAL"/>			
+				</combobox>
+			</panel>
+						
+		</panel>
+
+		<panel layout="GridBagLayout" border="TitledBorder(EtchedBorder,Serial Port Options)">
+			<gridbagconstraints gridx="0" gridy="2" insets="5,5,5,5"/>
+			<label text="Port:">
+				<gridbagconstraints gridx="0" gridy="1" insets="5,5,5,5" anchor="GridBagConstraints.WEST"/>
+			</label>
+			<combobox id="cbox_port">
+				<gridbagconstraints gridx="1" gridy="1" fill="GridBagConstraints.HORIZONTAL"/>			
+			</combobox>
+			<label text="Baud Rate:">
+				<gridbagconstraints gridx="2" gridy="1" insets="5,15,5,5" anchor="GridBagConstraints.WEST"/>
+			</label>
+			<combobox id="cbox_baudrate" Editable="true">
+				<gridbagconstraints gridx="3" gridy="1" fill="GridBagConstraints.HORIZONTAL"/>			
+			</combobox>
+			
+			<label text="Flow Control:">
+				<gridbagconstraints gridx="0" gridy="2" insets="5,5,5,5" anchor="GridBagConstraints.WEST"/>
+			</label>
+			<combobox id="cbox_flowcontrol">
+				<gridbagconstraints gridx="1" gridy="2" fill="GridBagConstraints.HORIZONTAL"/>			
+			</combobox>
+			<label text="Data Bits:">
+				<gridbagconstraints gridx="2" gridy="2" insets="5,15,5,5" anchor="GridBagConstraints.WEST"/>
+			</label>
+			<combobox id="cbox_databits">
+				<gridbagconstraints gridx="3" gridy="2" fill="GridBagConstraints.HORIZONTAL"/>			
+			</combobox>
+	
+			<label text="Stop Bits:">
+				<gridbagconstraints gridx="0" gridy="3" insets="5,5,5,5" anchor="GridBagConstraints.WEST"/>
+			</label>
+			<combobox id="cbox_stopbits">
+				<gridbagconstraints gridx="1" gridy="3" fill="GridBagConstraints.HORIZONTAL"/>			
+			</combobox>
+			<label text="Parity:">
+				<gridbagconstraints gridx="2" gridy="3" insets="5,15,5,5" anchor="GridBagConstraints.WEST"/>
+			</label>
+			<combobox id="cbox_parity">
+				<gridbagconstraints gridx="3" gridy="3" fill="GridBagConstraints.HORIZONTAL"/>			
+			</combobox>
+			
+			<button id="btn_test" text="Test Settings" ActionCommand="AC_TEST">
+				<gridbagconstraints insets="5,5,1,5" gridx="0" gridy="4" gridwidth="4"/>
+			</button>
+			
+			<scrollpane id="ta_scroll" PreferredSize="300,125">
+				<gridbagconstraints insets="1,5,5,5" gridx="0" gridy="5" gridwidth="4" fill="GridBagConstraints.BOTH"/>
+				<textarea id="ta_output">
+					<gridbagconstraints fill="GridBagConstraints.BOTH"/>
+				</textarea>
+			</scrollpane>
+		</panel>
+		
+	</panel>
+</optionspanel>
