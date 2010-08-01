@@ -77,7 +77,7 @@ public class ExtClassLoader extends URLClassLoader {
 		for (int i = 0; files != null && i < files.length; i++) {
 			file = files[i];
 			if ( file.getName().endsWith( suffix ) )
-				if ( file.isDirectory() && file.exists() ){
+				if ( file.isDirectory() ){
 					this.addAllFiles( file.getAbsolutePath(), suffix, false);
 				}else{
 					this.add( file.getAbsolutePath() );
