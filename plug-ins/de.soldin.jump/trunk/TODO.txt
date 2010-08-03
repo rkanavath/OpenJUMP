@@ -1,0 +1,30 @@
+rc2
+(done) rxtx iterate over subfolders and use the 
+	first word of the os name for checking e.g. mac,windows,linux
+(done) rename "set task" to "select project to track"
+	"add point" to "Add coordinate to layer or feature"
+	"insert points" to "Insert coordinate to closest segment"
+(done) reinstate cts projection support
+(done) fix error message:
+	Found no serial ports. Most likely you don't have Java Communication API (correctly) installed. GPSExtension will be disabled for now.
+
+
+
+renew list ports everytime optionspanel is opened
+
+allow to manually add port(mask)s
+
+let crosshair follow gps coordinate
+or disable crosshair if tracking disabled
+
+separate track now to "gps on" and "track project" (combines track on & select task)
+
+rxtx/*/ aufräumen nur dlls
+
+(arnd) manual input field for tracking frequency e.g.(0.2)s
+
+(arnd) averageing gps over configurable timeframe
+
+(arnd) auto add points after interval (or distance?)
+
+gui support for gpsd and file input

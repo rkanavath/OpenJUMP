@@ -18,6 +18,12 @@
  */
 package de.soldin.jump.gps;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -30,7 +36,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +49,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import gnu.io.*;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -67,7 +71,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.feature.FeatureUtil;
 import com.vividsolutions.jump.util.CoordinateArrays;
@@ -79,20 +82,17 @@ import com.vividsolutions.jump.workbench.plugin.EnableCheck;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.ui.EditOptionsPanel;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.GeometryEditor;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanelProxy;
 import com.vividsolutions.jump.workbench.ui.OptionsDialog;
 import com.vividsolutions.jump.workbench.ui.SelectionManagerProxy;
-import com.vividsolutions.jump.workbench.ui.SnapVerticesToolsOptionsPanel;
 import com.vividsolutions.jump.workbench.ui.Viewport;
-import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 import com.vividsolutions.jump.workbench.ui.snap.GridRenderer;
 
 import de.soldin.jump.UndoableSetGeometry;
-import de.soldin.jump.cts.*;
+import de.soldin.jump.cts.WKTCSLoader;
 
 /**
  * Another one size fits all class. It acts as a listener to the 
@@ -199,9 +199,7 @@ public class GPSTrackerPlugin
 		} catch (Throwable t) {
 			//System.out.println(e.getCause().getMessage()+"\n"+e.getCause().getStackTrace().toString());
 			//System.out.println(e.getException().getMessage()+"\n"+e.getException().getStackTrace().toString());
-			t.printStackTrace();
-			if (t.getCause()!=null)
-				t.getCause().printStackTrace();
+			System.out.println( t.getMessage() +"\n" + t.getStackTrace() );
 		}
 		
 		
@@ -254,7 +252,7 @@ public class GPSTrackerPlugin
 		
 		if (this.portnames.isEmpty()) {
 			context.getWorkbenchContext().getErrorHandler().handleThrowable(
-				new Exception("Found no serial ports. Most likely you don't have Java Communication API (correctly) installed. GPSExtension will be disabled for now."));
+				new Exception("Found no serial ports. Most likely the RXTX Comm API couldn't load the native library for your OS. GPSExtension will be disabled for now."));
 			return;
 		}
 
@@ -748,7 +746,7 @@ public class GPSTrackerPlugin
 class SetTaskPlugin extends AbstractPlugIn
 //implements PlugIn
 {
-	private static String NAME = "Set Task to track";
+	private static String NAME = "Select Project to track";
 	private GPSTrackerPlugin plugin;
 
 	public SetTaskPlugin(GPSTrackerPlugin plugin) {
@@ -790,7 +788,7 @@ class SetTaskPlugin extends AbstractPlugIn
 class AddPointPlugin 
 	extends AbstractPlugIn
 {
-	protected String NAME = "Add Point from GPS";
+	protected String NAME = "Add coordinate to layer or feature";
 	protected GPSTrackerPlugin plugin;
 	protected WorkbenchContext wbc;
 
@@ -940,7 +938,7 @@ class InsertPointPlugin
 
 	public InsertPointPlugin(GPSTrackerPlugin plugin) {
 		super(plugin);
-		NAME = "Insert Point from GPS";
+		NAME = "Insert coordinate to closest segment";
 	}
 	
 	public boolean execute(PlugInContext context) throws Exception {
@@ -969,12 +967,11 @@ class InsertPointPlugin
 																														getName());
 			Geometry geom_new;
 			// for Point and Multipoint the check will always produce null
-			// so I took care that tehy'll treated in the else condition
+			// so I took care that they'll treated in the else condition
 			LineSegment line = segmentInRange(geom,coord);
 			if (geom.getCoordinates().length>1 && line!=null){			
 				Geometry geom_orig = action.getGeom(feature);
-				geom_new  = new GeometryEditor().insertVertex(geom_orig, line.p0,
-																											line.p1, coord);
+				geom_new  = new GeometryEditor().insertVertex(geom_orig, line.p0,line.p1, coord);
 			}else {
 				context.getLayerViewPanel().getContext().warnUser("Selected geometry consists of less than 2 points, or .");
 				return false;

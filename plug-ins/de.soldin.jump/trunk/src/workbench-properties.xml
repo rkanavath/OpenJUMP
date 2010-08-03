@@ -7,6 +7,7 @@
 	<plug-in.sav>de.soldin.gt2jump.cts.CSLayerSetExtension</plug-in.sav-->
 	<!--plug-in>de.soldin.jump.plugin.geomconv.GCPlugin</plug-in-->
 	<extension>de.soldin.jump.gps.GPSExtension</extension>
+	<extension>de.soldin.jump.cts.CSLayerSetExtension</extension>
 	<!--plug-in>de.soldin.jump.gps.GPSTrackerPlugin</plug-in-->
 	<!--plug-in>de.soldin.jump.test.I18Test</plug-in-->
 </workbench>

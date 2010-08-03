@@ -64,6 +64,8 @@ public class GPSExtension
 	public static final String MENUENTRY = "GPS";
 	public static final String BASEFOLDER = GPSExtension.class.getCanonicalName() + "-basefolder";
 	private WorkbenchContext wbc = null;
+
+	public String getVersion(){ return VERSION; }
 	
 	public void configure(PlugInContext context) throws Exception {
 		this.wbc = context.getWorkbenchContext();
@@ -140,12 +142,12 @@ public class GPSExtension
 		
 		//EatThisClassLoader2 cl = new EatThisClassLoader2(new URL[]{});
 		
-		String base = getBase();
+		String base = ExtClassLoader.getBase( this.getClass() );
 		// add gps.jar
 		cl.add( base );
 		System.out.println(getName()+" base is: "+base);
 		// add gps/
-		String libFolder = getLibFolder();
+		String libFolder = ExtClassLoader.getLibFolder( this.getClass(), "gps" );
 		cl.add( libFolder );
 		System.out.println(getName()+" libs are in: "+libFolder);
 		// add gps/*.jar
@@ -163,13 +165,13 @@ public class GPSExtension
 		
 		System.out.println(getName()+" gps find: " + getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension") 
 				+ " in " + de.soldin.jump.cts.CSLayerSetExtension.class + " / " 
-				+ getLibFolder( de.soldin.jump.cts.CSLayerSetExtension.class, "cts"  )) ;
+				+ ExtClassLoader.getLibFolder( de.soldin.jump.cts.CSLayerSetExtension.class, "cts"  )) ;
 		
 		// find cts extension	//getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension");	
 		try {
 			Class cts = de.soldin.jump.cts.CSLayerSetExtension.class;
 			System.out.println(getName()+" cts find: " + cts );
-			libFolder = getLibFolder( cts, "cts"  );
+			libFolder = ExtClassLoader.getLibFolder( cts, "cts"  );
 			System.out.println(getName()+" libfolder find: " + libFolder );
 			cl.addAllFiles( libFolder );
 		} catch (Exception e) {
@@ -182,7 +184,7 @@ public class GPSExtension
 		
 		return cl;
 	}
-	
+/*	
 	static public String getBase(){
 		return getBase( null );
 	}
@@ -233,7 +235,10 @@ public class GPSExtension
 		return libFolder;
 	}
 	
-	public String getVersion(){ return VERSION; }
-	
 	public static String getStaticName(){ return GPSExtension.class.getName(); }
+	*/
+	
+	public static String getLibFolder() {
+		return ExtClassLoader.getLibFolder( ExtClassLoader.class, "cts" );
+	}
 }

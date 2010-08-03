@@ -10,16 +10,26 @@ import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 
 public class Loader {
 
+	private static final String LOADED = "loaded_";
+	private static final String FAILED = "loaded_";
 	private static HashSet memory = new HashSet();
 	public static String libraryPath;
 	
 	static {
-		System.out.println("RXTX Loader on: '"+System.getProperty("os.name")+"' '"+System.getProperty("os.arch")+"'");		
+		System.out.println("RXTX Loader on: '" + System.getProperty("os.name")
+				+ "' '" + System.getProperty("os.arch") + "'");
+		detectBaseFolder();
+		System.out.println("RXTX Loader will look for native libs in (listed in order of priority): \n"
+						+ "1. " +  libraryPath + "rxtx/ \n"
+						+ "2. " +  libraryPath + "rxtx/<os>/<arch1,arch2,..>/\n"
+						+ "3. " +  "java.library.path which is currently set to '" + System.getProperty("java.library.path") + "'\n"
+						+ "Hint: Place native libraries of your choice in 'lib/rxtx' to \n"
+						+ "      force RXTX to try to load them.");
 	}
 	
 	public static void loadLibrary(String name) {
 		// already loaded? return
-		if ( memory.contains( "loaded_" + name ) ) return;
+		if ( memory.contains( LOADED + name ) || memory.contains( FAILED + name ) ) return;
 		
 		// path is set, absolute resolve and try to load it and return
 		if ( libraryPath != null ) {
@@ -79,41 +89,52 @@ public class Loader {
 				for (int i = 0; i < files.length; i++) {
 					file = files[i];
 					if ( file.isDirectory() )
-						if ( _load( file.getAbsolutePath(), name ) ) return;
+						if ( _load( file.getAbsolutePath(), name ) ) return;	
 				}
-			}
-		}
+			}else
+				System.out.println("RXTX Loader could not find distribution's native lib path for '" + os + "': " + file.getAbsolutePath());
+		}else
+			System.out.println("RXTX Loader could not find distribution lib path: " + file.getAbsolutePath());
 		
 		
 		
 		//Last try. Eventually use java.library.path
 		//TODO: find some elegant way to tell user if this fails
 		System.loadLibrary( name );
+		
+		// remember failed already
+		memory.add( FAILED +  name );
 	}
 	
 	
 	private static boolean _load( String path, String name ) {
 		File libfile = new File( path + "/" + System.mapLibraryName(name) );
-		// already loaded?
+		// already tried?
 		if ( memory.contains( libfile ) )
 			return true;
 		else if ( libfile.exists() ) {
+			memory.add( libfile );
 			try {
 				System.load( libfile.getAbsolutePath() );
 				// no exception? fine, remember it's already loaded
-				memory.add( libfile );
-				memory.add( "loaded_" +  name );
+				memory.add( LOADED +  name );
 				System.out.println("RXTX succeeded loading: '"+libfile.getAbsolutePath()+"'");
 				return true;
 			} catch (UnsatisfiedLinkError e) {
-				System.out.println("RXTX unsuccessfully tried: '"+libfile.getAbsolutePath()+"'");
+				System.out.println("RXTX unsuccessfully tried: '"+libfile.getAbsolutePath()+"'\n" +
+						 e.getMessage() );
 			}
 		}else{
 			System.out.println("RXTX Loader could not find: " + libfile.getAbsolutePath());
 		}
+		memory.add( FAILED +  name );
 		return false; 
 	}
 
+	public static boolean loaded( String name ){
+		return memory.contains( LOADED + name );
+	}
+	
 
 	public static void detectBaseFolder() {
 		// detect only once!

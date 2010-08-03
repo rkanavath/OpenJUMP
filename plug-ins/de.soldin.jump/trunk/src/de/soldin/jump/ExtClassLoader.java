@@ -198,4 +198,56 @@ public class ExtClassLoader extends URLClassLoader {
 	    return Thread.currentThread().getStackTrace()[3].toString(); 
     }
 
+	static public String getBase(){
+		return getBase( null );
+	}
+	
+	static public String getBase( Class clazz ){
+		
+		URL whereami = clazz instanceof Class ?
+						clazz.getProtectionDomain().getCodeSource().getLocation() :
+						ExtClassLoader.class.getProtectionDomain().getCodeSource().getLocation();
+		System.out.println( getStaticName() + " is in: "+whereami );
+		
+		if ( whereami == null ) {
+			return "";
+		}
+		
+		// postprocessing
+		String path = whereami.toString();
+		path = path.endsWith("!/") ? path.subSequence(0, path.length()-2).toString() : path ;
+		path = path.startsWith("jar:") ? path.subSequence(4, path.length()).toString() : path ;
+		path = path.startsWith("file:") ? path.subSequence(5, path.length()).toString() : path ;
+		
+		// as extension is always in jar, simply get the parent
+		// should result in "JUMPHOME/ext/"
+		File basefile = new File( path );
+		String baseFolder = basefile.getAbsolutePath();
+		
+		return baseFolder;
+	}
+	
+	static public String getBaseFolder(){
+		return new File(getBase()).getParent();
+	}
+	static public String getLibFolder(){
+		return getLibFolder( null, null );
+	}
+	static public String getLibFolder( Class clazz, String ext_id ){
+		String prefix = "lib";
+		System.out.println(getStaticName()+" libfolder() params: " + clazz + " / " + ext_id);
+		// no extension id delivers the lib root
+		ext_id = ext_id instanceof String ? ext_id + "/" : "";
+		File basefile = new File( getBase( clazz ) );
+		System.out.println(getStaticName()+" libfolder() ext: " + basefile + " / " + ext_id);
+		String libFolder;
+		if ( basefile.getAbsolutePath().endsWith(".jar") )
+			libFolder = basefile.getParentFile().getAbsolutePath()+"/"+prefix+"/"+ext_id;
+		else // no jar eg. in eclipse
+			libFolder = basefile.getParentFile().getAbsolutePath()+"/"+prefix+"/"+ext_id;
+		
+		return libFolder;
+	}
+	
+	public static String getStaticName(){ return ExtClassLoader.class.getName(); }
 }
