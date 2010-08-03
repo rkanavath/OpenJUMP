@@ -1,0 +1,4 @@
+Copy the folder lib/ into your openjump folder.
+
+Start openjump.
+

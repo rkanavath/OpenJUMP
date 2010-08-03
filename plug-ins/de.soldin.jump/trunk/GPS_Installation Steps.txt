@@ -1,0 +1,5 @@
+Copy the folder lib/ into your openjump folder.
+Go into openjump/lib and remove the older log4j-1.2.*.jar. Probably log4j-1.2.8.jar.
+
+Start openjump.
+

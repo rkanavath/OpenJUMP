@@ -1,0 +1,40 @@
+This cts extension makes use of various licensed libraries and is licensed 
+itself to you. Find here a list libraries with their license's name as well 
+as a current webpage for their projects. 
+The licenses in full writing are available in the folder <jumphome>/licenses.
+
+While this extensions is released under the legal terms of the GPL version 2.0, 
+these original licenses of the aforementioned libraries will not be altered 
+by distributing their binaries with this extension. 
+Please check if you agree to their terms as well, before you use or distribute 
+or alter this software.
+
+
+CTS Extension, licensed under GPL 2.0
+http://soldin.de
+
+JAI, licensed under Java Advanced Imaging Distribution License
+https://jai-core.dev.java.net/
+
+Vecmath, licensed under GPL 2.0, with the Classpath Exception
+https://vecmath.dev.java.net/ 
+
+
+Geotools2, licensed under LGPL 2.1
+http://www.geotools.org/
+
+GeoApi, licensed under GeoApi License
+http://geoapi.sourceforge.net/
+
+
+SwixML, licensed under swixml license
+http://www.swixml.org/
+
+Jdom, licensed under Apache-style open source jdom license, with the acknowledgment clause removed
+http://www.jdom.org
+
+J2H Java2HTML, licensed under GPL 2.0
+http://www.java2html.com
+
+
+
