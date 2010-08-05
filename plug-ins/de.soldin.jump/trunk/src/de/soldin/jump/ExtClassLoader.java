@@ -207,7 +207,7 @@ public class ExtClassLoader extends URLClassLoader {
 		URL whereami = clazz instanceof Class ?
 						clazz.getProtectionDomain().getCodeSource().getLocation() :
 						ExtClassLoader.class.getProtectionDomain().getCodeSource().getLocation();
-		System.out.println( getStaticName() + " is in: "+whereami );
+		System.out.println( getStaticName( clazz ) + " is in: "+whereami );
 		
 		if ( whereami == null ) {
 			return "";
@@ -234,20 +234,23 @@ public class ExtClassLoader extends URLClassLoader {
 		return getLibFolder( null, null );
 	}
 	static public String getLibFolder( Class clazz, String ext_id ){
-		String prefix = "lib";
-		System.out.println(getStaticName()+" libfolder() params: " + clazz + " / " + ext_id);
+		System.out.println(getStaticName( clazz )+" libfolder() params: " + clazz + " / " + ext_id);
 		// no extension id delivers the lib root
 		ext_id = ext_id instanceof String ? ext_id + "/" : "";
 		File basefile = new File( getBase( clazz ) );
-		System.out.println(getStaticName()+" libfolder() ext: " + basefile + " / " + ext_id);
+		System.out.println(getStaticName( clazz )+" libfolder() ext: " + basefile + " / " + ext_id);
 		String libFolder;
-		if ( basefile.getAbsolutePath().endsWith(".jar") )
-			libFolder = basefile.getParentFile().getAbsolutePath()+"/"+prefix+"/"+ext_id;
+		if ( basefile.getPath().endsWith(".jar") ||  basefile.getPath().endsWith(".zip" ) )
+			libFolder = basefile.getParentFile().getAbsolutePath()+"/"+ext_id+"/";
 		else // no jar eg. in eclipse
-			libFolder = basefile.getParentFile().getAbsolutePath()+"/"+prefix+"/"+ext_id;
+			libFolder = basefile.getParentFile().getAbsolutePath()+"/lib/"+ext_id+"/";
 		
 		return libFolder;
 	}
-	
-	public static String getStaticName(){ return ExtClassLoader.class.getName(); }
+
+	public static String getStaticName(Class clazz) {
+		return clazz instanceof Class ? 
+				clazz.getName() : 
+				ExtClassLoader.class.getName();
+	}
 }

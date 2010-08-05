@@ -163,12 +163,12 @@ public class GPSExtension
 		}
 		*/
 		
-		System.out.println(getName()+" gps find: " + getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension") 
-				+ " in " + de.soldin.jump.cts.CSLayerSetExtension.class + " / " 
-				+ ExtClassLoader.getLibFolder( de.soldin.jump.cts.CSLayerSetExtension.class, "cts"  )) ;
-		
 		// find cts extension	//getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension");	
 		try {
+			System.out.println(getName()+" gps find: " + getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension") 
+					+ " in " + de.soldin.jump.cts.CSLayerSetExtension.class + " / " 
+					+ ExtClassLoader.getLibFolder( de.soldin.jump.cts.CSLayerSetExtension.class, "cts"  )) ;
+			
 			Class cts = de.soldin.jump.cts.CSLayerSetExtension.class;
 			System.out.println(getName()+" cts find: " + cts );
 			libFolder = ExtClassLoader.getLibFolder( cts, "cts"  );
@@ -239,6 +239,6 @@ public class GPSExtension
 	*/
 	
 	public static String getLibFolder() {
-		return ExtClassLoader.getLibFolder( ExtClassLoader.class, "cts" );
+		return ExtClassLoader.getLibFolder( GPSExtension.class, "gps" );
 	}
 }

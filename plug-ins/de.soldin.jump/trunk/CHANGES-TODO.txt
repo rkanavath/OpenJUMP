@@ -1,12 +1,20 @@
-rc2
+gps 0.2rc2
 (done) rxtx iterate over subfolders and use the 
 	first word of the os name for checking e.g. mac,windows,linux
 (done) rename "set task" to "select project to track"
 	"add point" to "Add coordinate to layer or feature"
 	"insert points" to "Insert coordinate to closest segment"
 (done) reinstate cts projection support
-(done) fix error message:
-	Found no serial ports. Most likely you don't have Java Communication API (correctly) installed. GPSExtension will be disabled for now.
+(done) fix error message: "Found no serial ports. "
+
+cts 0.2rc1
+(fix) find cs.conf although path contains spaces
+(done) reworked to use ExtClassLoader, moved libs to ext/cts/
+
+
+
+final
+- add hint in gps options to install cts if cts missing
 
 
 

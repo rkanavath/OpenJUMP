@@ -73,7 +73,7 @@ public class CSLayerSetExtension
 	}
 
 	public static String getLibFolder() {
-		return ExtClassLoader.getLibFolder( ExtClassLoader.class, "cts" );
+		return ExtClassLoader.getLibFolder( CSLayerSetExtension.class, "cts" );
 	}
 	
 }

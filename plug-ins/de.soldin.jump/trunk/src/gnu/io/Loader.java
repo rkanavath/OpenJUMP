@@ -147,7 +147,7 @@ public class Loader {
 		try {
 			 base = Loader.class.getProtectionDomain().getCodeSource().getLocation().toString();
 		}catch (Throwable t) {
-			// ignore, try next
+			t.printStackTrace();
 		}
 		// try by Classloader.getSystemResource
 		if (base == null){
@@ -169,6 +169,8 @@ public class Loader {
 				base = locstring;
 			}
 		}
+
+		System.out.println("RXTX detected basefolder as: '"+base+"'");
 		
 		// postprocessing, only local paths are supported
 		if (base instanceof String){
@@ -176,13 +178,12 @@ public class Loader {
 			base = base.startsWith("jar:") ? base.subSequence(4, base.length()).toString() : base ;
 			base = base.startsWith("file:") ? base.subSequence(5, base.length()).toString() : base ;
 		}
-		
-		System.out.println("RXTX detected basefolder as: '"+base+"'");
 
 		try {
 			File basefile = new File( base );
 			String baseFolder = basefile.getPath();
-			if ( baseFolder.endsWith(".jar") )
+			//System.out.println("RXTX basefolder set to: '"+baseFolder+"'");
+			if ( baseFolder.endsWith(".jar") ||  baseFolder.endsWith(".zip" ) )
 				baseFolder = basefile.getParent();
 			else // no jar eg. in eclipse, search in ../lib/
 				baseFolder = basefile.getParent() + "/lib/";

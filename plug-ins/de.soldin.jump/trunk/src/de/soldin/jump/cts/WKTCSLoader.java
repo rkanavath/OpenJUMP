@@ -64,7 +64,7 @@ public class WKTCSLoader extends TreeMap{
 			}
 			reader.close();
 		}catch (Exception e){
-			String msg = " Can't locate/read/write '"+FILE+"'. Make sure it's available and read/writable.";
+			String msg = " Can't locate/read '"+FILE+"'. Make sure it's available and readable.";
 			System.err.println(msg);
 			throw new Exception(msg);
 		}
