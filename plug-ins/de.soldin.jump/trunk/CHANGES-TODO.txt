@@ -11,11 +11,13 @@ cts 0.2rc1
 (fix) find cs.conf although path contains spaces
 (done) reworked to use ExtClassLoader, moved libs to ext/cts/
 
+cts, gps rc3
+(fix) classloader issue leading to reprojection class cast error
+
 
 
 final
 - add hint in gps options to install cts if cts missing
-
 
 
 renew list ports everytime optionspanel is opened

@@ -60,7 +60,7 @@ public class GPSExtension
 	extends Extension
 	{
 	public static final String NAME = "GPS Extension";
-	public static final String VERSION = "0.2rc1";
+	public static final String VERSION = "0.2rc3";
 	public static final String MENUENTRY = "GPS";
 	public static final String BASEFOLDER = GPSExtension.class.getCanonicalName() + "-basefolder";
 	private WorkbenchContext wbc = null;
@@ -139,15 +139,33 @@ public class GPSExtension
 	private URLClassLoader createExtClassLoader() throws Exception{
 		
 		ExtClassLoader cl = new ExtClassLoader( this.getClass().getClassLoader(), false );
-		
 		//EatThisClassLoader2 cl = new EatThisClassLoader2(new URL[]{});
+
+		String libFolder;
+		
+		// find cts extension	//getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension");	
+		try {
+			//System.out.println(getName()+" gps find: " + getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension") 
+			//		+ " in " + de.soldin.jump.cts.CSLayerSetExtension.class + " / " 
+			//		+ ExtClassLoader.getLibFolder( de.soldin.jump.cts.CSLayerSetExtension.class, "cts"  )) ;
+			String base = ExtClassLoader.getBase( de.soldin.jump.cts.CSLayerSetExtension.class );
+			cl.add( base );
+			Class cts = cl.loadClass( "de.soldin.jump.cts.CSLayerSetExtension" );
+			System.out.println(getName()+" cts find: " + cts + " / " + cts.getClassLoader() + " / " + base );
+			libFolder = ExtClassLoader.getLibFolder( cts, "cts"  );
+			System.out.println(getName()+" libfolder find: " + libFolder );
+			cl.addAllFiles( libFolder );
+		} catch (Throwable t) {
+			// TODO Auto-generated catch block
+			t.printStackTrace();
+		}
 		
 		String base = ExtClassLoader.getBase( this.getClass() );
 		// add gps.jar
 		cl.add( base );
 		System.out.println(getName()+" base is: "+base);
 		// add gps/
-		String libFolder = ExtClassLoader.getLibFolder( this.getClass(), "gps" );
+		libFolder = ExtClassLoader.getLibFolder( this.getClass(), "gps" );
 		cl.add( libFolder );
 		System.out.println(getName()+" libs are in: "+libFolder);
 		// add gps/*.jar
@@ -163,23 +181,7 @@ public class GPSExtension
 		}
 		*/
 		
-		// find cts extension	//getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension");	
-		try {
-			System.out.println(getName()+" gps find: " + getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension") 
-					+ " in " + de.soldin.jump.cts.CSLayerSetExtension.class + " / " 
-					+ ExtClassLoader.getLibFolder( de.soldin.jump.cts.CSLayerSetExtension.class, "cts"  )) ;
-			
-			Class cts = de.soldin.jump.cts.CSLayerSetExtension.class;
-			System.out.println(getName()+" cts find: " + cts );
-			libFolder = ExtClassLoader.getLibFolder( cts, "cts"  );
-			System.out.println(getName()+" libfolder find: " + libFolder );
-			cl.addAllFiles( libFolder );
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		
+	
 		//cl.addURLs( ((URLClassLoader)this.getClass().getClassLoader()).getURLs() );
 		
 		return cl;

@@ -43,10 +43,12 @@ import org.geotools.cs.FactoryException;
  */
 public class WKTCSLoader extends TreeMap{
 	private static final String FILE = CSLayerSetExtension.getLibFolder() + "cs.conf";
-  
+	
 	public WKTCSLoader() throws Exception
 	{
 		super();
+		System.out.println(this.getClass().getName() + " classloaders are: " + CoordinateSystemFactory.class.getClassLoader() + " / " + this.getClass().getClassLoader());
+		
 		try{
 			// Load file line per line
 			LineNumberReader reader = new LineNumberReader(new FileReader(new File(FILE)));

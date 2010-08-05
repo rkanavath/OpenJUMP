@@ -306,7 +306,7 @@ public class GPSTracker
 		//if (true) return new Coordinate(3432596.8159249444, 5794847.076351206);
 
 		// check if position is valid still, must be age 10s or younger
-		if (position == null
+		if ( position == null
 			|| !(System.currentTimeMillis() - last_updt < 10000)) {
 			return null;
 		} else {
@@ -318,10 +318,14 @@ public class GPSTracker
 			//if (cs_in_key!=null && cs_out_key!=null){
 			try {
 				//if (loader==null) loader = new WKTCSLoader();
-				CoordinateSystem cs_in = (CoordinateSystem) parent.getSetting("cs_in");
+				Object o = parent.getSetting("cs_in");
+				//System.out.println(this.getClass().getName() + " classloaders are: " + o.getClass().getClassLoader() + " / " + CoordinateSystem.class.getClassLoader());
+
+				CoordinateSystem cs_in = (CoordinateSystem) o;
 				//loader.get(cs_in_key);
 				CoordinateSystem cs_out =
 					(CoordinateSystem) parent.getSetting("cs_out");
+				//System.out.println( this.getClass().getSimpleName() + " : " + cs_in + " / " + cs_out);
 				//loader.get(cs_out_key);
 				if (cs_in != null && cs_out != null) {
 					CoordinateTransformFilter csf =
@@ -329,10 +333,9 @@ public class GPSTracker
 					csf.setYx(true);
 					csf.filter(coord);
 				}
-			} catch (Exception e) {
+			} catch (Throwable t) {
 				// no cts properly installed?
-			} catch (Error e) {
-				// no cts properly installed?				
+				t.printStackTrace();
 			}
 
 			return coord;

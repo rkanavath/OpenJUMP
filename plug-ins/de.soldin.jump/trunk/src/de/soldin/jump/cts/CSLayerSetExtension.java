@@ -35,7 +35,7 @@ public class CSLayerSetExtension
 	extends Extension 
 	{
 	private static final String NAME = "CTS (Coordinate Transformation Services) Extension";
-	private static final String VERSION = "0.2rc1";
+	private static final String VERSION = "0.2rc3";
 	/**
 	 * @see com.vividsolutions.jump.workbench.plugin.Configuration#configure(com.vividsolutions.jump.workbench.plugin.PlugInContext)
 	 */

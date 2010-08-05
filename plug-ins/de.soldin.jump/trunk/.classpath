@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="lib/gps/gt2+geoapi/cts-coordtrans-2.0-B2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/gps/gt2+geoapi/defaultcore-2.0-B2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/gps/gt2+geoapi/opengis-2.0-B2-SNAPSHOT.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/oj_core"/>
 	<classpathentry kind="lib" path="lib/gpsylon/java/openmap.jar"/>
 	<classpathentry kind="lib" path="lib/gpsylon/java/gnu-regexp-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/gpsylon/java/velocity-dep-1.3.1.jar"/>
@@ -23,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/gps/swixml_149/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/gps/swixml_149/swixml.jar"/>
 	<classpathentry kind="lib" path="lib/gps/swixml_149/ui.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oj_core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
