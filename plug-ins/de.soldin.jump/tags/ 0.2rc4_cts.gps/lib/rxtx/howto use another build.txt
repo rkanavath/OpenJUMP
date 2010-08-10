@@ -1,0 +1,2 @@
+Place native libraries of your choice in in this folder namely 
+'<jumphome>/lib/rxtx' to force RXTX to try to load them.

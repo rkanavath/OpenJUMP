@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @(#)dialog.xml	29.06.2004
+ *
+ * Copyright 2004 Edgar Soldin
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+-->
+<panel layout="GridBagLayout" border="EtchedBorder">
+	<panel id="p_categories" layout="GridLayout(0,1)">
+		<gridbagconstraints insets="1,5,1,5" gridx="0" gridy="1"/>
+		<label text="Transform all layers to">
+			<gridbagconstraints insets="0,5,0,5"/>
+		</label>
+	</panel>
+	<panel id="p_layers" layout="GridLayout(0,1)">
+		<gridbagconstraints insets="1,5,1,5" gridx="0" gridy="0"/>
+		<label text="Assign coordinate systems to these layers:"/>
+	</panel>
+	<panel id="p_buttons">	
+		<gridbagconstraints insets="1,2,1,2" gridx="0" gridy="2"/>
+		<button text="OK" ActionCommand="AC_OK">
+			<gridbagconstraints insets="1,1,1,1" gridx="0" gridy="3" fill="GridBagConstraints.NONE" anchor="GridBagConstraints.EAST" weightx="1.0"/>
+		</button>
+	</panel>
+</panel>

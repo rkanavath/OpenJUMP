@@ -1,0 +1,13 @@
+<workbench>
+	<!--input-driver.sav>TestInputDriver_Root</input-driver.sav>
+	<plug-in>de.soldin.gt2jump.test.jumpplugin.TestPlugin</plug-in>	
+	<plug-in>de.soldin.gt2jump.test.jumpplugin.TestThreadedPlugin</plug-in>
+	<plug-in>de.soldin.gt2jump.readwrite.GT2ReaderPlugin</plug-in>
+	<plug-in>de.soldin.gt2jump.readwrite.GT2WriterPlugin</plug-in>
+	<plug-in>de.soldin.jump.plugin.geomconv.GCPlugin</plug-in-->
+	<extension>de.soldin.jump.gps.GPSExtension</extension>
+	<extension>de.soldin.jump.cts.CSExtension</extension>
+	<!--plug-in>de.soldin.jump.gps.GPSTrackerPlugin</plug-in-->
+	<!--plug-in>de.soldin.jump.test.I18Test</plug-in-->
+</workbench>
+
