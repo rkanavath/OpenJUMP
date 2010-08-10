@@ -1,5 +1,5 @@
 /**
- * @(#)CSLayersetExtension.java	29.06.2004
+ * @(#)CSSetPlugin.java	29.06.2004
  *
  * Copyright 2004 Edgar Soldin
  * 
@@ -60,7 +60,7 @@ import com.vividsolutions.jump.workbench.ui.TaskFrame;
 import de.soldin.jump.gps.GPSExtension;
 
 /**
- * <code>CSLayerSetExtension</code> acts as extension, plugin and therefore is a
+ * <code>CSSetPlugin</code> acts as plugin and therefore is a
  * listener to this extensions ui components.
  * <p>
  * The plugin itself only creates <code>CSSetting</code> objects which are 

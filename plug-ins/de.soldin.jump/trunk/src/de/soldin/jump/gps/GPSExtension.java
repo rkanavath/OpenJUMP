@@ -60,7 +60,7 @@ public class GPSExtension
 	extends Extension
 	{
 	public static final String NAME = "GPS Extension";
-	public static final String VERSION = "0.2rc3";
+	public static final String VERSION = "0.2rc4";
 	public static final String MENUENTRY = "GPS";
 	public static final String BASEFOLDER = GPSExtension.class.getCanonicalName() + "-basefolder";
 	private WorkbenchContext wbc = null;
@@ -81,10 +81,10 @@ public class GPSExtension
 		*/
 		URLClassLoader ecl = createExtClassLoader();
 		
-		URL[] urls = ecl.getURLs();
+		/*URL[] urls = ecl.getURLs();
 		for (int i = 0; i < urls.length; i++) {
 			System.out.println("url-"+i+" : "+urls[i]);
-		}
+		}*/
 		
 		/*
 		System.out.println(getName()+" gps cl is: " + ecl ) ;
@@ -143,14 +143,14 @@ public class GPSExtension
 
 		String libFolder;
 		
-		// find cts extension	//getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension");	
+		// find cts extension	//getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSExtension");	
 		try {
-			//System.out.println(getName()+" gps find: " + getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSLayerSetExtension") 
-			//		+ " in " + de.soldin.jump.cts.CSLayerSetExtension.class + " / " 
-			//		+ ExtClassLoader.getLibFolder( de.soldin.jump.cts.CSLayerSetExtension.class, "cts"  )) ;
-			String base = ExtClassLoader.getBase( de.soldin.jump.cts.CSLayerSetExtension.class );
+			//System.out.println(getName()+" gps find: " + getClass().getClassLoader().loadClass("de.soldin.jump.cts.CSExtension") 
+			//		+ " in " + de.soldin.jump.cts.CSExtension.class + " / " 
+			//		+ ExtClassLoader.getLibFolder( de.soldin.jump.cts.CSExtension.class, "cts"  )) ;
+			String base = ExtClassLoader.getBase( de.soldin.jump.cts.CSExtension.class );
 			cl.add( base );
-			Class cts = cl.loadClass( "de.soldin.jump.cts.CSLayerSetExtension" );
+			Class cts = cl.loadClass( "de.soldin.jump.cts.CSExtension" );
 			System.out.println(getName()+" cts find: " + cts + " / " + cts.getClassLoader() + " / " + base );
 			libFolder = ExtClassLoader.getLibFolder( cts, "cts"  );
 			System.out.println(getName()+" libfolder find: " + libFolder );

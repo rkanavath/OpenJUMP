@@ -42,7 +42,7 @@ import org.geotools.cs.FactoryException;
  * </p>
  */
 public class WKTCSLoader extends TreeMap{
-	private static final String FILE = CSLayerSetExtension.getLibFolder() + "cs.conf";
+	private static final String FILE = CSExtension.getLibFolder() + "cs.conf";
 	
 	public WKTCSLoader() throws Exception
 	{

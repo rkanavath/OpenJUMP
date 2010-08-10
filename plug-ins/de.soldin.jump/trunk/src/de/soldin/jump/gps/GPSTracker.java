@@ -80,6 +80,7 @@ public class GPSTracker
 	long last_updt = 0;
 
 	WKTCSLoader loader;
+	private static boolean cts_enabled = true;
 
 	public GPSTracker(GPSTrackerPlugin parent, PlugInContext context) {
 		super();
@@ -313,31 +314,34 @@ public class GPSTracker
 			Coordinate coord =
 				new Coordinate(position.getLongitude(), position.getLatitude());
 
-			//String cs_in_key  = (String)parent.getSetting("cs_in");//(String)parent.cbox_cs_in.getSelectedItem();
-			//String cs_out_key = (String)parent.getSetting("cs_out");//(String)parent.cbox_cs_out.getSelectedItem();
-			//if (cs_in_key!=null && cs_out_key!=null){
-			try {
-				//if (loader==null) loader = new WKTCSLoader();
-				Object o = parent.getSetting("cs_in");
-				//System.out.println(this.getClass().getName() + " classloaders are: " + o.getClass().getClassLoader() + " / " + CoordinateSystem.class.getClassLoader());
+			if ( cts_enabled ) {
+				//String cs_in_key  = (String)parent.getSetting("cs_in");//(String)parent.cbox_cs_in.getSelectedItem();
+				//String cs_out_key = (String)parent.getSetting("cs_out");//(String)parent.cbox_cs_out.getSelectedItem();
+				//if (cs_in_key!=null && cs_out_key!=null){
+				try {
+					//if (loader==null) loader = new WKTCSLoader();
+					Object o = parent.getSetting("cs_in");
+					//System.out.println(this.getClass().getName() + " classloaders are: " + o.getClass().getClassLoader() + " / " + CoordinateSystem.class.getClassLoader());
 
-				CoordinateSystem cs_in = (CoordinateSystem) o;
-				//loader.get(cs_in_key);
-				CoordinateSystem cs_out =
-					(CoordinateSystem) parent.getSetting("cs_out");
-				//System.out.println( this.getClass().getSimpleName() + " : " + cs_in + " / " + cs_out);
-				//loader.get(cs_out_key);
-				if (cs_in != null && cs_out != null) {
-					CoordinateTransformFilter csf =
-						new CoordinateTransformFilter(cs_in, cs_out);
-					csf.setYx(true);
-					csf.filter(coord);
+					CoordinateSystem cs_in = (CoordinateSystem) o;
+					//loader.get(cs_in_key);
+					CoordinateSystem cs_out = (CoordinateSystem) parent
+							.getSetting("cs_out");
+					//System.out.println( this.getClass().getSimpleName() + " : " + cs_in + " / " + cs_out);
+					//loader.get(cs_out_key);
+					if (cs_in != null && cs_out != null) {
+						CoordinateTransformFilter csf = new CoordinateTransformFilter(
+								cs_in, cs_out);
+
+						csf.filter(coord);
+					}
+				} catch (Throwable t) {
+					// no cts properly installed?
+					t.printStackTrace();
+					System.out.println(this.getClass().getName() + " : cs transformation failed (cts not installed?). Will disable gps reprojection for now." );
+					cts_enabled = false;
 				}
-			} catch (Throwable t) {
-				// no cts properly installed?
-				t.printStackTrace();
 			}
-
 			return coord;
 		}
 

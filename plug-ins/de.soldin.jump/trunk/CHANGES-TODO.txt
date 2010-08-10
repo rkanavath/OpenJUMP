@@ -14,11 +14,14 @@ cts 0.2rc1
 cts, gps rc3
 (fix) classloader issue leading to reprojection class cast error
 
-
+rc4
+(fix) rxtx native lib loader ignoring one word os's e.g."Linux"
+(fix) solved setYx issue in gps reprojection leading to wrong results
 
 final
 - add hint in gps options to install cts if cts missing
-
+- catch CannotCreateTransformException and show user (remove towgs84 for testing)
+- let classloader add ignore .* files
 
 renew list ports everytime optionspanel is opened
 

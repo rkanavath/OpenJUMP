@@ -20,8 +20,8 @@ public class Loader {
 				+ "' '" + System.getProperty("os.arch") + "'");
 		detectBaseFolder();
 		System.out.println("RXTX Loader will look for native libs in (listed in order of priority): \n"
-						+ "1. " +  libraryPath + "rxtx/ \n"
-						+ "2. " +  libraryPath + "rxtx/<os>/<arch1,arch2,..>/\n"
+						+ "1. " +  libraryPath + "/rxtx/ \n"
+						+ "2. " +  libraryPath + "/rxtx/<os>/<arch1,arch2,..>/\n"
 						+ "3. " +  "java.library.path which is currently set to '" + System.getProperty("java.library.path") + "'\n"
 						+ "Hint: Place native libraries of your choice in 'lib/rxtx' to \n"
 						+ "      force RXTX to try to load them.");
@@ -76,9 +76,11 @@ public class Loader {
 		}*/
 		
 		// os aware load distributed libs v2
-		String os = System.getProperty("os.name");
+		String os = System.getProperty("os.name").trim();
+		//os = "Linux";
 		String sep = System.getProperty("file.separator");
-		os = os.trim().substring(0, os.indexOf(' ')).toLowerCase();
+		int pos = os.indexOf(' ');
+		os = os.substring(0, (pos > 0 ? pos : os.length())).toLowerCase();
 		
 		File file = new File( libraryPath + sep + "rxtx" + sep );
 		if ( file.isDirectory() ){
@@ -184,7 +186,7 @@ public class Loader {
 			String baseFolder = basefile.getPath();
 			//System.out.println("RXTX basefolder set to: '"+baseFolder+"'");
 			if ( baseFolder.endsWith(".jar") ||  baseFolder.endsWith(".zip" ) )
-				baseFolder = basefile.getParent();
+				baseFolder = basefile.getParent() + "/";
 			else // no jar eg. in eclipse, search in ../lib/
 				baseFolder = basefile.getParent() + "/lib/";
 			

@@ -82,7 +82,7 @@ public class ExtClassLoader extends URLClassLoader {
 				}else{
 					this.add( file.getAbsolutePath() );
 				}
-				System.out.println(this.getClass().getName()+" added lib: "+ file.getAbsolutePath());
+				//System.out.println(this.getClass().getName()+" added lib: "+ file.getAbsolutePath());
 		}
 		return true;
 	}
@@ -230,20 +230,30 @@ public class ExtClassLoader extends URLClassLoader {
 	static public String getBaseFolder(){
 		return new File(getBase()).getParent();
 	}
+	/*
 	static public String getLibFolder(){
 		return getLibFolder( null, null );
-	}
+	}*/
 	static public String getLibFolder( Class clazz, String ext_id ){
 		System.out.println(getStaticName( clazz )+" libfolder() params: " + clazz + " / " + ext_id);
 		// no extension id delivers the lib root
-		ext_id = ext_id instanceof String ? ext_id + "/" : "";
+		ext_id = ext_id instanceof String ? ext_id : ".";
 		File basefile = new File( getBase( clazz ) );
-		System.out.println(getStaticName( clazz )+" libfolder() ext: " + basefile + " / " + ext_id);
+		System.out.println(getStaticName( clazz )+" libfolder() base/extid: " + basefile + " / " + ext_id);
 		String libFolder;
-		if ( basefile.getPath().endsWith(".jar") ||  basefile.getPath().endsWith(".zip" ) )
-			libFolder = basefile.getParentFile().getAbsolutePath()+"/"+ext_id+"/";
-		else // no jar eg. in eclipse
-			libFolder = basefile.getParentFile().getAbsolutePath()+"/lib/"+ext_id+"/";
+		String path = basefile.getAbsolutePath();
+		// remove trailing slash for check
+		if ( path.endsWith("/") )
+			path = path.subSequence(0, path.length()-1).toString();
+		System.out.println(getStaticName( clazz )+" libfolder() path: " + path);
+		// get sep for matching
+		String sep = System.getProperty("file.separator");
+		// eclipse or what?
+		if ( path.endsWith( sep + "bin" ) )
+			// no jar but bin folder -> dev mode eg. in eclipse
+			libFolder = basefile.getParentFile().getAbsolutePath()+sep+"lib"+sep+ext_id+sep;
+		else
+			libFolder = basefile.getParentFile().getAbsolutePath()+sep+ext_id+sep;
 		
 		return libFolder;
 	}

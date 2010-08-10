@@ -1,5 +1,5 @@
 /**
- * @(#)CSLayersetExtension.java	29.06.2004
+ * @(#)CSExtension.java	29.06.2004
  *
  * Copyright 2004 Edgar Soldin
  * 
@@ -31,11 +31,11 @@ import de.soldin.jump.ExtClassLoader;
  * Installs {@link de.soldin.jump.cts.CSSetPlugin}.
  * @see com.vividsolutions.jump.workbench.plugin.Extension
  */
-public class CSLayerSetExtension
+public class CSExtension
 	extends Extension 
 	{
 	private static final String NAME = "CTS (Coordinate Transformation Services) Extension";
-	private static final String VERSION = "0.2rc3";
+	private static final String VERSION = "0.2rc4";
 	/**
 	 * @see com.vividsolutions.jump.workbench.plugin.Configuration#configure(com.vividsolutions.jump.workbench.plugin.PlugInContext)
 	 */
@@ -73,7 +73,7 @@ public class CSLayerSetExtension
 	}
 
 	public static String getLibFolder() {
-		return ExtClassLoader.getLibFolder( CSLayerSetExtension.class, "cts" );
+		return ExtClassLoader.getLibFolder( CSExtension.class, "cts" );
 	}
 	
 }
