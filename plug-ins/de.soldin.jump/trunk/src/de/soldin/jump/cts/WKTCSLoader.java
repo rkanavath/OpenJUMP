@@ -60,16 +60,21 @@ public class WKTCSLoader extends TreeMap{
 					CoordinateSystem cs = CoordinateSystemFactory.getDefault().createFromWKT(line);
 					this.put(cs.getName(Locale.getDefault()),cs);
 				} catch (FactoryException e1) {
+               		System.err.println("WKT to CS error: line=" + reader.getLineNumber() +  "\nwkt='" + line + "'");
 					e1.printStackTrace();
 				}
 				
 			}
-			reader.close();
-		}catch (Exception e){
+		}
+		catch (Exception e){
 			String msg = " Can't locate/read '"+FILE+"'. Make sure it's available and readable.";
 			System.err.println(msg);
 			throw new Exception(msg);
 		}
+		finally{
+			if (reader != null) reader.close();
+        }
+      }
 
 	}
 	
