@@ -1,7 +1,7 @@
 /**
- * @(#)CSSetPlugin.java	29.06.2004
+ * @(#)CSSetPlugin.java
  *
- * Copyright 2004 Edgar Soldin
+ * Copyright 2011 Edgar Soldin
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -56,6 +58,7 @@ import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.TaskFrame;
+import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
 import de.soldin.jump.gps.GPSExtension;
 
@@ -76,17 +79,18 @@ import de.soldin.jump.gps.GPSExtension;
  * @see com.vividsolutions.jump.workbench.plugin.PlugIn
  */
 public class CSSetPlugin
-	implements ActionListener, CSTransformFilter, WindowListener, PlugIn {
-	private static final String NAME = "Set Coordinate System";
-
+	implements ActionListener, CSTransformFilter, WindowListener, PlugIn
+	{
 	protected JDialog dialog;
 	public JComboBox chooser_src, chooser_trg;
 	public JPanel p_layers, p_categories, p_buttons;
+	public JLabel l_all, l_layers;
 	private static final String STORAGE = "Coordinate System Data Storage";
 	protected HashMap cs_settings;
 	private boolean cancelled = false;
 	protected PlugInContext context;
-
+	private ImageIcon icon = null;
+	
 	protected static String TEMPLATES = "de/soldin/jump/cts/";
 	protected SwingEngine swix;
 
@@ -94,9 +98,16 @@ public class CSSetPlugin
 	 * @see com.vividsolutions.jump.workbench.plugin.Configuration#configure(com.vividsolutions.jump.workbench.plugin.PlugInContext)
 	 */
 	public void configure(PlugInContext context) throws Exception {
+		System.out.println("after->"+CSExtension.class);
 		new CSSetPlugin().initialize(context);
 	}
-
+	
+	public Icon getIcon()
+	{
+		if (this.icon == null)
+			this.icon = new ImageIcon(this.getClass().getResource("globe_crs.png"));
+		return this.icon;
+	}
 
 	/**
 	 * Adds the menu entries, intializes swix stuff
@@ -116,9 +127,9 @@ public class CSSetPlugin
 		context.getFeatureInstaller().addPopupMenuItem(
 			categoryPopups,
 			this,
-			NAME,
+			getName(),
 			false,
-			null,
+			getIcon(),
 			new MultiEnableCheck()
 				.add(checkFactory.createAtLeastNCategoriesMustBeSelectedCheck(1))
 				.add(
@@ -135,9 +146,9 @@ public class CSSetPlugin
 		context.getFeatureInstaller().addPopupMenuItem(
 			layerNamePopupMenu,
 			this,
-			NAME,
+			getName(),
 			false,
-			null,
+			getIcon(),
 			new MultiEnableCheck().add(
 				checkFactory.createAtLeastNLayersMustBeSelectedCheck(1)));
 
@@ -158,7 +169,12 @@ public class CSSetPlugin
 	 * @see com.vividsolutions.jump.workbench.plugin.Extension#getName()
 	 */
 	public String getName() {
-		return NAME;
+		return _( "coordinate-reference-system" );
+	}
+	
+	// i18n function
+	public String _( String key ){
+		return CSExtension.getI18N( key );
 	}
 
 	/**
@@ -173,7 +189,7 @@ public class CSSetPlugin
 		
 		//create dialog
 		dialog = new JDialog(context.getWorkbenchFrame(), true);
-		dialog.setTitle(NAME);
+		dialog.setTitle(getName());
 		// position dialog
 		Point location;
 		Component frame = context.getActiveInternalFrame();
@@ -188,7 +204,10 @@ public class CSSetPlugin
 
 		// initialize dialog's main panel
 		JPanel main = (JPanel) swix.render(TEMPLATES + "dialog.xml");
-
+		// i18n'ize labels
+		l_all.setText(_("assign/transform-all-layers-to"));
+		l_layers.setText(_("assign-crs-to-these-layers-(enable-checkbox-to-transform)"));
+		
 		// create layers settings & add layers comboboxes		
 		Collection layers = getAffectedLayers();
 		Collection affected_cs_settings = new Vector();
@@ -246,8 +265,9 @@ public class CSSetPlugin
 				// get combobox & label
 				//CSComboBox all_cbox = (CSComboBox)all_p_chooser.getComponent(1);			
 				JLabel all_label = (JLabel) all_p_chooser.getComponent(0);
-				// remove checkbox
+				// remove checkbox & label
 				all_p_chooser.remove(2);
+				all_label.setVisible(false);
 
 				// create CST
 				CSTransform all_cs_transform =
@@ -258,7 +278,7 @@ public class CSSetPlugin
 				all_cs_transform.addTransformFilter(this);
 
 				// name this t'ing
-				all_label.setText("Set all to:");
+				//all_label.setText(CSExtension.getI18N("set-all"));
 
 				safe.put("CST", all_cs_transform);
 				safe.put("PANEL", all_p_chooser);
@@ -492,7 +512,7 @@ public class CSSetPlugin
 				}
 
 				return (layercount < i)
-					? "At least " + i + " layers must exist in selected categories!"
+					? String.format(_("at-least-%d-layer(s)-must-exist-in-selected-categories"), i)
 					: null;
 			}
 		};

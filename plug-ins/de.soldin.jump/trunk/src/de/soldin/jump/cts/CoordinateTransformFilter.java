@@ -1,7 +1,7 @@
 /**
- * @(#)CoordinateTransformFilter.java	28.06.2004
+ * @(#)CoordinateTransformFilter.java
  *
- * Copyright 2004 Edgar Soldin
+ * Copyright 2011 Edgar Soldin
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /**
- * @(#)CSExtension.java	29.06.2004
+ * @(#)CSExtension.java
  *
- * Copyright 2004 Edgar Soldin
+ * Copyright 2011 Edgar Soldin
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,60 +20,54 @@
 package de.soldin.jump.cts;
 
 import java.net.URLClassLoader;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
+import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 import de.soldin.jump.ExtClassLoader;
+import de.soldin.jump.IExtExtension;
 
 /**
  * Installs {@link de.soldin.jump.cts.CSSetPlugin}.
+ * 
  * @see com.vividsolutions.jump.workbench.plugin.Extension
  */
-public class CSExtension
-	extends Extension 
-	{
-	private static final String NAME = "CTS (Coordinate Transformation Services) Extension";
-	private static final String VERSION = "0.2rc4";
+public class CSExtension implements IExtExtension {
+	private static ResourceBundle i18n;
+
 	/**
 	 * @see com.vividsolutions.jump.workbench.plugin.Configuration#configure(com.vividsolutions.jump.workbench.plugin.PlugInContext)
 	 */
 	public void configure(PlugInContext context) throws Exception {
-		URLClassLoader ecl = createExtClassLoader();
-		
-		Class clazz = ecl.loadClass("de.soldin.jump.cts.CSSetPlugin");
-		PlugIn cts = (PlugIn) clazz.newInstance();
-		cts.initialize(context);
+		/*System.out.println(this.getClass().getName() + " cl is: "
+				+ this.getClass().getClassLoader());*/
+		CSSetPlugin csp = new CSSetPlugin();
+		csp.initialize(context);
 	}
 
-	/**
-	 * @see com.vividsolutions.jump.workbench.plugin.Extension#getVersion()
-	 */
-	public String getVersion() {
-		return VERSION;
-	}
+	public static String getI18N(String key) {
+		// System.out.println(i18n +" getI18N: "+key);
+		if (!(i18n instanceof ResourceBundle))
+			i18n = ResourceBundle.getBundle("language/cts");
 
-	private URLClassLoader createExtClassLoader() throws Exception{
-		
-		ExtClassLoader cl = new ExtClassLoader( this.getClass().getClassLoader(), false );
-		
-		String base = ExtClassLoader.getBase( this.getClass() );
-		// add gps.jar
-		cl.add( base );
-		System.out.println(getName()+" base is: "+base);
-		// add gps/
-		String libFolder = ExtClassLoader.getLibFolder( this.getClass(), "cts" );
-		cl.add( libFolder );
-		System.out.println(getName()+" libs are in: "+libFolder);
-		// add cts/*.jar
-		cl.addAllFiles( libFolder );
-		
-		return cl;
+		try {
+			return i18n.getString(key);
+		} catch (MissingResourceException ex) {
+			String[] labelpath = key.split("/\\.");
+			ex.printStackTrace();
+			return labelpath[(labelpath.length - 1)];
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return "";
 	}
 
 	public static String getLibFolder() {
-		return ExtClassLoader.getLibFolder( CSExtension.class, "cts" );
+		return ExtClassLoader.getLibFolder(CSExtension.class, "cts");
 	}
-	
 }

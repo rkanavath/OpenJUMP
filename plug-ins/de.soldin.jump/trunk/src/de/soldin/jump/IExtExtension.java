@@ -1,9 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
 /**
- * @(#)combobox.xml	29.06.2004
- *
- * Copyright 2004 Edgar Soldin
+ * Copyright 2011 Edgar Soldin
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
--->
-<panel layout="GridBagLayout">
-	<gridbagconstraints insets="2,2,2,2" gridx="0" gridy="0"/>
-	<label PreferredSize="90,25"/>
-	<cscombobox initClass="CSComboBox">
-		<gridbagconstraints insets="1,1,1,1" gridx="1" gridy="0" gridwidth="1"/>
-	</cscombobox>
-	<checkbox>
-		<gridbagconstraints insets="1,1,1,1" gridx="2" gridy="0" gridwidth="1"/>
-	</checkbox>	
-</panel>
+
+package de.soldin.jump;
+
+import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+
+public interface IExtExtension {
+	public void configure(PlugInContext context) throws Exception;
+	//public String getVersion();
+	//public String getName();
+}

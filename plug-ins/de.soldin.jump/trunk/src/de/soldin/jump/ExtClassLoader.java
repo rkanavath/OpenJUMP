@@ -1,3 +1,21 @@
+/**
+ * Copyright 2011 Edgar Soldin
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 package de.soldin.jump;
 
 import java.io.File;
@@ -92,12 +110,17 @@ public class ExtClassLoader extends URLClassLoader {
 	
 	public Class<?> loadClass(String name) throws ClassNotFoundException 
 	{
+		//System.out.println(this.getClass().getName()+" loadClass("+name+")");
 		
-        try {
-			return super.loadClass( name, false );
+		if ( !name.matches("^de.soldin.jump.[^\\.]+$") ){
+		// search me
+        try  {
+				return super.loadClass( name, false );
 		} catch (ClassNotFoundException e) {
 			// search next
 		}
+        }
+		//System.out.println(this.getClass().getName()+" loadClass parent("+name+")");
 		
     	// search parents
 		Iterator it = cls.iterator();
@@ -109,20 +132,26 @@ public class ExtClassLoader extends URLClassLoader {
 				// try next
 			}
 		}
-    			
+		
+		//System.out.println(this.getClass().getName()+" loadClass("+name+")->failed");
 		throw new ClassNotFoundException(name);
 	}
 	
 	public URL findResource(final String name) {
-    	
-		URL url = super.findResource(name);
+		URL url = null;
 
+		// search me
+		if (!(url instanceof URL))
+			url = super.findResource(name);
+		
+		// search parents
 		Iterator it = cls.iterator();
 		while ( it.hasNext() && ! (url instanceof URL) ) {
 			URLClassLoader cl = (URLClassLoader) it.next();
 			url = cl.findResource(name);
 		}
-		//System.out.println(this.getClass().getName()+" found: "+url);
+		
+		//System.out.println(this.getClass().getName()+" found("+name+"): "+url);
     	return url;
     }
     
@@ -207,7 +236,7 @@ public class ExtClassLoader extends URLClassLoader {
 		URL whereami = clazz instanceof Class ?
 						clazz.getProtectionDomain().getCodeSource().getLocation() :
 						ExtClassLoader.class.getProtectionDomain().getCodeSource().getLocation();
-		System.out.println( getStaticName( clazz ) + " is in: "+whereami );
+		//System.out.println( getStaticName( clazz ) + " is in: "+whereami );
 		
 		if ( whereami == null ) {
 			return "";
@@ -235,17 +264,17 @@ public class ExtClassLoader extends URLClassLoader {
 		return getLibFolder( null, null );
 	}*/
 	static public String getLibFolder( Class clazz, String ext_id ){
-		System.out.println(getStaticName( clazz )+" libfolder() params: " + clazz + " / " + ext_id);
+		//System.out.println(getStaticName( clazz )+" libfolder() params: " + clazz + " / " + ext_id);
 		// no extension id delivers the lib root
 		ext_id = ext_id instanceof String ? ext_id : ".";
 		File basefile = new File( getBase( clazz ) );
-		System.out.println(getStaticName( clazz )+" libfolder() base/extid: " + basefile + " / " + ext_id);
+		//System.out.println(getStaticName( clazz )+" libfolder() base/extid: " + basefile + " / " + ext_id);
 		String libFolder;
 		String path = basefile.getAbsolutePath();
 		// remove trailing slash for check
 		if ( path.endsWith("/") )
 			path = path.subSequence(0, path.length()-1).toString();
-		System.out.println(getStaticName( clazz )+" libfolder() path: " + path);
+		//System.out.println(getStaticName( clazz )+" libfolder() path: " + path);
 		// get sep for matching
 		String sep = System.getProperty("file.separator");
 		// eclipse or what?

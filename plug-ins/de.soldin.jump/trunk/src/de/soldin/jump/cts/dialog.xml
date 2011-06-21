@@ -23,13 +23,13 @@
 <panel layout="GridBagLayout" border="EtchedBorder">
 	<panel id="p_categories" layout="GridLayout(0,1)">
 		<gridbagconstraints insets="1,5,1,5" gridx="0" gridy="1"/>
-		<label text="Transform all layers to">
+		<label id="l_all" text="Transform all layers to">
 			<gridbagconstraints insets="0,5,0,5"/>
 		</label>
 	</panel>
 	<panel id="p_layers" layout="GridLayout(0,1)">
 		<gridbagconstraints insets="1,5,1,5" gridx="0" gridy="0"/>
-		<label text="Assign coordinate systems to these layers:"/>
+		<label id="l_layers" text="Assign coordinate systems to these layers"/>
 	</panel>
 	<panel id="p_buttons">	
 		<gridbagconstraints insets="1,2,1,2" gridx="0" gridy="2"/>

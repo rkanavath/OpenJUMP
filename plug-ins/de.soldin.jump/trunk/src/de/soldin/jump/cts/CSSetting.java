@@ -1,7 +1,7 @@
 /**
- * @(#)CSSetting.java	29.06.2004
+ * @(#)CSSetting.java
  *
- * Copyright 2004 Edgar Soldin
+ * Copyright 2011 Edgar Soldin
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +170,7 @@ public class CSSetting implements ItemListener {
 
 	public void listenEventsFrom(JPanel panel) {
 		JLabel label = (JLabel) panel.getComponent(0);
+		// no need to i18n this
 		label.setText(layer == null ? "no layer set" : layer.getName());
 
 		CSComboBox cobox = (CSComboBox) panel.getComponent(1);
