@@ -20,16 +20,13 @@
 
 package de.soldin.jump.cts;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 import de.soldin.jump.ExtClassLoader;
 import de.soldin.jump.IExtExtension;
 
-public class CSExtensionLoader extends Extension{
+public class CSLoaderExtension extends Extension{
 	private static final String NAME = "CTS (Coordinate Transformation Services) Extension";
 	private static final String VERSION = "0.2rc6";
 	private static ExtClassLoader ecl;
@@ -62,7 +59,7 @@ public class CSExtensionLoader extends Extension{
 		if (ecl instanceof ExtClassLoader)
 			return ecl;
 		
-		Class clazz = CSExtensionLoader.class;
+		Class clazz = CSLoaderExtension.class;
 		ecl = new ExtClassLoader( clazz.getClassLoader(), false );
 		// keep interfaces in parent loader
 		ecl.blacklist("^de.soldin.jump.[^\\.]+$");
