@@ -34,7 +34,9 @@ public class ExtClassLoader extends URLClassLoader {
 	
 	// list of classloaders to ask if we fail ATTENTION: cls.loadclass results in a private classspace
 	private Vector<URLClassLoader> cls = new Vector<URLClassLoader>();
-
+	// list of regexp's that will loadClass will delegate to parent classloader
+	private Vector<String> blacklist = new Vector<String>();
+	
 	public ExtClassLoader() {
 		super(new URL[]{}, null);
 		this.id = getCaller();
@@ -70,14 +72,6 @@ public class ExtClassLoader extends URLClassLoader {
 			super.addURL(urls[i]);
 		}
 	}
-	public boolean addCL(ClassLoader cl){
-		if ( isURLCL(cl) && ! this.cls.contains(cl) ) {
-			this.cls.add(0, (URLClassLoader) cl );
-			return true;
-		}	
-		
-		return false;
-	}
 	public boolean addAllFiles(String path){
 		return addAllFiles( path, null, false);
 	}
@@ -104,22 +98,65 @@ public class ExtClassLoader extends URLClassLoader {
 		}
 		return true;
 	}
+	
+	public boolean addCL(ClassLoader cl){
+		if ( isURLCL(cl) && ! this.cls.contains(cl) ) {
+			this.cls.add(0, (URLClassLoader) cl );
+			return true;
+		}	
+		
+		return false;
+	}	
+	
 	public boolean remCL(ClassLoader cl){
 		return this.cls.remove( cl );
+	}
+
+	public boolean isBlacklisted(String name){
+		Iterator it = blacklist.iterator();
+		while ( it.hasNext() ) {
+			String entry = (String) it.next();
+			if (name.matches(entry))
+				return true;
+		}
+		return false;
+	}	
+	
+	public boolean blacklist(String regexp){
+		Iterator it = blacklist.iterator();
+		while ( it.hasNext() ) {
+			String entry = (String) it.next();
+			if (entry.equals(regexp))
+				return false;
+		}
+		this.blacklist.add(0, regexp );
+		return true;
+	}
+	
+	public boolean whitelist(String regexp){
+		boolean res = false;
+		Iterator it = blacklist.iterator();
+		while ( it.hasNext() ) {
+			String entry = (String) it.next();
+			if (entry.equals(regexp)){
+				res =blacklist.remove( entry );			 
+			}
+		}
+		return res;
 	}
 	
 	public Class<?> loadClass(String name) throws ClassNotFoundException 
 	{
 		//System.out.println(this.getClass().getName()+" loadClass("+name+")");
 		
-		if ( !name.matches("^de.soldin.jump.[^\\.]+$") ){
-		// search me
-        try  {
-				return super.loadClass( name, false );
-		} catch (ClassNotFoundException e) {
-			// search next
+		if ( !isBlacklisted(name) ) {
+			// search me
+			try {
+				return super.loadClass(name, false);
+			} catch (ClassNotFoundException e) {
+				// search next
+			}
 		}
-        }
 		//System.out.println(this.getClass().getName()+" loadClass parent("+name+")");
 		
     	// search parents

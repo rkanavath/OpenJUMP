@@ -64,6 +64,8 @@ public class CSExtensionLoader extends Extension{
 		
 		Class clazz = CSExtensionLoader.class;
 		ecl = new ExtClassLoader( clazz.getClassLoader(), false );
+		// keep interfaces in parent loader
+		ecl.blacklist("^de.soldin.jump.[^\\.]+$");
 		
 		String base = ExtClassLoader.getBase( clazz );
 		// add gps.jar
