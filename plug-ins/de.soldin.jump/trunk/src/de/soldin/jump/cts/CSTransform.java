@@ -97,7 +97,8 @@ public class CSTransform implements ItemListener, CSSetListener {
 		if (source instanceof JCheckBox) {
 			transform = (change == ItemEvent.SELECTED) ? true : false;
 		} else {
-			System.err.println("CSTransform::itemStateChanged() wrong ui component, can't set status");
+			// ignore
+			//System.err.println("CSTransform::itemStateChanged() wrong ui component, can't set status");
 		}
 	}
 

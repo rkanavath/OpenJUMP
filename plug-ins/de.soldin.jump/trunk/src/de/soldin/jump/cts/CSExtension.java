@@ -19,14 +19,9 @@
  */
 package de.soldin.jump.cts;
 
-import java.net.URLClassLoader;
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import com.vividsolutions.jump.I18N;
-import com.vividsolutions.jump.workbench.plugin.Extension;
-import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 import de.soldin.jump.ExtClassLoader;

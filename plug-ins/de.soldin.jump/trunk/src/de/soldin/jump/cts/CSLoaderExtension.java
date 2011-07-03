@@ -26,9 +26,14 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import de.soldin.jump.ExtClassLoader;
 import de.soldin.jump.IExtExtension;
 
+/**
+ * This wraps the real extension to have it loaded with and have all classes
+ * use the ExtClassLoader. This enables the use of subfolders and custom library 
+ * jars, even different versions than already available to the parent oj classloader.
+ */
 public class CSLoaderExtension extends Extension{
 	private static final String NAME = "CTS (Coordinate Transformation Services) Extension";
-	private static final String VERSION = "0.2rc6";
+	private static final String VERSION = "0.2";
 	private static ExtClassLoader ecl;
 	
 	/**
@@ -62,18 +67,18 @@ public class CSLoaderExtension extends Extension{
 		Class clazz = CSLoaderExtension.class;
 		ecl = new ExtClassLoader( clazz.getClassLoader(), false );
 		// keep interfaces in parent loader
-		ecl.blacklist("^de.soldin.jump.[^\\.]+$");
+		ecl.blacklist("^(?i:de.soldin.jump.IExtExtension)$");
 		
 		String base = ExtClassLoader.getBase( clazz );
-		// add gps.jar
+		// add cts.jar
 		ecl.add( base );
 		//System.out.println(clazz.getName()+" base is: "+base);
-		// add gps/
+		// add cts/ folder
 		String libFolder = ExtClassLoader.getLibFolder( clazz, "cts" );
 		ecl.add( libFolder );
 		System.out.println(clazz.getName()+" libs are in: "+libFolder);
 		// add cts/*.jar
-		ecl.addAllFiles( libFolder );
+		ecl.addAllFiles( libFolder, "jar", true );
 		
 		return ecl;
 	}

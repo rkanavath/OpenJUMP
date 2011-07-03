@@ -25,8 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,14 +51,10 @@ import com.vividsolutions.jump.workbench.model.Category;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.plugin.EnableCheck;
 import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
-import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.TaskFrame;
-import com.vividsolutions.jump.workbench.ui.images.IconLoader;
-
-import de.soldin.jump.gps.GPSExtension;
 
 /**
  * <code>CSSetPlugin</code> acts as plugin and therefore is a
@@ -117,40 +111,34 @@ public class CSSetPlugin
 	public void initialize(PlugInContext context) {
 		EnableCheckFactory checkFactory =
 			new EnableCheckFactory(context.getWorkbenchContext());
-
-		JPopupMenu categoryPopups =
-			context
-				.getWorkbenchContext()
-				.getWorkbench()
-				.getFrame()
-				.getCategoryPopupMenu();
+		// add to category context menu
+		JPopupMenu categoryPopups = context.getWorkbenchContext()
+				.getWorkbench().getFrame().getCategoryPopupMenu();
+		context.getFeatureInstaller()
+				.addPopupMenuItem(
+						categoryPopups,
+						this,
+						getName(),
+						false,
+						getIcon(),
+						new MultiEnableCheck()
+								.add(checkFactory
+										.createAtLeastNCategoriesMustBeSelectedCheck(1))
+								.add(createSelectedCategoriesEmptyCheck( context.getWorkbenchContext()))
+								.add(createSelectedCategoriesLayersMustBeEditableCheck(context.getWorkbenchContext())));
+		// add to layerpanel context menu
+		JPopupMenu layerNamePopupMenu = context.getWorkbenchContext()
+				.getWorkbench().getFrame().getLayerNamePopupMenu();
 		context.getFeatureInstaller().addPopupMenuItem(
-			categoryPopups,
-			this,
-			getName(),
-			false,
-			getIcon(),
-			new MultiEnableCheck()
-				.add(checkFactory.createAtLeastNCategoriesMustBeSelectedCheck(1))
-				.add(
-					createCategorySelectedMustHaveAtLeastNItems(
-						1,
-						context.getWorkbenchContext())));
-
-		JPopupMenu layerNamePopupMenu =
-			context
-				.getWorkbenchContext()
-				.getWorkbench()
-				.getFrame()
-				.getLayerNamePopupMenu();
-		context.getFeatureInstaller().addPopupMenuItem(
-			layerNamePopupMenu,
-			this,
-			getName(),
-			false,
-			getIcon(),
-			new MultiEnableCheck().add(
-				checkFactory.createAtLeastNLayersMustBeSelectedCheck(1)));
+				layerNamePopupMenu,
+				this,
+				getName(),
+				false,
+				getIcon(),
+				new MultiEnableCheck()
+						.add(checkFactory
+								.createAtLeastNLayersMustBeSelectedCheck(1))
+						.add(checkFactory.createSelectedLayersMustBeEditableCheck()));
 
 		// swix stuff	
 		this.swix = new SwingEngine(this);
@@ -490,33 +478,53 @@ public class CSSetPlugin
 	 * @see com.vividsolutions.jump.workbench.plugin.EnableCheck
 	 * @see com.vividsolutions.jump.workbench.plugin.MultiEnableCheck
 	 */
-	public EnableCheck createCategorySelectedMustHaveAtLeastNItems(
-		final int i,
-		final WorkbenchContext workbenchContext) {
-		return new EnableCheck() {
-			//WorkbenchContext workbenchContext = workbenchContext;
-			//final int layersneeded = i;
+	public EnableCheck createSelectedCategoriesEmptyCheck(final WorkbenchContext wbc) {
+		MultiEnableCheck checker = new MultiEnableCheck();
+		
+		// check if there are layers
+		checker.add(new EnableCheck() {
 
 			public String check(JComponent component) {
-
 				int layercount = 0;
-				for (Iterator iter =
-					workbenchContext
-						.getLayerNamePanel()
-						.getSelectedCategories()
-						.iterator();
-					iter.hasNext();
-					) {
+				for (Iterator iter = wbc.getLayerNamePanel()
+						.getSelectedCategories().iterator(); iter.hasNext();) {
 					Category element = (Category) iter.next();
 					layercount += element.getLayerables().size();
 				}
 
-				return (layercount < i)
-					? String.format(_("at-least-%d-layer(s)-must-exist-in-selected-categories"), i)
-					: null;
+				int needed = 1;
+				return (layercount < needed) ? String
+						.format(_("at-least-%d-layer(s)-must-exist-in-selected-categories"),
+								needed)
+						: null;
+			}
+		});
+		
+		return checker;
+	}
+
+	public EnableCheck createSelectedCategoriesLayersMustBeEditableCheck( final WorkbenchContext wbc ) {
+		return new EnableCheck() {
+			public String check(JComponent component) {
+				Collection cats = wbc.getLayerNamePanel().getSelectedCategories();
+
+				for (Iterator i = cats.iterator(); i.hasNext();) {
+					Category cat = (Category) i.next();
+					Collection<Layer> layers = cat.getLayerables();
+
+				for (Iterator j = layers.iterator(); j.hasNext();) {
+					Layer layer = (Layer) j.next();
+					// System.out.println(layer.getName()
+					// +"->"+(layer.isEditable()?"ja":"nein"));
+					if (!layer.isEditable()) {
+						return String.format(_("layer-%s-not-editable"), layer.getName());
+					}
+				}
+
+				}
+				// reached here? all is well
+				return null;
 			}
 		};
 	}
-
-	
 }

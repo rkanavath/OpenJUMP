@@ -20,9 +20,7 @@
 package de.soldin.jump.cts;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.Locale;
 import java.util.TreeMap;
