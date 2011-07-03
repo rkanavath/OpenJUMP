@@ -78,6 +78,9 @@ public class ExtClassLoader extends URLClassLoader {
 	public boolean addAllFilesRecursive(String path){
 		return addAllFiles( path, null, true);
 	}
+	public boolean addAllFilesRecursive(String path, String suffix){
+		return addAllFiles( path, suffix, true);
+	}
 	public boolean addAllFiles(String path, String suffix, boolean recursive){
 		// initialize null suffix to empty string
 		suffix = suffix instanceof String ? suffix : "";
@@ -88,13 +91,12 @@ public class ExtClassLoader extends URLClassLoader {
 		// iterate through entries
 		for (int i = 0; files != null && i < files.length; i++) {
 			file = files[i];
-			if ( file.getName().endsWith( suffix ) )
-				if ( file.isDirectory() ){
-					this.addAllFiles( file.getAbsolutePath(), suffix, false);
-				}else{
+			if ( recursive && file.isDirectory() ){
+					this.addAllFiles( file.getAbsolutePath(), suffix, recursive);
+			}else if ( file.getName().endsWith( suffix ) ){
 					this.add( file.getAbsolutePath() );
-				}
-				//System.out.println(this.getClass().getName()+" added lib: "+ file.getAbsolutePath());
+					//System.out.println(this.getClass().getName()+" added lib: "+ file.getAbsolutePath());
+			}
 		}
 		return true;
 	}
@@ -159,7 +161,7 @@ public class ExtClassLoader extends URLClassLoader {
 		}
 		//System.out.println(this.getClass().getName()+" loadClass parent("+name+")");
 		
-    	// search parents
+		// search parents
 		Iterator it = cls.iterator();
 		while ( it.hasNext() ) {
 			URLClassLoader cl = (URLClassLoader) it.next();
