@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.undo.AbstractUndoableEdit;
@@ -180,9 +179,9 @@ public class UndoableSetGeometry
 	}
 	
 	public Geometry getGeom(Feature in_feature){
-		List features = layer.getFeatureCollectionWrapper().getFeatures();
-		Feature feature = (Feature)features.get(features.indexOf(in_feature));
-		return (Geometry)feature.getGeometry().clone();
+		//List features = layer.getFeatureCollectionWrapper().getFeatures();
+		//Feature feature = (Feature)features.get(features.indexOf(in_feature));
+		return (Geometry)in_feature.getGeometry().clone();
 	}
 
 // Start of implementation of the collection methods 
@@ -200,7 +199,15 @@ public class UndoableSetGeometry
 	}
 
 	public boolean isEmpty() {
-		return actions.isEmpty();
+		if (layer==null) {
+			for (Iterator i = actions.iterator(); i.hasNext();) {
+				Collection action = (Collection) i.next();
+				if (!action.isEmpty()) return false;
+			}
+			return true;
+		}
+		else
+			return proposed_geoms.isEmpty();
 	}
 
 	public Object[] toArray() {
