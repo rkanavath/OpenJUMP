@@ -854,7 +854,11 @@ public class GCPlugin extends ExtPlugIn {
 		List linescol = new ArrayList();
 		for (int i = 0; i < geom_src.getNumGeometries(); i++) {
 			Geometry g = geom_src.getGeometryN(i);
-			if (g.getGeometryType().equalsIgnoreCase("polygon"))
+			//System.out.println(g.getNumGeometries()+","+g.getGeometryType());
+			if (g.getNumGeometries() > 1){
+				linescol.addAll( Arrays.asList( getLines( g, asRings) ) );
+			}
+			else if (g.getGeometryType().toLowerCase().endsWith("polygon"))
 				LinearComponentExtracter.getLines(g, linescol, !asRings);
 			else if (asRings)
 				linescol.add(factory.createLinearRing(g.getCoordinates()));

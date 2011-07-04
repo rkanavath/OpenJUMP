@@ -25,15 +25,15 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import de.soldin.jump.ExtClassLoader;
 
 /**
- * Installs the {@link de.soldin.gt2jump.geomconv.GCPlugin}
- * 
+ * Installs the {@link de.soldin.jump.geomconv.GCPlugin}
+ *
  * @see com.vividsolutions.jump.workbench.plugin.Extension
  */
 public class GCExtension
 	extends Extension
 	{
-	public static final String NAME = "Geometry Converter Extension";
-	public static final String VERSION = "0.3rc4";
+	public static final String NAME = "Geometry Converter (de.soldin.jump.geomconv)";
+	public static final String VERSION = "0.3rc5";
 	private static ExtClassLoader ecl;
 	
 	public void configure(PlugInContext context) throws Exception {
