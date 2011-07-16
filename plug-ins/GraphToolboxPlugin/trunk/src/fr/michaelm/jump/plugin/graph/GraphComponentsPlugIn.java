@@ -1,6 +1,5 @@
 /*
- * Library name : fr.michaelm.formats.geoconcept
- * (C) 2010 Michaël Michaud
+ * (C) 2011 Micha&euml;l Michaud
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,19 +23,6 @@
 
 package fr.michaelm.jump.plugin.graph;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -49,16 +35,31 @@ import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
 import fr.michaelm.jump.feature.jgrapht.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import org.jgrapht.*;
-import org.jgrapht.graph.*;
 import org.jgrapht.alg.*;
+import org.jgrapht.graph.*;
 
 /**
  * Find main components of each graph or subgraph (number of connected
  * subgraphs, length, number of order 1 nodes...).
- * @author Michael Michaud
- * @version 0.1 (2010-04-22)
+ * @author Micha&euml;l Michaud
+ * @version 0.1.2 (2011-07-16)
  */
+//version 0.1.2 (2011-07-16) typos and comments
+//version 0.1.1 (2010-04-22) first svn version
+//version 0.1 (2010-04-22)
 public class GraphComponentsPlugIn extends ThreadedBasePlugIn {
     
     String GRAPH;
@@ -87,7 +88,6 @@ public class GraphComponentsPlugIn extends ThreadedBasePlugIn {
     String SUBGRAPHS;
     String NO_GRAPH;
     
-    
     Layer layer;
     String attribute;
     AttributeType attType;
@@ -113,8 +113,6 @@ public class GraphComponentsPlugIn extends ThreadedBasePlugIn {
         IGNORE_EMPTY_TOOLTIP       = I18NPlug.getI18N("ignore-empty-tooltip");
         DIM3                       = I18NPlug.getI18N("dim3");
         DIM3_TOOLTIP               = I18NPlug.getI18N("dim3-tooltip");
-        //FUZZY                      = I18NPlug.getI18N("GraphComponentsPlugIn.fuzzy");
-        //FUZZY_TOOLTIP              = I18NPlug.getI18N("GraphComponentsPlugIn.fuzzy-tooltip");
         RETURN_GRAPHS_AS           = I18NPlug.getI18N("GraphComponentsPlugIn.return-graphs-as");
         RETURN_GRAPHS_AS_TOOLTIP   = I18NPlug.getI18N("GraphComponentsPlugIn.return-graphs-as-tooltip");
         POINT                      = I18NPlug.getI18N("GraphComponentsPlugIn.point");
@@ -130,7 +128,6 @@ public class GraphComponentsPlugIn extends ThreadedBasePlugIn {
         GRAPHS                     = I18NPlug.getI18N("GraphComponentsPlugIn.graphs");
         SUBGRAPHS                  = I18NPlug.getI18N("GraphComponentsPlugIn.subgraphs");
         NO_GRAPH                   = I18NPlug.getI18N("GraphComponentsPlugIn.no-graph");
-        
         
         context.getFeatureInstaller().addMainMenuItem(
           this, new String[]{MenuNames.PLUGINS, GRAPH}, CONNECTED_COMPONENTS + "...",
@@ -162,7 +159,6 @@ public class GraphComponentsPlugIn extends ThreadedBasePlugIn {
         final JCheckBox jcb_3d = dialog.addCheckBox(DIM3, dim3, DIM3_TOOLTIP);
         jcb_3d.setEnabled(true);
         
-        //dialog.addDoubleField(FUZZY, 0, 6, "Connecter les arcs distants de moins de...");
         final JComboBox jcb_return_graph_as = dialog.addComboBox(
             RETURN_GRAPHS_AS,
             return_graphs_as,
@@ -205,7 +201,6 @@ public class GraphComponentsPlugIn extends ThreadedBasePlugIn {
             else attType = AttributeType.STRING;
             ignore_empty = dialog.getBoolean(IGNORE_EMPTY);
             dim3    = dialog.getBoolean(DIM3);
-            //fuzzy = dialog.getDouble(FUZZY);
             return_graphs_as = dialog.getText(RETURN_GRAPHS_AS);
             return true;
         }
@@ -249,7 +244,7 @@ public class GraphComponentsPlugIn extends ThreadedBasePlugIn {
         }
         
         int count = 1;
-        // Boucle sur l'ensemble des graphes à analyser
+        // Loop on all the graphs to analyse
         for (Iterator i = map.keySet().iterator() ; i.hasNext() ; ) {
             key = i.next();
             // Creates a undirected graph from the feature list

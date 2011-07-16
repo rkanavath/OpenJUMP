@@ -1,5 +1,5 @@
 /*
- * (C) 2010 Michaël Michaud
+ * (C) 2011 Micha&euml;l Michaud
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,23 +23,35 @@
 
 package fr.michaelm.jump.plugin.graph;
 
+import com.vividsolutions.jump.I18N;
+import com.vividsolutions.jump.workbench.plugin.Extension;
+import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import com.vividsolutions.jump.I18N;
-
-import com.vividsolutions.jump.workbench.plugin.Extension;
-import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-
+/**
+ * Graph Extension contains 3 plugins
+ * <ul>
+ * <li>GraphNodesPlugIn : computes a graph from a linear network and find nodes</li>
+ * <li>GraphComponentsPlugIn : computes a graph from a linear network and find
+ * connected subgraphs</li>
+ * <li>CycleFinderPlugIn : computes a graph from a linear network and find base cycles</li>
+ * </ul>
+ * @author Micha&euml;l Michaud
+ * @version 0.1.2 (2011-07-16)
+ */
+//version 0.1.2 (2011-07-16) typos and comments
+//version 0.1.1 (2010-04-22) first svn version
+//version 0.1 (2010-04-22)
 public class GraphExtension extends Extension {
 
     public String getName() {
-        return "Graph Extension (Michaël Michaud)";
+        return "Graph Extension (Micha\u00EBl Michaud)";
     }
 
     public String getVersion() {
-        return "0.1 (2010-04-22)";
+        return "0.1.2 (2011-07-16)";
     }
 
     public void configure(PlugInContext context) throws Exception {
@@ -57,7 +69,7 @@ public class GraphExtension extends Extension {
         } catch(ClassNotFoundException cnfe) {
             context.getWorkbenchFrame().warnUser("Graph Extension cannot be initialized : see log windows");
             context.getWorkbenchFrame().log("Missing library : jump-jgrapht-*.jar");
-            return;
+            missing_libraries = true;
         }
         if (missing_libraries) return;
         

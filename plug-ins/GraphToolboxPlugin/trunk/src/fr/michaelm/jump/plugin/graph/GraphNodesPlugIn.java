@@ -1,6 +1,5 @@
 /*
- * Library name : fr.michaelm.formats.geoconcept
- * (C) 2010 Michaël Michaud
+ * (C) 2011 Micha&euml;l Michaud
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,9 +61,12 @@ import org.jgrapht.UndirectedGraph;
  * Creates a graph from a linear layer with JGraphT and returns degree 1 nodes
  * (network dead-end), degree 2 nodes, degree 3+ nodes (intersection) or all
  * the nodes with their degree as attribute.
- * @author Michael Michaud
+ * @author Micha&euml;l Michaud
  * @version 0.1 (2010-04-22)
  */
+//version 0.1.2 (2011-07-16) typos and comments
+//version 0.1.1 (2010-04-22) first svn version
+//version 0.1 (2010-04-22)
 public class GraphNodesPlugIn extends ThreadedBasePlugIn {
     
     private static String LAYER;
@@ -74,7 +76,6 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
     private static String DEGREE;
     private static String GRAPH_NODES;
     private static String GRAPH_COMPUTATION;
-    
     
     private static String USE_ATTRIBUTE;
     private static String USE_ATTRIBUTE_TOOLTIP;
@@ -139,23 +140,6 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
     }
     
     public boolean execute(PlugInContext context) {
-        
-        //try {
-        //    //context.getClass().getClassLoader().loadClass("org.jgrapht.UndirectedGraph");
-        //    getClass().getClassLoader().loadClass("org.jgrapht.UndirectedGraph");
-        //} catch(ClassNotFoundException cnfe) {
-        //    ErrorDialog.show(context.getWorkbenchFrame(), "Error message",
-        //        "JGraphT library is missing", cnfe.getMessage());
-        //    return false;
-        //}
-        //
-        //try {
-        //    getClass().getClassLoader().loadClass("fr.michaelm.jump.feature.jgrapht.INode");
-        //} catch(ClassNotFoundException cnfe) {
-        //    ErrorDialog.show(context.getWorkbenchFrame(), "Error message",
-        //        "jump-jgrapht library is missing", cnfe.getMessage());
-        //    return false;
-        //}
         
         final MultiInputDialog dialog = new MultiInputDialog(
         context.getWorkbenchFrame(), GRAPH_NODES, true);
@@ -230,7 +214,7 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
         
         FeatureCollection fc = layer.getFeatureCollectionWrapper();
         
-        // Create the schema for the output dataset (nodes)
+        // Creates the schema for the output dataset (nodes)
         FeatureSchema schemaNodes = new FeatureSchema();
         schemaNodes.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
         if (use_attribute) {
@@ -281,7 +265,6 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
             context.addLayer(StandardCategoryNames.RESULT, layer.getName()+"-" + NODES, resultNodes);
         }
     }
-    
     
     private List getFieldsFromLayerWithoutGeometry(Layer l) {
         List fields = new ArrayList();

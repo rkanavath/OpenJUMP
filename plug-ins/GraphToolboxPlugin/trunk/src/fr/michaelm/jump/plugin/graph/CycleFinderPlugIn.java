@@ -1,6 +1,5 @@
 /*
- * Library name : fr.michaelm.formats.geoconcept
- * (C) 2010 Michaël Michaud
+ * (C) 2011 Micha&euml;l Michaud
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,27 +23,9 @@
 
 package fr.michaelm.jump.plugin.graph;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.index.strtree.STRtree;
 import com.vividsolutions.jts.operation.polygonize.Polygonizer;
 import com.vividsolutions.jump.feature.*;
@@ -55,17 +36,30 @@ import com.vividsolutions.jump.workbench.plugin.*;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
-import com.vividsolutions.jump.workbench.ui.renderer.style.RingVertexStyle;
-import com.vividsolutions.jump.workbench.ui.renderer.style.VertexStyle;
 import fr.michaelm.jump.feature.jgrapht.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
 
 /**
  * Find cycles in a network graph.
- * @author Michael Michaud
- * @version 0.1 (2008-02-02)
+ * @author Micha&euml;l Michaud
+ * @version 0.1.2 (2011-07-16)
  */
+//version 0.1.2 (2011-07-16) typo and comments
+//version 0.1.1 (2010-04-22) first svn version
+//version 0.1 (2008-02-02)
 public class CycleFinderPlugIn extends ThreadedBasePlugIn {
 
     Layer layer;
@@ -171,12 +165,6 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
         final JCheckBox jcb_aab_abb_cycles_only = dialog.addCheckBox(AAB_ABB_CYCLES_ONLY, aab_abb_cycles_only, AAB_ABB_CYCLES_ONLY_TOOLTIP);
         jcb_aab_abb_cycles_only.setEnabled(use_attribute && !all_heterogeneous_cycles);
 
-        //jcb_ignore_empty.setEnabled(list.size()>0);
-        //jcb_use_attribute.setEnabled(list.size()>0);
-        //jcb_attribute.setEnabled(list.size()>0);
-        //jcb_all_heterogeneous_cycles.setEnabled(list.size()>0);
-        //jcb_aab_abb_cycles_only.setEnabled(list.size()>0);
-
         jcb_layer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 List list = getFieldsFromLayerWithoutGeometry(dialog.getLayer(LAYER));
@@ -233,7 +221,6 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
             dim3    = dialog.getBoolean(DIM3);
             min_features = dialog.getInteger(MIN_FEATURES);
             max_features = dialog.getInteger(MAX_FEATURES);
-            //output_cycles = dialog.getBoolean(OUTPUT_CYCLES);
             max_length = dialog.getDouble(MAX_LENGTH);
             all_homogeneous_cycles = dialog.getBoolean(ALL_HOMOGENEOUS_CYCLES);
             isolated_cycles = dialog.getBoolean(ISOLATED_CYCLES);
@@ -290,7 +277,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
         FeatureCollection homogeneous_cycles_FC = new FeatureDataset(schema);
         FeatureCollection heterogeneous_cycles_FC = new FeatureDataset(schema);
 
-        // Filter and Index the input layer
+        // Filter and index input layer features
         // Do not eliminate long features too early,
         // because they can be used as incident edges
         FeatureCollection filteredFC = layer.getFeatureCollectionWrapper();
@@ -317,7 +304,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
         }
 
         monitor.report(POLYGONIZATION_OF + layer.getName() + "...");
-        // Polygonisation + sélection des polygones de longueur < à la tolérance
+        // Polygonisation + selection of polygons with length < threshold
         Polygonizer polygonizer = new Polygonizer();
         polygonizer.add(geoms);
         Collection pols = polygonizer.getPolygons();
@@ -328,7 +315,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
 
         monitor.report(ANALYSIS_OF + layer.getName() + "...");
         int count = 0;
-        // Loop over polygons representing our cycles
+        // Loop over polygons representing cycles
         for (Geometry g : geoms) {
             // Select edges of the cycle and edges incident to the cycle
             List list = ifc.query(g.getEnvelopeInternal());
@@ -337,14 +324,14 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
                 if (g.disjoint(gfeature)) list.remove(i);
             }
 
-            // Construire le graphe des objets intersectant le polygone
+            // Creates the graph with features intersecting the polygon
             UndirectedGraph<INode,FeatureAsEdge> graph =
                 (UndirectedGraph<INode,FeatureAsEdge>)GraphFactory.createGraph(list, dim3);
-            // Tous les noeuds et tous les arcs du graphe
+            // Graph node set and graph edges set
             Set<INode> nodeSet = graph.vertexSet();
             Set<FeatureAsEdge> edgeSet = graph.edgeSet();
 
-            // Le sous graphe correspondant au cycle seul
+            // Subgraph containing only the cycle
             Set<INode> cycleNodeSet = new HashSet();
             for (INode n : nodeSet) {
                 if (n.getGeometry().intersects(g)) cycleNodeSet.add(n);
@@ -353,7 +340,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
                 new Subgraph(graph, cycleNodeSet);
             Set<FeatureAsEdge> cycleEdgeSet = cycle.edgeSet();
 
-            // Elimination des cycles trop longs ou trop courts
+            // Eliminate too long ot too short cycles
             if (cycleEdgeSet.size() < min_features || cycleEdgeSet.size() > max_features) continue;
 
             String shape = g.equals(new ConvexHull(g).getConvexHull())?CONVEX:CONCAVE;
@@ -361,7 +348,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
             double perimeter = g.getLength();
             // Circularity (100 = circular / 0 = linear)
             double circularity = Math.floor(100.0*area*4.0*Math.PI/perimeter/perimeter);
-            // Construction des objets correspondant à tous les cycles respectant la taille
+            // Build one feature for each cycle under/over size thresholds
             Feature newf = new BasicFeature(schema);
             newf.setGeometry(g);
             newf.setAttribute(NB_OF_EDGES, cycleEdgeSet.size());
@@ -369,16 +356,16 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
             newf.setAttribute(CIRCULARITY, circularity);
             newf.setAttribute(LENGTH, perimeter);
             newf.setAttribute(AREA, area);
-            //cycleFC.add(newf);
             
-            // attributs présents sur le cycle
+            // feature attributes found in cycle
             Set attributeSet = new HashSet();
             String NOATT = "DO_NOT_USE_ATTRIBUTE";
             for (FeatureAsEdge e : cycleEdgeSet) {
                 if (use_attribute) attributeSet.add(e.getAttribute(attribute));
                 else attributeSet.add(NOATT);
             }
-            // Case 0 : no attribute defines for cycle homogenity
+            
+            // Case 0 : no attribute defined for cycle homogeneity
             if (!use_attribute) {
                 newf.setAttribute(CYCLE_HOMOGENEITY, HOMOGENEOUS);
                 int incident_edges = edgeSet.size() - cycleEdgeSet.size();
@@ -403,6 +390,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
                     homogeneous_cycles_FC.add(newf);
                 }
             }
+            
             // Case 1 : only one attribute value or !use_attribute
             else if (attributeSet.size() == 1) {
                 newf.setAttribute(CYCLE_HOMOGENEITY, HOMOGENEOUS);
@@ -435,6 +423,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
                 }
                 
             }
+            
             // Case 2 : use_attribute and several attribute values
             else if (attributeSet.size() > 1 && (all_heterogeneous_cycles || aab_abb_cycles_only)) {
                 newf.setAttribute(CYCLE_HOMOGENEITY, HETEROGENEOUS);
@@ -459,116 +448,6 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
                 }
                 else;
             }
-            
-            /*
-            // Cycle non homogène pour l'attribut
-            if (heterogeneous || terminal) {
-                Set attributeSet = new HashSet();
-                for (FeatureAsEdge e : cycleEdgeSet) {
-                    if (use_attribute && attribute != null) {
-                        attributeSet.add(e.getAttribute(attribute));
-                    }
-                }
-                if (attributeSet.size()>1 && shape.equals("CONVEXE")) {
-                    newf = (Feature)newf.clone();
-                    newf.setAttribute("COMMENTAIRE", "Cycle contenant " +
-                                                 attributeSet.size() +
-                                                 " \"" + attribute +
-                                                 "\" différent(es)");
-                    heterogeneous_cycleFC.add(newf);
-                }
-                // Recherche des cycles terminaux
-                else {  // Cycle homogène ou sans attribut
-                    Object att1 = attributeSet.size()==1?attributeSet.iterator().next():"";
-                    int count_out_edge = 0;
-                    for (FeatureAsEdge e : edgeSet) {
-                        Object att2 = use_attribute?e.getAttribute(attribute):"";
-                        if (!cycleEdgeSet.contains(e) && att2.equals(att1)) count_out_edge++;
-                    }
-                    if (count_out_edge==1) {
-                        newf = (Feature)newf.clone();
-                        terminal_cycleFC.add(newf);
-                    }
-                }
-            }
-            */
-            
-            /*
-            // Anmalie dans les arcs incidents aux noeuds du cycle
-            if (use_attribute && aab_abb) {
-                boolean flag = false;
-                Point g1=null, g2=null;
-                String comment=null;
-                Set<Object> cycleAttributes = new HashSet<Object>();
-                for (FeatureAsEdge fae : cycleEdgeSet) {
-                    cycleAttributes.add(fae.getAttribute(attribute));
-                }
-                INode[] nodeArray = cycleNodeSet.toArray(new INode[0]);
-                // Pour chaque noeud du cycle,
-                // compter les arcs incidents par attribut et les placer dans une map
-                for (int i=0 ; i<nodeArray.length ; i++) {
-                    Map<Object,Integer> edgeMap1 = new TreeMap<Object,Integer>();
-                    Set<FeatureAsEdge> edgesIncidentToI = graph.edgesOf(nodeArray[i]);
-                    for (FeatureAsEdge edge : edgesIncidentToI) {
-                        Object att1 = edge.getAttribute(attribute);
-                        if (!cycleAttributes.contains(att1)) continue;
-                        if (edgeMap1.containsKey(att1)) {
-                            edgeMap1.put(att1, edgeMap1.get(att1)+1);
-                        }
-                        else edgeMap1.put(att1, new Integer(1));
-                    }
-                    // Pour chaque autre noeud du cycle,
-                    // compter les arcs incidents par attribut et les placer dans une map
-                    for (int j=i+1 ; j<nodeArray.length ; j++) {
-                        Map<Object,Integer> edgeMap2 = new TreeMap<Object,Integer>();
-                        Set<FeatureAsEdge> edgesIncidentToJ = graph.edgesOf(nodeArray[j]);
-                        for (FeatureAsEdge edge : edgesIncidentToJ) {
-                            Object att2 = edge.getAttribute(attribute);
-                            if (!cycleAttributes.contains(att2)) continue;
-                            if (edgeMap2.containsKey(att2)) {
-                                edgeMap2.put(att2, edgeMap2.get(att2)+1);
-                            }
-                            else edgeMap2.put(att2, new Integer(1));
-                        }
-                        // Si les deux noeuds possèdent au moins deux types d'attributs
-                        // et que ces attributs sont les mêmes pour les deux noeuds
-                        if (edgeMap1.size()>1 && edgeMap2.size()>1 &&
-                            edgeMap1.keySet().equals(edgeMap2.keySet())) {
-                            Object[] atts = edgeMap1.keySet().toArray(new Object[0]);
-                            // Mais que le nombre d'arcs incidents de valeur A pour le noeud 1
-                            // est différent du nombre d'arcs incidents de valeur A pour le
-                            // noeud 2 et vice versa (ex. noeud 1 = AAB et noeud 2 = ABB)
-                            int att11 = ((Integer)edgeMap1.get(atts[0])).intValue();
-                            int att12 = ((Integer)edgeMap1.get(atts[1])).intValue();
-                            int att21 = ((Integer)edgeMap2.get(atts[0])).intValue();
-                            int att22 = ((Integer)edgeMap2.get(atts[1])).intValue();
-                            if ((att11==1 && att21>1 && att12>=1 && att22==1) ||
-                                (att11==1 && att21>=1 && att12>1 && att22==1) ||
-                                (att11>1 && att21==1 && att12==1 && att22>=1) ||
-                                (att11>=1 && att21==1 && att12==1 && att22>1)) {
-                            //if (!edgeMap1.get(atts[0]).equals(edgeMap2.get(atts[0])) &&
-                            //    !edgeMap1.get(atts[1]).equals(edgeMap2.get(atts[1])) ) {
-                                // Alors, construire l'anomalie (multipoints)
-                                flag = true;
-                                g1 = (Point)nodeArray[i].getGeometry();
-                                g2 = (Point)nodeArray[j].getGeometry();
-                                if (!edgeMap1.get(atts[0]).equals(edgeMap2.get(atts[0]))) {
-                                    comment = "Interruption de " + atts[0];
-                                } else comment = "Interruption de " + atts[1];
-                                break;
-                            }
-                        }
-                    }
-                    if (flag) break;
-                }
-                if (use_attribute && flag) {
-                    newf = (Feature)newf.clone();
-                    newf.setGeometry(gf.createMultiPoint(new Point[]{g1, g2}));
-                    newf.setAttribute("COMMENTAIRE", comment);
-                    aab_abb_cycleFC.add(newf);
-                }
-            }
-            */
             count++;
             monitor.report(count, geoms.size(), PROCESSED_CYCLES);
         }
@@ -596,7 +475,7 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
         return fields;
     }
     
-    // Return a map with different attribute values of edges connected to a node
+    // Returns a map counting distinct attribute values of incident edges
     private Map<Object,Integer> incidentEdgeValues(INode node,
                 UndirectedGraph<INode,FeatureAsEdge> graph, String attribute) {
         Map<Object,Integer> edgeMap = new HashMap<Object,Integer>();
@@ -610,18 +489,5 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
         }
         return edgeMap;
     }
-    
-    //public static class MyRingVertexStyle extends RingVertexStyle {
-    //
-    //    public MyRingVertexStyle() {super();}
-    //
-    //    public int getSize() {return 25;}
-    //
-    //    protected void render(java.awt.Graphics2D g) {
-    //        g.setStroke(new java.awt.BasicStroke(2.5f));
-    //        g.setColor(Color.RED);
-    //        g.draw(shape);
-    //    }
-    //}
 
 }
