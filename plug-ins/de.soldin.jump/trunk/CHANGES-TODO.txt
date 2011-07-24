@@ -34,62 +34,28 @@ gps rc4
 (fix) rxtx native lib loader ignoring one word os's e.g."Linux"
 (fix) solved setYx issue in gps reprojection leading to wrong results
 
-final
-- add hint in gps options to install cts if cts missing
-- catch CannotCreateTransformException and show user (remove towgs84 for testing)
-- let classloader add ignore .* files
-- lost fix doesn't work anymore, check that
-- document -Dgnu.io.rxtx.SerialPorts=/dev/ttyUSB0 java rxtx switch
-
-renew list ports everytime optionspanel is opened
-
-allow to manually add port(mask)s
-
-let crosshair follow gps coordinate
-or disable crosshair if tracking disabled
-
-separate track now to "gps on" and "track project" (combines track on & select task)
-
-rxtx/*/ aufräumen nur dlls
-
-(arnd) manual input field for tracking frequency e.g.(0.2)s
-
-(arnd) averageing gps over configurable timeframe
-
-(arnd) auto add points after interval (or distance?)
-
-gui support for gpsd and file input
-
-
-DRAFTS email to merge
-
-rc2
-- (done) rxtx iterate over subfolders and use the name for os checking e.g. mac,windows,linux
--rename "set task" to "attach to active project"
- "add point" to "create point"
- "insert points" to "append point to geometry"
-- (done) reinstate cts projection support
--fix error message:
-Found no serial ports. Most likely you don't have Java Communication API (correctly) installed. GPSExtension will be disabled for now.
-
 
 TODO (priority sorted)
 
-- cleanup rxtx/*/ folder
+- add hint in gps options to install cts if cts missing (ed)
+- catch CannotCreateTransformException and show user (remove towgs84 for testing)
+- lost fix doesn't work anymore?, check that
+- gui support for gpsd1 and file input
+- separate track now to "gps on" and "track project" (combines track on & select task)
+
+serial port enhancements
+- renew ports list everytime optionspanel is opened, better add a scan button to circumvent delay on scan
+- document -Dgnu.io.rxtx.SerialPorts=/dev/ttyUSB0 java rxtx switch or better allow to manually add port(mask)s in options dialog
+
+- cleanup rxtx/*/ folder, keep only libraries and scripts
 - add and explain mac rxtx scripts
 - move crosshair on every gps update (jukka)
 - let crosshair follow gps coordinate or disable crosshair if tracking disabled
 - separate "track now" to "gps on" and "track project" (combines track on & select task), this way the viewport can be recentered on different intervals than the gps updates itself (jukka)
 - manual input field for tracking frequency e.g.(0.2)s (arnd)
 
-- renew ports list everytime optionspanel is opened, better add a scan button to circumvent delay on scan
-- gui support for gpsd and file input
-
-
 - averageing gps over configurable timeframe (arnd)
 - auto add points after interval (or distance?) (arnd) 
-- allow to manually add serial port(mask)s
-
 
 
 --- GEOMCONV ---
