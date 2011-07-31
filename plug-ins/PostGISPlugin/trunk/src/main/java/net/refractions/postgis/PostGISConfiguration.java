@@ -20,8 +20,14 @@ package net.refractions.postgis;
 
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.plugin.Extension;
+
 /**
- * This class installs the PostGIS plugin. 
+ * This class installs the PostGIS plugin.
+ * @version 1.4.2 (2011-07-16)
+ * @author Refractions Research (initial version)
+ * @author Uwe Dalluege (1.3 version)
+ * @author Eric Lemestre (internationalization and openwizard integration)
+ * @author Micha&euml;l Michaud (integration of Uwe and Eric versions for 1.4.2)
  */
 public class PostGISConfiguration extends Extension {
   public void configure(PlugInContext context) {
@@ -29,11 +35,11 @@ public class PostGISConfiguration extends Extension {
   }
   
   public String getName() {
-    return("PostGIS Driver (Refractions Research/HCU Hamburg, RZCN/E. Lemesre V1.40.01)");
+    return("PostGIS Driver (Refractions Research/HCU Hamburg, RZCN/E. Lemesre V1.4.2)");
   }
   
   public String getVersion() {
-// UD, uwe.dalluege@rzcn.haw-hamburg.de
-    return("V1.40.01");
+    // UD, uwe.dalluege@hcu-hamburg.de
+    return("V1.4.2");
   }
 }

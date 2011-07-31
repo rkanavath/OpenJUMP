@@ -24,44 +24,45 @@ import java.util.*;
 /**
  * A DataSourceQueryChooser for writing to a PostGIS data source.
  */
-public class PostGISLoadDataSourceQueryChooser extends PostGISDataSourceQueryChooser implements DataSourceQueryChooser {
+public class PostGISLoadDataSourceQueryChooser
+       extends PostGISDataSourceQueryChooser implements DataSourceQueryChooser {
   
-  /**
-   * Creates a new query chooser.
-   * @param dataSource DataSource object to be queried against.
-   */
-  public PostGISLoadDataSourceQueryChooser(PostGISDataSource dataSource) {
-    super(dataSource);  
-  }
-  
-  /**
-   * Since the ui does not allow for loading of multiple tables, 
-   * the returned collection only contains a single element.
-   * @see DataSourceQueryChooser#getDataSourceQueries()
-   */
-  public Collection getDataSourceQueries() {
-    StringBuffer sql = new StringBuffer();
-    Map properties = super.getProperties();
-    
-    sql.append(
-      "SELECT * " + 
-        "FROM " + (String)properties.get(PostGISDataSource.TABLE_KEY)  
-    );
-
-    if (!properties.get(PostGISDataSource.WHERE_KEY).equals("")){
-    	sql.append(
-    		" WHERE " + (String)properties.get(PostGISDataSource.WHERE_KEY)
-    	);
+    /**
+     * Creates a new query chooser.
+     * @param dataSource DataSource object to be queried against.
+     */
+    public PostGISLoadDataSourceQueryChooser(PostGISDataSource dataSource) {
+        super(dataSource);  
     }
-    
-    PostGISDataSourceQuery query = new PostGISDataSourceQuery(
-      getDataSource(), sql.toString(), (String)properties.get(PostGISDataSource.TABLE_KEY)
-    );    
-    query.setProperties(getProperties());
-    
-    List queries = new ArrayList();
-    queries.add(query);
-    
-    return(queries);
-  }
+  
+    /**
+     * Since the ui does not allow for loading of multiple tables, 
+     * the returned collection only contains a single element.
+     * @see DataSourceQueryChooser#getDataSourceQueries()
+     */
+    public Collection getDataSourceQueries() {
+        StringBuffer sql = new StringBuffer();
+        Map properties = super.getProperties();
+        
+        sql.append(
+            "SELECT * FROM " + (String)properties.get(PostGISDataSource.TABLE_KEY)  
+        );
+        
+        if (!properties.get(PostGISDataSource.WHERE_KEY).equals("")){
+        	sql.append(
+        	    " WHERE " + (String)properties.get(PostGISDataSource.WHERE_KEY)
+        	);
+        }
+        
+        PostGISDataSourceQuery query = new PostGISDataSourceQuery(
+            getDataSource(), sql.toString(),
+            (String)properties.get(PostGISDataSource.TABLE_KEY)
+        );    
+        query.setProperties(getProperties());
+        
+        List queries = new ArrayList();
+        queries.add(query);
+        
+        return(queries);
+    }
 }

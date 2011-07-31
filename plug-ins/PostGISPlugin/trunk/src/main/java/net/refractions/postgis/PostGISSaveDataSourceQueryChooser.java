@@ -37,95 +37,92 @@ import javax.swing.JTextField;
  * A DataSourceQueryChooser for writing to a PostGIS data source.
  */
 public class PostGISSaveDataSourceQueryChooser extends PostGISDataSourceQueryChooser {
-  private PostGISSaveDriverPanel panel;
-  private HashMap properties;
-  
-  
-  ButtonGroup methodButtons;
-  JRadioButton insertButton;
-  JRadioButton updateButton;
-  JTextArea help;
-  JTextField uniqueField;
-  
-  /**
-   * Creates a new query chooser.
-   * @param dataSource DataSource object to be queried against.
-   */
-  public PostGISSaveDataSourceQueryChooser(PostGISDataSource dataSource) {
-    super(dataSource); 
-    panel = new PostGISSaveDriverPanel();
-  }
-  
-  /**
-   * @see com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser#getComponent()
-   */
-  public Component getComponent() { 
-  	return(panel); 
-  }
-  
-  /**
-   * Since the ui does not allow for loading of multiple tables, 
-   * the returned collection only contains a single element.
-   * @see com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser#getDataSourceQueries()
-   */
-  public Collection getDataSourceQueries() {
-    StringBuffer sql = new StringBuffer();
-    Map properties = super.getProperties();
+    private PostGISSaveDriverPanel panel;
+    private HashMap properties;
     
-    //we dont need to specify the update query since the connection 
-    // will do that for us. We only need to specify the table
-// UD, change from null to updateQuery
-		String updateQuery = 
-      "SELECT * FROM " +
-      (String)properties.get(PostGISDataSource.TABLE_KEY);
-// UD, new updateQuery      
-    PostGISDataSourceQuery query = new PostGISDataSourceQuery(
-      getDataSource(), updateQuery, 
-      (String)properties.get(PostGISDataSource.TABLE_KEY)
-    );    
-    query.setProperties(getProperties());
     
-    List queries = new ArrayList();
-    queries.add(query);
-    
-    return(queries);
-  }
+    ButtonGroup methodButtons;
+    JRadioButton insertButton;
+    JRadioButton updateButton;
+    JTextArea help;
+    JTextField uniqueField;
   
-  /**
-   * Checks that user input is valid.
-   * @see com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser#isInputValid()
-   */
-  public boolean isInputValid() {
-    if (!super.isInputValid()) return(false);
-//    if (panel.getSaveMethod().equals(PostGISDataSource.SAVE_METHOD_UPDATE) 
-//     && panel.getUniqueColumn().equals(""))
-    
-    if ( panel.getUniqueColumn().equals("") && 
-    		panel.getSaveMethod().equals(PostGISDataSource.SAVE_METHOD_UPDATE ) )    
-    { // U.D. 
-					JOptionPane.showMessageDialog 
-						( panel, 
-							"Unique Column does not exist!",
-							"Error!", JOptionPane.ERROR_MESSAGE );			    	
-    	return(false);
+    /**
+     * Creates a new query chooser.
+     * @param dataSource DataSource object to be queried against.
+     */
+    public PostGISSaveDataSourceQueryChooser(PostGISDataSource dataSource) {
+        super(dataSource); 
+        panel = new PostGISSaveDriverPanel();
     }
-    return(true);
-  }
   
-  /**
-   * Reads all the connection + query properties from the ui.
-   */
-  protected HashMap getProperties() {
-    if (properties == null) properties = new HashMap();
-    properties.put(PostGISDataSource.SERVER_KEY, panel.getServer());
-    properties.put(PostGISDataSource.PORT_KEY, panel.getPort());
-    properties.put(PostGISDataSource.DATABASE_KEY, panel.getDatabase());
-    properties.put(PostGISDataSource.TABLE_KEY, panel.getTable());
-    properties.put(PostGISDataSource.WHERE_KEY, panel.getWhere());
-    properties.put(PostGISDataSource.USERNAME_KEY, panel.getUsername());
-    properties.put(PostGISDataSource.PASSWORD_KEY, panel.getPassword());
-    properties.put(PostGISDataSource.SAVE_METHOD_KEY, panel.getSaveMethod());
-    properties.put(PostGISDataSource.UNIQUE_COLUMN_KEY, panel.getUniqueColumn());
-    return(properties);
-  }
+    /**
+     * @see com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser#getComponent()
+     */
+    public Component getComponent() { 
+        return(panel); 
+    }
+  
+    /**
+     * Since the ui does not allow for loading of multiple tables, 
+     * the returned collection only contains a single element.
+     * @see com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser#getDataSourceQueries()
+     */
+    public Collection getDataSourceQueries() {
+        StringBuffer sql = new StringBuffer();
+        Map properties = super.getProperties();
+      
+        // we dont need to specify the update query since the connection 
+        // will do that for us. We only need to specify the table
+        // UD, change from null to updateQuery
+        String updateQuery = "SELECT * FROM " +
+            (String)properties.get(PostGISDataSource.TABLE_KEY);
+        // UD, new updateQuery      
+        PostGISDataSourceQuery query = new PostGISDataSourceQuery(
+            getDataSource(), updateQuery, 
+            (String)properties.get(PostGISDataSource.TABLE_KEY)
+        );    
+        query.setProperties(getProperties());
+      
+        List queries = new ArrayList();
+        queries.add(query);
+      
+        return(queries);
+    }
+  
+    /**
+     * Checks that user input is valid.
+     * @see com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser#isInputValid()
+     */
+    public boolean isInputValid() {
+        if (!super.isInputValid()) return(false);
+//      if (panel.getSaveMethod().equals(PostGISDataSource.SAVE_METHOD_UPDATE) 
+//       && panel.getUniqueColumn().equals(""))
+      
+        if (panel.getUniqueColumn().equals("") && 
+            panel.getSaveMethod().equals(PostGISDataSource.SAVE_METHOD_UPDATE)) { // U.D. 
+                JOptionPane.showMessageDialog(panel, 
+                    "Unique Column does not exist!",
+                    "Error!", JOptionPane.ERROR_MESSAGE );                  
+            return(false);
+        }
+        return(true);
+    }
+  
+    /**
+     * Reads all the connection + query properties from the ui.
+     */
+    protected HashMap getProperties() {
+        if (properties == null) properties = new HashMap();
+        properties.put(PostGISDataSource.SERVER_KEY, panel.getServer());
+        properties.put(PostGISDataSource.PORT_KEY, panel.getPort());
+        properties.put(PostGISDataSource.DATABASE_KEY, panel.getDatabase());
+        properties.put(PostGISDataSource.TABLE_KEY, panel.getTable());
+        properties.put(PostGISDataSource.WHERE_KEY, panel.getWhere());
+        properties.put(PostGISDataSource.USERNAME_KEY, panel.getUsername());
+        properties.put(PostGISDataSource.PASSWORD_KEY, panel.getPassword());
+        properties.put(PostGISDataSource.SAVE_METHOD_KEY, panel.getSaveMethod());
+        properties.put(PostGISDataSource.UNIQUE_COLUMN_KEY, panel.getUniqueColumn());
+        return(properties);
+    }
 }

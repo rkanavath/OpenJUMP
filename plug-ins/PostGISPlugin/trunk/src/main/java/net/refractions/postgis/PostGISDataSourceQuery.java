@@ -26,32 +26,33 @@ import java.util.HashMap;
  * This class represents a query against a PostGIS data source. 
  */
 public class PostGISDataSourceQuery extends DataSourceQuery {
-  private HashMap properties = null;
+
+    private HashMap properties = null;
   
-  /**
-   * Creates a new query.
-   * @param dataSource The data source go be query against.
-   * @param query The "sql" of the query.
-   * @param name Name of the query.
-   */
-  public PostGISDataSourceQuery(DataSource dataSource, String query, String name) {
-    super(dataSource, query, name);
-  }
+    /**
+     * Creates a new query.
+     * @param dataSource The data source go be query against.
+     * @param query The "sql" of the query.
+     * @param name Name of the query.
+     */
+    public PostGISDataSourceQuery(DataSource dataSource, String query, String name) {
+        super(dataSource, query, name);
+    }
   
-  /**
-   * Returns the DataSource for the query.
-   */
-  public DataSource getDataSource() 
-  {
-    DataSource ds = super.getDataSource();
-    ds.setProperties(properties);
-    return(ds);
-  }
+    /**
+     * Returns the DataSource for the query.
+     */
+    public DataSource getDataSource() {
+        DataSource ds = super.getDataSource();
+        ds.setProperties(properties);
+        return(ds);
+    }
   
-  /**
-   * Property map for the query object. For defined keys see: {@link PostGISDataSource}
-   */
-  public void setProperties(HashMap properties) {
-    this.properties = (HashMap)properties.clone();  
-  }
+    /**
+     * Property map for the query object.
+     * For defined keys see: {@link PostGISDataSource}
+     */
+    public void setProperties(HashMap properties) {
+        this.properties = (HashMap)properties.clone();  
+    }
 }  

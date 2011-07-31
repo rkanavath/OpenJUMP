@@ -26,32 +26,33 @@ import com.vividsolutions.jump.io.datasource.DataSource;
  */
 // Last update U.D. uwe dalluege, HCU Hamburg, 2006.07.28
 public class PostGISDataSource extends DataSource {
-  // DriverProperties and DriverPanelCache keys
-  public final static String SERVER_KEY = "SERVER";
-  public final static String PORT_KEY = "PORT";
-  public final static String DATABASE_KEY = "DATABASE";
-  public final static String TABLE_KEY = "TABLE";
-  public final static String WHERE_KEY = "WHERE";
-  public final static String USERNAME_KEY = "USERNAME";
-  public final static String PASSWORD_KEY = "PASSWORD";
-  public final static String SAVE_METHOD_KEY = "SAVE_METHOD";
-  public final static String UNIQUE_COLUMN_KEY = "UNIQUE_COLUMN";
   
-  public final static String SAVE_METHOD_INSERT = "INSERT";
-  public final static String SAVE_METHOD_UPDATE = "UPDATE";
+    // DriverProperties and DriverPanelCache keys
+    public final static String SERVER_KEY = "SERVER";
+    public final static String PORT_KEY = "PORT";
+    public final static String DATABASE_KEY = "DATABASE";
+    public final static String TABLE_KEY = "TABLE";
+    public final static String WHERE_KEY = "WHERE";
+    public final static String USERNAME_KEY = "USERNAME";
+    public final static String PASSWORD_KEY = "PASSWORD";
+    public final static String SAVE_METHOD_KEY = "SAVE_METHOD";
+    public final static String UNIQUE_COLUMN_KEY = "UNIQUE_COLUMN";
+    
+    public final static String SAVE_METHOD_INSERT = "INSERT";
+    public final static String SAVE_METHOD_UPDATE = "UPDATE";
+    
+    // UD, 2006.07.28
+    public final static String SAVE_METHOD_DELETE = "DELETE";
+    public final static String SAVE_METHOD_OVERWRITE = "OVERWRITE";
+    
+    PostGISConnection conn = null;
   
-// UD, 2006.07.28
-  public final static String SAVE_METHOD_DELETE = "DELETE";
-  public final static String SAVE_METHOD_OVERWRITE = "OVERWRITE";
-  
-  PostGISConnection conn = null;
-  
-  /**
-   * Configures and returns a data source connection.
-   */
-  public Connection getConnection() {
-    if (conn == null) conn = new PostGISConnection();
-    conn.setProperties(getProperties());
-    return(conn);
-  }
+    /**
+     * Configures and returns a data source connection.
+     */
+    public Connection getConnection() {
+        if (conn == null) conn = new PostGISConnection();
+        conn.setProperties(getProperties());
+        return(conn);
+    }
 }

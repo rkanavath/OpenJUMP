@@ -18,49 +18,46 @@
  */ 
 package net.refractions.postgis;
 
-import org.openjump.core.ui.plugin.datastore.AddDataStoreLayerWizard;
-import org.openjump.core.ui.plugin.file.OpenWizardPlugIn;
-
 import com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooserManager;
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-
+import org.openjump.core.ui.plugin.datastore.AddDataStoreLayerWizard;
+import org.openjump.core.ui.plugin.file.OpenWizardPlugIn;
 
 /**
  * This plugin is a driver for a data source backed by an PostGIS database.
  */
 public class PostGISPlugIn implements PlugIn {
-  //debugging flag
-  public static boolean DEBUG = true;
-  public static PlugInContext plgInContext;
   
-  /**
-   * Initializes the plugin by creating the data source and data source 
-   * query choosers.
-   * @see PlugIn#initialize(com.vividsolutions.jump.workbench.plugin.PlugInContext)
-   */
-  public void initialize(PlugInContext context) {
-    PostGISDataSource dataSource = new PostGISDataSource();
-    //PostGISLoadDataSourceQueryChooser loadChooser = new PostGISLoadDataSourceQueryChooser(dataSource);
-    PostGISSaveDataSourceQueryChooser saveChooser = new PostGISSaveDataSourceQueryChooser(dataSource);
-    
-    DataSourceQueryChooserManager.get(
-      context.getWorkbenchContext().getWorkbench().getBlackboard()
-    )/*.addLoadDataSourceQueryChooser(loadChooser)*/
-    .addSaveDataSourceQueryChooser(saveChooser);
-
-    PostGISOpenWizard postGISOpenWizard = new PostGISOpenWizard(context.getWorkbenchContext());
-    OpenWizardPlugIn.addWizard(context.getWorkbenchContext(), postGISOpenWizard);
-
-  }
-
-  /**
-   * This function does nothing, all the setup is completed in initialize().
-   */
-  public boolean execute(PlugInContext context) { return(false); }
+    public static boolean DEBUG = true;
+    public static PlugInContext plgInContext;
   
-  /**
-   * @see PlugIn#getName()
-   */
-  public String getName() { return("PostGIS Driver" ); }
+    /**
+     * Initializes the plugin by creating the data source and data source 
+     * query choosers.
+     * @see PlugIn#initialize(com.vividsolutions.jump.workbench.plugin.PlugInContext)
+     */
+    public void initialize(PlugInContext context) {
+        PostGISDataSource dataSource = new PostGISDataSource();
+        //PostGISLoadDataSourceQueryChooser loadChooser = new PostGISLoadDataSourceQueryChooser(dataSource);
+        PostGISSaveDataSourceQueryChooser saveChooser = new PostGISSaveDataSourceQueryChooser(dataSource);
+        
+        DataSourceQueryChooserManager.get(
+          context.getWorkbenchContext().getWorkbench().getBlackboard()
+        )/*.addLoadDataSourceQueryChooser(loadChooser)*/
+        .addSaveDataSourceQueryChooser(saveChooser);
+        
+        PostGISOpenWizard postGISOpenWizard = new PostGISOpenWizard(context.getWorkbenchContext());
+        OpenWizardPlugIn.addWizard(context.getWorkbenchContext(), postGISOpenWizard);
+    }
+
+    /**
+     * This function does nothing, all the setup is completed in initialize().
+     */
+    public boolean execute(PlugInContext context) { return(false); }
+  
+    /**
+     * @see PlugIn#getName()
+     */
+    public String getName() { return("PostGIS Driver" ); }
 }
