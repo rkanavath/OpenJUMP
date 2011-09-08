@@ -30,16 +30,15 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
  * @author Micha&euml;l Michaud (integration of Uwe and Eric versions for 1.4.2)
  */
 public class PostGISConfiguration extends Extension {
-  public void configure(PlugInContext context) {
-    new PostGISPlugIn().initialize(context);    
-  }
+    public void configure(PlugInContext context) {
+        new PostGISPlugIn().initialize(context);    
+    }
   
-  public String getName() {
-    return("PostGIS Driver (Refractions Research/HCU Hamburg, RZCN/E. Lemesre V1.4.2)");
-  }
+    public String getName() {
+        return("PostGIS Driver (Refractions Research/HCU Hamburg, RZCN/E. Lemesre)");
+    }
   
-  public String getVersion() {
-    // UD, uwe.dalluege@hcu-hamburg.de
-    return("V1.4.2");
-  }
+    public String getVersion() {
+        return("1.4.2 (2011-09-10)");
+    }
 }

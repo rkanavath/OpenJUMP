@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
-//import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.workbench.ui.InputChangedListener;
 import com.vividsolutions.jump.workbench.ui.wizard.WizardPanel;
 
@@ -29,7 +28,8 @@ public class AddPostGISLayerWizardPanel extends JPanel implements WizardPanel {
 	private static final String TITLE = I18N.getString(KEY);
 	private static final String INSTRUCTIONS = I18N.getString(KEY + ".instructions");
 
-	private PostGISCommonDriverPanel postGISPanel;
+	//private PostGISCommonDriverPanel postGISPanel;
+	private PostGISLoadDriverPanel postGISPanel;
 	private HashMap properties;
 
 	/**
@@ -37,7 +37,8 @@ public class AddPostGISLayerWizardPanel extends JPanel implements WizardPanel {
 	 */
 	public AddPostGISLayerWizardPanel() {
 		super(new BorderLayout());
-		postGISPanel = new PostGISCommonDriverPanel();
+		//postGISPanel = new PostGISCommonDriverPanel();
+		postGISPanel = new PostGISLoadDriverPanel();
 		add(postGISPanel,BorderLayout.CENTER);
 	}
 

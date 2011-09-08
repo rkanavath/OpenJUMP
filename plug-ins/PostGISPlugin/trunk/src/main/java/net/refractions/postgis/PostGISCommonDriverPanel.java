@@ -54,26 +54,27 @@ public class PostGISCommonDriverPanel extends JPanel {
     private static final String TABLE = I18N.getString(KEY + ".table");
     private static final String USERNAME = I18N.getString(KEY + ".username");
     private static final String PASSWORD = I18N.getString(KEY + ".password");
-    private static final String WHERE = I18N.getString(KEY + ".where");
+    //private static final String WHERE = I18N.getString(KEY + ".where");
   
   
-    //These allow differnt objects to retain the same field values
-    private static PlainDocument serverDoc = null;
+    //These allow different objects to retain the same field values
+    protected static PlainDocument serverDoc = null;
     private static PlainDocument portDoc = null;
     private static PlainDocument databaseDoc = null;
     private static PlainDocument tableDoc = null;
-    private static PlainDocument whereDoc = null;
+    //private static PlainDocument whereDoc = null;
     private static PlainDocument usernameDoc = null;
     private static PlainDocument passwordDoc = null;
   
     // U.D. for error component
     public static JPanel driverPanel;
+    protected GridBagLayout gbLayout = new GridBagLayout();
   
     JTextField serverField;
     JTextField portField;
     JTextField databaseField;
     JTextField tableField;
-    JTextArea whereField;
+    //JTextArea whereField;
     JTextField usernameField;
     JPasswordField passwordField;
     
@@ -84,13 +85,13 @@ public class PostGISCommonDriverPanel extends JPanel {
             portDoc = new PlainDocument();
             databaseDoc = new PlainDocument();
             tableDoc = new PlainDocument();
-            whereDoc = new PlainDocument();
+            //whereDoc = new PlainDocument();
             usernameDoc = new PlainDocument();
             passwordDoc = new PlainDocument();
         }
     
         JLabel theLabel;
-        GridBagLayout gbLayout = new GridBagLayout();
+        //GridBagLayout gbLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         this.setLayout( gbLayout );
         Insets labelInsets = new Insets( 2, 6, 2, 2 );
@@ -185,21 +186,21 @@ public class PostGISCommonDriverPanel extends JPanel {
         this.add( passwordField );
 
         // forth row of fields
-        c.gridy = 3;
-        c.gridx = 0;
-        c.insets = labelInsets;
-        c.anchor = GridBagConstraints.EAST;
-        theLabel = new JLabel( WHERE + ":" );
-        gbLayout.setConstraints( theLabel, c );
-        this.add( theLabel );
-        c.gridx = 1;
-        c.gridwidth = 3;
-        c.insets = fieldsInsets;
-        c.anchor = GridBagConstraints.WEST;
-        whereField = new JTextArea( whereDoc,"", 4, 40 );
-        whereField.setText("");
-        gbLayout.setConstraints( whereField, c );
-        this.add( whereField );
+        //c.gridy = 3;
+        //c.gridx = 0;
+        //c.insets = labelInsets;
+        //c.anchor = GridBagConstraints.EAST;
+        //theLabel = new JLabel( WHERE + ":" );
+        //gbLayout.setConstraints( theLabel, c );
+        //this.add( theLabel );
+        //c.gridx = 1;
+        //c.gridwidth = 3;
+        //c.insets = fieldsInsets;
+        //c.anchor = GridBagConstraints.WEST;
+        //whereField = new JTextArea( whereDoc,"", 4, 40 );
+        //whereField.setText("");
+        //gbLayout.setConstraints( whereField, c );
+        //this.add( whereField );
 
         this.driverPanel = this;
         
@@ -223,9 +224,9 @@ public class PostGISCommonDriverPanel extends JPanel {
         if( cache.get( PostGISDataSource.TABLE_KEY ) != null ) {
             tableField.setText( (String)cache.get( PostGISDataSource.TABLE_KEY ) );
         }
-        if( cache.get( PostGISDataSource.WHERE_KEY ) != null ) {
-            whereField.setText( (String)cache.get( PostGISDataSource.WHERE_KEY ) );
-        }
+        //if( cache.get( PostGISDataSource.WHERE_KEY ) != null ) {
+        //    whereField.setText( (String)cache.get( PostGISDataSource.WHERE_KEY ) );
+        //}
         if( cache.get( PostGISDataSource.USERNAME_KEY ) != null ) {
             usernameField.setText( (String)cache.get( PostGISDataSource.USERNAME_KEY ) );
         }
@@ -239,7 +240,7 @@ public class PostGISCommonDriverPanel extends JPanel {
         cache.put( PostGISDataSource.PORT_KEY, portField.getText() );
         cache.put( PostGISDataSource.DATABASE_KEY, databaseField.getText() );
         cache.put( PostGISDataSource.TABLE_KEY, tableField.getText() );
-        cache.put( PostGISDataSource.WHERE_KEY, whereField.getText() );
+        //cache.put( PostGISDataSource.WHERE_KEY, whereField.getText() );
         cache.put( PostGISDataSource.USERNAME_KEY, usernameField.getText() );
         cache.put( PostGISDataSource.PASSWORD_KEY, passwordField.getText() );
     }
@@ -262,9 +263,9 @@ public class PostGISCommonDriverPanel extends JPanel {
         return tableField.getText().toLowerCase() ;
     }
 
-    public String getWhere() {
-        return whereField.getText();
-    }
+    //public String getWhere() {
+    //    return whereField.getText();
+    //}
 
     public String getUsername() {
         return usernameField.getText();

@@ -32,17 +32,18 @@ import com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser;
  * A DataSourceQueryChooser for a PostGIS data source.
  */
 public abstract class PostGISDataSourceQueryChooser implements DataSourceQueryChooser {
-    private static PostGISCommonDriverPanel panel;
+    //private static PostGISCommonDriverPanel panel;
+    private static PostGISLoadDriverPanel panel;
     private PostGISDataSource dataSource;
     private HashMap properties;
   
-    JTextField serverField;
-    JTextField portField;
-    JTextField databaseField;
-    JTextField tableField;
-    JTextArea whereField;
-    JTextField usernameField;
-    JPasswordField passwordField;
+    //JTextField serverField;
+    //JTextField portField;
+    //JTextField databaseField;
+    //JTextField tableField;
+    //JTextArea whereField;
+    //JTextField usernameField;
+    //JPasswordField passwordField;
   
     /**
      * Creates a new query chooser.
@@ -50,7 +51,8 @@ public abstract class PostGISDataSourceQueryChooser implements DataSourceQueryCh
      */
     public PostGISDataSourceQueryChooser(PostGISDataSource dataSource) {
         this.dataSource = dataSource;    
-        if (panel == null) panel = new PostGISCommonDriverPanel();
+        //if (panel == null) panel = new PostGISCommonDriverPanel();
+        if (panel == null) panel = new PostGISLoadDriverPanel();
     }
   
     /**

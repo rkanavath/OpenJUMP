@@ -41,7 +41,7 @@ import com.vividsolutions.jump.workbench.ui.*;
 //JBuilder displays this component as a "Red Bean". There's a trick to
 //displaying it -- see jcstest.AbstractDriverPanelProxy and
 //http://www.visi.com/~gyles19/fom-serve/cache/97.html. [Jon Aquino]
-// Last change UD, uwe dalluege, HCU Hamburg, 2006.03.24
+//Last change UD, uwe dalluege, HCU Hamburg, 2006.03.24
 public class PostGISSaveDriverPanel extends AbstractDriverPanel implements ActionListener {
 	
     public static final String KEY = PostGISSaveDriverPanel.class.getName();
@@ -156,12 +156,13 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 		
         this.add( topPanel, BorderLayout.NORTH );
         commonPanel = new PostGISCommonDriverPanel();
+        //commonPanel.whereField.setVisible(false);
 		this.add( commonPanel, BorderLayout.CENTER );
 
 		//cancel to be consistent with following comment 
 		//okCancelPanel = new OKCancelPanel();
         //the following line is commented out because JUMP has already added 
-        // an okay cancel control for us
+        //an okay cancel control for us
 		//this.add( okCancelPanel, BorderLayout.SOUTH );
         setSaveMethod( PostGISDataSource.SAVE_METHOD_OVERWRITE );
 		
@@ -249,9 +250,9 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 		return commonPanel.getPassword();
 	}
 
-	public String getWhere() {
-		return commonPanel.getWhere();
-	}
+	//public String getWhere() {
+	//	return commonPanel.getWhere();
+	//}
 
 	public void actionPerformed( ActionEvent ae ) {
 		String action = ae.getActionCommand();
@@ -259,7 +260,8 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 			 theLabel.setEnabled( false );
 			 uniqueField.setEnabled( false );
 			 help.setText( INSERT_HELP_STRING );
-		} else if( action.equals( "update" ) ) {
+		}
+		else if( action.equals( "update" ) ) {
 			theLabel.setEnabled( true );
 			uniqueField.setEnabled( true );
 			help.setText( UPDATE_HELP_STRING );
