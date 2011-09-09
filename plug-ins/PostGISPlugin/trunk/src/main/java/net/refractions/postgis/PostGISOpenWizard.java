@@ -33,7 +33,6 @@ import com.vividsolutions.jump.workbench.ui.wizard.WizardDialog;
 
 /**
  * @author Eric Lemesre
- *
  */
 public class PostGISOpenWizard extends AbstractWizardGroup {
     
@@ -44,6 +43,7 @@ public class PostGISOpenWizard extends AbstractWizardGroup {
     private WorkbenchContext workbenchContext;
 
     private ChooseProjectPanel chooseProjectPanel;
+    
     /**
      * 
      */
@@ -79,24 +79,21 @@ public class PostGISOpenWizard extends AbstractWizardGroup {
         chooseProjectPanel.activateSelectedProject();
 
         if (dialog.wasFinishPressed()) {
-            //try {
-                final Layer layer = createLayer(postGISWizardPanel, monitor);
-    
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        Collection<Category> selectedCategories = workbenchContext.getLayerNamePanel()
-                            .getSelectedCategories();
-                        LayerManager layerManager = workbenchContext.getLayerManager();
-                        String categoryName = StandardCategoryNames.WORKING;
-                        if (!selectedCategories.isEmpty()) {
-                            categoryName = selectedCategories.iterator().next().getName();
-                        }
-                        layerManager.addLayer(categoryName, layer);
+            
+            final Layer layer = createLayer(postGISWizardPanel, monitor);
+            
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    Collection<Category> selectedCategories = workbenchContext.getLayerNamePanel()
+                        .getSelectedCategories();
+                    LayerManager layerManager = workbenchContext.getLayerManager();
+                    String categoryName = StandardCategoryNames.WORKING;
+                    if (!selectedCategories.isEmpty()) {
+                        categoryName = selectedCategories.iterator().next().getName();
                     }
-                });
-            //} catch (Exception e) {
-            //  monitor.report(e);
-            //}
+                    layerManager.addLayer(categoryName, layer);
+                }
+            });
         }
     }
 
@@ -105,8 +102,7 @@ public class PostGISOpenWizard extends AbstractWizardGroup {
         Map properties = postGISWizardPanel.getProperties();
 
         sql.append(
-                "SELECT * " + 
-                "FROM " + (String)properties.get(PostGISDataSource.TABLE_KEY)  
+            "SELECT * FROM " + (String)properties.get(PostGISDataSource.TABLE_KEY)
         );
 
         if (!properties.get(PostGISDataSource.WHERE_KEY).equals("")){

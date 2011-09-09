@@ -24,9 +24,9 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
 /**
  * This class installs the PostGIS plugin.
  * @version 1.4.2 (2011-07-16)
- * @author Refractions Research (initial version)
+ * @author Refractions Research (initial version : chodgson, pramsey, bowens)
  * @author Uwe Dalluege (1.3 version)
- * @author Eric Lemestre (internationalization and openwizard integration)
+ * @author Eric Lemesre (internationalization and openwizard integration)
  * @author Micha&euml;l Michaud (integration of Uwe and Eric versions for 1.4.2)
  */
 public class PostGISConfiguration extends Extension {

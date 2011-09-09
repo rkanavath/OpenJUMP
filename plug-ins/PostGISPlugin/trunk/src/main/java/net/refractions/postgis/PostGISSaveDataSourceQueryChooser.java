@@ -1,6 +1,4 @@
 /*
- * $Id: PostGISSaveDataSourceQueryChooser.java,v 1.1.1.1 2004/01/06 00:13:16 pramsey Exp $
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,7 +14,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-// UD, uwe.dalluege@rzcn.haw-hamburg.de changed 15.07.2005
 package net.refractions.postgis;
 
 import java.awt.Component;
@@ -32,14 +29,16 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
 /**
  * A DataSourceQueryChooser for writing to a PostGIS data source.
  */
+// History
+// 2004.01.06 Paul Ramsey
+// 2005.07.15 Uwe Dalluege uwe.dalluege@rzcn.haw-hamburg.de
 public class PostGISSaveDataSourceQueryChooser extends PostGISDataSourceQueryChooser {
+    
     private PostGISSaveDriverPanel panel;
     private HashMap properties;
-    
     
     ButtonGroup methodButtons;
     JRadioButton insertButton;
@@ -96,11 +95,8 @@ public class PostGISSaveDataSourceQueryChooser extends PostGISDataSourceQueryCho
      */
     public boolean isInputValid() {
         if (!super.isInputValid()) return(false);
-//      if (panel.getSaveMethod().equals(PostGISDataSource.SAVE_METHOD_UPDATE) 
-//       && panel.getUniqueColumn().equals(""))
-      
         if (panel.getUniqueColumn().equals("") && 
-            panel.getSaveMethod().equals(PostGISDataSource.SAVE_METHOD_UPDATE)) { // U.D. 
+            panel.getSaveMethod().equals(PostGISDataSource.SAVE_METHOD_UPDATE)) { 
                 JOptionPane.showMessageDialog(panel, 
                     "Unique Column does not exist!",
                     "Error!", JOptionPane.ERROR_MESSAGE );                  
@@ -118,7 +114,6 @@ public class PostGISSaveDataSourceQueryChooser extends PostGISDataSourceQueryCho
         properties.put(PostGISDataSource.PORT_KEY, panel.getPort());
         properties.put(PostGISDataSource.DATABASE_KEY, panel.getDatabase());
         properties.put(PostGISDataSource.TABLE_KEY, panel.getTable());
-        //properties.put(PostGISDataSource.WHERE_KEY, panel.getWhere());
         properties.put(PostGISDataSource.USERNAME_KEY, panel.getUsername());
         properties.put(PostGISDataSource.PASSWORD_KEY, panel.getPassword());
         properties.put(PostGISDataSource.SAVE_METHOD_KEY, panel.getSaveMethod());

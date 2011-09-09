@@ -17,8 +17,7 @@ import java.util.ResourceBundle;
 /**
  * Class used to offer i18n support.
  */
-public class I18N
-{
+public class I18N {
 	private static final ResourceBundle I18N = 
 		ResourceBundle.getBundle("net.refractions.postgis.language.jump");
 
@@ -111,4 +110,3 @@ public class I18N
 		return null;
 	}
 }
-// end of file

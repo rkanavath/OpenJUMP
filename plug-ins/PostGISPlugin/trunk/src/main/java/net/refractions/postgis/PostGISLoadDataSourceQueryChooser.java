@@ -1,6 +1,4 @@
 /*
- * $Id: PostGISLoadDataSourceQueryChooser.java,v 1.1.1.1 2004/01/06 00:13:16 pramsey Exp $
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -24,6 +22,8 @@ import java.util.*;
 /**
  * A DataSourceQueryChooser for writing to a PostGIS data source.
  */
+// History
+// 2004.01.06 Paul Ramsey
 public class PostGISLoadDataSourceQueryChooser
        extends PostGISDataSourceQueryChooser implements DataSourceQueryChooser {
   

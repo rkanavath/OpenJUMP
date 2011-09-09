@@ -1,6 +1,4 @@
 /*
- * $Id: PostGISDataSource.java,v 1.1.1.1 2004/01/06 00:13:16 pramsey Exp $
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -24,7 +22,9 @@ import com.vividsolutions.jump.io.datasource.DataSource;
 /**
  * This class implements a data source for a PostGIS database.
  */
-// Last update U.D. uwe dalluege, HCU Hamburg, 2006.07.28
+// History
+// 2004.01.06 Paul Ramsey
+// 2006.07.28 Uwe Dalluege, HCU Hamburg, 
 public class PostGISDataSource extends DataSource {
   
     // DriverProperties and DriverPanelCache keys

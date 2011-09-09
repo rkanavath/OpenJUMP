@@ -1,6 +1,4 @@
 /*
- * $Id: PostGISCommonDriverPanel.java,v 1.1.1.1 2004/01/06 00:13:15 pramsey Exp $
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -19,28 +17,21 @@
 package net.refractions.postgis;
 
 import java.awt.*;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.text.PlainDocument;
 import com.vividsolutions.jump.workbench.ui.*;
 
-
 /**
- *
+ * Panel dedicated to a PostGIS table query for loading.
+ * Extends PostGISCommonDriverPanel to be able to add a "where" clause
  * @author mmichaud
  */
-//JBuilder displays this component as a "Red Bean". There's a trick to
-//displaying it -- see jcstest.AbstractDriverPanelProxy and
-//http://www.visi.com/~gyles19/fom-serve/cache/97.html. [Jon Aquino]
 public class PostGISLoadDriverPanel extends PostGISCommonDriverPanel {
     
-    //public static final String KEY = PostGISLoadDriverPanel.class.getName();
-  
     private static final String WHERE = I18N.getString(KEY + ".where");
     
-    //These allow different objects to retain the same field values
     private static PlainDocument whereDoc = null;
   
     JTextArea whereField;
@@ -51,7 +42,6 @@ public class PostGISLoadDriverPanel extends PostGISCommonDriverPanel {
             whereDoc = new PlainDocument();
         }
         JLabel theLabel;
-        //GridBagLayout gbLayout = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         Insets labelInsets = new Insets( 2, 6, 2, 2 );
         Insets fieldsInsets = new Insets( 2, 2, 2, 6 );
@@ -72,7 +62,6 @@ public class PostGISLoadDriverPanel extends PostGISCommonDriverPanel {
         whereField.setText("");
         gbLayout.setConstraints( whereField, c );
         this.add( whereField );
-        //this.driverPanel = this;
     }
 
     public void setCache(DriverPanelCache cache) {
@@ -84,7 +73,7 @@ public class PostGISLoadDriverPanel extends PostGISCommonDriverPanel {
     
     public void putCache( DriverPanelCache cache ) {
         super.putCache(cache);
-        cache.put( PostGISDataSource.WHERE_KEY, whereField.getText() );
+        cache.put(PostGISDataSource.WHERE_KEY, whereField.getText());
     }
 
     public String getWhere() {

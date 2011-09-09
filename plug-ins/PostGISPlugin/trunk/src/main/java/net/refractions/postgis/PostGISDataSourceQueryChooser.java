@@ -1,6 +1,4 @@
 /*
- * $Id: PostGISDataSourceQueryChooser.java,v 1.1.1.1 2004/01/06 00:13:16 pramsey Exp $
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -31,19 +29,12 @@ import com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooser;
 /**
  * A DataSourceQueryChooser for a PostGIS data source.
  */
+// History
+// 2004.01.06 Paul Ramsey
 public abstract class PostGISDataSourceQueryChooser implements DataSourceQueryChooser {
-    //private static PostGISCommonDriverPanel panel;
     private static PostGISLoadDriverPanel panel;
     private PostGISDataSource dataSource;
     private HashMap properties;
-  
-    //JTextField serverField;
-    //JTextField portField;
-    //JTextField databaseField;
-    //JTextField tableField;
-    //JTextArea whereField;
-    //JTextField usernameField;
-    //JPasswordField passwordField;
   
     /**
      * Creates a new query chooser.
@@ -51,7 +42,6 @@ public abstract class PostGISDataSourceQueryChooser implements DataSourceQueryCh
      */
     public PostGISDataSourceQueryChooser(PostGISDataSource dataSource) {
         this.dataSource = dataSource;    
-        //if (panel == null) panel = new PostGISCommonDriverPanel();
         if (panel == null) panel = new PostGISLoadDriverPanel();
     }
   
@@ -72,13 +62,13 @@ public abstract class PostGISDataSourceQueryChooser implements DataSourceQueryCh
      * @see DataSourceQueryChooser#isInputValid()
      */
     public boolean isInputValid() {
-      if (panel.getServer().equals("")) return(false);
-      if (panel.getPort().matches("")) return(false);
-      if (panel.getDatabase().equals("")) return(false);
-      if (panel.getTable().equals("")) return(false);
-      if (panel.getUsername().equals("")) return(false);
-      if (panel.getPassword().equals("")) return(false);
-      return(true);
+        if (panel.getServer().equals("")) return(false);
+        if (panel.getPort().matches("")) return(false);
+        if (panel.getDatabase().equals("")) return(false);
+        if (panel.getTable().equals("")) return(false);
+        if (panel.getUsername().equals("")) return(false);
+        if (panel.getPassword().equals("")) return(false);
+        return(true);
     }
   
     protected HashMap getProperties() {

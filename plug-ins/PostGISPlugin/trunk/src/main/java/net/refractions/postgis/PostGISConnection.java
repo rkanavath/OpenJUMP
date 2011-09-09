@@ -1,6 +1,4 @@
 /*
- * $Id: PostGISConnection.java,v 1.4 2004/07/12 17:51:13 bowens Exp $
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,7 +14,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-// Changed: Uwe Dalluege (U.D.), 15.07.2005, uwe.dalluege@hcu-hamburg.de
+// Changed:
+// 2004.07.12, brent owens
+// 2005.07.15, U.D. (Uwe Dalluege, uwe.dalluege@hcu-hamburg.de)
 // 2006.06.21, U.D.
 // 2006.11.06, U.D.
 // 2009.09.25, U.D.
@@ -217,20 +217,6 @@ public class PostGISConnection implements Connection {
                         else if (ob instanceof Long) {
                             f.setAttribute(attr_idx, new Integer(((Long)ob).intValue()));
                         }
-                        
-                        //String iType = ob.getClass().getName();
-                        //if (iType.indexOf( "Integer" ) >= 0) {
-                        //    Integer iObj = (Integer) ob;
-                        //    f.setAttribute(attr_idx, new Integer(iObj.intValue()));
-                        //}
-                        //else {
-                        //    Long iObj = ( Long ) ob;
-                        //    f.setAttribute(attr_idx, new Long(iObj.intValue()));
-                        //}
-                        
-                        // System.out.println ( " PGCon 194 lesen? " + rs.getObject( schema.getAttributeName( attr_idx ) ) );
-                        // getInt
-                        // f.setAttribute( attr_idx, new Integer( rs.getInt( schema.getAttributeName( attr_idx ) ) ) );
                     }
                     else if(attr_type.equals(AttributeType.DOUBLE)) {
                         // u.d. to get the null values
@@ -248,32 +234,6 @@ public class PostGISConnection implements Connection {
                         else if (ob instanceof BigDecimal) {
                             f.setAttribute(attr_idx, new Double(((BigDecimal)ob).doubleValue()));
                         } 
-                        //{ 
-                        //    String dType = ob.getClass ( ).getName ( );
-                        //    if ( dType.indexOf ( "Double" ) >= 0 )
-                        //    {
-                        //        Double dObj = ( Double ) ob;
-                        //        f.setAttribute( attr_idx, new Double( dObj.doubleValue( ) ) );
-                        //    }
-                        //    //   UD, 06.11.06, also need Float Datatype
-                        //    else if ( dType.indexOf ( "Float" ) >= 0 )
-                        //    {
-                        //        Float dObj = ( Float ) ob;
-                        //        f.setAttribute( attr_idx, new Double( dObj.doubleValue( ) ) );
-                        //    }
-                        //    else
-                        //    { // BigDecimal
-                        //        
-                        //        BigDecimal dObj = ( BigDecimal ) ob;
-                        //        //System.out.println ( "PGC 240 Long: " + dObj.doubleValue( ) );
-                        //        // if dObj value is outside of Double.MAX_VALUE and Double.MIN_VALUE
-                        //        // the value is +/- infinity [lemesre]
-                        //        f.setAttribute( attr_idx, new Double ( dObj.doubleValue( ) ) );
-                        //        // BigDecimal is not Handeling by OpenJUMP
-                        //        //f.setAttribute( attr_idx, new BigDecimal ( dObj.doubleValue( ) ) );
-                        //    }
-                        //} 
-                        //            f.setAttribute( attr_idx, new Double( rs.getDouble( schema.getAttributeName( attr_idx ) ) ) );
                     } 
                     else if(attr_type.equals(AttributeType.STRING)) {
                         f.setAttribute(attr_idx, rs.getString(schema.getAttributeName(attr_idx)));
@@ -773,10 +733,6 @@ public class PostGISConnection implements Connection {
         sqlBuf.deleteCharAt(sqlBuf.lastIndexOf(","));
         sqlBuf.append(" WHERE " + uniqueCol + " = " + uniqueVal);
 
-//System.out.println ("Where clause = " + where);
-//      if (where != null && where != "") {
-//        sqlBuf.append(" AND " + where);
-//      }
         String sql = sqlBuf.toString();
 
         try {
@@ -786,7 +742,6 @@ public class PostGISConnection implements Connection {
                 "Update statement failed: " + sqle.toString() + "\n" + sql);
         }
     }
-
 
     /**
      * Insert feature in table. If there is an uniqueVal this value is used
@@ -964,7 +919,7 @@ public class PostGISConnection implements Connection {
         }
     }
 
-    /*
+    /**
      * Reads the query + connection properties into global variables.
      */
     private void readProperties() {
@@ -979,7 +934,7 @@ public class PostGISConnection implements Connection {
         method = (String)properties.get( PostGISDataSource.SAVE_METHOD_KEY );
     }
   
-    /*
+    /**
      * Opens a connection to a PostgresSQL database.
      */
     private java.sql.Connection connect() {
@@ -1003,27 +958,24 @@ public class PostGISConnection implements Connection {
      */
     public void close() {}
 
-    /* (non-Javadoc)
+    /**
      * @see com.vividsolutions.jump.io.datasource.Connection#executeQuery(java.lang.String, java.util.Collection, com.vividsolutions.jump.task.TaskMonitor)
      */
     public FeatureCollection executeQuery(String query, Collection exceptions, TaskMonitor monitor) {
-        // TODO Auto-generated method stub (temporary implementation [brent owens])
         return executeQuery(query);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see com.vividsolutions.jump.io.datasource.Connection#executeQuery(java.lang.String, com.vividsolutions.jump.task.TaskMonitor)
      */
     public FeatureCollection executeQuery(String query, TaskMonitor monitor) throws Exception {
-        // TODO Auto-generated method stub (temporary implementation [brent owens])
         return executeQuery(query);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see com.vividsolutions.jump.io.datasource.Connection#executeUpdate(java.lang.String, com.vividsolutions.jump.feature.FeatureCollection, com.vividsolutions.jump.task.TaskMonitor)
      */
     public void executeUpdate(String query, FeatureCollection featureCollection, TaskMonitor monitor) throws Exception {
-        // TODO Auto-generated method stub (temporary implementation [brent owens])
         executeUpdate(query, featureCollection);
     }
 

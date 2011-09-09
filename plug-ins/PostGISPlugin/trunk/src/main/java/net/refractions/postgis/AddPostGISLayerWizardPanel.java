@@ -18,28 +18,27 @@ import com.vividsolutions.jump.workbench.ui.InputChangedListener;
 import com.vividsolutions.jump.workbench.ui.wizard.WizardPanel;
 
 /**
+ * A Wizard Panel for the new Open framework.
  * @author Eric Lemesre
- *
  */
 public class AddPostGISLayerWizardPanel extends JPanel implements WizardPanel {
+    
 	private static final String KEY = AddPostGISLayerWizardPanel.class.getName();
 
 	private static final String PKG_KEY = "net.refractions.postgis";
 	private static final String TITLE = I18N.getString(KEY);
 	private static final String INSTRUCTIONS = I18N.getString(KEY + ".instructions");
 
-	//private PostGISCommonDriverPanel postGISPanel;
 	private PostGISLoadDriverPanel postGISPanel;
 	private HashMap properties;
 
 	/**
-	 * 
+	 * Constructs a new Wizard Panel for Postgis table
 	 */
 	public AddPostGISLayerWizardPanel() {
 		super(new BorderLayout());
-		//postGISPanel = new PostGISCommonDriverPanel();
 		postGISPanel = new PostGISLoadDriverPanel();
-		add(postGISPanel,BorderLayout.CENTER);
+		add(postGISPanel, BorderLayout.CENTER);
 	}
 
 	/**
@@ -47,7 +46,6 @@ public class AddPostGISLayerWizardPanel extends JPanel implements WizardPanel {
 	 */
 	public AddPostGISLayerWizardPanel(LayoutManager layout) {
 		super(layout);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -55,65 +53,61 @@ public class AddPostGISLayerWizardPanel extends JPanel implements WizardPanel {
 	 */
 	public AddPostGISLayerWizardPanel(boolean isDoubleBuffered) {
 		super(isDoubleBuffered);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param layout
 	 * @param isDoubleBuffered
 	 */
-	public AddPostGISLayerWizardPanel(LayoutManager layout,
-			boolean isDoubleBuffered) {
+	public AddPostGISLayerWizardPanel(LayoutManager layout, boolean isDoubleBuffered) {
 		super(layout, isDoubleBuffered);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void add(InputChangedListener listener) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#enteredFromLeft(java.util.Map)
 	 */
 	public void enteredFromLeft(Map arg0) {
 		// TODO Populate field by connection information
-
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#exitingToRight()
 	 */
 	public void exitingToRight() throws Exception {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#getID()
 	 */
 	public String getID() {
 		return KEY;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#getInstructions()
 	 */
 	public String getInstructions() {
 		return INSTRUCTIONS;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#getNextID()
 	 */
 	public String getNextID() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#getTitle()
 	 */
 	public String getTitle() {
 		return TITLE;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#isInputValid()
 	 */
 	public boolean isInputValid() {
@@ -126,7 +120,7 @@ public class AddPostGISLayerWizardPanel extends JPanel implements WizardPanel {
 	    return(true);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.vividsolutions.jump.workbench.ui.wizard.WizardPanel#remove(com.vividsolutions.jump.workbench.ui.InputChangedListener)
 	 */
 	public void remove(InputChangedListener arg0) {
@@ -140,7 +134,7 @@ public class AddPostGISLayerWizardPanel extends JPanel implements WizardPanel {
 	}
 
 	public String getDatasetName() {
-		return (String) postGISPanel.getTable();
+		return (String)postGISPanel.getTable();
 	}
 	
 	protected HashMap getProperties() {

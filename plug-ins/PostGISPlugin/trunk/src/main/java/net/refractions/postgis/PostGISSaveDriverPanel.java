@@ -1,6 +1,4 @@
 /*
- * $Id: PostGISSaveDriverPanel.java,v 1.2 2004/07/12 16:19:43 bowens Exp $
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -38,10 +36,9 @@ import com.vividsolutions.jump.workbench.ui.*;
  * This class contains the ui for the save PostGIS plugin.
  * @author chodgson
  */
-//JBuilder displays this component as a "Red Bean". There's a trick to
-//displaying it -- see jcstest.AbstractDriverPanelProxy and
-//http://www.visi.com/~gyles19/fom-serve/cache/97.html. [Jon Aquino]
-//Last change UD, uwe dalluege, HCU Hamburg, 2006.03.24
+// History
+// 2004.07.12 bowens
+// 2006.03.24 UD, uwe dalluege, HCU Hamburg
 public class PostGISSaveDriverPanel extends AbstractDriverPanel implements ActionListener {
 	
     public static final String KEY = PostGISSaveDriverPanel.class.getName();
@@ -83,88 +80,82 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 		GridBagLayout gbLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		JPanel topPanel = new JPanel();
-		topPanel.setLayout( gbLayout );
-		Insets insets = new Insets( 2, 2, 2, 2 );
+		topPanel.setLayout(gbLayout);
+		Insets insets = new Insets(2, 2, 2, 2);
 		c.insets = insets;
 		
-		TitledBorder border = BorderFactory.createTitledBorder( BorderFactory.createEtchedBorder(), SELECT_SAVE_METHOD );
-		border.setTitleJustification( TitledBorder.LEFT );
-		topPanel.setBorder( border );
+		TitledBorder border = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), SELECT_SAVE_METHOD);
+		border.setTitleJustification(TitledBorder.LEFT);
+		topPanel.setBorder(border);
 		
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridx = 0;
 		c.gridy = 0;
-		deleteButton = new JRadioButton ( NEW_TABLE );
-		deleteButton.setActionCommand( "delete" );
-		deleteButton.addActionListener( this );
-		gbLayout.setConstraints( deleteButton, c );
-		topPanel.add( deleteButton );
+		deleteButton = new JRadioButton (NEW_TABLE);
+		deleteButton.setActionCommand("delete");
+		deleteButton.addActionListener(this);
+		gbLayout.setConstraints(deleteButton, c);
+		topPanel.add(deleteButton);
 		
 		c.gridx = 0;
 		c.gridy = 1;
-		overwriteButton = new JRadioButton ( OVERWRITE );
-		overwriteButton.setActionCommand( "overwrite" );
+		overwriteButton = new JRadioButton (OVERWRITE);
+		overwriteButton.setActionCommand("overwrite");
 		overwriteButton.setSelected(true);
-		overwriteButton.addActionListener( this );
-		gbLayout.setConstraints( overwriteButton, c );
-		topPanel.add( overwriteButton );
+		overwriteButton.addActionListener(this);
+		gbLayout.setConstraints(overwriteButton, c);
+		topPanel.add(overwriteButton);
 		
 		c.gridx = 0;
 		c.gridy = 2;
-		updateButton = new JRadioButton( INSERT );
-		updateButton.setActionCommand( "update" );
-		updateButton.addActionListener( this );
+		updateButton = new JRadioButton(INSERT);
+		updateButton.setActionCommand("update");
+		updateButton.addActionListener(this);
 		updateButton.setSelected(false);
-		gbLayout.setConstraints( updateButton, c );
-		topPanel.add( updateButton );
+		gbLayout.setConstraints(updateButton, c);
+		topPanel.add(updateButton);
 		
 		methodButtons = new ButtonGroup();
-		methodButtons.add( updateButton );		
-		methodButtons.add( deleteButton );
-		methodButtons.add( overwriteButton );
+		methodButtons.add(updateButton);		
+		methodButtons.add(deleteButton);
+		methodButtons.add(overwriteButton);
 		
 		c.gridx = 0;
 		c.gridy = 3;
 		c.anchor = GridBagConstraints.EAST;
-		theLabel = new JLabel( UNIQUE_COLUMN );
-		gbLayout.setConstraints( theLabel, c );
-		theLabel.setEnabled( false );
-		topPanel.add( theLabel );
+		theLabel = new JLabel(UNIQUE_COLUMN);
+		gbLayout.setConstraints(theLabel, c);
+		theLabel.setEnabled(false);
+		topPanel.add(theLabel);
 		
 		c.gridx = 1;
 		c.anchor = GridBagConstraints.WEST;
-		uniqueField = new JTextField( 15 );
-		gbLayout.setConstraints( uniqueField, c );
-		topPanel.add( uniqueField );
-		uniqueField.setEnabled( false );
+		uniqueField = new JTextField(15);
+		gbLayout.setConstraints(uniqueField, c);
+		topPanel.add(uniqueField);
+		uniqueField.setEnabled(false);
 		
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridheight = 2;
-		help = new JTextArea( 4, 40 );
-		help.setEditable( false );
-		help.setLineWrap( true );
-		help.setWrapStyleWord( true );
-		help.setBackground( topPanel.getBackground() );
-		help.setFont( new Font( "Sans-Serif", Font.PLAIN, 12 ) );
-		gbLayout.setConstraints( help, c );
-		topPanel.add( help );
+		help = new JTextArea(4, 40);
+		help.setEditable(false);
+		help.setLineWrap(true);
+		help.setWrapStyleWord(true);
+		help.setBackground(topPanel.getBackground());
+		help.setFont(new Font("Sans-Serif", Font.PLAIN, 12));
+		gbLayout.setConstraints(help, c);
+		topPanel.add(help);
 		
         // U.D. Default overwrite-info		
-		help.setText( OVERWRITE_HELP_STRING );
+		help.setText(OVERWRITE_HELP_STRING);
 		
-        this.add( topPanel, BorderLayout.NORTH );
+        this.add(topPanel, BorderLayout.NORTH);
         commonPanel = new PostGISCommonDriverPanel();
-        //commonPanel.whereField.setVisible(false);
-		this.add( commonPanel, BorderLayout.CENTER );
+		this.add(commonPanel, BorderLayout.CENTER);
 
-		//cancel to be consistent with following comment 
-		//okCancelPanel = new OKCancelPanel();
-        //the following line is commented out because JUMP has already added 
-        //an okay cancel control for us
-		//this.add( okCancelPanel, BorderLayout.SOUTH );
-        setSaveMethod( PostGISDataSource.SAVE_METHOD_OVERWRITE );
+        setSaveMethod(PostGISDataSource.SAVE_METHOD_OVERWRITE);
 		
 	}
 
@@ -172,11 +163,11 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 		return null;
 	}
 
-	public void addActionListener( ActionListener l ) {
+	public void addActionListener(ActionListener l) {
 		okCancelPanel.addActionListener( l );
 	}
 
-	public void removeActionListener( ActionListener l ) {
+	public void removeActionListener(ActionListener l) {
 		okCancelPanel.removeActionListener( l );
 	}
 
@@ -184,39 +175,39 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 		return okCancelPanel.wasOKPressed();
 	}
 
-	public void setCache( DriverPanelCache cache ) {
-		super.setCache( cache );
-		commonPanel.setCache( cache );
-		if( cache.get( PostGISDataSource.SAVE_METHOD_KEY ) != null ) {
-			setSaveMethod( (String)cache.get( PostGISDataSource.SAVE_METHOD_KEY ) );
+	public void setCache(DriverPanelCache cache) {
+		super.setCache(cache);
+		commonPanel.setCache(cache);
+		if(cache.get(PostGISDataSource.SAVE_METHOD_KEY) != null ) {
+			setSaveMethod((String)cache.get(PostGISDataSource.SAVE_METHOD_KEY));
 		}
-		if( cache.get( PostGISDataSource.UNIQUE_COLUMN_KEY ) != null ) {
-			uniqueField.setText( (String)cache.get( PostGISDataSource.UNIQUE_COLUMN_KEY ) );
+		if( cache.get(PostGISDataSource.UNIQUE_COLUMN_KEY) != null ) {
+			uniqueField.setText((String)cache.get(PostGISDataSource.UNIQUE_COLUMN_KEY));
 		} 
 	}
 
 	public DriverPanelCache getCache() {
 		DriverPanelCache cache = super.getCache();
-		commonPanel.putCache( cache );
-		cache.put( PostGISDataSource.SAVE_METHOD_KEY, getSaveMethod() );
-		cache.put( PostGISDataSource.UNIQUE_COLUMN_KEY, uniqueField.getText() );
+		commonPanel.putCache(cache);
+		cache.put(PostGISDataSource.SAVE_METHOD_KEY, getSaveMethod());
+		cache.put(PostGISDataSource.UNIQUE_COLUMN_KEY, uniqueField.getText());
 		return cache;
 	}
 
-    private void setSaveMethod( String method ) {
-		if( method.equals( PostGISDataSource.SAVE_METHOD_UPDATE ) ) {
+    private void setSaveMethod(String method) {
+		if(method.equals(PostGISDataSource.SAVE_METHOD_UPDATE)) {
 			updateButton.doClick();
 		}
 	}
 
 	public String getSaveMethod() {
-		if ( methodButtons.isSelected( updateButton.getModel() ) ) {
+		if (methodButtons.isSelected(updateButton.getModel())) {
 			return PostGISDataSource.SAVE_METHOD_UPDATE;
 		}
-		else if ( methodButtons.isSelected( deleteButton.getModel() ) ) { 
+		else if (methodButtons.isSelected(deleteButton.getModel())) { 
 			return PostGISDataSource.SAVE_METHOD_DELETE;
 		}
-		else if ( methodButtons.isSelected( overwriteButton.getModel() ) ) {
+		else if (methodButtons.isSelected(overwriteButton.getModel())) {
 			return PostGISDataSource.SAVE_METHOD_OVERWRITE;
 		}
 		return PostGISDataSource.SAVE_METHOD_INSERT;
@@ -250,31 +241,27 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 		return commonPanel.getPassword();
 	}
 
-	//public String getWhere() {
-	//	return commonPanel.getWhere();
-	//}
-
-	public void actionPerformed( ActionEvent ae ) {
+	public void actionPerformed(ActionEvent ae) {
 		String action = ae.getActionCommand();
-		if( action.equals( "insert" ) ) {
-			 theLabel.setEnabled( false );
-			 uniqueField.setEnabled( false );
-			 help.setText( INSERT_HELP_STRING );
+		if(action.equals("insert")) {
+			 theLabel.setEnabled(false);
+			 uniqueField.setEnabled(false);
+			 help.setText(INSERT_HELP_STRING);
 		}
-		else if( action.equals( "update" ) ) {
-			theLabel.setEnabled( true );
-			uniqueField.setEnabled( true );
-			help.setText( UPDATE_HELP_STRING );
+		else if(action.equals("update")) {
+			theLabel.setEnabled(true);
+			uniqueField.setEnabled(true);
+			help.setText(UPDATE_HELP_STRING);
 		}
-		else if ( action.equals ( "delete" ) ) {
-			theLabel.setEnabled( false );
-			uniqueField.setEnabled( false );
-			help.setText( DELETE_HELP_STRING );
+		else if (action.equals("delete")) {
+			theLabel.setEnabled(false);
+			uniqueField.setEnabled(false);
+			help.setText(DELETE_HELP_STRING);
 		}
-		else if ( action.equals ( "overwrite" ) ) {
-			theLabel.setEnabled( false );
-			uniqueField.setEnabled( false );
-			help.setText( OVERWRITE_HELP_STRING );
+		else if (action.equals("overwrite")) {
+			theLabel.setEnabled(false);
+			uniqueField.setEnabled(false);
+			help.setText(OVERWRITE_HELP_STRING);
 		}
 	}
 
