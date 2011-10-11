@@ -23,11 +23,10 @@ import java.util.Iterator;
 import mapgen.algorithms.PolyRingIndex;
 import mapgen.geomutilities.LineIntersection;
 import mapgen.geomutilities.ModifyPolygonPoints;
+import mapgen.geomutilities.PointLineDistance;
+import mapgen.geomutilities.TangentAngleFunction;
 import mapgen.measures.supportclasses.ShortEdgeConflict;
 import mapgen.measures.supportclasses.ShortEdgeConflictList;
-
-import ch.unizh.geo.geomutilities.PointLineDistance;
-import ch.unizh.geo.geomutilities.TangentAngleFunction;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;

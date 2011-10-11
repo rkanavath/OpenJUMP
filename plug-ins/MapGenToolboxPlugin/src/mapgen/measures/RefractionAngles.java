@@ -18,8 +18,9 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import ch.unizh.geo.geomutilities.SecondGeodeticTask2d;
 import mapgen.geomutilities.JumpAngle;
+import mapgen.geomutilities.SecondGeodeticTask2d;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;

@@ -29,9 +29,6 @@
 
 package mapgen.ui.onselecteditems;
 
-
-import ch.unizh.geo.algorithms.snakes.LineDisplacementSnakes;
-
 import com.vividsolutions.jump.feature.FeatureCollection;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
@@ -48,6 +45,8 @@ import com.vividsolutions.jump.workbench.ui.zoom.*;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
 import java.util.Collection;
+
+import mapgen.algorithms.snakes.LineDisplacementSnakes;
 
 /**
  * @description:

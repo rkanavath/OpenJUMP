@@ -49,9 +49,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import mapgen.agents.goals.BuildingGoals;
 import mapgen.algorithms.polygons.BuildingEnlargeWidthLocaly;
 import mapgen.constraints.buildings.BuildingLocalWidth;
-import ch.unizh.geo.agents.goals.BuildingGoals;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;

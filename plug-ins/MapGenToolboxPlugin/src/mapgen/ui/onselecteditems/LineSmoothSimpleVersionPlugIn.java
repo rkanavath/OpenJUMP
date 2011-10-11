@@ -45,10 +45,6 @@
 
 package mapgen.ui.onselecteditems;
 
-import ch.unizh.geo.algorithms.snakes.SnakesSmoothingLineNew;
-import ch.unizh.geo.geomutilities.InterpolateLinePoints;
-import ch.unizh.geo.measures.TAFandCurvature;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -71,6 +67,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import com.vividsolutions.jump.workbench.model.Layer;
 import java.util.Collection;
+
+import mapgen.algorithms.snakes.SnakesSmoothingLineNew;
+import mapgen.geomutilities.InterpolateLinePoints;
+import mapgen.measures.TAFandCurvature;
 
 /**
  * @description:

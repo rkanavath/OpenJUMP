@@ -20,9 +20,11 @@ package mapgen.measures;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JFrame;
-import ch.unizh.geo.geomutilities.PointLineDistance;
-import ch.unizh.geo.measures.supportclasses.MWConflictList;
-import ch.unizh.geo.measures.supportclasses.MinWidthConflict;
+
+import mapgen.geomutilities.PointLineDistance;
+import mapgen.measures.supportclasses.MWConflictList;
+import mapgen.measures.supportclasses.MinWidthConflict;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;

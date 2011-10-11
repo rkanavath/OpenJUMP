@@ -17,8 +17,8 @@
  ***********************************************/
 package mapgen.measures;
 
-import ch.unizh.geo.algorithms.Rotate;
-import ch.unizh.geo.geomutilities.SecondGeodeticTask2d;
+import mapgen.algorithms.Rotate;
+import mapgen.geomutilities.SecondGeodeticTask2d;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.algorithm.MinimumDiameter;

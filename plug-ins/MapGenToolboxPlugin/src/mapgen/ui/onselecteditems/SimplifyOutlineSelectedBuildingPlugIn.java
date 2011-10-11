@@ -39,8 +39,7 @@
 
 package mapgen.ui.onselecteditems;
 
-
-import ch.unizh.geo.agents.goals.BuildingGoals;
+import mapgen.agents.goals.BuildingGoals;
 import mapgen.algorithms.polygons.BuildingDeletePointsInLine;
 import mapgen.algorithms.polygons.BuildingOutlineSimplify;
 import mapgen.constraints.buildings.BuildingPointInLine;

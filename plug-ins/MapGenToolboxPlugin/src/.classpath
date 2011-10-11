@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/MapGenLib/jmat_5.0.jar"/>
-	<classpathentry kind="lib" path="/MapGenLib/snakesalgos.jar"/>
-	<classpathentry kind="lib" path="/MapGenLib/bdgoutlinesimplify.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openjump_svn"/>
 	<classpathentry kind="lib" path="/openjump_svn/lib/jts-1.11.jar"/>
 	<classpathentry kind="output" path=""/>

@@ -23,8 +23,9 @@ package mapgen.algorithms.polygons;
 
 
 import mapgen.geomutilities.LineIntersection;
-import ch.unizh.geo.measures.supportclasses.MWConflictList;
-import ch.unizh.geo.measures.supportclasses.MinWidthConflict;
+import mapgen.measures.supportclasses.MWConflictList;
+import mapgen.measures.supportclasses.MinWidthConflict;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;

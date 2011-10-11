@@ -15,11 +15,13 @@
 package mapgen.algorithms.polygons;
 
 import java.util.ArrayList;
-import ch.unizh.geo.algorithms.Rotate;
-import ch.unizh.geo.geomutilities.FirstGeodeticTask2d;
+
+import mapgen.algorithms.Rotate;
+import mapgen.geomutilities.FirstGeodeticTask2d;
 import mapgen.geomutilities.LineIntersection;
 import mapgen.geomutilities.ModifyPolygonPoints;
-import ch.unizh.geo.geomutilities.SecondGeodeticTask2d;
+import mapgen.geomutilities.SecondGeodeticTask2d;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;

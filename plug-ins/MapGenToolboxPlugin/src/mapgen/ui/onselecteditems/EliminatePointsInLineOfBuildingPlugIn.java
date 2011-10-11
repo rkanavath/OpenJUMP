@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import ch.unizh.geo.agents.goals.BuildingGoals;
+import mapgen.agents.goals.BuildingGoals;
 import mapgen.algorithms.polygons.BuildingDeletePointsInLine;
 import mapgen.constraints.buildings.BuildingPointInLine;
 
