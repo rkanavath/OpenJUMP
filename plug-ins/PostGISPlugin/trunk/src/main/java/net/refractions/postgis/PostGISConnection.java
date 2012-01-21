@@ -22,7 +22,7 @@
 // 2009.09.25, U.D.
 // 2010.03.29, U.D. (add table schema management)
 // 2010.11.05, U.D., fixed NaN
-// 2011.07.16, M.M. (merge EL and UD code)
+// 2011.07.16, M.M. (merged EL and UD changes)
 package net.refractions.postgis;
 
 import com.vividsolutions.jts.geom.*;
@@ -98,7 +98,7 @@ public class PostGISConnection implements Connection {
             Statement st = conn.createStatement();
             
             // [mmichaud 2011-07-16] Most of the conversion code could be
-            // replaced by code taken from the new framework :
+            // replaced by OpenJUMP's new framework :
             // see com.vividsolutions.jump.datastore.postgis.PostgisResultSetConverter
             
             ResultSet rs = st.executeQuery(query + " LIMIT 0");
@@ -151,7 +151,8 @@ public class PostGISConnection implements Connection {
             rs.close();
         
             // U.D., uwe.dalluege@hcu-hamburg.de : read SRID
-            query = "SELECT SRID ( " + geoColName + " ) FROM " + table;
+            // M.M., use new function ST_SRID
+            query = "SELECT ST_SRID ( " + geoColName + " ) FROM " + table;
             rs = st.executeQuery ( query + " LIMIT 1" );
             while ( rs.next() ) {
                 srid_tmp = rs.getInt ( 1 );
@@ -161,7 +162,7 @@ public class PostGISConnection implements Connection {
             if (!geomCol) {
                 st.close();
                 conn.close();
-                throw new IllegalStateException("The table you have selected does not contain any geometric data.");  
+                throw new IllegalStateException(I18N.getText(PKG_KEY,KEY+".geometry-missing"));  
             }
             
             sql.deleteCharAt( sql.lastIndexOf( "," ) );
@@ -284,7 +285,7 @@ public class PostGISConnection implements Connection {
         boolean unColExists = false;
         
         if (collection.isEmpty()) 
-          throw new IllegalStateException("No data to write, empty Feature Collection");
+          throw new IllegalStateException(I18N.getText(PKG_KEY, KEY + ".empty-featurecollection"));
         
         int SRID = ((Feature)collection.iterator().next()).getGeometry().getSRID();
         
@@ -295,7 +296,7 @@ public class PostGISConnection implements Connection {
             String name = schema.getAttributeName( i );
             if(schemaCols.contains(name)) {
                 throw new UnsupportedOperationException
-                    ("The FeatureSchema contains duplicate attribute names; you must remove duplicate attribute names before saving to a PostGIS table.");
+                    (I18N.getText(PKG_KEY, KEY + ".duplicate-attribute-names"));
             }
             // toLowerCase, ud, 2006.07.29
             schemaCols.add(name.toLowerCase());
@@ -348,8 +349,8 @@ public class PostGISConnection implements Connection {
                         param[0] = table;
                         int opt = JOptionPane.showConfirmDialog(
                             PostGISCommonDriverPanel.driverPanel, 
-                            I18N.getMessage(PKG_KEY,KEY+".overwrite.existing", param), 
-                            I18N.getMessage(PKG_KEY,KEY+".overwrite", param), 
+                            com.vividsolutions.jump.I18N.getMessage(PKG_KEY, KEY+".overwrite.existing", param), 
+                            com.vividsolutions.jump.I18N.getMessage(PKG_KEY, KEY+".overwrite", param), 
                             JOptionPane.YES_NO_OPTION);
                         
                         if ( opt == JOptionPane.NO_OPTION ) return;
@@ -384,13 +385,13 @@ public class PostGISConnection implements Connection {
                 if (method == PostGISDataSource.SAVE_METHOD_OVERWRITE) {
                     if (table_exists) {
                         //System.out.println 
-                        //( "PostGIS Connection tabelle: " + table + " löschen!"); 
+                        //( "PostGIS Connection table: " + table + " löschen!"); 
                         param = new String[1];
                         param[0] = table;
                         int opt = JOptionPane.showConfirmDialog(
                             PostGISCommonDriverPanel.driverPanel, 
-                            I18N.getMessage(PKG_KEY,KEY+".overwrite.existing", param), 
-                            I18N.getMessage(PKG_KEY,KEY+".overwrite", param), 
+                            com.vividsolutions.jump.I18N.getMessage(PKG_KEY, KEY+".overwrite.existing", param), 
+                            com.vividsolutions.jump.I18N.getMessage(PKG_KEY, KEY+".overwrite", param), 
                             JOptionPane.YES_NO_OPTION );
                         
                         if (opt == JOptionPane.NO_OPTION) return;
@@ -424,7 +425,7 @@ public class PostGISConnection implements Connection {
                 if (num_attrs <= 1 &&
                     method != PostGISDataSource.SAVE_METHOD_DELETE &&
                     method != PostGISDataSource.SAVE_METHOD_OVERWRITE) {
-                    throw new Exception ( "Error: Please insert FeatureColumn!");
+                    throw new Exception (I18N.getText(PKG_KEY, KEY + ".error.missing-feature-column"));
                 }
                 cols = new HashSet(num_attrs);
             
@@ -465,8 +466,8 @@ public class PostGISConnection implements Connection {
                         method != PostGISDataSource.SAVE_METHOD_OVERWRITE) {
                         JOptionPane.showMessageDialog(
                             PostGISCommonDriverPanel.driverPanel, 
-                            "Unique Column  " + uniqueCol + "  does not existx!",
-                            "Table will not saved!", JOptionPane.ERROR_MESSAGE);
+                            I18N.getMessage(PKG_KEY, KEY + ".error.unique-column-does-not-exist", new Object[]{uniqueCol}),
+                            I18N.getText(PKG_KEY, KEY + ".error.table-will-not-be-saved"), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     try {
@@ -480,8 +481,8 @@ public class PostGISConnection implements Connection {
                         if (PostGISPlugIn.DEBUG) { 
                             sqle.printStackTrace();
                         }
-                        throw new Exception( "Create table statement failed: " + 
-                            sqle.toString() + "\n" + sql );
+                        throw new Exception(I18N.getText(PKG_KEY, KEY + ".error.create-table-failed") + 
+                            "\n" + sqle.toString() + "\n" + sql );
                     }
           
                     // add the geometry column
@@ -502,11 +503,14 @@ public class PostGISConnection implements Connection {
                         stmt.execute(sql);
                         //stmt.execute ( "COMMIT" );
                     }
-                    catch( SQLException sqle ) {
+                    catch( Exception e ) {
                         if (PostGISPlugIn.DEBUG) { 
-                            sqle.printStackTrace();
+                            e.printStackTrace();
                         } 
-                        throw new Exception( "AddGeometryColumn statement failed: " + sqle.toString() + "\n" + sql );
+                        throw new Exception(
+                            I18N.getText(PKG_KEY, KEY + ".error.addgeometrycolumn-failed") + 
+                            "\n" + e.toString() + "\n" + sql
+                        );
                     }
                 }
         
@@ -541,11 +545,10 @@ public class PostGISConnection implements Connection {
                     method != PostGISDataSource.SAVE_METHOD_DELETE &&
                     method != PostGISDataSource.SAVE_METHOD_OVERWRITE) {
                     JOptionPane.showMessageDialog( 
-                        PostGISCommonDriverPanel.driverPanel, 
-                        "Feature and TableSchema are not equal ( " + 
-                        errColName + " )!\n" +
-                        "Please use only lowercase colum names!",
-                        "Table will not saved!", JOptionPane.ERROR_MESSAGE );
+                        PostGISCommonDriverPanel.driverPanel,
+                        I18N.getMessage(PKG_KEY, KEY + ".error.schemas-are-not-equal", new Object[]{errColName}) +
+                        "\n" + I18N.getText(PKG_KEY, KEY + ".error.use-lowercases"),
+                        I18N.getText(PKG_KEY, KEY + ".error.table-will-not-be-saved"), JOptionPane.ERROR_MESSAGE );
                     stmt.close();
                     conn.close();    
                     return;
@@ -556,8 +559,8 @@ public class PostGISConnection implements Connection {
                     method != PostGISDataSource.SAVE_METHOD_OVERWRITE) {
                     JOptionPane.showMessageDialog(
                         PostGISCommonDriverPanel.driverPanel, 
-                        "Unique Column  " + uniqueCol + "  does not existY!",
-                        "Table will not saved!", JOptionPane.ERROR_MESSAGE );
+                        I18N.getMessage(PKG_KEY, KEY + ".error.unique-column-does-not-exist", new Object[]{uniqueCol}),
+                        I18N.getText(PKG_KEY, KEY + ".error.table-will-not-be-saved"), JOptionPane.ERROR_MESSAGE );
                     stmt.close();
                     conn.close();        
                     return;
@@ -663,8 +666,8 @@ public class PostGISConnection implements Connection {
         // ud. emty geometry not saved  
         if (errGeomEmpty) {
             JOptionPane.showMessageDialog(PostGISCommonDriverPanel.driverPanel, 
-                "The Layer had empty Geometries!",
-                "Empty Geometries are not saved!", 
+                I18N.getText(PKG_KEY, KEY + ".error.layer-has-empty-geometries"),
+                I18N.getText(PKG_KEY, KEY + ".error.empty-geometries-are-not-saved"),
                 JOptionPane.ERROR_MESSAGE );    
             errGeomEmpty = false;
         }
@@ -739,7 +742,8 @@ public class PostGISConnection implements Connection {
             stmt.executeUpdate(sql);
         } catch (SQLException sqle) {
             throw new Exception(
-                "Update statement failed: " + sqle.toString() + "\n" + sql);
+                I18N.getText(PKG_KEY, KEY + ".error.update-failed") + 
+                "\n" + sqle.toString() + "\n" + sql);
         }
     }
 
@@ -822,7 +826,8 @@ public class PostGISConnection implements Connection {
             stmt.executeUpdate(sql);
         } catch (SQLException sqle) {
             throw new Exception(
-                "Insert statement failed: " + sqle.toString() + "\n" + sql);
+                I18N.getText(PKG_KEY, KEY + ".error.insert-failed") + 
+                "\n" + sqle.toString() + "\n" + sql);
         }
     }
 
@@ -915,7 +920,8 @@ public class PostGISConnection implements Connection {
             stmt.executeUpdate(sql);
         } catch (SQLException sqle) {
             throw new Exception(
-                "Insert statement failed: " + sqle.toString() + "\n" + sql);
+                I18N.getText(PKG_KEY, KEY + ".error.insert-failed") + 
+                "\n" + sqle.toString() + "\n" + sql);
         }
     }
 
@@ -945,11 +951,15 @@ public class PostGISConnection implements Connection {
         }
         catch(ClassNotFoundException cnfe) {
             if (PostGISPlugIn.DEBUG) cnfe.printStackTrace();
-            throw new IllegalStateException("Could not load PostgresSQL driver: " + cnfe.getMessage());  
+            throw new IllegalStateException(
+                I18N.getText(PKG_KEY, KEY + ".error.could-not-load-driver") + 
+                "\n" + cnfe.getMessage());  
         }
         catch(SQLException sqle) {
             if (PostGISPlugIn.DEBUG) sqle.printStackTrace();
-            throw new IllegalStateException("Could not connection to database: " + sqle.getMessage());
+            throw new IllegalStateException(
+                I18N.getText(PKG_KEY, KEY + ".error.could-not-connect-to-database") + 
+                "\n" + sqle.getMessage());
         } 
     }
   

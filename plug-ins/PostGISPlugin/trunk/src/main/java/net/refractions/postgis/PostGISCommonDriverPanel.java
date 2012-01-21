@@ -16,14 +16,16 @@
  */
 package net.refractions.postgis;
 
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.text.PlainDocument;
-import com.vividsolutions.jump.workbench.ui.*;
+import com.vividsolutions.jump.workbench.ui.DriverPanelCache;
 import com.vividsolutions.jump.workbench.model.Layer;
 
 /**
@@ -223,7 +225,7 @@ public class PostGISCommonDriverPanel extends JPanel {
 
     public String getTable() {
         // UD. uwe.dalluege@hcu-hamburg.de
-        // toLowerCase ( ) because AddGeometryColumn does not work with uppercase?
+        // toLowerCase() because AddGeometryColumn does not work with uppercase?
         return tableField.getText().toLowerCase() ;
     }
 

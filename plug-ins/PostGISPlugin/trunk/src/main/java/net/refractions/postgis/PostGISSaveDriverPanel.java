@@ -50,11 +50,11 @@ public class PostGISSaveDriverPanel extends AbstractDriverPanel implements Actio
 	static final String DELETE_HELP_STRING = I18N.getText(PKG_KEY,KEY + ".DELETE_HELP_STRING"); 
 	static final String OVERWRITE_HELP_STRING = I18N.getText(PKG_KEY,KEY + ".OVERWRITE_HELP_STRING"); 
 	
-	static final String SELECT_SAVE_METHOD = I18N.getText(PKG_KEY,KEY + ".select-save-method");
-	static final String NEW_TABLE = I18N.getText(PKG_KEY,KEY + ".new-table");
-	static final String OVERWRITE = I18N.getText(PKG_KEY,KEY + ".overwrite");
-	static final String INSERT = I18N.getText(PKG_KEY,KEY + ".insert");
-	static final String UNIQUE_COLUMN = I18N.getText(PKG_KEY,KEY + ".unique-Column");
+	static final String SELECT_SAVE_METHOD = I18N.getText(PKG_KEY, KEY + ".select-save-method");
+	static final String NEW_TABLE = I18N.getText(PKG_KEY, KEY + ".new-table");
+	static final String OVERWRITE = I18N.getText(PKG_KEY, KEY + ".overwrite");
+	static final String INSERT = I18N.getText(PKG_KEY, KEY + ".insert");
+	static final String UNIQUE_COLUMN = I18N.getText(PKG_KEY, KEY + ".unique-Column");
 	
     ButtonGroup methodButtons;
     JRadioButton updateButton;

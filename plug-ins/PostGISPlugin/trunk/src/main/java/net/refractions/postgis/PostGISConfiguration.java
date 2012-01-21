@@ -1,6 +1,4 @@
-/*
- * $Id: PostGISConfiguration.java,v 1.1.1.1 2004/01/06 00:13:15 pramsey Exp $
- * 
+/* 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -23,11 +21,11 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
 
 /**
  * This class installs the PostGIS plugin.
- * @version 1.4.2 (2011-07-16)
- * @author Refractions Research (initial version : chodgson, pramsey, bowens)
- * @author Uwe Dalluege (1.3 version)
- * @author Eric Lemesre (internationalization and openwizard integration)
- * @author Micha&euml;l Michaud (integration of Uwe and Eric versions for 1.4.2)
+ * @version 1.4.2 (2012-01-21)
+ * @author Refractions Research (initial version : chodgson, pramsey, bowens)<br/>
+ *         Uwe Dalluege (1.3 version)<br/>
+ *         Eric Lemesre (internationalization and openwizard integration)<br/>
+ *         Micha&euml;l Michaud (merged Uwe and Eric changes for 1.4.2)<br/>
  */
 public class PostGISConfiguration extends Extension {
     public void configure(PlugInContext context) {
@@ -39,6 +37,6 @@ public class PostGISConfiguration extends Extension {
     }
   
     public String getVersion() {
-        return("1.4.2 (2011-09-10)");
+        return("1.4.2 (2012-01-21)");
     }
 }
