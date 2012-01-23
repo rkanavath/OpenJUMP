@@ -1,4 +1,4 @@
---- Informations about the OpenJUMP PostGIS PlugIn (2012-01-21)
+--- Informations about the OpenJUMP PostGIS PlugIn (2012-01-23)
 
 The JumpPostGIS PlugIn is an extension of the original PostGIS driver 
 created by Refractions Research (www.refractions.net) for Jump.
@@ -8,7 +8,7 @@ HISTORY
 It has been succcessively developped and maintained by
 - Chris Hodgson and Paul Ramsey
     original developpers
-- Uwe Dalluege (uwe.dalluege@rzcn.haw-hamburg.de)
+- Uwe Dalluege (uwe.dalluege@hcu-hamburg.de)
     feature schema and srid management
     better exception handling
 - Eric Lemesre (eric.lemesre@gmail.com)

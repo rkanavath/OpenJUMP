@@ -1,4 +1,4 @@
---- Informations about the OpenJUMP PostGIS PlugIn (2012-01-21)
+--- Informations about the OpenJUMP PostGIS PlugIn (2012-01-23)
 
 The JumpPostGIS PlugIn is an extension of the original PostGIS driver 
 created by Refractions Research (www.refractions.net) for Jump.
@@ -34,14 +34,11 @@ You can choose between "New Table", "Overwrite"" and "Insert" mode:
   will updated. Other rows will inserted into the existing dataset.
   So it is better, that the "Unique Column" contains the primary-key of the
   dataset.
+  
+If there are any problems please contact:
+  
+openjump-users@googlegroups.com
+  
+  or
 
-If you have questions, please mail me:
-
-Uwe Dalluege
-
-uwe.dalluege@rzcn.haw-hamburg.de
-
-HCU Hamburg, Department Geomatic
-
-http://www.hcu-hamburg.de/geomatik/ 
-
+jump-pilot-devel@lists.sourceforge.net
