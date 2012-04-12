@@ -11,14 +11,17 @@
  */  
 package de.intevation.printlayout.beans;
 
+import java.util.ArrayList;
+
 import java.io.Serializable;
 
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGLocatable;
-import org.w3c.dom.svg.SVGElement;               
-import org.w3c.dom.svg.SVGMatrix;               
+import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.svg.SVGMatrix;
 import org.w3c.dom.svg.SVGTextElement;
 
 import org.apache.batik.dom.AbstractElement;
@@ -49,7 +52,7 @@ implements   Serializable, ExtraData.ChangeListener, ExtraData.RemoveListener
 
 	public ScaleUpdater(String scaleID, String transformID) {
 		this();
-		this.scaleID     = scaleID;
+		this.scaleID	 = scaleID;
 		this.transformID = transformID;
 	}
 
@@ -84,7 +87,7 @@ implements   Serializable, ExtraData.ChangeListener, ExtraData.RemoveListener
 	}
 
 	public void elementTransformed(
-		SVGLocatable    loc,
+		SVGLocatable	loc,
 		DocumentManager manager
 	) {
 		String id =
@@ -138,7 +141,23 @@ implements   Serializable, ExtraData.ChangeListener, ExtraData.RemoveListener
 		if (text == null)
 			return;
 
-		text.setTextContent("1:" + format.format(scale));
+
+		ArrayList toDelete = new ArrayList();
+
+		children = text.getChildNodes();
+		for (int i = children.getLength()-1; i >= 0; --i) {
+			Node node = children.item(i);
+			if (node.getNodeType() == Node.TEXT_NODE) {
+				toDelete.add(node);
+			}
+		}
+
+		for (int i = toDelete.size()-1; i >= 0; --i) {
+			text.removeChild((Node)toDelete.get(i));
+		}
+
+		String msg = "1:" + format.format(scale);
+		text.appendChild(document.createTextNode(msg));
 	}
 }
 // end of file

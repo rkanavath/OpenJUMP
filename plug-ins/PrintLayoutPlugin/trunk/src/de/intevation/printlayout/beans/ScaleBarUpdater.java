@@ -222,7 +222,7 @@ implements   Serializable, DocumentManager.ElementGenerator
 		t.setAttributeNS(null, "font-size",   "5");
 		if (fontWeight != null)
 			t.setAttributeNS(null, "font-weight", fontWeight);
-		t.setTextContent(text);
+		t.appendChild(document.createTextNode(text));
 		return t;
 	}
 
@@ -231,7 +231,7 @@ implements   Serializable, DocumentManager.ElementGenerator
 		RoundQuantity increment, 
 		double        gscale
 	) {
-    return HORIZONTAL_MARGIN + i * increment.getModelValue() * gscale;
+		return HORIZONTAL_MARGIN + i * increment.getModelValue() * gscale;
 	}
 }
 // end of file

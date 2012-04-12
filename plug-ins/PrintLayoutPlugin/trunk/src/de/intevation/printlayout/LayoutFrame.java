@@ -101,8 +101,6 @@ import de.intevation.printlayout.ui.JPEGParameterDialog;
 import de.intevation.printlayout.ui.OptionDialog;
 import de.intevation.printlayout.ui.InfoDialog;
 
-import de.intevation.printlayout.jump.SimplifyingJava2DConverter;
-
 /**
  * Top level window containing the tool bar and the sheet panel.
  */

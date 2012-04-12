@@ -18,7 +18,6 @@ import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
 import com.vividsolutions.jump.workbench.ui.renderer.LayerRenderer;
 import com.vividsolutions.jump.workbench.ui.renderer.Renderer;   
 import com.vividsolutions.jump.workbench.ui.renderer.RenderingManager; 
-import com.vividsolutions.jump.workbench.ui.renderer.ThreadQueue;
 
 import com.vividsolutions.jump.workbench.ui.renderer.java2D.Java2DConverter;
 

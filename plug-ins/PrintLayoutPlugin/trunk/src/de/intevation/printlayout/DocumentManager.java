@@ -536,7 +536,8 @@ public class DocumentManager
 					(AbstractElement)docManager.getSVGDocument()
 					.createElementNS(svgNS, "text");
 
-				textElement.setTextContent(text);
+				textElement.appendChild(
+					docManager.getSVGDocument().createTextNode(text));
 			
 				return textElement;
 			}

@@ -1,3 +1,25 @@
+2012-04-12	Sascha L. Teichmann	<sascha.teichmann@intevation.de>
+
+	Make it compile and runnable with OJ 1.5.1.
+	Some small issues still remain.
+
+	* src/de/intevation/printlayout/beans/ScaleBarUpdater.java,
+	  src/de/intevation/printlayout/beans/ScaleUpdater.java,
+	  src/de/intevation/printlayout/DocumentManager.java:
+	  Use slightly different DOM API calls for generating text.
+
+	* src/de/intevation/printlayout/jump/SimplifyingJava2DConverter.java:
+	  JTS does not expose DouglasPeuckerLineSimplifier public any
+	  more so we have to call it following the new conventions.
+
+	* src/de/intevation/printlayout/tools/TextDialog.java:
+	  Removed dead code.
+
+	* src/de/intevation/printlayout/ui/JPEGParameterDialog.java,
+	  src/de/intevation/printlayout/Map2SVG.java,
+	  src/de/intevation/printlayout/LayoutFrame.java:
+	  Removed superfluous import.
+
 2007-10-15  Ludwig Reiter  <ludwig.reiter@intevation.de>
 
 	* src/de/intevation/printlayout/tools/TextConsumer.java:

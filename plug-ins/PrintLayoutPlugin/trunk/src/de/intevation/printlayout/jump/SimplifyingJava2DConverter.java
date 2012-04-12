@@ -14,7 +14,7 @@ package de.intevation.printlayout.jump;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
 
-import com.vividsolutions.jts.simplify.DouglasPeuckerLineSimplifier;
+import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 import java.awt.Shape;
@@ -64,22 +64,21 @@ extends      PreciseJava2DConverter
 		for (int i = 0; i < holesCoordinates.length; ++i)
 			holesCoordinates[i] =
 				toViewPoints(
-					DouglasPeuckerLineSimplifier.simplify(
-						p.getInteriorRingN(i).getCoordinates(), tolerance));
+					((LineString)DouglasPeuckerSimplifier.simplify(
+						p.getInteriorRingN(i), tolerance)).getCoordinates());
 
 		return new PrecisePolygonShape(
 			toViewPoints(
-				DouglasPeuckerLineSimplifier.simplify(
-					p.getExteriorRing().getCoordinates(), tolerance)),
+				((LineString)DouglasPeuckerSimplifier.simplify(
+					p.getExteriorRing(), tolerance)).getCoordinates()),
 			holesCoordinates);
 	}
 
 	protected Shape toPreciseShape(LineString lineString)
 	throws NoninvertibleTransformException 
 	{
-		return coords2shape(DouglasPeuckerLineSimplifier.simplify(
-			lineString.getCoordinates(),
-			tolerance));
+		return coords2shape(((LineString)DouglasPeuckerSimplifier.simplify(
+			lineString, tolerance)).getCoordinates());
 	} 
 }
 // end of file

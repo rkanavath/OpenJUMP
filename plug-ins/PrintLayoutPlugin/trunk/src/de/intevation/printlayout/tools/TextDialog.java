@@ -27,7 +27,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
@@ -229,15 +228,6 @@ implements ColorButton.ColorChangedListener,
 		return panel;
 	}
 	
-	/*protected JPanel createSmallPanel(String title, JComponent component) {
-		JPanel panel = new JPanel();
-		panel.add(new JLabel(title));
-		panel.add(component);
-		panel.setBorder(new TitledBorder(""));
-
-		return panel;
-	}*/
-
 	protected JPanel createTitledPanel(String title, JComponent component) {
 		JPanel panel = new JPanel();
 		panel.add(component);

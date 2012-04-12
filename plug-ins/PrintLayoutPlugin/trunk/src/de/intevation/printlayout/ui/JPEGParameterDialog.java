@@ -15,7 +15,6 @@ package de.intevation.printlayout.ui;
 import java.awt.Frame;
 import java.awt.FlowLayout;
 
-import javax.swing.JDialog;
 import javax.swing.JSlider;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
