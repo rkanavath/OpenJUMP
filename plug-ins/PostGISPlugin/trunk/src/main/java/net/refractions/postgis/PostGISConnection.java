@@ -23,6 +23,7 @@
 // 2010.03.29, U.D. (add table schema management)
 // 2010.11.05, U.D., fixed NaN
 // 2011.07.16, M.M. (merged EL and UD changes)
+// 2012.04.20, M.M. add date type management
 package net.refractions.postgis;
 
 import com.vividsolutions.jts.geom.*;
@@ -33,6 +34,7 @@ import com.vividsolutions.jump.io.datasource.Connection;
 import com.vividsolutions.jump.task.TaskMonitor;
 import java.io.Reader;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 import java.math.*;
@@ -58,6 +60,8 @@ public class PostGISConnection implements Connection {
     String method;
     int srid_tmp = 0;
     boolean errGeomEmpty = false;
+    
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
     /**
      * Creates an unconfigured connection.
@@ -139,6 +143,12 @@ public class PostGISConnection implements Connection {
                         case Types.REAL:
                         case Types.NUMERIC:
                             attr_type = AttributeType.DOUBLE;
+                            sql.append( " " + attr_name + "," );
+                            break;
+                        case Types.DATE:
+                        case Types.TIME:
+                        case Types.TIMESTAMP:
+                            attr_type = AttributeType.DATE;
                             sql.append( " " + attr_name + "," );
                             break;
                         default:
@@ -235,6 +245,15 @@ public class PostGISConnection implements Connection {
                         else if (ob instanceof BigDecimal) {
                             f.setAttribute(attr_idx, new Double(((BigDecimal)ob).doubleValue()));
                         } 
+                    }
+                    else if(attr_type.equals(AttributeType.DATE)) {
+                        Object ob = rs.getObject( schema.getAttributeName( attr_idx ) );
+                        if (ob == null) {
+                            f.setAttribute(attr_idx, null); 
+                        }
+                        else {
+                            f.setAttribute(attr_idx, rs.getDate(schema.getAttributeName(attr_idx)));
+                        }
                     } 
                     else if(attr_type.equals(AttributeType.STRING)) {
                         f.setAttribute(attr_idx, rs.getString(schema.getAttributeName(attr_idx)));
@@ -718,6 +737,13 @@ public class PostGISConnection implements Connection {
                         }                                                           
                     }
                 }
+                else if (type.equals(AttributeType.DATE)) {
+                    if ( f.getAttribute ( i ) == null ) { val = null; }                 
+                    else {
+                        Object ob = f.getAttribute ( i );
+                        val = "'" + sdf.format((java.util.Date)ob) + "'";
+                    }
+                }
                 else if (type.equals(AttributeType.GEOMETRY)) {
                     val = "GeometryFromText( '"
                           + f.getGeometry().toText() + "', " + SRID + ")";
@@ -808,6 +834,15 @@ public class PostGISConnection implements Connection {
                     }
                                       
                 }
+                else if (type.equals(AttributeType.DATE)) {
+                    if (f.getAttribute ( j ) == null) {
+                        sqlBuf.append(" " + null + ",");
+                    }
+                    else {
+                        Object ob = f.getAttribute (j);
+                        sqlBuf.append(" '" + sdf.format((java.util.Date)ob) + "',");
+                    }
+                }
                 else if (type.equals(AttributeType.GEOMETRY)) {
                     sqlBuf.append(
                         " GeometryFromText( '"
@@ -893,6 +928,15 @@ public class PostGISConnection implements Connection {
                         }
                     }
                                       
+                }
+                else if (type.equals(AttributeType.DATE)) {
+                    if (f.getAttribute ( j ) == null) {
+                        sqlBuf.append(" " + null + ",");
+                    }
+                    else {
+                        Object ob = f.getAttribute ( j );
+                        sqlBuf.append(" '" + sdf.format((java.util.Date)ob) + "',"); 
+                    }
                 }
                 else if (type.equals(AttributeType.GEOMETRY)) {
                     // empty geometries are not saves
