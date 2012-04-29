@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sextante"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sextante_gui"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openjump_app"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

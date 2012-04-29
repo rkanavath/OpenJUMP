@@ -1,0 +1,59 @@
+<project name="SEXTANTE_OJ" default="generate-without-source" basedir=".">
+
+    <description>
+        Bindings for OpenJUMP
+    </description>
+
+	<property name="version.number" value="0.7alpha"/>
+	<property name="src" value="src"/>
+	<property name="build" value="build"/>
+	<property name="slib" value="sextante-lib"/>
+	<property name="olib" value="openjump-lib"/>
+	<property name="dist" value="dist"/>
+	
+	<path id="classpath">
+        <pathelement location="${build}" />
+        <fileset dir="${slib}">
+            <include name="**/*.jar" />
+        </fileset>
+        <fileset dir="${olib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+	<target id="jar" name="jar">
+  	    <!--ant antfile="../../sextante_lib/sextante/build.xml" inheritall="no" /-->
+
+  	    <mkdir dir="${build}"/>
+  	    <mkdir dir="${dist}"/>
+  	    <javac srcdir="${src}" destdir="${build}" debug="on" source="1.5" target="1.5">
+            <classpath refid="classpath" />
+        </javac>
+  	    <jar jarfile="${dist}/sextante_openjump${version.number}.jar">
+            <fileset dir="build">
+                <include name="**"/>
+            </fileset>
+        </jar>
+        <!--copy todir="../openjump_app/lib/ext">
+             <fileset dir="../dist" includes="**"/>
+        </copy>
+        <copy todir="../lib/ext">
+            <fileset dir="../dist" includes="**"/>
+        </copy-->
+    </target>
+
+	<!--target name="distribution">
+		<mkdir dir="../../tmp/bindings/openjump"/>
+		<jar jarfile="../../tmp/bindings/openjump/sextante_openjump.jar">
+		        <fileset dir="bin">
+		            <include name="**"/>
+		        </fileset>
+		    </jar>
+		<copy todir="../../tmp/bindings/openjump">
+		<fileset dir=".">
+		 <include name="readme.txt"/>
+		 </fileset>
+		</copy>
+	</target-->
+
+</project>
