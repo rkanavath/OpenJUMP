@@ -126,7 +126,7 @@ public class PostGISConnection implements Connection {
                     geomCol = true;
                     attr_type = AttributeType.GEOMETRY;
                     geoColName = attr_name;
-                    sql.append( " asText(" + attr_name + ") AS " + attr_name + "," );
+                    sql.append( " ST_AsText(" + attr_name + ") AS " + attr_name + "," );
                 } 
                 else {
                     int sql_type = meta.getColumnType(col_idx);
@@ -625,7 +625,7 @@ public class PostGISConnection implements Connection {
                                 val = "" + f.getDouble(i);
                             } else if (
                                 attrType.equals(AttributeType.GEOMETRY)) {
-                                val = "GeometryFromText( '" +
+                                val = "ST_GeometryFromText( '" +
                                       f.getGeometry().toText() + "', " + SRID + ")";
                             } else {
                                 val = "'" + f.getString(i).replaceAll ( "'", "''" ) + "'";
@@ -745,7 +745,7 @@ public class PostGISConnection implements Connection {
                     }
                 }
                 else if (type.equals(AttributeType.GEOMETRY)) {
-                    val = "GeometryFromText( '"
+                    val = "ST_GeometryFromText( '"
                           + f.getGeometry().toText() + "', " + SRID + ")";
                 }
                 else {
@@ -945,7 +945,7 @@ public class PostGISConnection implements Connection {
                         errGeomEmpty = true;
                         return;
                     }
-                    sqlBuf.append(" GeometryFromText( '"
+                    sqlBuf.append(" ST_GeometryFromText( '"
                             + f.getGeometry().toText()
                             + "', " + SRID + "),");
                 }
