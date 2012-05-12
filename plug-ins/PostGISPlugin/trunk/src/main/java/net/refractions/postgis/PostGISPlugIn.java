@@ -38,7 +38,7 @@ public class PostGISPlugIn implements PlugIn {
      */
     public void initialize(PlugInContext context) {
         PostGISDataSource dataSource = new PostGISDataSource();
-        PostGISSaveDataSourceQueryChooser saveChooser = new PostGISSaveDataSourceQueryChooser(dataSource);
+        PostGISSaveDataSourceQueryChooser saveChooser = new PostGISSaveDataSourceQueryChooser(dataSource/*, context*/);
         
         DataSourceQueryChooserManager.get(
           context.getWorkbenchContext().getWorkbench().getBlackboard()
