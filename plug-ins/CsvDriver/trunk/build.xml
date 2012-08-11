@@ -1,0 +1,82 @@
+<project name="openjump-csv-driver" default="compile" basedir=".">
+
+    <!--*************************************************************************
+    *****************************************************************************
+    **                                  PROPERTIES                             **
+    *****************************************************************************
+    **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"           value="src" />
+    <property name="bin"           value="bin" />
+    <property name="lib"           value="lib" />
+    <property name="build"         value="build" />
+    <property name="dist"          value="dist" />
+    <property name="doc-api"       value="doc-api" />
+    <property name="resources"     value="resources" />
+    
+    <!-- plugins -->
+    <property name="csv-driver-version"        value="0.6.5" />    
+
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+    </target>
+   
+    <target name="compile-all" id="compile-all" depends="clean">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <javac srcdir="${src}" destdir="${build}" 
+               debug="on"      deprecation="false" verbose="no"
+               includeantruntime="false" 
+               target="1.5">
+	         <!--fork="true" executable="G:\Program Files\Java\jdk1.5.0_15\bin\javac.exe"-->
+             <!--compilerarg value="-Xlint:unchecked"/-->
+             <exclude name="**/clean/*"/>
+             <classpath refid="classpath"/>
+        </javac>
+        <copy todir="${build}" >
+            <fileset dir="${src}" casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.properties" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.html" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.txt" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.java2xml" />
+        </copy>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- csv driver                                                            -->
+    <!-- =================================================================== -->
+    <target name="jar-csv-driver" id="jar-csv-driver" depends="compile-all">
+        <jar basedir="${build}" jarfile="${dist}/csv-driver-${csv-driver-version}.jar">
+             <include name="fr/michaelm/jump/drivers/csv/**/*"/>
+        </jar>
+        <!--copy file="${dist}/csv-driver-${csv-driver-version}.jar" todir="${openjump-ext}"/-->
+        <java classname="fr.michaelm.jump.drivers.csv.CSVFileTest">
+            <arg value="-h"/>
+            <classpath>       
+                <pathelement location="${dist}/csv-driver-${csv-driver-version}.jar"/>
+                <fileset dir="${lib}">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+    <target name="zip-csv-driver-src" id="zip-csv-driver-src" depends="jar-csv-driver">
+        <zip basedir="." destfile="${dist}/csv-driver-src-${csv-driver-version}.zip">
+            <include name="${dist}/csv-driver-${csv-driver-version}.jar"/>
+            <include name="src/fr/michaelm/jump/drivers/csv/**/*.java"/>
+            <include name="src/fr/michaelm/jump/drivers/csv/**/*.properties"/>
+        </zip>
+    </target>
+    
+</project>
