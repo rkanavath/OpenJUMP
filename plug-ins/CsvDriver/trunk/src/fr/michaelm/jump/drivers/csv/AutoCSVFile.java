@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 
 import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 
-import sun.nio.cs.ext.GBK;
+//import sun.nio.cs.ext.GBK;
 
 /**
  * An extension of CSVFile with methods to guess the internal structure of the
@@ -82,7 +82,7 @@ public class AutoCSVFile extends CSVFile {
     private String guessEncoding() throws IOException {
         // Main multi-bytes encodings
         String local_charset = Charset.defaultCharset().name();
-        String[] encodings = {"UTF-8", local_charset, "Shift_JIS", "GBK", "UTF-16"};
+        String[] encodings = {"UTF-8", local_charset, "Shift_JIS", "UTF-16"};
         FileInputStream in = new FileInputStream(getFilePath());
         final int defsize = 4096*2;
         int len = Math.min(defsize, (int)new File(getFilePath()).length());
