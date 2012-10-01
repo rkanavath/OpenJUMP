@@ -1,0 +1,81 @@
+<project name="kml-driver" default="compile" basedir=".">
+
+    <!--*************************************************************************
+    *****************************************************************************
+    **                                  PROPERTIES                             **
+    *****************************************************************************
+    **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"           value="src" />
+    <property name="bin"           value="bin" />
+    <property name="lib"           value="lib" />
+    <property name="build"         value="build" />
+    <property name="dist"          value="dist" />
+    <property name="doc-api"       value="doc-api" />
+    <property name="resources"     value="resources" />
+    <!--property name="openjump-ext"  value="../OpenJUMP-2012/dist/openjump-1.6.0alpha/lib/ext" /-->
+    
+    <!-- plugins -->
+    <!-- drivers -->
+    <property name="kml-driver-version"        value="0.1" />
+        
+
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+    </target>
+   
+    <target name="compile-all" id="compile-all" depends="clean">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <javac srcdir="${src}" 
+               destdir="${build}" 
+               debug="on"      
+               deprecation="false" 
+               verbose="no"
+               includeantruntime="false" 
+               target="1.5">
+	         <!--fork="true" executable="G:\Program Files\Java\jdk1.5.0_15\bin\javac.exe"-->
+             <!--compilerarg value="-Xlint:unchecked"/-->
+             <!--include name="fr/michaelm/jump/drivers/geoconcept/**/*"/-->
+             <exclude name="**/clean/*"/>
+             <classpath refid="classpath"/>
+        </javac>
+        <copy todir="${build}" >
+            <fileset dir="${src}" casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.properties" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.html" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.txt" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.java2xml" />
+        </copy>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- kml driver                                                            -->
+    <!-- =================================================================== -->
+    <target name="jar-kml-driver" id="jar-kml-driver" depends="compile-all">
+        <jar basedir="${build}" jarfile="${dist}/kml-driver-${kml-driver-version}.jar">
+             <include name="com/isa/jump/plugin/**/*"/>
+        </jar>
+        <!--copy file="${dist}/kml-driver-${kml-driver-version}.jar" todir="${openjump-ext}"/-->
+    </target>
+    <target name="zip-kml-driver-src" id="zip-kml-driver-src" depends="jar-kml-driver">
+        <zip basedir="." destfile="${dist}/kml-driver-src-${kml-driver-version}.zip">
+            <include name="${dist}/kml-driver-${kml-driver-version}.jar"/>
+            <include name="${src}/com/isa/jump/plugin/**/*.java"/>
+            <include name="${src}/com/isa/jump/plugin/**/*.properties"/>
+            <include name="build.xml"/>
+        </zip>
+    </target>
+
+    
+</project>
