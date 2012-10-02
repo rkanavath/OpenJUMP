@@ -285,49 +285,62 @@ public class CSVFile {
     /**
      * Set the FeatureSchema from the header.
      */
-    public void setFeatureSchema() throws IOException {
+    public void setFeatureSchema() throws IOException, CSVFileException {
         if (schema != null) return;
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                new FileInputStream(getFilePath()), getEncoding()));
-        String line = null;
-        String line1 = null;
-        String line2 = null;
-        int count = 0;      // count all line
-        int nonComment = 0; // count only non comment lines
-        List<String> lines = new ArrayList<String>();
-        // read until first non empty line 
-        while (null != (line=br.readLine())) {
-            if (line.trim().length() == 0) continue;
-            if (commentLinePattern.matcher(line).find()) continue;
-            count++;
-            if (count == 1) line1 = line;
-            else if (count == 2 && dataTypeLine) line2 = line;
-            else break; // count > 2
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(getFilePath()), getEncoding()));
+            String line = null;
+            String line1 = null;
+            String line2 = null;
+            int count = 0;      // count all line
+            int nonComment = 0; // count only non comment lines
+            List<String> lines = new ArrayList<String>();
+            // read until first non empty line 
+            while (null != (line=br.readLine())) {
+                if (line.trim().length() == 0) continue;
+                if (commentLinePattern.matcher(line).find()) continue;
+                count++;
+                if (count == 1) line1 = line;
+                else if (count == 2 && dataTypeLine) line2 = line;
+                else break; // count > 2
+            }
+            if (line1 == null) {
+                if (br != null) br.close();
+                throw new CSVFileException(CSVFileException.NO_DATA_FOUND, this);
+            }
+            setColumns(line1);
+            setAttributeTypes(line2);
+            schema = new FeatureSchema();
+            //String[] data = line != null ? tokenize(line) : null;
+            for (int i = 0 ; i < columns.length ; i++) {
+                if (geometryColumns.length == 1 && geometryColumns[0] == i) {
+                    schema.addAttribute(columns[i], AttributeType.GEOMETRY);
+                }
+                else if (geometryColumns.length == 2 &&
+                         (geometryColumns[0] == i || geometryColumns[1] == i)) {
+                    if (schema.getGeometryIndex() == -1) schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
+                }
+                else if (geometryColumns.length == 3 && geometryColumns[2] == i) {
+                    continue;
+                }
+                else {
+                    AttributeType type = (dataTypes != null && dataTypes.length > i) ? dataTypes[i] : AttributeType.STRING;
+                    schema.addAttribute(columns[i], type);
+                }
+            }
+            // if schema has no geometry attribute, create one which will be filled
+            // with empty GeometryCollection
+            if (schema.getGeometryIndex() == -1) {
+                schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
+            }
         }
-        setColumns(line1);
-        setAttributeTypes(line2);
-        schema = new FeatureSchema();
-        //String[] data = line != null ? tokenize(line) : null;
-        for (int i = 0 ; i < columns.length ; i++) {
-            if (geometryColumns.length == 1 && geometryColumns[0] == i) {
-                schema.addAttribute(columns[i], AttributeType.GEOMETRY);
-            }
-            else if (geometryColumns.length == 2 &&
-                     (geometryColumns[0] == i || geometryColumns[1] == i)) {
-                if (schema.getGeometryIndex() == -1) schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
-            }
-            else if (geometryColumns.length == 3 && geometryColumns[2] == i) {
-                continue;
-            }
-            else {
-                AttributeType type = (dataTypes != null && dataTypes.length > i) ? dataTypes[i] : AttributeType.STRING;
-                schema.addAttribute(columns[i], type);
-            }
-        }
-        // if schema has no geometry attribute, create one which will be filled
-        // with empty GeometryCollection
-        if (schema.getGeometryIndex() == -1) {
-            schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
+        catch(IOException ioe) {
+            throw ioe;
+        } 
+        finally {
+            if (br != null) br.close();
         }
     }
     
@@ -398,7 +411,7 @@ public class CSVFile {
     public Iterator<Feature> iterator() throws IOException, CSVFileException {
         
         if (schema == null) {
-            throw new CSVFileException("CSVFile has not been fully configured");
+            throw new CSVFileException(CSVFileException.DRIVER_NOT_CONFIGURED, this);
         }
         exceptions.clear();
         
@@ -480,12 +493,13 @@ public class CSVFile {
                 try {
                     type = schema.getAttributeType(name);
                     if (type == AttributeType.STRING) feature.setAttribute(name, fields[i]);
+                    else if (fields[i] == null || fields[i].trim().equals("")) feature.setAttribute(name, null);
                     else if (type == AttributeType.DOUBLE) feature.setAttribute(name, Double.parseDouble(fields[i]));
                     else if (type == AttributeType.INTEGER) feature.setAttribute(name, Integer.parseInt(fields[i]));
                     else if (type == AttributeType.DATE) feature.setAttribute(name, DATE_PARSER.parse(fields[i], false));
                     else feature.setAttribute(name, fields[i]);
                 } catch (Exception e) {
-                    exceptions.add(new Exception("Feature " + feature.getID() + 
+                    exceptions.add(new CSVFileException("Feature " + feature.getID() + 
                         ": could not parse \"" + fields[i] + "\" as a " + getType(type)));
                 }
             }
@@ -562,7 +576,7 @@ public class CSVFile {
                     writer.write("" + feature.getGeometry().getCoordinate().z);
                 }
                 else {
-                    String value = feature.getAttribute(columns[i]).toString();
+                    String value = feature.getString(columns[i]);
                     boolean quote = value.indexOf("\"") > -1 ||
                         value.indexOf(fieldSeparator.getSeparator()) > -1;
                     if (quote) value = "\"" + value.replaceAll("\"","\"\"") + "\"";

@@ -49,17 +49,19 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 0.6.5 (2012-04-16)
+ * @version 0.6.6 (2012-10-02)
  */
+// 0.6.6 (2012-10-02) make csv-driver compatible with SaveDatasetsPlugIn and 
+//       improved error management (+I18N)
 // 0.6.5 (2012-08-11) add geometry column with empty geometry collections if missing
 // 0.6.1 (2012-06-19) fix an UnsupportedCharsetException
-// 0.6 (2012-04-16) replace 0.5 version of text driver by a completly new one
-//     merging pirol and michael's drivers
-// 0.5 (2012-03-11) add a JScrollPane for the attribute filter (export)
-// 0.4 (2012-01-16) add option to manage datatypes, compile for java 1.5
-// 0.3 (2011-07-10) enable attribute filter for export
-// 0.2 (2010-04-30) 1 fixes in remove quotes method and in language file
-// 0.2 (2009-10-07)
+// 0.6   (2012-04-16) replace 0.5 version of text driver by a completly new one
+//       merging pirol and michael's drivers
+// 0.5   (2012-03-11) add a JScrollPane for the attribute filter (export)
+// 0.4   (2012-01-16) add option to manage datatypes, compile for java 1.5
+// 0.3   (2011-07-10) enable attribute filter for export
+// 0.2   (2010-04-30) 1 fixes in remove quotes method and in language file
+// 0.2   (2009-10-07)
 
 public class CSVDriverConfiguration extends Extension {
 
@@ -68,7 +70,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "0.6.1";
+        return "0.6.6";
     }
 
     public void configure(PlugInContext context) throws Exception {

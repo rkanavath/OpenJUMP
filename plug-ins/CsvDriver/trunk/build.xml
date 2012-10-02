@@ -16,7 +16,7 @@
     <property name="resources"     value="resources" />
     
     <!-- plugins -->
-    <property name="csv-driver-version"        value="0.6.5" />    
+    <property name="csv-driver-version"        value="0.6.6" />    
 
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->
@@ -38,8 +38,6 @@
                debug="on"      deprecation="false" verbose="no"
                includeantruntime="false" 
                target="1.5">
-	         <!--fork="true" executable="G:\Program Files\Java\jdk1.5.0_15\bin\javac.exe"-->
-             <!--compilerarg value="-Xlint:unchecked"/-->
              <exclude name="**/clean/*"/>
              <classpath refid="classpath"/>
         </javac>
@@ -76,6 +74,7 @@
             <include name="${dist}/csv-driver-${csv-driver-version}.jar"/>
             <include name="src/fr/michaelm/jump/drivers/csv/**/*.java"/>
             <include name="src/fr/michaelm/jump/drivers/csv/**/*.properties"/>
+            <include name="build.xml"/>
         </zip>
     </target>
     

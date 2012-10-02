@@ -21,14 +21,17 @@
 package fr.michaelm.jump.drivers.csv;
 
 public class CSVFileException extends Exception {
+    
+    public static final String DRIVER_NOT_CONFIGURED = I18NPlug.getI18N("drivers.csv.driver-not-fully-configured");
+    public static final String ERROR_READING = I18NPlug.getI18N("drivers.csv.error-reading");
+    public static final String NO_DATA_FOUND = I18NPlug.getI18N("drivers.csv.no-data-found");
 
     public CSVFileException(String message) {
         super(message);
     }
     
-    public CSVFileException(CSVFile file) {
-        super("Error trying to configure/read " + file.getFilePath());
+    public CSVFileException(String message, CSVFile file) {
+        super(message + "\n" + file.getFilePath());
     }
-
 
 }

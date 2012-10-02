@@ -65,6 +65,7 @@ public class CSVDataSource extends DataSource {
     public void init() {
         try {
             csv = (CSVFile)getProperties().get("CSV_FILE");
+            
             if (csv == null) {
                 
                 csv = new CSVFile((String)getProperties().get(FILE_KEY));
@@ -105,7 +106,7 @@ public class CSVDataSource extends DataSource {
         }
         catch(Exception e) {
             e.printStackTrace();
-            LOG.throwing("CSVDataSource","init",e);
+            LOG.throwing("CSVDataSource", "init", e);
         }
     }
 
@@ -126,14 +127,16 @@ public class CSVDataSource extends DataSource {
                     try {
                         csv.setFeatureSchema();
                         FeatureCollection fc = new FeatureDataset(csv.getFeatureSchema());
-                        System.out.println(csv);
+                        //System.out.println(csv);
                         Iterator<Feature> iterator = csv.iterator();
                         while (iterator.hasNext()) {
                             try {
                                 Feature f = iterator.next();
                                 if (f!=null) {
                                     fc.add(f);
-                                } else System.out.println("could't read feature");
+                                } else {
+                                    System.out.println("Could't read feature");
+                                }
                             }
                             catch(Exception e) {
                                 e.printStackTrace();
@@ -151,12 +154,14 @@ public class CSVDataSource extends DataSource {
                 public void executeUpdate(String update, FeatureCollection featureCollection, TaskMonitor monitor)
                         throws Exception {
                     
-                    CSVFile csv = new CSVFile();
-                    csv.setFieldSeparator((FieldSeparator)getProperties().get(I18NPlug.getI18N("drivers.csv.field-separator")));
+                    //CSVFile csv = new CSVFile();
+                    //csv.setFieldSeparator((FieldSeparator)getProperties().get(I18NPlug.getI18N("drivers.csv.field-separator")));
                     csv.setHeaderLine(true);
-                    csv.setDataTypeLine((Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.data-type-line")));
-                    
-                    boolean selectAttributes= (Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.select-attributes"));
+                    //csv.setDataTypeLine((Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.data-type-line")));
+                    boolean selectAttributes = false;
+                    if (getProperties().get(I18NPlug.getI18N("drivers.csv.select-attributes")) != null) {
+                        selectAttributes = (Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.select-attributes"));
+                    }
                     int[] geometryColumns;
                     
                     File output = new File((String)getProperties().get(FILE_KEY));
