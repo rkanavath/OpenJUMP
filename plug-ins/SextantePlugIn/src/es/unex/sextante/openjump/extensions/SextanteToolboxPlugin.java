@@ -11,6 +11,7 @@ import es.unex.sextante.openjump.core.OpenJUMPOutputFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPGUIFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPInputFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPPostProcessTaskFactory;
+import es.unex.sextante.openjump.init.OJSextanteApiInitialiser;
 
 public class SextanteToolboxPlugin
          implements
@@ -42,6 +43,8 @@ public class SextanteToolboxPlugin
       SextanteGUI.setInputFactory(new OpenJUMPInputFactory(context.getWorkbenchContext()));
       SextanteGUI.setOutputFactory(new OpenJUMPOutputFactory(context.getWorkbenchContext()));
       SextanteGUI.setPostProcessTaskFactory(new OpenJUMPPostProcessTaskFactory());
+      
+      OJSextanteApiInitialiser.isInitialized = true;
 
       context.getFeatureInstaller().addLayerViewMenuItem(this, new String[] { "Sextante" }, getName());
 

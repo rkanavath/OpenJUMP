@@ -326,4 +326,10 @@ public class OpenJUMPRasterLayer
 
    }
 
+   //[sstein 26. Oct. 2012] added method back-in
+   public String getFilename() {
+	return m_sFilename;
+   }
+
+
 }
