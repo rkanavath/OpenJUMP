@@ -34,8 +34,10 @@ public class SextanteToolboxPlugin
 
 
    public void initialize(final PlugInContext context) throws Exception {
-
-      Sextante.initialize(getJarsFolder());
+	  System.out.println("starting Sextante initialization ==");
+      Sextante.initialize(getJarsFolder()); // needs to be there for the distribution to load the algorithms,
+      										// but is not necessary for debugging newly created algorithms started from an OJ menu
+      Sextante.initialize(); //this will load only from classpath not from folder
       SextanteGUI.setSextantePath(getHelpPath());
       SextanteGUI.initialize();
       SextanteGUI.setGUIFactory(new OpenJUMPGUIFactory());
@@ -54,6 +56,7 @@ public class SextanteToolboxPlugin
    private String getJarsFolder() {
 
       final String sPath = System.getProperty("user.dir") + "/lib/ext/sextante";
+      System.out.println("Sextante jar folder: " + sPath);
 
       return sPath;
 
@@ -62,7 +65,8 @@ public class SextanteToolboxPlugin
 
    private String getHelpPath() {
 
-      final String sPath = getSextantePath() + File.separator + "sextante_help";;
+      final String sPath = getSextantePath() + File.separator + "sextante_help";
+      System.out.println("Sextante help path folder: " + sPath);
       return sPath;
 
    }
