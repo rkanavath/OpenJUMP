@@ -120,8 +120,9 @@ public class GraphFactory {
             Geometry g = f.getGeometry();
             cc = f.getGeometry().getCoordinates();
             INode node1 = dim3? new Node3D(cc[0]) : new Node2D(cc[0]);
-            INode node2 = dim3? new Node3D(cc[cc.length-1]) : new Node2D(cc[cc.length-1]);
             graph.addVertex(node1);
+            if (g.getDimension() == 0) continue;
+            INode node2 = dim3? new Node3D(cc[cc.length-1]) : new Node2D(cc[cc.length-1]);
             graph.addVertex(node2);
             FeatureAsEdge edge = new FeatureAsEdge(f);
             graph.addEdge(node1, node2, edge);
@@ -189,8 +190,9 @@ public class GraphFactory {
             Geometry g = f.getGeometry();
             cc = f.getGeometry().getCoordinates();
             INode node1 = dim3? new Node3D(cc[0]) : new Node2D(cc[0]);
-            INode node2 = dim3? new Node3D(cc[cc.length-1]) : new Node2D(cc[cc.length-1]);
             graph.addVertex(node1);
+            if (g.getDimension() == 0) continue;
+            INode node2 = dim3? new Node3D(cc[cc.length-1]) : new Node2D(cc[cc.length-1]);
             graph.addVertex(node2);
             FeatureAsEdge edge = new FeatureAsEdge(f);
             if (f.getSchema().hasAttribute("direct_weight") &&

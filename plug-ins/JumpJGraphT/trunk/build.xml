@@ -1,0 +1,96 @@
+
+<project name="jump-jgrapht" default="compile" basedir=".">
+   
+    <!--************************************************************************
+    ****************************************************************************
+    **                                 PROPERTIES                             **
+    ****************************************************************************
+    *************************************************************************-->
+
+    <property name="jump-jgrapht" value="jump-jgrapht"/>
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"     value="src" />
+    <property name="bin"     value="bin" />
+    <property name="lib"     value="lib" />
+    <property name="build"   value="build" />
+    <property name="dist"    value="dist" />
+    <property name="javadoc" value="javadoc" />
+
+    <property name="version" value="0.5" />
+    
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- compile graph-toolbox                                               -->
+    <!-- =================================================================== -->
+    <target name="compile" id="compile" depends="clean">
+        <mkdir dir="${build}"/>
+        <javac destdir="${build}" debug="true" deprecation="false" nowarn="true">
+            <src path="${src}"/>
+            <classpath refid="classpath"/>
+            <include name="**/*.java"/>
+            <include name="**/*.java"/>
+        </javac>
+        <!--copy todir="${build}">
+            <fileset dir="${src}">
+                <include name="fr/michaelm/jump/plugin/graph/**/*.png"/>
+                <include name="fr/michaelm/jump/plugin/graph/**/*.properties"/>
+                <include name="fr/michaelm/jump/plugin/graph/**/*.html"/>
+            </fileset>
+        </copy-->
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- jar graph-toolbox                                                   -->
+    <!-- =================================================================== -->
+    <target name="jar" id="jar" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar basedir="${build}" jarfile="${dist}/jump-jgrapht-${version}.jar">
+            <include name="fr/michaelm/jump/feature/jgrapht/**/*"/>
+        </jar>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- javadoc graph-toolbox                                               -->
+    <!-- =================================================================== -->
+    <target name="javadoc" depends="compile">
+        <mkdir dir="${javadoc}"/>
+        <javadoc destdir="${javadoc}" use="true">
+            <classpath refid="classpath"/>
+            <packageset dir="${src}">
+                <include name="fr/**"/>
+            </packageset>
+        </javadoc>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- dist graph-toolbox                                                  -->
+    <!-- =================================================================== -->
+    <target name="zip-jump-jgrapht" id="zip-jump-jgrapht" depends="jar, javadoc">
+        <zip basedir="." zipfile="${dist}/jump-jgrapht-${version}.zip">
+             <include name="src/**"/>
+             <include name="javadoc/**"/>
+             <include name="${dist}/jump-jgrapht-${version}.jar"/>
+             <include name="build.xml"/>
+        </zip>
+        <copy todir="${dist}">
+            <fileset dir="${lib}">
+                <!--include name="jump-jgrapht*.jar"/-->
+                <include name="jgrapht*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+</project>
