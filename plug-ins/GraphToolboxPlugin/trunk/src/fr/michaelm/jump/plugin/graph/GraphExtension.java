@@ -41,6 +41,7 @@ import java.util.ResourceBundle;
  * @author Micha&euml;l Michaud
  * @version 0.1.2 (2011-07-16)
  */
+//version 0.1.3 (2013-01-14) recompiled for java 1.5 compatibility 
 //version 0.1.2 (2011-07-16) typos and comments
 //version 0.1.1 (2010-04-22) first svn version
 //version 0.1 (2010-04-22)
@@ -51,7 +52,7 @@ public class GraphExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.1.2 (2011-07-16)";
+        return "0.1.3 (2013-01-14)";
     }
 
     public void configure(PlugInContext context) throws Exception {
