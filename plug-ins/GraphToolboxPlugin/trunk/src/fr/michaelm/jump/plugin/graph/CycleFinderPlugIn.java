@@ -298,17 +298,16 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
         // WARNING : a long feature can cut a short cycle into 2 long cycles
         // ==> eliminating long features can produce small non-simple cycles
         Collection<Geometry> geoms = new ArrayList<Geometry>();
-        Collection<Geometry> lines = new ArrayList<Geometry>();
+        // [2013-01-15] Eliminate line duplicates
+        Collection<Geometry> lines = new HashSet<Geometry>();
         for (Object f : filteredFC.getFeatures()) {
             Geometry geom = ((Feature)f).getGeometry();
             if (geom.getLength()<=max_length) {
-                if (geom.getDimension() == 1) lines.add(geom);
+                if (geom.getDimension() == 1) lines.add(geom.norm());
                 else geoms.add(geom);
             }
-        }
-        // [2013-01-15] union cleans overlapping lines, which is necessary
-        // to perform polygonization the right way
-        geoms.add(UnaryUnionOp.union(lines));
+        } 
+        geoms.addAll(lines);
 
         monitor.report(POLYGONIZATION_OF + layer.getName() + "...");
         // Polygonisation + selection of polygons with length < threshold
