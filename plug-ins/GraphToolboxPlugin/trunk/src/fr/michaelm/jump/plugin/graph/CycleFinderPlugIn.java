@@ -28,6 +28,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.index.strtree.STRtree;
 import com.vividsolutions.jts.operation.polygonize.Polygonizer;
+import com.vividsolutions.jts.operation.union.UnaryUnionOp;
 import com.vividsolutions.jump.feature.*;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.model.Layer;
@@ -297,11 +298,17 @@ public class CycleFinderPlugIn extends ThreadedBasePlugIn {
         // WARNING : a long feature can cut a short cycle into 2 long cycles
         // ==> eliminating long features can produce small non-simple cycles
         Collection<Geometry> geoms = new ArrayList<Geometry>();
+        Collection<Geometry> lines = new ArrayList<Geometry>();
         for (Object f : filteredFC.getFeatures()) {
-            if (((Feature)f).getGeometry().getLength()<=max_length) {
-                geoms.add(((Feature)f).getGeometry());
+            Geometry geom = ((Feature)f).getGeometry();
+            if (geom.getLength()<=max_length) {
+                if (geom.getDimension() == 1) lines.add(geom);
+                else geoms.add(geom);
             }
         }
+        // [2013-01-15] union cleans overlapping lines, which is necessary
+        // to perform polygonization the right way
+        geoms.add(UnaryUnionOp.union(lines));
 
         monitor.report(POLYGONIZATION_OF + layer.getName() + "...");
         // Polygonisation + selection of polygons with length < threshold
