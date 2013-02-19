@@ -1,0 +1,61 @@
+##
+## MoveAnTools ToDo's
+##
+
+updated: 2012-Nov-12 
+by sstein <ssteinig@ucalgary.ca>
+
+== ABODE related ==
+  
+  * June 2nd 2010 i noticed a problem for the function GridExtent.enlargeOneCell() in 
+    Sextante 0.3.0  & 0.55 which causes XMax of the GridExtend not to be enlarged (on the 
+    computer of ChenLu and my machine when using the sextante main lib).
+    However, it does actually work for other datasets.
+    
+  * implement x% values for MCP (see Harris et al 1990 on methods to do that)
+    => almost done; implemented fixed mean and median, but not yet floating mean and median
+  
+  * function for overlap and similarity analysis of HR shapes
+  
+  * add a scaling *checkbox*, so that output of different kernels can be compared
+    (e.g. KD value at a single point, i.e. with no others in the surrounding, should 
+    be one or generate probability surface? 
+    ...mhm not sure if the latter requires to consider the whole dataset?)
+    and: contours based on the volume should be the same - independent of 
+    amplitude scaling
+
+  * there seems to be a problem with calculating the max value for the
+  	topographic contour lines (though I used a sextante function here)   
+  
+  * implement scaling of input data (standardization)
+
+  * implement discretization (push points, see Abode Manual)
+
+  * check if Sextante KD evaluates point distance h first 
+    (and distance to center of pixel: probably not) : AB Manual p.14 
+
+  * check how Donut situations are treated in Sextante
+    (e.g. island in a lake) : AB Manual p.5
+
+  * calculate probability for other topographic contour values (or 
+    just create other contours?)
+    
+  * handle points with distance = 0? (see Seaman et al.
+    1998 p. 97 and ABode manual), (or dist < 0.5*cellsize ?)
+    
+  * allow multiple animals per file
+  
+  => for more infos on possible options sea Seaman et al. 1998 on KERNELHR
+  
+=== user friendliness ===
+
+  * write ASCII grid files
+  
+  * enable carto projection from WGS84 (Lat/Lon) to UTM for GPS points
+  
+  * output of metadata?
+  
+  * 3D plot of KD
+  
+  * adapter to import Sextante raster format (as RasterImage) 
+    

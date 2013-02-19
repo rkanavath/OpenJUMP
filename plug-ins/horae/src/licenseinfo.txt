@@ -1,0 +1,34 @@
+License Information [12. Nov. 2012]
+===================
+These are the copyright and license statements for the OpenJUMP Home-Range 
+Analysis toolbox (java package: ca.ucalgary.engg.moveantools):
+
+Do not use this software if you do not accept the terms of the licenses described 
+below.
+
+The source code delivered with and for OpenJUMP - Open Java Unified Mapping Platform -
+is under the terms of the GNU General Public License (Version 2), similar to
+the OpenJUMP software package. See therefore the OpenJump License information files.
+Otherwise the GPL 2.0 license terms can be found here:
+http://www.gnu.org/licenses/gpl-2.0.txt
+
+Is the code not delivered with or for the OpenJUMP, then it is under 
+Copyright (C) by 2010, 2011, 2012 Stefan Steiniger (primary author).
+
+You can reach Stefan Steiniger under: perriger[at]gmx.de
+
+Funding for the software was provide by a Young Prospective Researcher grant 
+from the Swiss National Science Foundation to Stefan Steiniger (Feb. 2008 - 
+July 2009), and a Canadian GEOIDE Phase IV Grant (project #3) to Andrew Hunter, 
+University of Calgary, Alberta (Sept. 2009 - Aug. 2010). 				
+
+Documentation and articles on the software are (hopefully) under way. 
+
+The code may contain and uses parts of other software libraries:
+-------------------------------------
+Library:				License:
+-------------------------------------
+JUMP/OpenJUMP			GPL 2
+JTS						LGPL
+JMatTools				BSD
+Sextante				LGPL

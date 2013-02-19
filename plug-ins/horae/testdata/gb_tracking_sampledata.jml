@@ -1,0 +1,325 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<JCSDataFile xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" >
+<JCSGMLInputTemplate>
+<CollectionElement>featureCollection</CollectionElement> 
+<FeatureElement>feature</FeatureElement>
+<GeometryElement>geometry</GeometryElement>
+<ColumnDefinitions>
+     <column>
+          <name>Bears_ID</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="Bears_ID"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>location_n</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="location_n"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_year</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_year"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_month</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_month"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_day</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_day"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_hour</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_hour"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>full_date</name>
+          <type>DATE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="full_date"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>timeanddayinsec</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="timeanddayinsec"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>uniquedays</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="uniquedays"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>weight</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="weight"/>
+          <valueLocation position="body"/>
+     </column>
+</ColumnDefinitions>
+</JCSGMLInputTemplate>
+
+<featureCollection>
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>430539.0,5956546.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">463</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="loc_hour">18.0</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="timeanddayinsec">147780.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>438404.20207490976,5951121.953195488 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">466</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="loc_hour">8.0</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="timeanddayinsec">206280.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>439717.765788113,5952033.162477285 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">467</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="loc_hour">12.0</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="timeanddayinsec">219780.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>435183.0,5955180.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">464</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="loc_hour">0.5</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="timeanddayinsec">176580.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>416204.0,5961627.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">461</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="loc_hour">6.0</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="timeanddayinsec">120840.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>432544.0,5956162.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">459</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">25.0</property>
+          <property name="loc_hour">18.0</property>
+          <property name="full_date">2000-08-25</property>
+          <property name="timeanddayinsec">61440.0</property>
+          <property name="uniquedays">2.0000825E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>422932.0,5957658.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">460</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="loc_hour">0.5</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="timeanddayinsec">92040.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>440436.0,5952332.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">458</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">25.0</property>
+          <property name="loc_hour">12.0</property>
+          <property name="full_date">2000-08-25</property>
+          <property name="timeanddayinsec">32580.0</property>
+          <property name="uniquedays">2.0000825E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>435178.0,5955214.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">465</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="loc_hour">4.0</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="timeanddayinsec">190980.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>441694.22352405,5953143.779336577 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">469</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="loc_hour">20.0</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="timeanddayinsec">248580.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>439817.8896390743,5954623.832004668 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">468</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="loc_hour">16.0</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="timeanddayinsec">235080.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>441161.0,5953076.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">457</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">25.0</property>
+          <property name="loc_hour">6.0</property>
+          <property name="full_date">2000-08-25</property>
+          <property name="timeanddayinsec">18180.0</property>
+          <property name="uniquedays">2.0000825E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>422724.0,5961402.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">462</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="loc_hour">12.0</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="timeanddayinsec">133380.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>441687.22352405,5953132.779336577 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="Bears_ID">265</property>
+          <property name="location_n">470</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">28.0</property>
+          <property name="loc_hour">0.5</property>
+          <property name="full_date">2000-08-28</property>
+          <property name="timeanddayinsec">262980.0</property>
+          <property name="uniquedays">2.0000828E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     </featureCollection>
+</JCSDataFile>

@@ -1,0 +1,37 @@
+<workbench>
+ <!--plug-in> ====== Sextante ===== </plug-in-->
+ <!--extension> es.unex.sextante.openjump.extensions.SextanteToolboxExtension</extension-->
+ <!--plug-in> ====== ABode related PlugIns ===== </plug-in-->
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.DisplayMovementTracksPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.DisplayDayTravelRangePlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.CreateTimeAttributesFromTimeFieldPlugIn</plug-in> 
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.CalculateMinimumConvexPolygonPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.AsymptoteAnalysisPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.AsymptoteMoviePlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.CreateProbabilityContoursFromSelectedImageLayerPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.SextanteKernelDensityPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.DisplayKernelDensityLSCVFunctionPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineBufferbasedHomeRangesPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.GeoEllipseSimplePlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LoCoHHomeRangesPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineKernelDensityForMovementTracksPlugIn</plug-in>
+ <plug-in> org.openjump.core.ui.plugin.raster.LineKernelDensityPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.ScaledLineKernelDensityForMovementTracksPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.BrownianBridgeDensityPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.BrownianBridgeDensityRasterVersionPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hrestimator.DisplayLikerFunctionForBBPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.CreateCoreAreaFromSelectedImageLayerPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.CalculateCoreBufferDistancePlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.SkeletonizeHRPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.ExtractCoreEdgeAndPatchPlugIn</plug-in>
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.hranalysis.ExtractCorridorsPlugIn</plug-in>
+ <!--plug-in> ====== Utility PlugIns ===== </plug-in-->
+ <plug-in> ca.ucalgary.engg.moveantools.ojplugin.testing.SextanteTestPlugIn</plug-in>
+ <!--plug-in> org.openjump.core.ui.plugin.raster.CreateLatticeFromSelectedImageLayerPlugIn</plug-in-->
+ <!--plug-in> org.openjump.core.ui.plugin.raster.CreatePolygonGridFromSelectedImageLayerPlugIn</plug-in-->
+ <plug-in> org.openjump.core.ui.plugin.raster.CreateContourLineFromSelectedImageLayerPlugIn</plug-in>
+ <plug-in> org.openjump.core.ui.plugin.raster.ProfileGraphPlugIn</plug-in>
+ <!--plug-in> org.openjump.core.ui.plugin.raster.color.RasterColorEditorPlugIn</plug-in-->
+  <!--plug-in> ====== other ===== </plug-in-->
+ <!--extension> ch.unizh.geo.pagevis.LePatternExtension</extension-->
+</workbench>

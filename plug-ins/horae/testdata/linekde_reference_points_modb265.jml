@@ -1,0 +1,625 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<JCSDataFile xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" >
+<JCSGMLInputTemplate>
+<CollectionElement>featureCollection</CollectionElement> 
+<FeatureElement>feature</FeatureElement>
+<GeometryElement>geometry</GeometryElement>
+<ColumnDefinitions>
+     <column>
+          <name>OBJECTID</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="OBJECTID"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>Bears_ID</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="Bears_ID"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>name</name>
+          <type>STRING</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="name"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>location_n</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="location_n"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>UTM_east_8</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="UTM_east_8"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>UTM_north_</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="UTM_north_"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_date</name>
+          <type>DATE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_date"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_time</name>
+          <type>DATE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_time"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_year</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_year"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_month</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_month"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>loc_day</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="loc_day"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>fix_type</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="fix_type"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>dop</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="dop"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>Collar_Typ</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="Collar_Typ"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>DataStatus</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="DataStatus"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>full_date</name>
+          <type>DATE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="full_date"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>Locations_</name>
+          <type>INTEGER</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="Locations_"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>reloc</name>
+          <type>STRING</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="reloc"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>denning</name>
+          <type>STRING</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="denning"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>TimeOfDay</name>
+          <type>STRING</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="TimeOfDay"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>DataOwners</name>
+          <type>STRING</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="DataOwners"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>HealthKey</name>
+          <type>STRING</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="HealthKey"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>timeanddayinsec</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="timeanddayinsec"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>uniquedays</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="uniquedays"/>
+          <valueLocation position="body"/>
+     </column>
+     <column>
+          <name>weight</name>
+          <type>DOUBLE</type>
+          <valueElement elementName="property" attributeName="name" attributeValue="weight"/>
+          <valueLocation position="body"/>
+     </column>
+</ColumnDefinitions>
+</JCSGMLInputTemplate>
+
+<featureCollection>
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>430539.0,5956546.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10402</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">463</property>
+          <property name="UTM_east_8">430539.0</property>
+          <property name="UTM_north_">5956545.99998</property>
+          <property name="loc_date">2000-08-26</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">2.6</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="Locations_">10799</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">147780.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>438404.20207490976,5951121.953195488 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10405</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">466</property>
+          <property name="UTM_east_8">439514.000001</property>
+          <property name="UTM_north_">5952337.99998</property>
+          <property name="loc_date">2000-08-27</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">2.5</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="Locations_">10802</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">206280.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>439717.765788113,5952033.162477285 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10406</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">467</property>
+          <property name="UTM_east_8">440809.000001</property>
+          <property name="UTM_north_">5953229.99998</property>
+          <property name="loc_date">2000-08-27</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">1.5</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="Locations_">10803</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">219780.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>435183.0,5955180.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10403</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">464</property>
+          <property name="UTM_east_8">435183.000001</property>
+          <property name="UTM_north_">5955179.99998</property>
+          <property name="loc_date">2000-08-27</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="fix_type">2</property>
+          <property name="dop">3.4</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="Locations_">10800</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">176580.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>416204.0,5961627.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10400</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">461</property>
+          <property name="UTM_east_8">416204.0</property>
+          <property name="UTM_north_">5961626.99998</property>
+          <property name="loc_date">2000-08-26</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="fix_type">2</property>
+          <property name="dop">5.1</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="Locations_">10797</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">120840.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>432544.0,5956162.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10398</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">459</property>
+          <property name="UTM_east_8">432544.000001</property>
+          <property name="UTM_north_">5956161.99998</property>
+          <property name="loc_date">2000-08-25</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">25.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">3.2</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-25</property>
+          <property name="Locations_">10795</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">61440.0</property>
+          <property name="uniquedays">2.0000825E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>422932.0,5957658.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10399</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">460</property>
+          <property name="UTM_east_8">422932.0</property>
+          <property name="UTM_north_">5957657.99998</property>
+          <property name="loc_date">2000-08-26</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="fix_type">2</property>
+          <property name="dop">3.0</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="Locations_">10796</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">92040.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>440436.0,5952332.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10397</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">458</property>
+          <property name="UTM_east_8">440436.000001</property>
+          <property name="UTM_north_">5952331.99998</property>
+          <property name="loc_date">2000-08-25</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">25.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">5.7</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-25</property>
+          <property name="Locations_">10794</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">32580.0</property>
+          <property name="uniquedays">2.0000825E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>435178.0,5955214.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10404</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">465</property>
+          <property name="UTM_east_8">435178.000001</property>
+          <property name="UTM_north_">5955213.99998</property>
+          <property name="loc_date">2000-08-27</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="fix_type">2</property>
+          <property name="dop">2.6</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="Locations_">10801</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">190980.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>441694.22352405,5953143.779336577 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10408</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">469</property>
+          <property name="UTM_east_8">445133.000001</property>
+          <property name="UTM_north_">5952156.99998</property>
+          <property name="loc_date">2000-08-27</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">2.3</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="Locations_">10805</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">248580.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>439817.8896390743,5954623.832004668 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10407</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">468</property>
+          <property name="UTM_east_8">443338.000001</property>
+          <property name="UTM_north_">5953602.99998</property>
+          <property name="loc_date">2000-08-27</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">27.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">1.9</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-27</property>
+          <property name="Locations_">10804</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">235080.0</property>
+          <property name="uniquedays">2.0000827E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>441161.0,5953076.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10396</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">457</property>
+          <property name="UTM_east_8">441161.000001</property>
+          <property name="UTM_north_">5953075.99998</property>
+          <property name="loc_date">2000-08-25</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">25.0</property>
+          <property name="fix_type">2</property>
+          <property name="dop">6.8</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-25</property>
+          <property name="Locations_">10793</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">18180.0</property>
+          <property name="uniquedays">2.0000825E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>422724.0,5961402.0 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10401</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">462</property>
+          <property name="UTM_east_8">422724.0</property>
+          <property name="UTM_north_">5961401.99998</property>
+          <property name="loc_date">2000-08-26</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">26.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">1.4</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-26</property>
+          <property name="Locations_">10798</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">133380.0</property>
+          <property name="uniquedays">2.0000826E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Point>
+                  <gml:coordinates>441687.22352405,5953132.779336577 </gml:coordinates>
+                </gml:Point>
+          </geometry>
+          <property name="OBJECTID">10409</property>
+          <property name="Bears_ID">265</property>
+          <property name="name">G024</property>
+          <property name="location_n">470</property>
+          <property name="UTM_east_8">445126.000001</property>
+          <property name="UTM_north_">5952145.99998</property>
+          <property name="loc_date">2000-08-28</property>
+          <property name="loc_time">1899-12-30</property>
+          <property name="loc_year">2000</property>
+          <property name="loc_month">8</property>
+          <property name="loc_day">28.0</property>
+          <property name="fix_type">3</property>
+          <property name="dop">2.9</property>
+          <property name="Collar_Typ">2</property>
+          <property name="DataStatus">1</property>
+          <property name="full_date">2000-08-28</property>
+          <property name="Locations_">10806</property>
+          <property name="reloc">No</property>
+          <property name="denning">No</property>
+          <property name="TimeOfDay"></property>
+          <property name="DataOwners">FRI</property>
+          <property name="HealthKey">G0242000</property>
+          <property name="timeanddayinsec">262980.0</property>
+          <property name="uniquedays">2.0000828E7</property>
+          <property name="weight">1.0</property>
+     </feature>
+
+     </featureCollection>
+</JCSDataFile>

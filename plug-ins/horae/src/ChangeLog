@@ -1,0 +1,445 @@
+2012-Oct.&Nov. sstein <ssteinig@ucalgary.ca>
+
+  * several improvements and additions:
+    - added GeoEllipe method from Long and Nelson (2012)
+    - improved MCP, so that a point subset can be defined in percent, based on distance from mean or median centre
+    - build in a check, so that h > cellsize
+    - new function that allows to extract different time fields from one 'Date'-format field (known from shp-files)
+    - changes that allow the toolbox be used with Sextante 1.0 and OpenJUMP 1.6
+    
+2011-Nov-16th sstein <ssteinig@ucalgary.ca>
+
+  * first manuscript of user manual ready for release (though some subsections
+    on data preparation need still to be written)
+  
+2010-Aug-16th sstein <ssteinig@ucalgary.ca>
+
+  * changes to KDE Asymptote calculation, so that h_ref can be fixed or adaptive 
+    
+    - changed:
+    ca.ucalgary.engg.moveantools.ojplugin.hranlaysis.AsymptoteAnalysisPlugIn
+    ca.ucalgary.engg.moveantools.util.KernelDensityUtil (extension)
+    
+  * Aug-20th: raster cell size can be set now as well.
+  			  Note, if an error message occurs, i.e. such that the shape file type
+  			  could not be determined, then the cell size is to big and no 
+  			  95% contours could be generated (i.e. no files could be written).
+  			  A smaller cell size needs to be selected (e.g. for Bear 241, 200m works
+  			  but not 400m). 
+    
+2010-Aug-11th sstein <ssteinig@ucalgary.ca>
+
+  * intermediate release
+  	see release folder for openjump132movantools_aug2010.zip 
+  	The jar/library that contains the Home Range toolbox is named
+  		movantool_aug2010.jar
+  	and contained in the OpenJUMP folder
+  		/lib/ext/
+  	The folder also contains the utilized library jmathplot_sept2007_java1.5.jar 
+  	(see the /lib/ folder of the SVN repository) for plotting graphs and the 
+  	Sextante libraries that provide the raster functions.
+    
+2010-Aug-11th sstein <ssteinig@ucalgary.ca>
+
+  * extended line-buffer HR function to allow manual input of buffer radius 
+    
+    - changed:
+    ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineBufferbasedHomeRangesPlugIn
+    
+2010-Aug-11th sstein <ssteinig@ucalgary.ca>
+
+  * added classification functions for Home Ranges to detect core, edge, patch
+  	and corridors. These functions have been written originally for forest 
+  	polygons in 2009 when I was at the UofC F^3GISci lab with Geoff and Greg. 
+    
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hranlysis.ExtractCoreEdgeAndPatchPlugIn
+    ca.ucalgary.engg.moveantools.ojplugin.hranlysis.ExtractCorridorsPlugIn
+    ca.ucalgary.engg.moveantools.util.patterndetect.ForestPatternAnalysisFunctions
+
+2010-Aug-10th sstein <ssteinig@ucalgary.ca>
+
+  * resolved finally some display issues for the raster data in OpenJUMP. I needed
+    to change interfaces that allow to separate between data and visualization 
+    and we can color images without changing the data (see also my previous entry 
+    on that).
+    
+2010-Aug-3rd sstein <ssteinig@ucalgary.ca>
+
+  * added an experimental plugin that allows to change the color of an raster image
+    i.e. instead of b/w it can be gree-yellow-red.
+    This is possible as I separated image/representation and data model for rasters
+    in OpenJUMP NB (yesterday)
+    As a result effect Brownian Bridge result images are not anymore black only but show
+    some structures/pixel values.
+    
+    - added:
+    org.openjump.core.ui.plugin.raster.color.RasterColorEditorPlugIn
+  
+2010-July-29th sstein <ssteinig@ucalgary.ca>
+
+  * added function to create a skeleton for each home range polygon in a layer.
+    
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hranlysis.SkeletonizeHRPlugIn
+    
+2010-July-16th sstein <ssteinig@ucalgary.ca>
+
+  * added histogram plot to display daily travel distances.
+    
+    - changed:
+    ca.ucalgary.engg.moveantools.ojplugin.DisplayDayTravelRangePlugIn
+    
+2010-July-8th sstein <ssteinig@ucalgary.ca>
+
+  * added function to display how Home Range changes over time when the asymptotes 
+    output is given as input.
+    
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hranlysis.AsymptoteMoviePlugIn
+    
+2010-June-21st sstein <ssteinig@ucalgary.ca>
+
+  * added function to calculate Home Range with a Scaled Line-Kernel Density (SLKD).
+    The Scaling of the gaussian is based on the error band model described
+    in Caspary and Scheuning (1993). For smaller probabilities (e.g. 75%) this
+    will result in a bone-shaped contour for a single line.
+    
+    However - after first experiments, the contours for LKD and SLKD are not
+    so much different. Maybe the kernel scaling from [1.0 ... sqrt(0.5)=0.707] should 
+    be made stronger, e.g. [1.0 ... 0.5]?! But I am not sure what the effect of the
+    bandwidth is here too? Furthermore, for p=95% the contours still contain each
+    single travel track (similar to LKD) - though I would have assumed that some 
+    of them would be excluded for p=0.95. For p=0.75 single (explorative) tracks are 
+    excluded (also for LKD). The result for BB-0.95 looks a bit better, but has funny parts.
+    (used dataset: bid259, y:2000, median avg. travel dist: 1800m/day, cellsize: 200m)
+    
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hrestimator.ScaledLineKernelDensityForMovementTracksPlugIn
+    ca.ucalgary.engg.moveantools.util.ScaledLineKernelDensityForMovementTracksAlgorithm
+    
+2010-June-22nd sstein <ssteinig@ucalgary.ca>
+
+  * IMPORTANT: 
+    I noticed a problem for the function GridExtent.enlargeOneCell() in 
+    Sextante 0.3.0 & 0.55 which causes XMax of the GridExtend not to be enlarged (on the 
+    computer of ChenLu and my machine when using the sextante main lib).
+    However, it does actually work for the other 20 bear datasets.
+
+2010-June-21st sstein <ssteinig@ucalgary.ca>
+
+  * added function to evaluate asymptotic behavior, i.e. that creates a number of 
+    points-vs-area plot using the MCP method to retain the area (other methods may 
+    be added). For a description/discussion of asymptote evaluation see Harris et 
+    al. (1990) and P.N. Laver (2005). The graph can be calculated for track data 
+    (successively adding the points in their recorded order) or for un-ordered
+    point data (10x selection of n-random points and taking the median-area)
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hranlysis.AsymptoteAnalysisPlugIn
+    
+    - 2010-July-8th:
+    Extended Function to calculate asymptotes for Line-Buffer-based HR as well.
+    
+    - 2010-July-9th
+    Extended Function to calculate asymptotes for Point KDE HR as well. Using
+    Sextante-Biweight Kernel, h_ref (Normal K), and p=0.95 contour, cellSize=200m
+        
+2010-June-10th sstein <ssteinig@ucalgary.ca>
+
+  * added function to calculate average distance between Home Ranges derived 
+    with different probability settings. The distance can be used to classify
+    the home range polygons (see Soille and Vogt (2009), P Vogt, K Riitters et al (2007)) 
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hranalysis.CalculateCoreBufferDistancePlugIn
+    
+2010-June-9/10th sstein <ssteinig@ucalgary.ca>
+
+  * added function to calculate the core area from a density raster after the method
+  	outlined in R.A. Powell(2000) and Seaman and Powell(1990). The function creates
+  	the core home range contour (or polygon) and a graph that displays the home range
+  	area (in percent) covered by each density-value (in percent)). The graph allows
+  	to access if the animal moves randomly (straight line) or uses the area in a
+  	clustered fashion (concave shaped curve - i.e. no plateaus)  or used the area in a
+  	even distribution fashion (convex shape - i.e. has plateaus).
+  	Note the axes of the graph are as in Powell(2000) and in PN Laver(2005).
+  	
+  	June 21st 2010:
+  	Added control method/plot for core area calculation - based on [2.5-100] percent 
+  	probability polygon/contour line generation (see Harris et al. 1990) 
+  	
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hranalysis.CreateCoreAreaFromSelectedImageLayerPlugIn
+    - changed:
+    ca.ucalgary.engg.moveantools.util.KernelDensityUtil
+  
+2010-May-31st sstein <ssteinig@ucalgary.ca>
+
+  * added function to calculate Sigma 1 for Brownian Bridge implementation.
+    It simply tests the values according to Horne et al 2007 and then
+    takes the min value of the (liker) function. 
+    Horne et al (2007) actually implement the Golden Search optimization for
+    finding the value. 
+    - added:
+    ca.ucalgary.engg.moveantools.ojplugin.hrestimator.DisplayLikerFunctionForBBPlugIn
+    - changed:
+	ca.ucalgary.engg.moveantools.util.BrownianBridgeUtil
+    
+    [sstein, 3. June 2010] Note, if the graph look bumpy - i.e. there are 
+    upward jumps, then this is related to numerical problems when I needed to 
+    discard Log(0.0) values, since they result in infinity. The numerical problems 
+    appear with the calculation of e^x for values of x > 7xx (Googles calculator 
+    does not return any values after x=709). For this reason if unit-time differences
+    are to be used I am not using the value dT = 1 but dT = 10'000 instead. As this
+    may avoid the precision problem. This could also be the reason, why the
+    R implementation requires times (difference) in seconds and not in minutes or hours.
+    
+2010-May-27th sstein <ssteinig@ucalgary.ca>
+
+  * the function Display Day Travel Ranges returns now also some other measures
+    on the movement track (i.e. mean daily travel range, h_ref, 
+    mean leave-one-out error)
+    - changed:
+    ca.ucalgary.engg.moveantools.ojplugin.DisplayDayTravelRangePlugIn
+  	
+2010-May-26th sstein <ssteinig@ucalgary.ca>
+
+  * improvements of Brownian Bridge HR approach 
+  	- Segment-based BB approach now allows dT != 1
+  	- tried to derive bounding box for calculations (to determine raster size too)
+	
+2010-May-17th sstein <ssteinig@ucalgary.ca>
+
+  * first version of Brownian Bridge HR approach with code taken from kernelbb function of
+    the adehabitat package for R. 
+    However values are quite small e.g. 2.0*E-12
+    [sstein: 18May2010] renaming of BrownianBridgeAlgorithm class to BrownianBridgeGeometrySegmentAlgorithm 
+	- changed:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.BrownianBridgeDensityPlugIn
+	ca.ucalgary.engg.moveantools.util.BrownianBridgeAlgorithm
+	- added:
+	ca.ucalgary.engg.moveantools.util.BrownianBridgeUtil
+	
+2010-May-14th sstein <ssteinig@ucalgary.ca>
+
+  * extended both Line Kernel Density plugins with rasterize-lines-first approach as used in ArcGIS
+	- changed:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineKernelDensityPlugIn
+	ca.ucalgary.engg.moveantools.util.LineKernelDensityAlgorithm
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineKernelDensityForMovementTracksPlugIn
+	ca.ucalgary.engg.moveantools.util.LineKernelDensityForMovementTracksAlgorithm
+
+2010-May-13th sstein <ssteinig@ucalgary.ca>
+
+  * added function to create Kernel Density for a line layer
+	- added:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineKernelDensityPlugIn
+	ca.ucalgary.engg.moveantools.util.LineKernelDensityAlgorithm
+	
+  * added function to create line-based Kernel Density for GPS point 
+    movement data (the difference to the other line-based KD implementation
+    is that subsequent track segments are observed and the probability of
+    observation does not become larger on line end points.
+    Though... the probability to find the animal there is actually larger.
+    However, we may rather model this with the Brownian Bridge approach.
+	- added:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineKernelDensityForMovementTracksPlugIn
+	ca.ucalgary.engg.moveantools.util.LineKernelDensityForMovementTracksAlgorithm
+	
+2010-May-11th sstein <ssteinig@ucalgary.ca>
+
+  * added option to Line-Buffer-based HR to calculate a Usage Density Grid from
+    which probability contours can be created later
+	- added:
+	ca.ucalgary.engg.moveantools.util.LineBufferDensityAlgorithm
+	- changed:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineBufferbasedHomeRangesPlugIn
+	
+2010-May-10th sstein <ssteinig@ucalgary.ca>
+
+  * added functions to calculate Home Range with LoCoH-R, LoCoH-A and 
+    LoCoH-K (see WM Getz et al 2007); including calculation of isopleths 
+    as described in the Getz paper.  [Note, implementation still needs more testing]
+	- added:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LoCoHHomeRangesPlugIn
+	ca.ucalgary.engg.moveantools.util.LoCoHUtil
+    
+2010-May-6th sstein <ssteinig@ucalgary.ca>
+
+  * added function to display a raster profile graph (programming 5.-6.May.2010).  
+	- added:
+	org.openjump.core.ui.plugin.raster.ProfileGraphPlugIn
+	org.openjump.core.ui.plugin.raster.ProfileGraphTool
+	
+  * bug fixing and re-implementation of some kernels (e.g. Normal, Biweight, Triweight
+    and Epanechnikov kernels). Added Triangular, Uniform, and Cosine kernels. Almost all 
+    Kernels use now the 1D version (with different scaling values compared to 
+    the 2D versions)
+	
+2010-May-3rd sstein <ssteinig@ucalgary.ca>
+
+  * added function that creates a MBR/circle for GPS points of one day  
+	- added:
+	ca.ucalgary.engg.moveantools.ojplugin.DisplayDayTravelRangePlugIn
+	
+2010-Apr-25 sstein <ssteinig@ucalgary.ca>
+
+  * added Home-Range calculation method based on buffering of GPS tracks (i.e. the line-
+  	buffer-based HRE approach).  
+	- added:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.LineBufferbasedHomeRangesPlugIn
+	- additional geometry utility functions from UniZH DEGEN project copied
+	ca.ucalgary.engg.moveantools.util.geom.JtsCentroid
+	ca.ucalgary.engg.moveantools.util.geom.OrientationMBR
+	ca.ucalgary.engg.moveantools.util.geom.PointLineDistance
+	ca.ucalgary.engg.moveantools.util.geom.Rotate
+	ca.ucalgary.engg.moveantools.util.geom.SecondGeodeticTask2d
+	
+2010-Apr-24 sstein <ssteinig@ucalgary.ca>
+
+  * added Home-Range split method to retrieve h_opt. It checks when the home range
+    region is split into to two regions (with p=99). The h value before that split 
+    would then be h_opt.  (this is called the ad-hoc method by Berger and Gese 2007, 
+    Jacques et al. 2009, in RH Schuler et al. 2010/11 ) 
+    The search range is currently 0.01* ... 3*href
+  	- changed:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.SextanteKernelDensityPlugIn
+	ca.ucalgary.engg.moveantools.util.KernelDensityUtil
+	- added:
+	ca.ucalgary.engg.moveantools.util.KernelDensityHRSplit
+	- additional externalising/refactoring of functions from
+	CreateProbabilityContoursFromSelectedImageLayerPlugIn to FeatureConversionUtils
+	
+2009-Dec-07 sstein <ssteinig@ucalgary.ca>
+
+  * using now JFreeChart instead of the JMathPlot lib to display the LSCV graphs.
+  	However, one problem is that JFreeChart can not show the optimization path,
+  	since it seems to order the data (so I can't get a zigzag path). 
+  	- changed:
+	ca.ucalgary.engg.moveantools.ojplugin.DisplayKernelDensityLSCVFunctionPlugIn
+  
+2009-Dec-07 sstein <ssteinig@ucalgary.ca>
+
+  * Note: I did a comparison with ArcGIS biweight Kernel method and (new) implemented 
+    Sextante biweight and gaussian. It turns out that the rasters are slightly 
+    different, but if the 0.95 probability contour is created the contours are
+    fairly equal. So I assume the implementations are more or less similar.
+    However, the max amplitudes of the raster cell values differ quite strongly,
+    i.e. for the bear 248 subset the biweight Sextante kernel [not normalized 
+    to f(t)] has max value = 1.691, and biweight ArcGIS has max value = 6.165; 
+    [As written below: there is a difference between the implemented 
+    kernels: i.e. for a single point, max = 0.4 (Normal Kernel) to 
+    1.0 (Sextante Kernel)]  
+	
+2009-Dec-07 sstein <ssteinig@ucalgary.ca>
+
+  * calculation of topographic contours is now an option for the probability contour
+    calculation (previously always created) 
+	- changed:
+	org.openjump.core.ui.plugin.raster.CreateProbabilityContoursFromSelectedImageLayerPlugIn
+
+2009-Dec-03 sstein <ssteinig@ucalgary.ca>
+
+  * implement several kernel functions. However there are issues with the
+    amplitudes of the values returned, ranging for a single point from
+    0.4 (Normal Kernel) to 1.0 (Sextante Kernel) - subsequently the values
+    returned are neither density values f(t) (because the scaling is 
+    missing) nor normalized values (to 1).
+	- changed:
+	org.openjump.core.ui.plugin.raster.SextanteKernelDensityPlugIn
+	ca.ucalgary.engg.moveantools.util.KernelDensitySextanteModifiedAlgorithm
+	
+2009-Nov-24 sstein <ssteinig@ucalgary.ca>
+
+  * implemented a (separate) OJ function that plots the LSCV function 
+    and the optimization path: "MOVEAN > Display LSCV Function for Dataset"
+	- new:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.DisplayKernelDensityLSCVFunctionPlugIn
+	
+	- changed:
+	ca.ucalgary.engg.moveantools.util.KernelDensityLSCV   
+
+2009-Nov-24 sstein <ssteinig@ucalgary.ca>
+
+  *	determination of h_opt based on h_ref (as starting point). The search
+    for h_opt uses the LSCV score function given in BJ Worton (1995) and
+    uses the Golden Section Search optimization approach. 
+    Note 1: this approach assumes a function to minimize with only one (global) minimum.
+    Note 2: the objective function given by Worton (1995) can not handle
+    point distances of 0m. Hence such distances are excluded in the calculation.
+    Note 3: The derived density raster for h_opt is calculated for the adjusted
+    h_opt(biweight), i.e. the biweight Kernel (K2) (according to Abode Manual p. 20) 
+    The golden section search code was inherited from USDA Forest Products 
+    Laboratory and is in the public domain.
+    - new classes:
+	ca.ucalgary.engg.moveantools.util.KernelDensityLSCV
+	ca.ucalgary.engg.moveantools.util.optimization.GoldenSearchOptimization
+	ca.ucalgary.engg.moveantools.util.optimization.Console
+	ca.ucalgary.engg.moveantools.util.optimization.FMinMethods
+	ca.ucalgary.engg.moveantools.util.optimization.FminTest
+				
+	- changed:
+	ca.ucalgary.engg.moveantools.ojplugin.hrestimator.SextanteKernelDensityPlugIn
+	ca.ucalgary.engg.moveantools.util.KernelDensityUtil
+	
+	- used now but may be replaced later with the Sextante KD class (if my 
+	changes are contributed back to the project):
+	ca.ucalgary.engg.moveantools.util.KernelDensitySextanteModifiedAlgorithm
+	
+2009-Nov-12 sstein <ssteinig@ucalgary.ca>
+
+  *	function for determination of h_ref for the input dataset and display in 
+  	the dialog (see ABode Manual p.17, and BJ Worton 1995) 
+    Note: h_ref is kernel dependent, current implementation is for the
+    Biweight Kernel/Normal Kernel
+
+2009-Nov-10 sstein <ssteinig@ucalgary.ca>
+
+  * implemented an option to remove single points that have no other 
+    point within radius 2*h (they may be outliers?) : ABode Manual p.14, 
+    Seaman et al. 1998 (this can not be done before h
+    has been determined, i.e. is different for h_LSCV and h_manual,
+    and before the raster extent is calculated)
+    Another option would be to set weight of those points to 0? 
+    - changed Classes:
+    ca.ucalgary.engg.moveantools.ojplugin.hrestimator.SextanteKernelDensityPlugIn
+
+2009-Nov-09 sstein <ssteinig@ucalgary.ca>
+	a bit late, but finally my init
+	
+	current state:
+	=============
+	programmed OpenJUMP Plugins (appear in menu bar "MOVEAN" ):
+	
+	* a plugin that visualizes the bear tracks (for each bear), 
+	  i.e. generates lines out of points (after ordering them) : started 6.Oct.2009
+	  - ca.ucalgary.engg.moveantools.ojplugin.DisplayMovementTracksPlugIn
+	  
+	* first implementation of MCP based on JTS Convex Hull algorithm done 
+	  using subsets (for different bears in the same dataset) : started 8.Oct.2009
+	  - ca.ucalgary.engg.moveantools.ojplugin.hrestimator.CalculateMinimumConvexPolygonPlugIn
+
+	* a plugin that calculates the Kernel-Density using the Sextante library;
+	  besides the Sextante kernel a second kernel was added (ABode, but no scaling)
+	  : started 20.Oct.2009
+	  - ca.ucalgary.engg.moveantools.ojplugin.hrestimator.SextanteKernelDensityPlugIn
+
+    * a plugin that creates probability contours and/or probability polygons based 
+      on a given kernel density raster (i.e. generated with the previous method). 
+      the plugin utilizes the contouring method from Sextante, and the 
+      Polygonizer from JTS : started 2.Nov.2009
+	  - ca.ucalgary.engg.moveantools.ojplugin.hranalysis.CreateProbabilityContoursFromSelectedImageLayerPlugIn
+	
+	* a plugin that creates a vector grid from a raster image, so I can check 
+	  some things in OpenJUMP, i.e. use different display methods and explore
+	  values of the raster. started 27.Oct.2009
+	  - org.openjump.core.ui.plugin.raster.CreateLatticeFromSelectedImageLayerPlugIn
+	  - org.openjump.core.ui.plugin.raster.CreatePolygonGridFromSelectedImageLayerPlugIn
+		
+	The SVN was setup/used first on 6.Oct.2009
+	
+	web addresses of tools used:
+	===========================
+	  - OpenJUMP GIS: http://www.openjump.org (and JUMP Pilot Project on SourceForge)
+	  - JTS (JTS Topology Suite): http://tsusiatsoftware.net/ (and on SourceForge)
+	  - Sextante GIS: http://forge.osor.eu/plugins/wiki/index.php?id=13&type=g
+	  - Eclipse IDE: http://www.eclipse.org (for JAVA development, and Subclipse for SVN access) 

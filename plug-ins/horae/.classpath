@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/yyy/oj/jts-1.12.jar"/>
+	<classpathentry kind="lib" path="/yyy/oj/jmatharray-20070905.jar"/>
+	<classpathentry kind="lib" path="/yyy/oj/jmathplot-20070905.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/oj_svn_trunk"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openjump_bindings"/>
+	<classpathentry kind="lib" path="/yyy/sextante/jfreechart-1.0.11.jar"/>
+	<classpathentry kind="lib" path="/yyy/sextante/jcommon-1.0.14.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/algorithms"/>
+	<classpathentry kind="lib" path="/openjump_bindings/sextante-lib/sextante_gui.jar"/>
+	<classpathentry kind="lib" path="/openjump_bindings/sextante-lib/sextante.jar" sourcepath="/sextante_core_trunk"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

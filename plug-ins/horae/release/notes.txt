@@ -1,0 +1,24 @@
+Notes for the Home-Range Analysis and Estimation toolbox for OpenJUMP
+=====================================================================
+- OpenJUMP 1.6 requires JAVA (SE) version 1.5 installed
+
+- un-zip the file anywhere on your machine
+
+- start OpenJUMP by switching to the folder called /bin/ and 
+-- run openjump.bat or OpenJUMP.exe if you have a Microsoft Windows system, or 
+-- run "sh openjump.sh" from the command line/Shell if you have a Linux or MacOSX
+-- run "OpenJUMP.app" for MacOSX
+
+- the toolbox adds the new menu entry "MOVEAN" to OpenJUMP 1.6 (and 2 functions to the "Raster" menu)
+
+- documentation is in progress; but we have also a user email list/forum ojhorae-users@googlegroups.com
+
+- an example data file should be shipped with the package. Its stored in OpenJUMPs own *.jml format (an xml format). However, data can be also loaded from *.shp files or from *.csv files with.
+
+- the maximal to use memory can be set in the files OpenJUMP.ini (for windows) and oj_linux.sh (for Linux/Mac) by changing "Xmx512M", which currently sets the  maximal memory to be used to 512 MB, to e.g. "Xmx1024M", which sets the maximal memory to be used to 1 GB 
+
+- it is not sure if all functions run on MacOSX and Linux, since the Sextante toolbox functions, used by the Home Range toolbox, produce intermediate vector and raster files in the temp folder (e.g. on Windows Vista: "C:\Users\Stefan\AppData\Local\Temp\"). Subsequently the temp folder should be also cleaned once in a while. 
+
+- for developers:
+-- the source code for the toolbox can be found in the file: /lib/ext/movantool_nov2012.jar 
+-- license and copyright information see the license files in the package
