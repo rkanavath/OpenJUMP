@@ -1,0 +1,14 @@
+Changes to Home-Range Analysis and Estimation toolbox for OpenJUMP - since Nov. 2011 version
+===============================================================
+- an option for the MCP method to define the percentage of point used (e.g. 95%) for MCP generation; utilizing the fixed mean centre and/or fixed median centre method
+- a function to extract (unique) time attributes (e.g. year, day, hour, etc.), if a time-formatted field exists (as with shapefiles). Such time fields are necessary for some estimators, such as Brownian Bridges and GeoEllipse.
+- added GeoEllipse method, i.e.  potential path area, described in J.A. Long & T.A. Nelson (JoWM, 2012) [note, the Geo-Ellipse method from Downs (GIScience, 2010) is similar but different]
+
+in OpenJUMP RC 1.6:
+- new CSV plugin, that allows to read different CSV file styles, if the user sets the options
+- uses now Version 1.0 of the Sextante analysis toolbox (previously: vers. 0.6)
+
+Known issues:
+- PostGIS database connections stored in a project are re-stored on project loading
+
+stefan, 19. Feb. 2013
