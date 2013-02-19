@@ -1,18 +1,24 @@
-Libraries needed by the OJ HoRAE extension (openabode) for building:
+Libraries needed by the OJ HoRAE extension for building:
 
-[status 29. Dec. 2011]
+[status 29. Nov. 2012]
 
 from OpenJUMP libraries folder
 * jts-1.12.jar
 * jmatharray-20070905.jar
 * jmathplot-200070905.jar
-* sextante-binding-0.6.1.jar
 
-libraries from OpenJUMP svn > lib > plus > sextante folder:
-* sextante-0.6.jar
-* sextante_vectorize-0.6.jar
-* sextante_vectorTools-0.6.jar
-* sextante_imageAnalysis-0.6.jar
-* sextante_rasterize-0.6.jar
+libraries from OpenJUMP SVN: core > lib > plus folder:
+* ojsextante_binding_oct2012.jar
+and from the lib > plus > sextante folder:
+* sextante_gui.jar
+* sextante.jar
+* sextante_algorithms.jar
 * jfreechart-1.0.11.jar
 * jcommon-1.0.14.jar
+
+For development, I actually did use the libs sextante-binding-0.6.1.jar and
+sextante_algorithms.jar, but instead I used the original dev projects:
+- The Sextante Algorithms Project can be found on:
+http://sextante.googlecode.com/svn/trunk/soft/sextante_lib/algorithms
+- and the OJ-Sextante Bindings Project can be found on:
+https://jump-pilot.svn.sourceforge.net/svnroot/jump-pilot/plug-ins/SextantePlugIn
