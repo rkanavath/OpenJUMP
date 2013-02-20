@@ -195,6 +195,7 @@ public class SextanteKernelDensityPlugIn extends AbstractThreadedUiPlugIn{
 		        if(true){//fill in condition (i.e. not null, or working with subset)
 		        	//context.addLayer(StandardCategoryNames.RESULT, this.input.getName() + "-tracks", resultC);
 		     	    context.getLayerManager().addLayerable(StandardCategoryNames.RESULT, raster);
+		        	raster.setName(this.input.getName() + "-KDE");
 		        }
 	    	}
 	    	if (this.useLSCV == true){
@@ -205,6 +206,7 @@ public class SextanteKernelDensityPlugIn extends AbstractThreadedUiPlugIn{
 		        if(raster != null){
 		        	//context.addLayer(StandardCategoryNames.RESULT, this.input.getName() + "-tracks", resultC);
 		     	    context.getLayerManager().addLayerable(StandardCategoryNames.RESULT, raster);
+		     	    raster.setName(this.input.getName() + "-lscvKDE");
 		        }
 		        else{
 		        	context.getWorkbenchFrame().warnUser("no point dataset");
@@ -218,6 +220,7 @@ public class SextanteKernelDensityPlugIn extends AbstractThreadedUiPlugIn{
 		        if(raster != null){
 		        	//context.addLayer(StandardCategoryNames.RESULT, this.input.getName() + "-tracks", resultC);
 		     	    context.getLayerManager().addLayerable(StandardCategoryNames.RESULT, raster);
+		     	    raster.setName(this.input.getName() + "-adhocKDE");
 		        }
 	    	}
     	    System.gc();    		

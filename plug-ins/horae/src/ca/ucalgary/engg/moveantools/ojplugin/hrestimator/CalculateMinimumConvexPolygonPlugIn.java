@@ -98,7 +98,7 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
     private JComboBox centreMethodComboBox = null;
     private PlugInContext context = null;
 	private String idAttribute = "";
-    private String sATTRIBUTEA = "id Attribute";
+    private String sATTRIBUTEA = "Animal ID Attribute";
     private String sGENERATELAYERS = "one output layer per indiviual";
     private boolean generateLayerPerObject = false;
     private boolean usePercentage = false;
@@ -153,7 +153,11 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
 	    	FeatureCollection resultC = this.calculateConvexHulls(this.points, this.idAttribute, this.generateLayerPerObject, 
 	    			this.usePercentage, this.percentage, this.selectedCentreCalculation, context, monitor);
 	        if(this.generateLayerPerObject == false){
-	        	context.addLayer(StandardCategoryNames.RESULT, this.input.getName() + "-tracks", resultC);
+	        	String ending = "-MCP";
+	        	if (usePercentage){
+	        		ending = "-MCP_"  + ((int)(this.percentage*100)) + "p";
+	        	}
+	        	context.addLayer(StandardCategoryNames.RESULT, this.input.getName() + ending, resultC);
 	        }
     	    System.gc();    		
     	}

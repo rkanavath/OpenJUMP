@@ -184,6 +184,7 @@ public class ScaledLineKernelDensityForMovementTracksPlugIn extends AbstractThre
 	        		this.rasterizeFirst, this.scaleWithSqrt, context, monitor);
 	        if(raster != null){
 	        	context.getLayerManager().addLayerable(StandardCategoryNames.RESULT, raster);
+	        	raster.setName(this.input.getName() + "-SLine-KDE");
 	        }
 	        //--
 	        System.gc();    		

@@ -292,7 +292,7 @@ public class DisplayKernelDensityLSCVFunctionPlugIn extends AbstractThreadedUiPl
 	private void updateHref() {
     	this.input =  dialog.getLayer(this.sLAYERPTS);
     	this.href = KernelDensityUtil.calculateHref(this.input);
-    	this.sHRefLabel = "h_ref (?normal? Kernel, not biweight K2) = " + this.href; 
+    	this.sHRefLabel = "h_ref (normal Kernel, not biweight K2) = " + this.href; 
     	this.hrefLabel.setText(this.sHRefLabel);
 		//System.out.print("process h_ref");
 	}

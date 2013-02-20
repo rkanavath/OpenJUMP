@@ -162,7 +162,7 @@ public class LineKernelDensityForMovementTracksPlugIn extends AbstractThreadedUi
 	    	FeatureCollection singleLines = TrackCalculationUtil.convertToLines(sortedPoints, 
 	    			this.locAttribute, null, context, monitor);
 	        context.addLayer(StandardCategoryNames.RESULT, this.input.getName() + "-tracks", singleLines);
-	        /*// the value calculated here mey be used as input for the bandwidth
+	        /*// the value calculated here may be used as input for the bandwidth
 	        double[] errorDists = TrackCalculationUtil.calcOneDayActivityRadiusDistances(sortedPoints, this.dayAttribute, 
 	        		this.input.getName(), true, context);
 	        //-- calculate median for buffer radius
@@ -180,6 +180,7 @@ public class LineKernelDensityForMovementTracksPlugIn extends AbstractThreadedUi
 	        		this.rasterizeFirst, context, monitor);
 	        if(raster != null){
 	        	context.getLayerManager().addLayerable(StandardCategoryNames.RESULT, raster);
+	        	raster.setName(this.input.getName() + "-LineKDE");
 	        }
 	        //--
 	        System.gc();    		

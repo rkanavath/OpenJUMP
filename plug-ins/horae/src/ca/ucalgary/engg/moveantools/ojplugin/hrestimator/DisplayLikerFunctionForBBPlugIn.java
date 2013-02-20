@@ -194,6 +194,12 @@ public class DisplayLikerFunctionForBBPlugIn extends AbstractThreadedUiPlugIn{
     	double sigma1 = ((int)(Math.sqrt(sigma12)*1000.0))/1000.0;
     	
     	context.getWorkbenchFrame().warnUser("calculated minima sigma 1: " + sigma1 + " - with " +  minVal);
+		context.getWorkbenchFrame().getOutputFrame().createNewDocument();
+		context.getWorkbenchFrame().getOutputFrame().addText("Brownian Bridge Liker function results");
+		context.getWorkbenchFrame().getOutputFrame().addText("Layer: " + this.input.getName());
+		context.getWorkbenchFrame().getOutputFrame().addText("GPS points: " + this.points.size());
+		context.getWorkbenchFrame().getOutputFrame().addText("calculated minima sigma 1: " + sigma1 + " - with " +  minVal);
+		context.getWorkbenchFrame().getOutputFrame().addText("set value for sigma 2: " + sigma2);
     	
     	//-- Display results in a plot
     	//-- stuff for jmathplot (now replaced by JFreeChart plots

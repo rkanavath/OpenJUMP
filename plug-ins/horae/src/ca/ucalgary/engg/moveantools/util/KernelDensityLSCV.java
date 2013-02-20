@@ -292,10 +292,29 @@ public class KernelDensityLSCV implements FMinMethods{
 
 	    if(context != null){
 	    	if(calculateGridValues){
-	    		context.getWorkbenchFrame().warnUser("h_opt(Normal): " + roundedHOpt + "; h_opt(Biweight): " + roundedHOptBiweight + "; h_min(Biweight): " + roundedHBestBiweight + "; h_ref: " + this.hRef);
+	    		context.getWorkbenchFrame().warnUser("see output window");
+				
+	    		context.getWorkbenchFrame().getOutputFrame().createNewDocument();
+	    		context.getWorkbenchFrame().getOutputFrame().addText("Grid & Golden Search - LSCV results");
+				context.getWorkbenchFrame().getOutputFrame().addText("Layer: " + points.getName());
+				context.getWorkbenchFrame().getOutputFrame().addText("GPS points: " + fc.size());
+				context.getWorkbenchFrame().getOutputFrame().addText("h_opt(Normal Kernel) - Golden Search: " + roundedHOpt);
+				context.getWorkbenchFrame().getOutputFrame().addText("h_opt(Biweight Kernel) - Golden Search: " + roundedHOptBiweight);
+				context.getWorkbenchFrame().getOutputFrame().addText("h_min(Biweight Kernel) - Grid Search: " + roundedHBestBiweight);
+				context.getWorkbenchFrame().getOutputFrame().addText("h_ref(Normal Kernel): " + this.hRef);
+				context.getWorkbenchFrame().getOutputFrame().addText("Note: h(Normal Kernel) * 2.78 = h(Biweight Kernel) ");
 	    	}
 	    	else{
-	    		context.getWorkbenchFrame().warnUser("h_opt(Normal): " + roundedHOpt + "; h_opt(Biweight): " + roundedHOptBiweight + "; h_ref: " + this.hRef);
+	    		context.getWorkbenchFrame().warnUser("see output window");
+
+	    		context.getWorkbenchFrame().getOutputFrame().createNewDocument();
+	    		context.getWorkbenchFrame().getOutputFrame().addText("Golden Search - LSCV results");
+				context.getWorkbenchFrame().getOutputFrame().addText("Layer: " + points.getName());
+				context.getWorkbenchFrame().getOutputFrame().addText("GPS points: " + fc.size());
+				context.getWorkbenchFrame().getOutputFrame().addText("h_opt(Normal Kernel) - Golden Search: " + roundedHOpt);
+				context.getWorkbenchFrame().getOutputFrame().addText("h_opt(Biweight Kernel) - Golden Search: " + roundedHOptBiweight);
+				context.getWorkbenchFrame().getOutputFrame().addText("h_ref(Normal Kernel): " + this.hRef);
+				context.getWorkbenchFrame().getOutputFrame().addText("Note: h(Normal Kernel) * 2.78 = h(Biweight Kernel) ");
 	    	}
 	    }
 	    return true;

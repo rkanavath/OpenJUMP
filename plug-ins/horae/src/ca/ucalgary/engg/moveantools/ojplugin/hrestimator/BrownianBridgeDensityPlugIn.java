@@ -173,6 +173,7 @@ public class BrownianBridgeDensityPlugIn extends AbstractThreadedUiPlugIn{
 	        		cellSize, this.useDTone, context, monitor);
 	        if(raster != null){
 	        	context.getLayerManager().addLayerable(StandardCategoryNames.RESULT, raster);
+	        	raster.setName(this.input.getName() + "-BB");
 	        }
 	        //--
 	        System.gc();    		

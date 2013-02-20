@@ -164,6 +164,7 @@ public class BrownianBridgeDensityRasterVersionPlugIn extends AbstractThreadedUi
 	        		this.timeAttribute, this.useDTone, context, monitor);
 	        if(raster != null){
 	        	context.getLayerManager().addLayerable(StandardCategoryNames.RESULT, raster);
+	        	raster.setName(this.input.getName() + "-BBraster");
 	        }
 	        //--
 	        System.gc();    		
