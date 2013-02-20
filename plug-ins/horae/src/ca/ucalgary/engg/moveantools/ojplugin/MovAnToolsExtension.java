@@ -47,9 +47,9 @@ public class MovAnToolsExtension extends Extension{
 		new DisplayDayTravelRangePlugIn().initialize(context);
 		new CreateTimeAttributesFromTimeFieldPlugIn().initialize(context);
 		new CalculateMinimumConvexPolygonPlugIn().initialize(context);
+		new CreateProbabilityContoursFromSelectedImageLayerPlugIn().initialize(context);
 		new AsymptoteAnalysisPlugIn().initialize(context);
 		new AsymptoteMoviePlugIn().initialize(context);
-		new CreateProbabilityContoursFromSelectedImageLayerPlugIn().initialize(context);
 		new SextanteKernelDensityPlugIn().initialize(context);
 		new DisplayKernelDensityLSCVFunctionPlugIn().initialize(context);
 		new LineBufferbasedHomeRangesPlugIn().initialize(context);
