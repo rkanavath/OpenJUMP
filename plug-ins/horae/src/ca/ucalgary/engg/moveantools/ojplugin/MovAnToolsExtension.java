@@ -48,6 +48,7 @@ public class MovAnToolsExtension extends Extension{
 		new CreateTimeAttributesFromTimeFieldPlugIn().initialize(context);
 		new CalculateMinimumConvexPolygonPlugIn().initialize(context);
 		new CreateProbabilityContoursFromSelectedImageLayerPlugIn().initialize(context);
+		new CreateCoreAreaFromSelectedImageLayerPlugIn().initialize(context);
 		new AsymptoteAnalysisPlugIn().initialize(context);
 		new AsymptoteMoviePlugIn().initialize(context);
 		new SextanteKernelDensityPlugIn().initialize(context);
@@ -59,7 +60,6 @@ public class MovAnToolsExtension extends Extension{
 		new DisplayLikerFunctionForBBPlugIn().initialize(context);
 		new BrownianBridgeDensityPlugIn().initialize(context);
 		new BrownianBridgeDensityRasterVersionPlugIn().initialize(context);
-		new CreateCoreAreaFromSelectedImageLayerPlugIn().initialize(context);
 		new CalculateCoreBufferDistancePlugIn().initialize(context);
 		new SkeletonizeHRPlugIn().initialize(context);
 		new ExtractCoreEdgeAndPatchPlugIn().initialize(context);
