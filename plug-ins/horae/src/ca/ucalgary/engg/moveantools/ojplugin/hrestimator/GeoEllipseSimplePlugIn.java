@@ -196,7 +196,7 @@ public class GeoEllipseSimplePlugIn extends AbstractThreadedUiPlugIn{
         	if( maxSpeedsDetected[0] > maxSpeedsDetected[1]){
         		if(maxSpeedsDetected[1] > 0){
 	        		vMaxUsed = maxSpeedsDetected[0] + (maxSpeedsDetected[0] - maxSpeedsDetected[1]);
-	        		sVMethod = "using Robson and Whitlock (1964) estimate";
+	        		sVMethod = "using Robson and Whitlock (1964) estimate vmax = v(m) + [v(m) - v(m+1)]  ";
         		}
         		else{
             		vMaxUsed = maxSpeedsDetected[0] + 0.5;
