@@ -4,6 +4,9 @@
  */
 package ca.ucalgary.engg.moveantools.ojplugin;
 
+import org.openjump.core.ui.plugin.raster.CreateContourLineFromSelectedImageLayerPlugIn;
+import org.openjump.core.ui.plugin.raster.LineKernelDensityPlugIn;
+
 import ca.ucalgary.engg.moveantools.ojplugin.hranalysis.AsymptoteAnalysisPlugIn;
 import ca.ucalgary.engg.moveantools.ojplugin.hranalysis.AsymptoteMoviePlugIn;
 import ca.ucalgary.engg.moveantools.ojplugin.hranalysis.CalculateCoreBufferDistancePlugIn;
@@ -69,6 +72,8 @@ public class MovAnToolsExtension extends Extension{
 		//OJ-Sextante Menu
 		//================
 		//new LineKernelDensityPlugIn().initialize(context);
+		new CreateContourLineFromSelectedImageLayerPlugIn().initialize(context);
+		new LineKernelDensityPlugIn().initialize(context);
 	}
 	
 }
