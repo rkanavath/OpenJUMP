@@ -67,6 +67,7 @@ public class OpenJUMPRasterLayer
       //[sstein 26 Oct. 2010] using the new method instead
       // so I do not need to change the code in all the cases
       // where #.create(layer) is used
+	  System.out.println("creation of raster layer"); 
       create(layer, true);
 
    }
@@ -85,9 +86,10 @@ public class OpenJUMPRasterLayer
          m_sFilename = layer.getImageFileName();
          final Envelope env = layer.getEnvelope();
          m_LayerExtent = new AnalysisExtent();
+         //[sstein 18 Mar 2013], set cell size first, and then the extent, otherwise maxX and maxY will be reset
+         m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX()) / m_Raster.getWidth());
          m_LayerExtent.setXRange(env.getMinX(), env.getMaxX(), true);
          m_LayerExtent.setYRange(env.getMinY(), env.getMaxY(), true);
-         m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX()) / m_Raster.getWidth());
          m_dNoDataValue = DEFAULT_NO_DATA_VALUE;
       }
       else {
@@ -100,9 +102,10 @@ public class OpenJUMPRasterLayer
          m_sFilename = rasterLayer.getImageFileName();
          final Envelope env = rasterLayer.getEnvelope();
          m_LayerExtent = new AnalysisExtent();
+         //[sstein 18 Mar 2013], set cell size first, and then the extent, otherwise maxX and maxY will be reset
+         m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX()) / m_Raster.getWidth());
          m_LayerExtent.setXRange(env.getMinX(), env.getMaxX(), true);
          m_LayerExtent.setYRange(env.getMinY(), env.getMaxY(), true);
-         m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX()) / m_Raster.getWidth());
          m_dNoDataValue = DEFAULT_NO_DATA_VALUE;
       }
 
