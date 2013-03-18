@@ -316,9 +316,17 @@ public class BrownianBridgeDensityRasterVersionPlugIn extends AbstractThreadedUi
 				ntimes = (int)Math.ceil((sigma2Error*5.0)/cellSize);
 			}
 			***************************/
+			/*
 			for( int i = 0; i < ntimes; i++){
 				extent.enlargeOneCell();
 			}
+			*/
+			//[sstein 18 Mar 2012] sometimes, extension by one cell does not work (it falls back 
+			// due to rounding) - so I try it this way 
+			extent.setXRange(extent.getXMin() - (cellSize * ntimes), 
+					extent.getXMax() + (cellSize * ntimes), true);
+			extent.setYRange(extent.getYMin() - (cellSize * ntimes), 
+					extent.getYMax() + (cellSize * ntimes), true);
 			//-- And now we set the extent as the one to use to create new raster
 			// layers within the rasterizing algorithm.
 			alg.setAnalysisExtent(extent);
