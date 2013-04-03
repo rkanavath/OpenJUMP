@@ -47,7 +47,7 @@ public class SextanteResultsPlugin
    @Override
    public void initialize(final PlugInContext context) throws Exception {
 
-      context.getFeatureInstaller().addLayerViewMenuItem(this, new String[] { "Sextante" }, getName());
+	   context.getFeatureInstaller().addMainMenuPlugin(this, new String[] { "Sextante" }, getName(), false,  getIcon(), null); 
 
    }
 

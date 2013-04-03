@@ -2,6 +2,8 @@ package es.unex.sextante.openjump.extensions;
 
 import java.io.File;
 
+import javax.swing.ImageIcon;
+
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
@@ -50,7 +52,8 @@ public class SextanteToolboxPlugin
 	      
 	      OJSextanteApiInitialiser.isInitialized = true;
 	
-	      context.getFeatureInstaller().addLayerViewMenuItem(this, new String[] { "Sextante" }, getName());
+	       context.getFeatureInstaller().addMainMenuPlugin(this, new String[] { "Sextante" }, getName(), false,  getIcon(), null); 
+	  
 	  }
 	  catch(Exception e){// this is most likely thrown while Debugging with the eclipse IDE.
 		System.out.println("Sextante not initialized!");
@@ -75,7 +78,7 @@ public class SextanteToolboxPlugin
 
 			  OJSextanteApiInitialiser.isInitialized = true;
 			  System.out.println("Success initializing Sextante at 2nd trial!");
-			  context.getFeatureInstaller().addLayerViewMenuItem(this, new String[] { "Sextante" }, getName());
+			  context.getFeatureInstaller().addMainMenuPlugin(this, new String[] { "Sextante" }, getName(), false,  getIcon(), null); 
 		}
 		catch(Exception e1){// this is most likely thrown while Debugging with the eclipse IDE.
 			System.out.println("No success with Sextante initialization - printing error log:" );
@@ -97,7 +100,8 @@ public class SextanteToolboxPlugin
 
    private String getHelpPath() {
 
-      final String sPath = getSextantePath() + File.separator + "sextante_help";
+	   final String sPath = System.getProperty("user.dir") + "/lib/ext/sextante_help";
+     // final String sPath = getSextantePath() + File.separator + "sextante_help";
       System.out.println("Sextante help path folder: " + sPath);
       return sPath;
 
@@ -111,4 +115,12 @@ public class SextanteToolboxPlugin
 
    }
 
+   
+   public ImageIcon getIcon() {
+
+      return new ImageIcon(SextanteGUI.class.getClassLoader().getResource("images/sextante.gif"));
+
+   }
+   
+   
 }
