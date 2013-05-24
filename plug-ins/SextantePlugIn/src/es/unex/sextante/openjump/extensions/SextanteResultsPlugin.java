@@ -10,6 +10,7 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 import es.unex.sextante.gui.additionalResults.AdditionalResults;
 import es.unex.sextante.gui.core.SextanteGUI;
+import es.unex.sextante.openjump.language.I18NPlug;
 
 public class SextanteResultsPlugin
          extends
@@ -29,9 +30,9 @@ public class SextanteResultsPlugin
 
 
    @Override
-   public String getName() {
+   public String getName() {//Giuseppe Aruta - PlugIn Internationalized 2013_05_25//
 
-      return "Results";
+     return   I18NPlug.getI18N("es.unex.sextante.kosmo.extensions.SextanteResultsPlugin.Results");
 
    }
 

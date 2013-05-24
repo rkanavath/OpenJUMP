@@ -14,6 +14,7 @@ import es.unex.sextante.openjump.gui.OpenJUMPGUIFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPInputFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPPostProcessTaskFactory;
 import es.unex.sextante.openjump.init.OJSextanteApiInitialiser;
+import es.unex.sextante.openjump.language.I18NPlug;
 
 public class SextanteToolboxPlugin
          implements
@@ -28,9 +29,9 @@ public class SextanteToolboxPlugin
    }
 
 
-   public String getName() {
+   public String getName() {//Giuseppe Aruta - PlugIn Internationalized 2013_05_25//
 
-      return "Toolbox";
+      return   I18NPlug.getI18N("es.unex.sextante.kosmo.extensions.SextanteToolboxPlugin.Sextante-toolbox");
 
    }
 

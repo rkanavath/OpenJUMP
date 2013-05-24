@@ -1,11 +1,14 @@
 package es.unex.sextante.openjump.extensions;
 
+
+
 import javax.swing.ImageIcon;
 
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 import es.unex.sextante.gui.core.SextanteGUI;
+import es.unex.sextante.openjump.language.I18NPlug;
 
 public class SextanteCommandLinePlugin
          implements
@@ -20,9 +23,11 @@ public class SextanteCommandLinePlugin
    }
 
 
-   public String getName() {
+   public String getName() {//Giuseppe Aruta - PlugIn Internationalized 2013_05_25//
 
-      return "Command line";
+      return  I18NPlug.getI18N("es.unex.sextante.kosmo.extensions.SextanteCommandLinePlugin.Command-line");
+    		  
+    
 
    }
 

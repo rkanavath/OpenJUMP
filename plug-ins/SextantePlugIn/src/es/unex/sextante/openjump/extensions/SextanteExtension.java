@@ -5,9 +5,15 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 public class SextanteExtension extends Extension {
 
+	/*
+	 * Version History
+	 * 
+	 * Sextante 1.0                     2013-04-01
+	 * Sextante 1.0 Internationalized   2013-05-25 (Add Language codes from Kosmo Sextante (ca,es,fi,hr,it), add French)
+	 */
 	
-	  private static final String NAME = "Sextante 1.0 (http://www.sextantegis.com/)";
-	    private static final String VERSION = "(2013-04-01)";
+	  private static final String NAME = "Sextante 1.0 Internationalized (http://www.sextantegis.com/)";
+	    private static final String VERSION = "(2013-05-25)";//Giuseppe Aruta - PlugIn Internationalized 2013_05_25//
 	 
 	    public String getName()
 		  {

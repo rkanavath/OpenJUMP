@@ -6,6 +6,7 @@ import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 import es.unex.sextante.gui.core.SextanteGUI;
+import es.unex.sextante.openjump.language.I18NPlug;
 
 public class SextanteModelerPlugin
          implements
@@ -20,9 +21,9 @@ public class SextanteModelerPlugin
    }
 
 
-   public String getName() {
+   public String getName() {//Giuseppe Aruta - PlugIn Internationalized 2013_05_25//
 
-      return "Modeler";
+      return   I18NPlug.getI18N("es.unex.sextante.kosmo.extensions.SextanteModelerPlugin.Modeler");
 
    }
 
