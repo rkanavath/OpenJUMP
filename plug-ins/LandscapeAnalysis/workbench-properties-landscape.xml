@@ -1,0 +1,13 @@
+<workbench>
+ <!--plug-in> ============================================= </plug-in-->
+ <!--plug-in> ======        Stefan LE-PlugIns        ===== </plug-in-->
+ <!--plug-in> ============================================= </plug-in-->
+ <plug-in>ch.unizh.geo.pagevis.ojplugin.patterns.ExtractCoreEdgeAndPatchPlugIn</plug-in>  
+ <plug-in>ch.unizh.geo.pagevis.ojplugin.patterns.ExtractCorridorsPlugIn</plug-in>
+ <plug-in>ch.unizh.geo.pagevis.ojplugin.patterns.CharacterizePolygonsPlugIn</plug-in>
+ <plug-in>ch.unizh.geo.pagevis.ojplugin.patterns.CharacterizePolygonNeighborhoodPlugIn</plug-in> 
+ <!--plug-in> ============================================= </plug-in-->
+ <!--plug-in> ======     OpenStreetMap-PlugIns        ===== </plug-in-->
+ <!--plug-in> ============================================= </plug-in-->
+ <plug-in>org.openjump.core.ui.plugin.tools.ProjectionPlugIn</plug-in>
+</workbench>
