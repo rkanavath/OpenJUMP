@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -220,8 +219,8 @@ public class OJOsmReader {
                 } else if (parser.getLocalName().equals("way")) {
                     OjOsmWay way = parseWay();
                     this.allWays.put(way.getId(), way);
-                } else if (parser.getLocalName().equals("relation")) {//TODO: keep working from here on
-                    //parseRelation();
+                } else if (parser.getLocalName().equals("relation")) {//TODO: keep working/debugging from here on
+                    parseRelation();
                 } else if (parser.getLocalName().equals("changeset")) {
                     //parseChangeset(uploadChangesetId);
                 } else {
@@ -572,8 +571,11 @@ public class OJOsmReader {
         return null;
     }
     
+    /**
+     * creates for each way object in @allWays the geometry. Usually this is a LineString.
+     *  However, it can also be an area if the tag/key "area"="yes" exists.  
+     */
     private void createWayGeoms() {
-    	
     	GeometryFactory gf = new GeometryFactory();
     	//iterate over all ways, and retrieve the node Ids with their geometries
     	Iterator<Long> keySetIterator = this.allWays.keySet().iterator();
@@ -590,7 +592,25 @@ public class OJOsmReader {
     			coords[i] = tnode.getCoord();
     			i++;
     		}
-    		Geometry g = gf.createLineString(coords);
+    		Geometry g;
+    		boolean hasAreaTag = false;
+    		hasAreaTag = w.hasKey("area");
+    		//TODO: test this
+    		if(hasAreaTag){
+    			System.out.println("hasAreaTag");
+    		}
+    		if(w.isClosed() && hasAreaTag){
+    			if(w.get("area").equalsIgnoreCase("yes")){
+    				LinearRing lr = gf.createLinearRing(coords);
+    				g = gf.createPolygon(lr, null);
+    			}
+    			else{
+    				g = gf.createLineString(coords);
+    			}
+    		}
+    		else{
+        		g = gf.createLineString(coords);	
+    		}
     		w.setGeom(g); 
     	}
     }

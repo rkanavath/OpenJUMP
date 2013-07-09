@@ -24,10 +24,11 @@ public class OjOsmRelationMember {
     
 	/**
 	 * TODO check if this method works.
+	 * Does the relation member have a role, such as "inner" or "outer" polygon ring? 
 	 * @return
 	 */
 	public boolean hasRole(){
-		if(role.length() > 0){
+		if(role != null){
 			return true;
 		}
 		else{
