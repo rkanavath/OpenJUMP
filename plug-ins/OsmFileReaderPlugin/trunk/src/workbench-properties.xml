@@ -1,5 +1,5 @@
 <workbench>
  <!--plug-in> ====== other ===== </plug-in-->
- <plug-in> org.openjump.core.ui.plugin.raster.SaveToAsciiPlugIn</plug-in>
+ <!--plug-in> org.openjump.core.ui.plugin.raster.SaveToAsciiPlugIn</plug-in-->
  <plug-in> org.openjump.core.ui.plugin.file.LoadOSMFilePlugIn</plug-in>
 </workbench>
