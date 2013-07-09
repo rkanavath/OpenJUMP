@@ -1,4 +1,4 @@
-package org.openjump.core.ui.plugin.file;
+package org.openjump.core.ui.plugin.file.openstreetmap;
 
 public class OjOsmRelationMember {
 	

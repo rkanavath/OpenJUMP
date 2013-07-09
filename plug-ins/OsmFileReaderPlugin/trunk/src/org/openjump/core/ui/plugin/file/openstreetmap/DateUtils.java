@@ -16,7 +16,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-package org.openjump.core.ui.plugin.file;
+package org.openjump.core.ui.plugin.file.openstreetmap;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;

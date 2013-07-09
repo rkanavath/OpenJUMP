@@ -1,5 +1,5 @@
 // License: GPL. See LICENSE file for details.
-package org.openjump.core.ui.plugin.file;
+package org.openjump.core.ui.plugin.file.openstreetmap;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,7 +49,7 @@ public class OJOsmReader {
      *
      * @see #doParseDataSet(InputStream)
      */
-    protected OJOsmReader() {
+    public OJOsmReader() {
     }
     
     public ArrayList<OjOsmPrimitive> getDataset() {

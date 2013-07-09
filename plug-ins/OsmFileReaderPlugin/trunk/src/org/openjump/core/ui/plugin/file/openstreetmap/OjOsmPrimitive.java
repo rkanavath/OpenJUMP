@@ -1,4 +1,4 @@
-package org.openjump.core.ui.plugin.file;
+package org.openjump.core.ui.plugin.file.openstreetmap;
 
 import java.text.MessageFormat;
 import java.util.Collection;

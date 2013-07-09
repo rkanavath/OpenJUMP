@@ -20,6 +20,8 @@ import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileFilter;
 
 import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
+import org.openjump.core.ui.plugin.file.openstreetmap.OJOsmReader;
+import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmPrimitive;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jump.feature.AttributeType;
@@ -187,7 +189,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 			fNew.setAttribute(sfieldDelete, new Integer(valDel));
 			int valMod = osmPrim.isModified() ? 1 : 0;
 			fNew.setAttribute(sfieldModify, new Integer(valMod));
-			fNew.setAttribute(sfieldChangeID, new Integer(osmPrim.changesetId));
+			fNew.setAttribute(sfieldChangeID, new Integer(osmPrim.getChangesetId()));
 			String tagText = "";
 			if (osmPrim.hasKeys()){
 				tagText = osmPrim.getAllKeyValueTagsAsOneString();

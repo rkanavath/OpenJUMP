@@ -1,4 +1,4 @@
-package org.openjump.core.ui.plugin.file;
+package org.openjump.core.ui.plugin.file.openstreetmap;
 
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
