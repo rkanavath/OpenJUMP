@@ -23,12 +23,17 @@ public class OjOsmRelationMember {
 	}
     
 	/**
-	 * TODO check if this method works.
+	 * TODO: check if this works for roles with empty strings
 	 * Does the relation member have a role, such as "inner" or "outer" polygon ring? 
 	 * @return
 	 */
 	public boolean hasRole(){
 		if(role != null){
+			if(role.equalsIgnoreCase("")){
+				System.out.println("OjOsmRelationMember: this role contains an empty - null-length string");
+			}
+		}
+		if((role != null) && (role.length() > 1)){
 			return true;
 		}
 		else{

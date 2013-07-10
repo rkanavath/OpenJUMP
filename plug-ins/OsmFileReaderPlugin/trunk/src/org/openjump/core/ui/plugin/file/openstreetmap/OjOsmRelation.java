@@ -18,5 +18,11 @@ public class OjOsmRelation extends OjOsmPrimitive {
 	public void setMembers(ArrayList<OjOsmRelationMember> members) {
 		this.members = members;			
 	}
+	
+	public boolean isMultiPolygon(){
+		boolean isMultiPoly = false;
+		
+		return isMultiPoly;
+	}
 			
 }

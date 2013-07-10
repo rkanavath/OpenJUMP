@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 
 
@@ -27,10 +28,10 @@ import com.vividsolutions.jts.geom.LinearRing;
  * Parser for the Osm Api. Read from an input stream and construct a dataset out of it.
  *
  * For each xml element, there is a dedicated method.
- * The XMLStreamReader cursor points to the start of the element, when the method is
+ * The <code>XMLStreamReader</code> cursor points to the start of the element, when the method is
  * entered, and it must point to the end of the same element, when it is exited.
  * 
- * This class contains methods taken from JOSM's org.openstreetmap.josm.io.OsmReader class.
+ * This class contains methods taken from JOSM's <code>org.openstreetmap.josm.io.OsmReader</code> class.
  * 
  * @author: sstein
  * @date: 5.July.2013
@@ -41,7 +42,7 @@ public class OJOsmReader {
     private ArrayList<OjOsmPrimitive> dataset = null;
     HashMap<Long, OjOsmNode> allNodes = new HashMap<Long, OjOsmNode>();
     HashMap<Long, OjOsmWay> allWays = new HashMap<Long, OjOsmWay>();
-    HashMap<Long, OjOsmWay> allRelations = new HashMap<Long, OjOsmWay>();
+    HashMap<Long, OjOsmRelation> allRelations = new HashMap<Long, OjOsmRelation>();
     Envelope osmFileEnvelope = null;
 
 	/**
@@ -70,11 +71,13 @@ public class OJOsmReader {
     
     /**
      * Does initiate the parsing process and does a bit of post processing,
-     * such as creating the way geometrys. However, the parsing itself is
-     * done in #.parseOSM() via #.parse() and #.parseRoot().
+     * such as creating the way geometries. However, the parsing itself is
+     * done in <code>#parseOSM()</code> via <code>#parse()</code> and <code>#parseRoot()</code>.
      * @param source
      * @return
      * @throws IllegalDataException
+     * @see #parse()
+     * @see #parseOSM()
      */
     public boolean doParseDataSet(InputStream source) throws IllegalDataException {
     	if(source == null) return false;
@@ -88,6 +91,7 @@ public class OJOsmReader {
             					//  from org.openstreetmap.josm.io.AbstractReader
             
             //add only nodes that have tags/keys (except for the create_by key)
+            //TODO: check/output if there are points that are not used in either a way or a relation
             Iterator<Long> keySetIterator = this.allNodes.keySet().iterator();
             while(keySetIterator.hasNext()){
               Long key = keySetIterator.next();
@@ -102,14 +106,22 @@ public class OJOsmReader {
             	  }
               }
             }
-            //assemble way geometries
-            createWayGeoms();
+            //assemble way and relation geometries
+            this.createWayGeomsAndRelationGeometries();
             //add all ways
             Iterator<Long> keySetIterator2 = this.allWays.keySet().iterator();
             while(keySetIterator2.hasNext()){
               Long key = keySetIterator2.next();
               this.dataset.add(this.allWays.get(key));
             }
+            //add all relations
+            Iterator<Long> keySetIterator3 = this.allRelations.keySet().iterator();
+            while(keySetIterator3.hasNext()){
+              Long key = keySetIterator3.next();
+              this.dataset.add(this.allRelations.get(key));
+            }
+            //identify major land uses for items in the dataset only
+            this.detectMayorLanduses();
             
             return true;
         } catch(OsmParsingException e) {
@@ -220,7 +232,8 @@ public class OJOsmReader {
                     OjOsmWay way = parseWay();
                     this.allWays.put(way.getId(), way);
                 } else if (parser.getLocalName().equals("relation")) {//TODO: keep working/debugging from here on
-                    parseRelation();
+                    OjOsmRelation relation = parseRelation();
+                    this.allRelations.put(relation.getId(), relation);
                 } else if (parser.getLocalName().equals("changeset")) {
                     //parseChangeset(uploadChangesetId);
                 } else {
@@ -495,7 +508,6 @@ public class OJOsmReader {
         if (value == null) {
             throwException("Missing attribute ''type'' on member "+Long.toString(id)+" in relation " + Long.toString(r.getUniqueId()));
         }
-        //TODO check if type value assignment works
         try {
         	osmPrimitiveType = OjOsmRelationMember.getOsmPrimitiveTypeFromParsedString(value);
         } catch(IllegalArgumentException e) {
@@ -529,7 +541,7 @@ public class OJOsmReader {
      * When cursor is at the start of an element, moves it to the end tag of that element.
      * Nested content is skipped.
      *
-     * This is basically the same code as parseUnknown(), except for the warnings, which
+     * This is basically the same code as <code>#parseUnknown()</code>, except for the warnings, which
      * are displayed for inner elements and not at top level.
      */
     private void jumpToEnd(boolean printWarning) throws XMLStreamException {
@@ -572,10 +584,12 @@ public class OJOsmReader {
     }
     
     /**
-     * creates for each way object in @allWays the geometry. Usually this is a LineString.
-     *  However, it can also be an area if the tag/key "area"="yes" exists.  
+     * Creates for each way object in <code>allWays</code> the geometry. Usually this is a LineString.
+     * However, it can also be an area if the tag/key "area"="yes" exists.
+     * Then it calls <code>#createRelationGeometries()</code>.  
+     * @see #createRelationGeometries()
      */
-    private void createWayGeoms() {
+    private void createWayGeomsAndRelationGeometries() {
     	GeometryFactory gf = new GeometryFactory();
     	//iterate over all ways, and retrieve the node Ids with their geometries
     	Iterator<Long> keySetIterator = this.allWays.keySet().iterator();
@@ -588,14 +602,19 @@ public class OJOsmReader {
     		int i=0;
     		for (Iterator iteratorNodeId = nodeIds.iterator(); iteratorNodeId.hasNext();) {
     			Long nid = (Long) iteratorNodeId.next();
-    			OjOsmNode tnode = this.allNodes.get(nid);
-    			coords[i] = tnode.getCoord();
+    			try{
+	    			OjOsmNode tnode = this.allNodes.get(nid);
+	    			coords[i] = tnode.getCoord();
+	    			tnode.setUsedInAWay(true);
+    			}
+    			catch(Exception e){
+    				System.out.println("OjOsmReader.createWayGeoms...(): 'node' for way creation not found. Node Id: " + nid);
+    			}
     			i++;
     		}
     		Geometry g;
     		boolean hasAreaTag = false;
     		hasAreaTag = w.hasKey("area");
-    		//TODO: test this
     		if(hasAreaTag){
     			System.out.println("hasAreaTag");
     		}
@@ -613,5 +632,118 @@ public class OJOsmReader {
     		}
     		w.setGeom(g); 
     	}
+		// now that we have the way geometries we can create relation geometries
+    	this.createRelationGeometries();
+    }
+    
+    /**
+     * Creates for each relation object in <code>allRelations</code> the geometry.
+     * This method needs to be called after the way geometries are created, and therefore
+     * is called from within the method <code>#createWayGeomsAndRelationGeometries()</code>.
+     * @see createWayGeomsAndRelationGeometries()
+     */
+    private void createRelationGeometries(){
+    	GeometryFactory gf = new GeometryFactory();
+    	//iterate over all ways, and retrieve the node Ids with their geometries
+    	Iterator<Long> keySetIterator = this.allRelations.keySet().iterator();
+    	while(keySetIterator.hasNext()){
+    		Long key = keySetIterator.next();
+    		OjOsmRelation rel = this.allRelations.get(key);
+    		//check if there is a multipolygon tag, so we can do some decisions later
+    		boolean isMultiPolygon = rel.isMultiPolygon();
+    			
+    		ArrayList<OjOsmRelationMember> members = rel.getMembers();
+    		
+    		ArrayList<LinearRing> innerR = new ArrayList<LinearRing>();
+    		ArrayList<LineString> outerR = new ArrayList<LineString>();
+    		ArrayList<LineString> wayCollection = new ArrayList<LineString>();
+    		ArrayList<Coordinate> nodeCoords = new ArrayList<Coordinate>(); 
+    		int i=0;
+    		Geometry g = gf.createGeometryCollection(null); //create a geom that always works
+    		boolean hasWays = false;
+    		boolean hasNodes = false;
+    		for (Iterator iteratorMembers = members.iterator(); iteratorMembers.hasNext();) {
+    			OjOsmRelationMember member = (OjOsmRelationMember) iteratorMembers.next();
+    			if(member.getOsmPrimitiveType() == OjOsmPrimitive.OSM_PRIMITIVE_WAY){
+    				hasWays = true;
+    				try{
+    					OjOsmWay way = this.allWays.get(member.getMemberId());
+    					if(way != null){
+    						
+	    					Coordinate[] wayCoords = way.getGeom().getCoordinates();
+    						/**
+    						 * note: even if we have a multi-polygon it may be that we have non-closed lines like the limits of a river
+    						 */
+	    					if(isMultiPolygon){
+	    						System.out.println("OjOsmReader.createRelationGeometries() : TODO : implement treatment of multipolygons");
+			    				if(member.hasRole()){	
+			    					//TODO: implement
+			    				}
+			    				else{
+			    					//TODO: implement
+			    					System.out.println("This relation member of type way has no role, adding it to way collection");
+			    				}
+    						}
+    						else{//not a multipolygon, so treat everything as a multi-linestring
+    							LineString ls = gf.createLineString(wayCoords);
+		    					wayCollection.add(ls);
+    						}
+		    				// set flag that this way is actually part of a relation
+		    				way.setUsedInARelation(true);
+		    			}
+    					else{//way == null
+    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. Member Id: " + member.getMemberId());
+    					}
+    				}
+    				catch(Exception e){
+   						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. No ways existing in dataset.");
+    				}
+    			}
+    			else if(member.getOsmPrimitiveType() == OjOsmPrimitive.OSM_PRIMITIVE_NODE) {
+    				hasNodes = true;
+    				try{
+    					OjOsmNode node = this.allNodes.get(member.getMemberId());
+    					if(node != null){
+	    					nodeCoords.add(node.getCoord());
+	    					node.setUsedInARelation(true);
+    					}
+    					else{
+    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'node' not found. Node/Member Id: " + member.getMemberId());
+    					}
+    				}
+    				catch(Exception e){
+    					System.out.println("OjOsmReader.createRelationGeometries(): no list of 'nodes' found.");
+    				}
+    			}
+    			else{
+    				System.out.println("Relation member is of unknown type: " + member.getOsmPrimitiveType() + ". Skipping Member");
+    			}
+    			i++; 
+    		}//end iteration over all members
+    		//TODO: create geom for multi-polys
+    		//      until now i create only multi-line-string
+    		if(hasWays && hasNodes){
+    			System.out.println("OJOsmReader: TODO: This is a geometry collection of points and lines. Geometry creation still needs to be implemented.");
+    		}
+    		else{
+	    		if(hasWays){
+	    			if(wayCollection.size() > 0){
+	    				LineString[] lines = wayCollection.toArray(new LineString[wayCollection.size()]);
+	    				g = gf.createMultiLineString(lines);
+	    			}
+	    		}
+	    		if(hasNodes){
+	    			Coordinate[] pointCoords = nodeCoords.toArray(new Coordinate[nodeCoords.size()]);
+	    			g = gf.createMultiPoint(pointCoords);
+	    		}
+    		}
+    		rel.setGeom(g); 
+    	}
+    }
+    
+    private void detectMayorLanduses(){
+    	//TODO: implement this, based on tag parsing
+    	//      in particular identify: roads, rail, bridge, landmark, building, natural landuse + "other" category
+    	System.out.println("TODO: implement me: OJOsmReader.detectMayorLanduses()");
     }
 }

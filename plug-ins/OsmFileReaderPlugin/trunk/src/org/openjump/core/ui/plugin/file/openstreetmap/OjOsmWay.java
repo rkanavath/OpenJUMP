@@ -8,6 +8,8 @@ public class OjOsmWay extends OjOsmPrimitive {
 	/** whether or not the first node's ID and last nodes ID are the same. Tested when the nodes are set **/
 	private boolean closed = false;
 	
+	private boolean usedInRelation = false;
+	
 	public OjOsmWay() {
 		super();
 		this.setOsmType(OjOsmPrimitive.OSM_PRIMITIVE_WAY);
@@ -33,6 +35,12 @@ public class OjOsmWay extends OjOsmPrimitive {
 		return closed;
 	}
 	
+	public boolean isUsedInARelation(){
+		return this.usedInRelation;
+	}
 	
-			
+	public void setUsedInARelation(boolean usedInRelation){
+		this.usedInRelation = usedInRelation;
+	}
+		
 }

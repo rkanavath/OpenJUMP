@@ -37,6 +37,9 @@ public class OjOsmPrimitive implements Tagged{
     public static final int OSM_PRIMITIVE_RELATION = 3;
     public static final int OSM_AREA = 4;
 
+    private boolean hasLandUse = false;
+    private String landUseType = "";
+    
     static long generateUniqueId() {
         return idCounter.decrementAndGet();
     }
@@ -92,6 +95,19 @@ public class OjOsmPrimitive implements Tagged{
 		return returnType;
 	}
 	
+    public String getLandUseDescription() {
+		return landUseType;
+	}
+
+	public void setLandUseDescription(String landUseType) {
+		this.landUseType = landUseType;
+		this.hasLandUse = true;
+	}	
+	
+	public boolean hasLandUseDescription(){
+		return this.hasLandUse;
+	}
+	
 	/*------------
      * Keys handling
      ------------*/
@@ -100,7 +116,7 @@ public class OjOsmPrimitive implements Tagged{
     // doesn't have to be locked so it's possible that keys array will be modified. But all write methods make copy of keys array so
     // the array itself will be never modified - only reference will be changed
 
-    /**
+	/**
      * The key/value list for this primitive.
      *
      */
@@ -329,28 +345,28 @@ public class OjOsmPrimitive implements Tagged{
      * An id of 0 means an unknown id. The object has not been uploaded yet to
      * know what id it will get.
      */
-    protected long id = 0;
+    private long id = 0;
 
     /**
      * User that last modified this primitive, as specified by the server.
      * Never changed by JOSM.
      */
-    protected User user = null;
+    private User user = null;
 
     /**
      * Contains the version number as returned by the API. Needed to
      * ensure update consistency
      */
-    protected int version = 0;
+    private int version = 0;
 
     /**
      * The id of the changeset this primitive was last uploaded to.
      * 0 if it wasn't uploaded to a changeset yet of if the changeset
      * id isn't known.
      */
-    protected int changesetId;
+    private int changesetId;
 
-    protected int timestamp;
+    private int timestamp;
     
     /*-------------------
      * FLAGS

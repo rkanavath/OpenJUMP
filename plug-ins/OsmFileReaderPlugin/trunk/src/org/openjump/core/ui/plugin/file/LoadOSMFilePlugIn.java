@@ -22,6 +22,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
 import org.openjump.core.ui.plugin.file.openstreetmap.OJOsmReader;
 import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmPrimitive;
+import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmWay;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jump.feature.AttributeType;
@@ -127,7 +128,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 		AttributeType t0 = AttributeType.INTEGER;
 		fsvx.addAttribute(sfieldID, t0);
 		
-		String sfieldType = "type";		
+		String sfieldType = "osm_primitive";		
 		AttributeType t1 = AttributeType.STRING;
 		fsvx.addAttribute(sfieldType, t1);
 	
@@ -166,8 +167,20 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 		String sTags = "osm_tags";		
 		AttributeType t10 = AttributeType.STRING;
 		fsvx.addAttribute(sTags, t10);
+
+		String sLuType = "lu_type";		
+		AttributeType t11 = AttributeType.STRING;
+		fsvx.addAttribute(sLuType, t11);
 		
-		FeatureDataset fdVertices = new FeatureDataset(fsvx);	
+		String sName = "name";		
+		AttributeType t12 = AttributeType.STRING;
+		fsvx.addAttribute(sName, t12);
+		
+		String sUsedInRelation = "part of relation";		
+		AttributeType t13 = AttributeType.STRING;
+		fsvx.addAttribute(sUsedInRelation, t13);
+		
+		FeatureDataset fdOsmObjects = new FeatureDataset(fsvx);	
 		
         for (Iterator iterator = data.iterator(); iterator.hasNext();) {
 			OjOsmPrimitive osmPrim = (OjOsmPrimitive) iterator.next();
@@ -177,9 +190,9 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 			fNew.setGeometry(osmPrim.getGeom());
 			Long lid = osmPrim.getId();
 			fNew.setAttribute(sfieldID, new Integer(lid.intValue()));
-			fNew.setAttribute(sfieldType, new String(osmPrim.getOsmTypeAsString()));
+			fNew.setAttribute(sfieldType, osmPrim.getOsmTypeAsString());
 			fNew.setAttribute(sfieldTime, osmPrim.getTimestamp());
-			fNew.setAttribute(sfieldUser, new String(osmPrim.getUser().getName()));
+			fNew.setAttribute(sfieldUser, osmPrim.getUser().getName());
 			Long uid = osmPrim.getUser().getId();
 			fNew.setAttribute(sfieldUserID, new Integer(uid.intValue()));
 			fNew.setAttribute(sfieldVersion, new Integer(osmPrim.getVersion()));
@@ -191,23 +204,44 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 			fNew.setAttribute(sfieldModify, new Integer(valMod));
 			fNew.setAttribute(sfieldChangeID, new Integer(osmPrim.getChangesetId()));
 			String tagText = "";
+			String nameText = "";
+			String luTypeText = "";
 			if (osmPrim.hasKeys()){
 				tagText = osmPrim.getAllKeyValueTagsAsOneString();
+				if(osmPrim.hasKey("name")){
+					nameText = osmPrim.get("name");
+				}
+				if(osmPrim.hasLandUseDescription()){
+					luTypeText = osmPrim.getLandUseDescription();
+				}
 			}
-			fNew.setAttribute(sTags, new String(tagText));
+			fNew.setAttribute(sTags, tagText);
+			fNew.setAttribute(sName, nameText);
+			fNew.setAttribute(sLuType, luTypeText);
+			String usedInRelationText = "";
+			if(osmPrim instanceof OjOsmWay){
+				OjOsmWay way = (OjOsmWay)osmPrim; 
+				if(way.isUsedInARelation()){
+					usedInRelationText="yes";
+				}
+				else{
+					usedInRelationText="no";
+				}
+			}
+			fNew.setAttribute(sUsedInRelation, usedInRelationText);
 			
-			fdVertices.add(fNew);
+			fdOsmObjects.add(fNew);
 			
 			if(monitor.isCancelRequested()){
-				if(fdVertices.size() > 0){
-					context.addLayer(StandardCategoryNames.RESULT, "OSM - stopped", fdVertices);
+				if(fdOsmObjects.size() > 0){
+					context.addLayer(StandardCategoryNames.WORKING, "OSM - stopped", fdOsmObjects);
 				}
 			}
 		}
 				
 		//display the result FCs
-		if(fdVertices.size() > 0){
-			context.addLayer(StandardCategoryNames.RESULT, "OSM_" + this.selFile.getName() , fdVertices);
+		if(fdOsmObjects.size() > 0){
+			context.addLayer(StandardCategoryNames.WORKING, "OSM_" + this.selFile.getName() , fdOsmObjects);
 		}
 		System.gc(); 
 	}
