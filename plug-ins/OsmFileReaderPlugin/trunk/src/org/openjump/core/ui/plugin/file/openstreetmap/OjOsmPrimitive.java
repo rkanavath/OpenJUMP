@@ -39,6 +39,7 @@ public class OjOsmPrimitive implements Tagged{
 
     private boolean hasLandUse = false;
     private String landUseType = "";
+	private boolean usedInRelation = false;
     
     static long generateUniqueId() {
         return idCounter.decrementAndGet();
@@ -108,6 +109,13 @@ public class OjOsmPrimitive implements Tagged{
 		return this.hasLandUse;
 	}
 	
+	public boolean isUsedInARelation(){
+		return this.usedInRelation;
+	}
+	
+	public void setUsedInARelation(boolean usedInRelation){
+		this.usedInRelation = usedInRelation;
+	}
 	/*------------
      * Keys handling
      ------------*/

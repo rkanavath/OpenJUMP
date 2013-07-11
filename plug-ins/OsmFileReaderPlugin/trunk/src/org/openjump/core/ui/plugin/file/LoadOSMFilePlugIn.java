@@ -22,6 +22,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
 import org.openjump.core.ui.plugin.file.openstreetmap.OJOsmReader;
 import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmPrimitive;
+import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmRelation;
 import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmWay;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -190,7 +191,12 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 			fNew.setGeometry(osmPrim.getGeom());
 			Long lid = osmPrim.getId();
 			fNew.setAttribute(sfieldID, new Integer(lid.intValue()));
-			fNew.setAttribute(sfieldType, osmPrim.getOsmTypeAsString());
+			String osmPrimType = osmPrim.getOsmTypeAsString();
+			if (osmPrim instanceof OjOsmRelation){
+				OjOsmRelation rel = (OjOsmRelation)osmPrim;
+				osmPrimType = osmPrimType + " - " + rel.getRelationType();
+			}
+			fNew.setAttribute(sfieldType, osmPrimType);
 			fNew.setAttribute(sfieldTime, osmPrim.getTimestamp());
 			fNew.setAttribute(sfieldUser, osmPrim.getUser().getName());
 			Long uid = osmPrim.getUser().getId();
@@ -219,14 +225,11 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 			fNew.setAttribute(sName, nameText);
 			fNew.setAttribute(sLuType, luTypeText);
 			String usedInRelationText = "";
-			if(osmPrim instanceof OjOsmWay){
-				OjOsmWay way = (OjOsmWay)osmPrim; 
-				if(way.isUsedInARelation()){
-					usedInRelationText="yes";
-				}
-				else{
-					usedInRelationText="no";
-				}
+			if(osmPrim.isUsedInARelation()){
+				usedInRelationText="yes";
+			}
+			else{
+				usedInRelationText="no";
 			}
 			fNew.setAttribute(sUsedInRelation, usedInRelationText);
 			

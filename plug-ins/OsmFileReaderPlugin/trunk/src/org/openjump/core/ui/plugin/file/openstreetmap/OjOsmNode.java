@@ -6,7 +6,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 public class OjOsmNode extends OjOsmPrimitive {
 	private Coordinate coord = null;
 	private boolean usedInWay = false;
-	private boolean usedInRelation = false;
 
 	public OjOsmNode() {
 		super();
@@ -23,20 +22,12 @@ public class OjOsmNode extends OjOsmPrimitive {
 		this.setGeom(gf.createPoint(coord));
 	}
 	
-	public boolean isUsedInARelation(){
-		return this.usedInRelation;
-	}
-	
-	public void setUsedInARelation(boolean usedInRelation){
-		this.usedInRelation = usedInRelation;
-	}
-	
 	public boolean isUsedInAWay(){
 		return this.usedInWay;
 	}
 	
 	public void setUsedInAWay(boolean usedInWay){
-		this.usedInRelation = usedInWay;
+		this.usedInWay = usedInWay;
 	}
 		
 }

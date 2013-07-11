@@ -15,12 +15,17 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.openjump.core.geomutils.algorithm.GeometryConverter;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.Polygon;
 
 
 
@@ -616,7 +621,7 @@ public class OJOsmReader {
     		boolean hasAreaTag = false;
     		hasAreaTag = w.hasKey("area");
     		if(hasAreaTag){
-    			System.out.println("hasAreaTag");
+    			System.out.println("OJOsmReader: hasAreaTag");
     		}
     		if(w.isClosed() && hasAreaTag){
     			if(w.get("area").equalsIgnoreCase("yes")){
@@ -654,8 +659,8 @@ public class OJOsmReader {
     			
     		ArrayList<OjOsmRelationMember> members = rel.getMembers();
     		
-    		ArrayList<LinearRing> innerR = new ArrayList<LinearRing>();
-    		ArrayList<LineString> outerR = new ArrayList<LineString>();
+    		ArrayList<LineString> innerLS = new ArrayList<LineString>();
+    		ArrayList<LineString> outerLS = new ArrayList<LineString>();
     		ArrayList<LineString> wayCollection = new ArrayList<LineString>();
     		ArrayList<Coordinate> nodeCoords = new ArrayList<Coordinate>(); 
     		int i=0;
@@ -668,24 +673,32 @@ public class OJOsmReader {
     				hasWays = true;
     				try{
     					OjOsmWay way = this.allWays.get(member.getMemberId());
-    					if(way != null){
+    					if(way != null){ //because we may not have a way with that ID stored in this file
     						
 	    					Coordinate[] wayCoords = way.getGeom().getCoordinates();
+							LineString ls = gf.createLineString(wayCoords);
     						/**
     						 * note: even if we have a multi-polygon it may be that we have non-closed lines like the limits of a river
     						 */
 	    					if(isMultiPolygon){
-	    						System.out.println("OjOsmReader.createRelationGeometries() : TODO : implement treatment of multipolygons");
 			    				if(member.hasRole()){	
-			    					//TODO: implement
+			    					if(member.isInnerWay(member.getRole())){
+			    						innerLS.add(ls);
+			    					}
+			    					else if(member.isOuterWay(member.getRole())){
+			    						outerLS.add(ls);
+			    					}
+			    					else{
+			    						System.out.println("Relation member with id "+member.getMemberId()+" of type 'way' has an unrecognized role type: "+ member.getRole() +". Adding it to way collection");
+				    					wayCollection.add(ls);
+			    					}
 			    				}
 			    				else{
-			    					//TODO: implement
-			    					System.out.println("This relation member of type way has no role, adding it to way collection");
+			    					System.out.println("Relation member with id "+member.getMemberId()+" of type 'way' has no role assigned. Adding it to way collection");
+			    					wayCollection.add(ls);
 			    				}
     						}
     						else{//not a multipolygon, so treat everything as a multi-linestring
-    							LineString ls = gf.createLineString(wayCoords);
 		    					wayCollection.add(ls);
     						}
 		    				// set flag that this way is actually part of a relation
@@ -716,30 +729,110 @@ public class OJOsmReader {
     				}
     			}
     			else{
-    				System.out.println("Relation member is of unknown type: " + member.getOsmPrimitiveType() + ". Skipping Member");
+    				System.out.println("Relation member is of unknown type: " + member.getOsmPrimitiveType() + ". Skipping Member.");
     			}
     			i++; 
     		}//end iteration over all members
-    		//TODO: create geom for multi-polys
-    		//      until now i create only multi-line-string
+			ArrayList<Geometry> allMemberGeoms = new ArrayList();
     		if(hasWays && hasNodes){
     			System.out.println("OJOsmReader: TODO: This is a geometry collection of points and lines. Geometry creation still needs to be implemented.");
     		}
     		else{
 	    		if(hasWays){
+    				// build the relation geometries based on ways
+	    			
+    				//---------------------------------
+    				//TODO: check/debug if this code works as intended (i.e. what are the union outputs)
+    				//---------------------------------
+	    			if(outerLS.size() > 0){
+	    				GeometryCollection outerPolys = this.createPolygonsFromRelationMemberWays(outerLS, wayCollection);
+	    				//assuming that we can have inner ways only if we have outer way
+	    				//now check if we have inner polys
+	    				GeometryCollection innerPolys = gf.createGeometryCollection(null);
+	    				if(innerLS.size() > 0){
+	    					innerPolys = this.createPolygonsFromRelationMemberWays(innerLS, wayCollection);
+		    				System.out.println("TODO: implement polygon-outer-inner subtraction for relations");
+	    				}
+	    				//TODO: subtract inner polys from outer polygons.
+	    				//meanwhile add polys separately
+	    				allMemberGeoms.add(outerPolys);
+	    				allMemberGeoms.add(innerPolys);
+
+	    			}// end (outerLS > 0);
+	    			Geometry gways = gf.createGeometryCollection(null);
 	    			if(wayCollection.size() > 0){
 	    				LineString[] lines = wayCollection.toArray(new LineString[wayCollection.size()]);
-	    				g = gf.createMultiLineString(lines);
+	    				gways = gf.createGeometryCollection(lines);
 	    			}
+	    			allMemberGeoms.add(gways);
 	    		}
 	    		if(hasNodes){
 	    			Coordinate[] pointCoords = nodeCoords.toArray(new Coordinate[nodeCoords.size()]);
-	    			g = gf.createMultiPoint(pointCoords);
+	    			allMemberGeoms.add(gf.createMultiPoint(pointCoords));
 	    		}
     		}
+    		Geometry[] allGeomArray = dissolveGeomCollections(allMemberGeoms);
+    		g=gf.createGeometryCollection(allGeomArray);
     		rel.setGeom(g); 
     	}
     }
+
+	private GeometryCollection createPolygonsFromRelationMemberWays(ArrayList<LineString> outerOrInnerLS, ArrayList<LineString> allWays){
+    	GeometryFactory gf = new GeometryFactory();
+		//Union all the single LineStrings
+		Geometry unionGeometry = outerOrInnerLS.get(0);
+		for (int j = 1; j < outerOrInnerLS.size(); j++) {
+			unionGeometry = unionGeometry.union(outerOrInnerLS.get(j));
+		}
+		//we should have a MultiLineString now, however, maybe we also get only one
+		GeometryCollection constructedPolys = null;
+		if(unionGeometry instanceof LineString){
+			//check if it is closed
+			if (((LineString) unionGeometry).isClosed()){
+				Polygon p = gf.createPolygon(unionGeometry.getCoordinates());
+				constructedPolys = gf.createGeometryCollection(new Geometry[]{p});
+			}
+			else{
+				//not closed, so we add it to the ways
+				allWays.add((LineString)unionGeometry);
+			}
+		}
+		else if(unionGeometry instanceof MultiLineString){
+			//create polygons from all outer parts
+			MultiLineString lines = ((MultiLineString)unionGeometry);
+			ArrayList<Polygon> polygons = new ArrayList<Polygon>();
+			for (int j = 0; j < lines.getNumGeometries(); j++) {
+				LineString lst = (LineString)lines.getGeometryN(j);
+				if(lst.isClosed()){
+					Polygon pt = gf.createPolygon(lst.getCoordinates());
+					polygons.add(pt);
+				}
+				else{
+					//not closed, so we add to ways
+					allWays.add(lst);
+					System.out.println("createPolygonsFromRelationMemberWays(): Way LineString is not closed. TODO: Test if LineString is handled later on.");
+				}
+			}
+			//create outerPolys collection
+			Polygon[] allPolysArray = polygons.toArray(new Polygon[polygons.size()]);
+			constructedPolys = gf.createGeometryCollection(allPolysArray);
+		}
+		else{
+			System.out.println("unionGeometry of outerLS is neither a single LineString nor a MultiLineString - help!!!");
+		}
+    	return constructedPolys;
+    }
+    
+    private Geometry[] dissolveGeomCollections(ArrayList<Geometry> allMemberGeoms) {
+    	ArrayList<Geometry> singleGeoms = new ArrayList<Geometry>();
+    	for (Iterator iterator = allMemberGeoms.iterator(); iterator.hasNext();) {
+			Geometry g = (Geometry) iterator.next();
+			ArrayList<Geometry> collGeoms = GeometryConverter.explodeGeomsIfMultiG(g);
+			singleGeoms.addAll(collGeoms);
+		}
+    	Geometry[] geomArray = singleGeoms.toArray(new Geometry[singleGeoms.size()]);
+		return geomArray;
+	}
     
     private void detectMayorLanduses(){
     	//TODO: implement this, based on tag parsing

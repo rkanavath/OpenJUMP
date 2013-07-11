@@ -19,9 +19,21 @@ public class OjOsmRelation extends OjOsmPrimitive {
 		this.members = members;			
 	}
 	
+	public String getRelationType(){
+		String type = "";
+		if(this.hasKey("type")){
+			type = this.get("type");
+		}
+		return type;
+	}
+	
 	public boolean isMultiPolygon(){
 		boolean isMultiPoly = false;
-		
+		if(this.hasKey("type")){
+			if(this.get("type").equalsIgnoreCase("multipolygon")){
+				isMultiPoly = true;
+			}
+		}
 		return isMultiPoly;
 	}
 			

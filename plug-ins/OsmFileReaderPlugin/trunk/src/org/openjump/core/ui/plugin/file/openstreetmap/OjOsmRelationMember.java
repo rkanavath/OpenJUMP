@@ -62,4 +62,13 @@ public class OjOsmRelationMember {
     	}
     	return isInner;
     }
+    
+    static boolean isOuterWay(String role){
+    	boolean isInner = false;
+    	if(role.equalsIgnoreCase("outer")){
+    		isInner = true;
+    	}
+    	return isInner;
+    }
+    
 }
