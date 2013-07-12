@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -20,12 +21,12 @@ import org.openjump.core.geomutils.algorithm.GeometryConverter;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.linemerge.LineMerger;
 
 
 
@@ -663,7 +664,6 @@ public class OJOsmReader {
     		ArrayList<LineString> outerLS = new ArrayList<LineString>();
     		ArrayList<LineString> wayCollection = new ArrayList<LineString>();
     		ArrayList<Coordinate> nodeCoords = new ArrayList<Coordinate>(); 
-    		int i=0;
     		Geometry g = gf.createGeometryCollection(null); //create a geom that always works
     		boolean hasWays = false;
     		boolean hasNodes = false;
@@ -707,11 +707,11 @@ public class OJOsmReader {
     					else{//way == null
     						rel.setMissingMembers(true);
     						member.setIdNotFoundInDataset(true);
-    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. Member Id: " + member.getMemberId());
+    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. Relation ID: " + rel.getId() + ", Member Id: " + member.getMemberId());
     					}
     				}
     				catch(Exception e){
-   						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. No ways existing in dataset.");
+   						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. No ways existing in dataset. Relation ID: "+ rel.getId());
     				}
     			}
     			else if(member.getOsmPrimitiveType() == OjOsmPrimitive.OSM_PRIMITIVE_NODE) {
@@ -726,17 +726,16 @@ public class OJOsmReader {
     					else{
     						rel.setMissingMembers(true);
     						member.setIdNotFoundInDataset(true);
-    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'node' not found. Node/Member Id: " + member.getMemberId());
+    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'node' not found. Relation ID: " + rel.getId() + ", Node/Member Id: " + member.getMemberId());
     					}
     				}
     				catch(Exception e){
-    					System.out.println("OjOsmReader.createRelationGeometries(): no list of 'nodes' found.");
+    					System.out.println("OjOsmReader.createRelationGeometries(): no list of 'nodes' found. Relation ID: "+ rel.getId());
     				}
     			}
     			else{
     				System.out.println("Relation member is of unknown type: " + member.getOsmPrimitiveType() + ". Skipping Member.");
     			}
-    			i++; 
     		}//end iteration over all members
 			ArrayList<Geometry> allMemberGeoms = new ArrayList<Geometry>();
     		if(hasWays && hasNodes){
@@ -746,9 +745,6 @@ public class OJOsmReader {
 	    		if(hasWays){
     				// build the relation geometries based on ways
 	    			
-    				//---------------------------------
-    				//TODO: check/debug if this code works as intended (i.e. what are the union outputs)
-    				//---------------------------------
 	    			if(outerLS.size() > 0){
 	    				ArrayList<Polygon> outerPolys = this.createPolygonsFromRelationMemberWays(outerLS, wayCollection);
 	    				//assuming that we can have inner ways only if we have outer way
@@ -769,8 +765,8 @@ public class OJOsmReader {
 	    			if(wayCollection.size() > 0){
 	    				LineString[] lines = wayCollection.toArray(new LineString[wayCollection.size()]);
 	    				gways = gf.createGeometryCollection(lines);
+		    			allMemberGeoms.add(gways);
 	    			}
-	    			allMemberGeoms.add(gways);
 	    		}
 	    		if(hasNodes){
 	    			Coordinate[] pointCoords = nodeCoords.toArray(new Coordinate[nodeCoords.size()]);
@@ -783,14 +779,35 @@ public class OJOsmReader {
     	}
     }
 
+    /**
+     * Given a list of linestrings, i.e. ways that are part of a relation, the method checks which lines
+     * are connected using JTS union method - which creates multi-line-strings. Then it is checked if
+     * the single linestrings within the multi-linestring are closed. If they are closed, then a polygon 
+     * is formed. LineStrings/ways that are not closed are added to the list allWays. Non-closed linestrings
+     * may appear if not all elements of a multipolygon relation are found in the file. 
+     * The method is used by <code>#createRelationGeometries()</code>.
+     * @param outerOrInnerLS
+     * @param allWays
+     * @return list of polygons
+     */
 	private ArrayList<Polygon> createPolygonsFromRelationMemberWays(ArrayList<LineString> outerOrInnerLS, ArrayList<LineString> allWays){
 		GeometryFactory gf = new GeometryFactory();
-		//Union all the single LineStrings
+		//Union/merge all the single LineStrings
+		//so we handle the case when a polygon outline is formed by many single lines
+		//the line merger will do the node-ing, etc.
+
+		// TODO: it looks like i should use the LineMerger and not just noding to
+		// concat the different linestrings (see also OSM feature with id 1846627 - that seem to be closed)
 		Geometry unionGeometry = outerOrInnerLS.get(0);
 		for (int j = 1; j < outerOrInnerLS.size(); j++) {
 			unionGeometry = unionGeometry.union(outerOrInnerLS.get(j));
 		}
-		//we should have a MultiLineString now, however, maybe we also get only one
+		/*  //maybe new code (but it requires more changes below)
+		LineMerger lm = new LineMerger();
+		lm.add(outerOrInnerLS);
+		Collection<Geometry> mergedGeoms = lm.getMergedLineStrings();
+		*/
+		//we should have a MultiLineString now, however, we may also get only one
 		ArrayList<Polygon> createdPolygons = new ArrayList<Polygon>();
 		if(unionGeometry instanceof LineString){
 			//check if it is closed
@@ -804,7 +821,7 @@ public class OJOsmReader {
 			}
 		}
 		else if(unionGeometry instanceof MultiLineString){
-			//create polygons from all outer parts
+			//create polygons from all parts
 			MultiLineString lines = ((MultiLineString)unionGeometry);
 			for (int j = 0; j < lines.getNumGeometries(); j++) {
 				LineString lst = (LineString)lines.getGeometryN(j);
@@ -815,7 +832,6 @@ public class OJOsmReader {
 				else{
 					//not closed, so we add to ways
 					allWays.add(lst);
-					System.out.println("createPolygonsFromRelationMemberWays(): Way LineString is not closed. TODO: Test if LineString is handled later on.");
 				}
 			}
 		}
@@ -825,6 +841,17 @@ public class OJOsmReader {
     	return createdPolygons;
     }
     
+	/**
+	 * Given the outer and inner ways as polygons in separated list, this method 
+	 * finally creates the holes, by checking which inner polygon is part of
+	 * which outer polygons. Inner polygons that are not covered by any outer polygon
+	 * are added to the wayCollection as LineStrings (not as polygons), so they are not lost.
+	 * The method is used by <code>#createRelationGeometries()</code>.
+	 * @param outerPolys are the polygons of a relation that may have holes. 
+	 * @param innerPolys i.e. the holes to be created in the outer polygons.
+	 * @param wayCollection
+	 * @return List of (outer) polygons with and without holes.
+	 */
 	private ArrayList<Geometry> substractRelationPolygons(
 			ArrayList<Polygon> outerPolys, ArrayList<Polygon> innerPolys,
 			ArrayList<LineString> wayCollection) {
@@ -838,7 +865,6 @@ public class OJOsmReader {
 		for (Iterator iterator = outerPolys.iterator(); iterator.hasNext();) {
 			Geometry outerPoly = (Polygon) iterator.next();
 			int i = 0; 
-			//TODO: check/debug
 			while(i < innerPolys.size()){
 				Polygon innerPoly = innerPolys.get(i);
 				if(outerPoly.covers(innerPoly)){
@@ -855,20 +881,27 @@ public class OJOsmReader {
 			// store the outer poly - modified or not
 			newOuterPolys.add(outerPoly);
 		}
-		// way may have some of the innerPolys left
+		// we may have some of the innerPolys left for which we cannot find a covering polygon
 		// lets add them as LineStrings to wayCollection
 		if(innerPolys.size() > 0 ){
-			System.out.println("OJOsmReader.substractRelationPolygons(): some inner-Polygons from a Relation are not coverd by an outer-Polygon");
-		}
-		for (Iterator iterator = innerPolys.iterator(); iterator.hasNext();) {
-			Polygon pol = (Polygon) iterator.next();
-			Coordinate[] coords = pol.getCoordinates();
-			wayCollection.add(gf.createLineString(coords));
+			//System.out.println("OJOsmReader.substractRelationPolygons(): some inner-Polygons from a Relation are not covered by an outer-Polygon");
+			for (Iterator iterator = innerPolys.iterator(); iterator.hasNext();) {
+				Polygon pol = (Polygon) iterator.next();
+				Coordinate[] coords = pol.getCoordinates();
+				wayCollection.add(gf.createLineString(coords));
+			}
 		}
 		return newOuterPolys;
 	}
 	
-    private Geometry[] dissolveGeomCollections(ArrayList<Geometry> allMemberGeoms) {
+	/**
+	 * Explodes/dissolves a list that can contain multi-geometries, such as MultiLineString, 
+	 * into its single geometries, e.g. a list of single LineStrings. The method is used
+	 * by <code>#createRelationGeometries()</code>.
+	 * @param allMemberGeoms
+	 * @return list of single geometries
+	 */
+    private static Geometry[] dissolveGeomCollections(ArrayList<Geometry> allMemberGeoms) {
     	ArrayList<Geometry> singleGeoms = new ArrayList<Geometry>();
     	for (Iterator iterator = allMemberGeoms.iterator(); iterator.hasNext();) {
 			Geometry g = (Geometry) iterator.next();
