@@ -674,7 +674,7 @@ public class OJOsmReader {
     				try{
     					OjOsmWay way = this.allWays.get(member.getMemberId());
     					if(way != null){ //because we may not have a way with that ID stored in this file
-    						
+    						member.setIdNotFoundInDataset(false);
 	    					Coordinate[] wayCoords = way.getGeom().getCoordinates();
 							LineString ls = gf.createLineString(wayCoords);
     						/**
@@ -705,6 +705,8 @@ public class OJOsmReader {
 		    				way.setUsedInARelation(true);
 		    			}
     					else{//way == null
+    						rel.setMissingMembers(true);
+    						member.setIdNotFoundInDataset(true);
     						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. Member Id: " + member.getMemberId());
     					}
     				}
@@ -717,10 +719,13 @@ public class OJOsmReader {
     				try{
     					OjOsmNode node = this.allNodes.get(member.getMemberId());
     					if(node != null){
+    						member.setIdNotFoundInDataset(false);
 	    					nodeCoords.add(node.getCoord());
 	    					node.setUsedInARelation(true);
     					}
     					else{
+    						rel.setMissingMembers(true);
+    						member.setIdNotFoundInDataset(true);
     						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'node' not found. Node/Member Id: " + member.getMemberId());
     					}
     				}
@@ -733,7 +738,7 @@ public class OJOsmReader {
     			}
     			i++; 
     		}//end iteration over all members
-			ArrayList<Geometry> allMemberGeoms = new ArrayList();
+			ArrayList<Geometry> allMemberGeoms = new ArrayList<Geometry>();
     		if(hasWays && hasNodes){
     			System.out.println("OJOsmReader: TODO: This is a geometry collection of points and lines. Geometry creation still needs to be implemented.");
     		}
@@ -745,18 +750,19 @@ public class OJOsmReader {
     				//TODO: check/debug if this code works as intended (i.e. what are the union outputs)
     				//---------------------------------
 	    			if(outerLS.size() > 0){
-	    				GeometryCollection outerPolys = this.createPolygonsFromRelationMemberWays(outerLS, wayCollection);
+	    				ArrayList<Polygon> outerPolys = this.createPolygonsFromRelationMemberWays(outerLS, wayCollection);
 	    				//assuming that we can have inner ways only if we have outer way
 	    				//now check if we have inner polys
-	    				GeometryCollection innerPolys = gf.createGeometryCollection(null);
+	    				ArrayList<Polygon> innerPolys = null;
+	    				ArrayList<Geometry> multiPolys = null;
 	    				if(innerLS.size() > 0){
 	    					innerPolys = this.createPolygonsFromRelationMemberWays(innerLS, wayCollection);
-		    				System.out.println("TODO: implement polygon-outer-inner subtraction for relations");
+		    				multiPolys = this.substractRelationPolygons(outerPolys, innerPolys, wayCollection);
+		    				allMemberGeoms.addAll(multiPolys);
 	    				}
-	    				//TODO: subtract inner polys from outer polygons.
-	    				//meanwhile add polys separately
-	    				allMemberGeoms.add(outerPolys);
-	    				allMemberGeoms.add(innerPolys);
+	    				else{
+	    					allMemberGeoms.addAll(outerPolys);
+	    				}
 
 	    			}// end (outerLS > 0);
 	    			Geometry gways = gf.createGeometryCollection(null);
@@ -777,20 +783,20 @@ public class OJOsmReader {
     	}
     }
 
-	private GeometryCollection createPolygonsFromRelationMemberWays(ArrayList<LineString> outerOrInnerLS, ArrayList<LineString> allWays){
-    	GeometryFactory gf = new GeometryFactory();
+	private ArrayList<Polygon> createPolygonsFromRelationMemberWays(ArrayList<LineString> outerOrInnerLS, ArrayList<LineString> allWays){
+		GeometryFactory gf = new GeometryFactory();
 		//Union all the single LineStrings
 		Geometry unionGeometry = outerOrInnerLS.get(0);
 		for (int j = 1; j < outerOrInnerLS.size(); j++) {
 			unionGeometry = unionGeometry.union(outerOrInnerLS.get(j));
 		}
 		//we should have a MultiLineString now, however, maybe we also get only one
-		GeometryCollection constructedPolys = null;
+		ArrayList<Polygon> createdPolygons = new ArrayList<Polygon>();
 		if(unionGeometry instanceof LineString){
 			//check if it is closed
 			if (((LineString) unionGeometry).isClosed()){
 				Polygon p = gf.createPolygon(unionGeometry.getCoordinates());
-				constructedPolys = gf.createGeometryCollection(new Geometry[]{p});
+				createdPolygons.add(p);
 			}
 			else{
 				//not closed, so we add it to the ways
@@ -800,12 +806,11 @@ public class OJOsmReader {
 		else if(unionGeometry instanceof MultiLineString){
 			//create polygons from all outer parts
 			MultiLineString lines = ((MultiLineString)unionGeometry);
-			ArrayList<Polygon> polygons = new ArrayList<Polygon>();
 			for (int j = 0; j < lines.getNumGeometries(); j++) {
 				LineString lst = (LineString)lines.getGeometryN(j);
 				if(lst.isClosed()){
 					Polygon pt = gf.createPolygon(lst.getCoordinates());
-					polygons.add(pt);
+					createdPolygons.add(pt);
 				}
 				else{
 					//not closed, so we add to ways
@@ -813,16 +818,56 @@ public class OJOsmReader {
 					System.out.println("createPolygonsFromRelationMemberWays(): Way LineString is not closed. TODO: Test if LineString is handled later on.");
 				}
 			}
-			//create outerPolys collection
-			Polygon[] allPolysArray = polygons.toArray(new Polygon[polygons.size()]);
-			constructedPolys = gf.createGeometryCollection(allPolysArray);
 		}
 		else{
 			System.out.println("unionGeometry of outerLS is neither a single LineString nor a MultiLineString - help!!!");
 		}
-    	return constructedPolys;
+    	return createdPolygons;
     }
     
+	private ArrayList<Geometry> substractRelationPolygons(
+			ArrayList<Polygon> outerPolys, ArrayList<Polygon> innerPolys,
+			ArrayList<LineString> wayCollection) {
+		// Geometry.difference() is not implemented for Geometry collections - so we have to do
+		// it by hand and therefore do use the lists.
+		// Assuming there are not too many outer and inner lines we do not use an index for 
+		// speeding up the search
+		GeometryFactory gf = new GeometryFactory();
+		ArrayList<Geometry> newOuterPolys = new ArrayList<Geometry>();
+		// Loop over the outer polygons
+		for (Iterator iterator = outerPolys.iterator(); iterator.hasNext();) {
+			Geometry outerPoly = (Polygon) iterator.next();
+			int i = 0; 
+			//TODO: check/debug
+			while(i < innerPolys.size()){
+				Polygon innerPoly = innerPolys.get(i);
+				if(outerPoly.covers(innerPoly)){
+					outerPoly = outerPoly.difference(innerPoly); //note, a difference may end-up being not a polygon anymore
+					// assuming that each innerPoly is covered only by one
+					// outerPoly we remove it
+					innerPolys.remove(i);
+					// in this case we do not raise the list index
+				}
+				else{//innerPoly is not covered by outerPoly
+					i++;
+				}
+			}
+			// store the outer poly - modified or not
+			newOuterPolys.add(outerPoly);
+		}
+		// way may have some of the innerPolys left
+		// lets add them as LineStrings to wayCollection
+		if(innerPolys.size() > 0 ){
+			System.out.println("OJOsmReader.substractRelationPolygons(): some inner-Polygons from a Relation are not coverd by an outer-Polygon");
+		}
+		for (Iterator iterator = innerPolys.iterator(); iterator.hasNext();) {
+			Polygon pol = (Polygon) iterator.next();
+			Coordinate[] coords = pol.getCoordinates();
+			wayCollection.add(gf.createLineString(coords));
+		}
+		return newOuterPolys;
+	}
+	
     private Geometry[] dissolveGeomCollections(ArrayList<Geometry> allMemberGeoms) {
     	ArrayList<Geometry> singleGeoms = new ArrayList<Geometry>();
     	for (Iterator iterator = allMemberGeoms.iterator(); iterator.hasNext();) {

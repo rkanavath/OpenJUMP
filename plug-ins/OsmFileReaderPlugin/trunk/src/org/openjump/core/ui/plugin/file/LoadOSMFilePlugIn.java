@@ -148,38 +148,39 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 		String sfieldVersion = "osm_version";		
 		AttributeType t5 = AttributeType.INTEGER;
 		fsvx.addAttribute(sfieldVersion, t5);
-		
-		String sfieldVisible = "visible";		
-		AttributeType t6 = AttributeType.INTEGER;
-		fsvx.addAttribute(sfieldVisible, t6);
-		
-		String sfieldDelete = "action_deleted";		
-		AttributeType t7 = AttributeType.INTEGER;
-		fsvx.addAttribute(sfieldDelete, t7);
-		
-		String sfieldModify = "action_modified";		
-		AttributeType t8 = AttributeType.INTEGER;
-		fsvx.addAttribute(sfieldModify, t8);
-		
-		String sfieldChangeID = "osm_changeset_id";		
-		AttributeType t9 = AttributeType.INTEGER;
-		fsvx.addAttribute(sfieldChangeID, t9);
-		
+				
 		String sTags = "osm_tags";		
-		AttributeType t10 = AttributeType.STRING;
-		fsvx.addAttribute(sTags, t10);
+		AttributeType t6 = AttributeType.STRING;
+		fsvx.addAttribute(sTags, t6);
 
 		String sLuType = "lu_type";		
-		AttributeType t11 = AttributeType.STRING;
-		fsvx.addAttribute(sLuType, t11);
+		AttributeType t7 = AttributeType.STRING;
+		fsvx.addAttribute(sLuType, t7);
 		
 		String sName = "name";		
-		AttributeType t12 = AttributeType.STRING;
-		fsvx.addAttribute(sName, t12);
+		AttributeType t8 = AttributeType.STRING;
+		fsvx.addAttribute(sName, t8);
 		
 		String sUsedInRelation = "part of relation";		
-		AttributeType t13 = AttributeType.STRING;
-		fsvx.addAttribute(sUsedInRelation, t13);
+		AttributeType t9 = AttributeType.STRING;
+		fsvx.addAttribute(sUsedInRelation, t9);
+		
+		String sfieldVisible = "visible";		
+		AttributeType t10 = AttributeType.INTEGER;
+		fsvx.addAttribute(sfieldVisible, t10);
+		
+		String sfieldDelete = "action_deleted";		
+		AttributeType t11 = AttributeType.INTEGER;
+		fsvx.addAttribute(sfieldDelete, t11);
+		
+		String sfieldModify = "action_modified";		
+		AttributeType t12 = AttributeType.INTEGER;
+		fsvx.addAttribute(sfieldModify, t12);
+		
+		String sfieldChangeID = "osm_changeset_id";		
+		AttributeType t13 = AttributeType.INTEGER;
+		fsvx.addAttribute(sfieldChangeID, t13);
+
 		
 		FeatureDataset fdOsmObjects = new FeatureDataset(fsvx);	
 		
@@ -230,6 +231,15 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 			}
 			else{
 				usedInRelationText="no";
+			}
+			if(osmPrim instanceof OjOsmRelation){
+				OjOsmRelation rel = (OjOsmRelation)osmPrim;
+				if(rel.isMissingMembers()){
+					usedInRelationText = usedInRelationText + " - missing own members.";
+				}
+				else{
+					usedInRelationText = usedInRelationText + " - all members found";
+				}
 			}
 			fNew.setAttribute(sUsedInRelation, usedInRelationText);
 			

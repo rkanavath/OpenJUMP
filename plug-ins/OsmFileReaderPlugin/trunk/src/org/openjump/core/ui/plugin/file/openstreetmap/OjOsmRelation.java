@@ -6,6 +6,20 @@ public class OjOsmRelation extends OjOsmPrimitive {
 
 	private ArrayList<OjOsmRelationMember> members = new ArrayList<OjOsmRelationMember>();
 	
+	/**
+	 * Whether or not some members (e.g. way IDs) were not found in the current file.
+	 * @return
+	 */
+	public boolean isMissingMembers() {
+		return missingMembers;
+	}
+
+	public void setMissingMembers(boolean missingMembers) {
+		this.missingMembers = missingMembers;
+	}
+
+	private boolean missingMembers = false;
+	
 	public OjOsmRelation() {
 		super();
 		this.setOsmType(OjOsmPrimitive.OSM_PRIMITIVE_RELATION);

@@ -5,6 +5,7 @@ public class OjOsmRelationMember {
 	private final String role;
     private final long memberId;
     private final int osmPrimitiveType;
+    private boolean idNotFoundInDataset = true;
     
     public OjOsmRelationMember(String role, int type, long id) {
         this.role = role == null?"":role;
@@ -70,5 +71,14 @@ public class OjOsmRelationMember {
     	}
     	return isInner;
     }
+
+	public boolean isIdNotFoundInDataset() {
+		return idNotFoundInDataset;
+	}
+
+	public void setIdNotFoundInDataset(boolean idNotFoundInDataset) {
+		this.idNotFoundInDataset = idNotFoundInDataset;
+	}
+    
     
 }
