@@ -87,12 +87,13 @@ public class OJOsmReader {
      */
     public boolean doParseDataSet(InputStream source) throws IllegalDataException {
     	if(source == null) return false;
+    	System.out.println("OJOsmReader.doParseDataSet: start parsing File " + source.toString());
         try {
             InputStreamReader ir = UTFInputStreamReader.create(source, "UTF-8");
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
             setParser(parser);
             parse();
-
+        	System.out.println("OJOsmReader.doParseDataSet: finished parsing");
             //prepareDataSet(); // [sstein] : not needed, calls originally dataset assembling methods 
             					//  from org.openstreetmap.josm.io.AbstractReader
             
@@ -113,7 +114,9 @@ public class OJOsmReader {
               }
             }
             //assemble way and relation geometries
+        	System.out.println("OJOsmReader.doParseDataSet: assembling relation geometries");
             this.createWayGeomsAndRelationGeometries();
+            System.out.println("OJOsmReader.doParseDataSet: adding ways and relations to output");
             //add all ways
             Iterator<Long> keySetIterator2 = this.allWays.keySet().iterator();
             while(keySetIterator2.hasNext()){
@@ -127,7 +130,8 @@ public class OJOsmReader {
               this.dataset.add(this.allRelations.get(key));
             }
             //identify major land uses for items in the dataset only
-            this.detectMayorLanduses();
+            System.out.println("OJOsmReader.doParseDataSet: detecting mayor landuses");
+            this.detectMayorLanduses(dataset);
             
             return true;
         } catch(OsmParsingException e) {
@@ -621,9 +625,6 @@ public class OJOsmReader {
     		Geometry g;
     		boolean hasAreaTag = false;
     		hasAreaTag = w.hasKey("area");
-    		if(hasAreaTag){
-    			System.out.println("OJOsmReader: hasAreaTag");
-    		}
     		if(w.isClosed() && hasAreaTag){
     			if(w.get("area").equalsIgnoreCase("yes")){
     				LinearRing lr = gf.createLinearRing(coords);
@@ -912,9 +913,163 @@ public class OJOsmReader {
 		return geomArray;
 	}
     
-    private void detectMayorLanduses(){
-    	//TODO: implement this, based on tag parsing
-    	//      in particular identify: roads, rail, bridge, landmark, building, natural landuse + "other" category
+    /**
+     * Based on the tags the methods will try to identify the major land-use type.
+     * For some land-uses (tag: building=yes and natural="...") the geometry of ways will 
+     * be changed from LineString to Polygon.
+     * @param osmFeatureData
+     * @return a new dataset with identified landuses.
+     */
+    private ArrayList<OjOsmPrimitive> detectMayorLanduses(ArrayList<OjOsmPrimitive> osmFeatureData){
     	System.out.println("TODO: implement me: OJOsmReader.detectMayorLanduses()");
+    	ArrayList<OjOsmPrimitive> osmFeaturesWithLuType = new ArrayList<OjOsmPrimitive>();
+    	for (Iterator iterator = osmFeatureData.iterator(); iterator.hasNext();) {
+			OjOsmPrimitive ojOsmPrimitive = (OjOsmPrimitive) iterator.next();
+	    	//TODO: implement this, based on tag parsing
+	    	//      in particular identify: roads, rail, bridge, landmark, 
+			//      building, natural landuse + "other" category
+			GeometryFactory gf = new GeometryFactory();
+			/* == Ways ==*/
+			if(ojOsmPrimitive instanceof OjOsmWay){
+				if (ojOsmPrimitive.hasKey("building")){
+					ojOsmPrimitive.setLandUseDescription("building");
+					Geometry geom = ojOsmPrimitive.getGeom();
+					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
+						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("highway")){
+					if(ojOsmPrimitive.hasKey("foot")){
+						if(ojOsmPrimitive.get("foot").equalsIgnoreCase("yes")){
+							if(ojOsmPrimitive.hasKey("bicyle")){
+								if(ojOsmPrimitive.get("bicyle").equalsIgnoreCase("yes")){
+									ojOsmPrimitive.setLandUseDescription("path: foot and bicycle");
+								}
+								else{
+									ojOsmPrimitive.setLandUseDescription("footpath");
+								}
+							}
+							else{
+								ojOsmPrimitive.setLandUseDescription("footpath");
+							}
+						}
+						else{
+							ojOsmPrimitive.setLandUseDescription("path");	
+						}
+					}//does not have "foot" tag
+					else{
+							ojOsmPrimitive.setLandUseDescription("road: " + ojOsmPrimitive.get("highway"));
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("railway")){
+					ojOsmPrimitive.setLandUseDescription("rail");
+				}
+				else if (ojOsmPrimitive.hasKey("natural")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("natural"));
+					Geometry geom = ojOsmPrimitive.getGeom();
+					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
+						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("parking")){
+					ojOsmPrimitive.setLandUseDescription("parking");
+					if(ojOsmPrimitive.get("parking").equalsIgnoreCase("surface")){
+						Geometry geom = ojOsmPrimitive.getGeom();
+						if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
+							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						}
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("amenity")){
+					if(ojOsmPrimitive.get("amenity").equalsIgnoreCase("parking")){
+						ojOsmPrimitive.setLandUseDescription("parking");
+						Geometry geom = ojOsmPrimitive.getGeom();
+						if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
+							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						}
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("landuse")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("landuse"));
+					Geometry geom = ojOsmPrimitive.getGeom();
+					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
+						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("sport")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("sport"));
+					Geometry geom = ojOsmPrimitive.getGeom();
+					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
+						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("leisure")){
+					ojOsmPrimitive.setLandUseDescription("leisure: "+ ojOsmPrimitive.get("leisure"));
+					Geometry geom = ojOsmPrimitive.getGeom();
+					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
+						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+					}
+				}
+				else if (ojOsmPrimitive.hasKey("waterway")){
+					ojOsmPrimitive.setLandUseDescription("waterway: "+ ojOsmPrimitive.get("waterway"));
+				}
+
+			}
+			/* == Nodes ==*/
+			else if(ojOsmPrimitive instanceof OjOsmNode){
+				//TODO: implement lu type detection for nodes	
+				if (ojOsmPrimitive.hasKey("highway")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("highway"));
+				}
+				else if (ojOsmPrimitive.hasKey("railway")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("railway"));
+				}
+				else if (ojOsmPrimitive.hasKey("barrier")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("barrier"));
+				}
+				else if (ojOsmPrimitive.hasKey("amenity")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("amenity"));
+				}
+				else if (ojOsmPrimitive.hasKey("tourism")){
+					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("tourism"));
+				}
+				else if (ojOsmPrimitive.hasKey("building")){
+					ojOsmPrimitive.setLandUseDescription("building");
+				}
+			}
+			else if(ojOsmPrimitive instanceof OjOsmRelation){
+				//TODO: implement lu type detection for relations
+				if(ojOsmPrimitive.hasKey("type")){
+					String relType = ojOsmPrimitive.get("type");
+					if(relType.equalsIgnoreCase("multipolygon")){
+						relType = "";
+					}
+					ojOsmPrimitive.setLandUseDescription(relType);
+					if (ojOsmPrimitive.hasKey("natural")){
+						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("natural"));
+					}
+					if (ojOsmPrimitive.hasKey("route")){
+						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("route"));
+					}
+					if (ojOsmPrimitive.hasKey("waterway")){
+						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("waterway"));
+					}
+					if (ojOsmPrimitive.hasKey("boundary")){
+						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("boundary"));
+					}
+					if (ojOsmPrimitive.hasKey("site")){
+						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("site"));
+					}
+					if (ojOsmPrimitive.hasKey("destination_sign")){
+						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("destination_sign"));
+					}
+					if (ojOsmPrimitive.hasKey("public_transport")){
+						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("public_transport"));
+					}
+				}
+			}
+			osmFeaturesWithLuType.add(ojOsmPrimitive);
+		}
+    	return osmFeaturesWithLuType;
     }
 }

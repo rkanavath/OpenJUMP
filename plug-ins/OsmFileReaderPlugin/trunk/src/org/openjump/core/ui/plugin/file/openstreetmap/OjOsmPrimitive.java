@@ -102,7 +102,10 @@ public class OjOsmPrimitive implements Tagged{
 
 	public void setLandUseDescription(String landUseType) {
 		this.landUseType = landUseType;
-		this.hasLandUse = true;
+		//TODO: check how long an empty string is.
+		if(landUseType.length()>1){
+			this.hasLandUse = true;
+		}
 	}	
 	
 	public boolean hasLandUseDescription(){
