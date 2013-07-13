@@ -218,9 +218,9 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 				if(osmPrim.hasKey("name")){
 					nameText = osmPrim.get("name");
 				}
-				if(osmPrim.hasLandUseDescription()){
-					luTypeText = osmPrim.getLandUseDescription();
-				}
+			}
+			if(osmPrim.hasLandUseDescription()){
+				luTypeText = osmPrim.getLandUseDescription();
 			}
 			fNew.setAttribute(sTags, tagText);
 			fNew.setAttribute(sName, nameText);
