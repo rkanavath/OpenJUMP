@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Michaël MICHAUD
+ * Copyright (C) 2012 Michaï¿½l MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -20,28 +20,24 @@
 
 package fr.michaelm.jump.drivers.csv;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.regex.Pattern;
-
+import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooserManager;
-import com.vividsolutions.jump.workbench.datasource.SaveFileDataSourceQueryChooser;
-import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.WorkbenchContext;
 import org.openjump.core.ui.io.file.DataSourceFileLayerLoader;
 import org.openjump.core.ui.io.file.FileLayerLoader;
 import org.openjump.core.ui.swing.factory.field.CheckBoxFieldComponentFactory;
 import org.openjump.core.ui.swing.factory.field.ComboBoxFieldComponentFactory;
 import org.openjump.core.ui.swing.factory.field.FieldComponentFactoryRegistry;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.regex.Pattern;
 
 import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 
@@ -51,6 +47,7 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
  * @author Micha&euml;l MICHAUD
  * @version 0.6.6 (2012-10-02)
  */
+// 0.7.0 (2013-03-24) make csv-driver persistable in an OpenJUMP project
 // 0.6.6 (2012-10-02) make csv-driver compatible with SaveDatasetsPlugIn and 
 //       improved error management (+I18N)
 // 0.6.5 (2012-08-11) add geometry column with empty geometry collections if missing
@@ -70,7 +67,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "0.6.6";
+        return "0.7.0 (2013-07-14)";
     }
 
     public void configure(PlugInContext context) throws Exception {

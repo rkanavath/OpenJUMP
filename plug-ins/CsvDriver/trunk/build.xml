@@ -1,4 +1,4 @@
-<project name="openjump-csv-driver" default="compile" basedir=".">
+<project name="openjump-csv-driver" default="compile-all" basedir=".">
 
     <!--*************************************************************************
     *****************************************************************************
@@ -16,7 +16,10 @@
     <property name="resources"     value="resources" />
     
     <!-- plugins -->
-    <property name="csv-driver-version"        value="0.6.6" />    
+    <property name="csv-driver-version"        value="0.7.0" />
+    <!--property name="openjump-ext" value="C:/Users/Micha&#x00EB;l/DEVELOPPEMENTS/OpenJUMP-2012/dist/openjump-1.6.2beta/lib/ext" /-->
+    <property name="openjump-ext" value="C:\Users\Micha&#x00EB;l\Downloads\OpenJUMP\OpenJUMP-1.6.3-r3576-CORE\lib\ext" />
+
 
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->
@@ -58,7 +61,7 @@
         <jar basedir="${build}" jarfile="${dist}/csv-driver-${csv-driver-version}.jar">
              <include name="fr/michaelm/jump/drivers/csv/**/*"/>
         </jar>
-        <!--copy file="${dist}/csv-driver-${csv-driver-version}.jar" todir="${openjump-ext}"/-->
+        <copy file="${dist}/csv-driver-${csv-driver-version}.jar" todir="${openjump-ext}"/>
         <java classname="fr.michaelm.jump.drivers.csv.CSVFileTest">
             <arg value="-h"/>
             <classpath>       

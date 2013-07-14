@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Michaël MICHAUD
+ * Copyright (C) 2012 Michaï¿½l MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -42,12 +42,21 @@ public class FieldSeparator {
     private char separator;
     private Pattern fieldPattern;
 
+    /**
+     * No parameter constructor used for persistence in project files.
+     */
+    public FieldSeparator() {}
+
     public FieldSeparator(char separator) {
         this.separator = separator;
     }
 
     public char getSeparator() {
         return separator;
+    }
+
+    public void setSeparator(char sep) {
+        this.separator = sep;
     }
     
     public Pattern getFieldPattern() {

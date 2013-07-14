@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Michaël MICHAUD
+ * Copyright (C) 2012 Michaï¿½l MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -23,12 +23,7 @@ package fr.michaelm.jump.drivers.csv;
 import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.FeatureSchema;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,8 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
-
-//import sun.nio.cs.ext.GBK;
 
 /**
  * An extension of CSVFile with methods to guess the internal structure of the
@@ -64,8 +57,14 @@ public class AutoCSVFile extends CSVFile {
     // Pattern matching a WKT string
     // A non-comment line containing such a pattern is considered as a data line
     private final static Pattern WKT_PATTERN = Pattern.compile("(((MULTI)?(POINT|LINESTRING|POLYGON))|GEOMETRYCOLLECTION) ?( EMPTY|\\([\\(\\)\\d,\\. ]*\\))");
-        
-    
+
+
+    /** No parameter constructor for persitence in a project file.*/
+    public AutoCSVFile() throws IOException, CSVFileException {
+        super();
+    }
+
+
     public AutoCSVFile(String filePath) throws IOException, CSVFileException {
         super(filePath);
     }
@@ -97,7 +96,7 @@ public class AutoCSVFile extends CSVFile {
             for (String enc : encodings) {                          
                 String s = new String(buf, enc);
                 // \ufffd is the replacement character used to replace an unknown or unprintable character
-                if (new String(s.getBytes(enc), enc).equals(s) && s.indexOf("\ufffd") < 0) {
+                if (new String(s.getBytes(enc), enc).equals(s) && !s.contains("\ufffd")) {
                     return enc;
                 }
             }
@@ -110,7 +109,7 @@ public class AutoCSVFile extends CSVFile {
     
     private void readHeaderLines() throws IOException, CSVFileException {
         BufferedReader br = new BufferedReader(new InputStreamReader(
-            new FileInputStream(getFilePath()), getEncoding()));
+            new FileInputStream(getFilePath()), getCharset()));
         // line1 will try to get the header line containing column names (if any)
         String line1 = null;
         // line2 will try to get the data type line (if any)
@@ -122,7 +121,7 @@ public class AutoCSVFile extends CSVFile {
         // read until first non empty line to guess/set the comment line pattern
         // if 1st non empty line starts with $, read it as a pirol header line
         // if no comment mark is found read first non empty line a header line
-        String currentLine = null;
+        String currentLine;
         while (null != (currentLine=br.readLine())) {
             count++;
             currentLine = currentLine.trim();
@@ -235,8 +234,9 @@ public class AutoCSVFile extends CSVFile {
     }
 
     
-    protected void setColumns(String line) {
-        if (line != null && getFeatureSchema() == null) {
+    protected void setColumns(String line) throws IOException, CSVFileException {
+
+        if (line != null /*&& getFeatureSchema() == null*/) {
             boolean header = !NUMBER_PATTERN.matcher(line).find() &&
                              !WKT_PATTERN.matcher(line).find();
             setHeaderLine(header);
@@ -279,7 +279,6 @@ public class AutoCSVFile extends CSVFile {
                     schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
                 }
                 else if ((i == y || i == z) && x != -1 && wkt == -1) {
-                    continue;
                 }
                 else if (wkt+x+y == -3 && 
                          data != null && 
