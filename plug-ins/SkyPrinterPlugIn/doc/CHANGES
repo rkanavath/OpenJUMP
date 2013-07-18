@@ -1,0 +1,14 @@
+# for display continuity sake please use 2 spaces instead of tabs
+
+2013-07-18 Matthias Scholz <ms@jammerhund.de>
+  * PrintPlugIn:
+    - pdfCurrentWindow():
+	  - restore the last PDF output directory from Blackboard
+	  - customizalble dateformat for the PDF file name via i18n
+      - add some metadata to the PDF
+    - execute():
+	  - ComboBox with papersize
+	  - orientation switch
+    - printCurrentWindow():
+      - fix PrintServiceLookup problem for *nix systems with the JobName Attribute
+  * NorthArrowRenderer activated

@@ -68,6 +68,8 @@ import javax.print.attribute.standard.JobName;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
@@ -77,6 +79,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.OrientationRequested;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.openjump.core.ui.plugin.view.NorthArrowRenderer;
 
 /**
  * This class installs a File->Print menu option and
@@ -121,6 +129,16 @@ public class PrintPlugIn extends AbstractPlugIn {
     private final String PDF_FILES              = I18N_.getText("print","PrintPlugIn.PDF-files");
     private final String PDF_PAGE_WIDTH        = I18N_.getText("print","PrintPlugIn.PDF-page-width");
     private final String PDF_PAGE_HEIGHT       = I18N_.getText("print","PrintPlugIn.PDF-page-height");
+	private final String PAPER_SIZE            = I18N_.getText("print", "PrintPlugIn.Paper-size");
+	private final String PAPER_SIZE_TOOLTIP    = I18N_.getText("print", "PrintPlugIn.Please-select-the-papersize");
+	private final String PAPER_SIZE_CUSTOM     = I18N_.getText("print", "PrintPlugIn.custom-papersize");
+	private final String PORTRAIT              = I18N_.getText("print", "PrintPlugIn.Portait");
+	private final String LANDSCAPE             = I18N_.getText("print", "PrintPlugIn.Landscape");
+	private final String PORTRAIT_TOOLTIP      = I18N_.getText("print", "PrintPlugIn.Portrait-orientation");
+	private final String LANDSCAPE_TOOLTIP     = I18N_.getText("print", "PrintPlugIn.Landscape-orientation");
+	private final String ORIENTATION_BUTTON_GROUP = "orientationButtonGroup";
+	private final String DATE_FORMAT_STRING    = I18N_.getText("print", "PrintPlugIn.dateFormatString");
+	private final String PDF_SUBJECT           = I18N_.getText("print", "PrintPlugIn.PDF-Subject");
 
 	private boolean printToPDF = false;
 	private PlugInContext pluginContext;
@@ -147,6 +165,10 @@ public class PrintPlugIn extends AbstractPlugIn {
 	private Geometry fence = null;
 	private double pdfPageWidth = 210;
 	private double pdfPageHeight = 297;
+	private JTextField pageWidthTextField;
+	private JTextField pageHeightTextField;
+	private boolean landscapeOrientation = false;
+	private Object mediaSizeNameObject = MediaSizeName.ISO_A4;
 
 
 	//TODO: plugin to set page format (PrintRequestAttributeSet)
@@ -216,8 +238,69 @@ public class PrintPlugIn extends AbstractPlugIn {
 //        dialog.addRadioButton(PRINT_AS_RASTER, PRINT_AS_GROUP, forceRaster,"");
 //        dialog.addRadioButton(PRINT_AS_VECTORS, PRINT_AS_GROUP, forceVector,"");
         dialog.addCheckBox(PRINT_TO_PDF, printToPDF);
-        dialog.addDoubleField(PDF_PAGE_WIDTH,pdfPageWidth,4,PDF_PAGE_TOOLTIP);
-        dialog.addDoubleField(PDF_PAGE_HEIGHT,pdfPageHeight,4,PDF_PAGE_TOOLTIP);
+		// ComboBox for papersize selection
+        dialog.addComboBox(PAPER_SIZE, MediaSizeName.ISO_A4, 
+				Arrays.asList(MediaSizeName.ISO_A3, MediaSizeName.ISO_A4, MediaSizeName.ISO_A5, 
+				MediaSizeName.NA_LETTER, PAPER_SIZE_CUSTOM), PAPER_SIZE_TOOLTIP);
+		// add a Listener for managing the width and height fields
+		dialog.getComboBox(PAPER_SIZE).addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mediaSizeNameObject = ((JComboBox)e.getSource()).getSelectedItem();
+				if (mediaSizeNameObject instanceof MediaSizeName) {
+					// if we have a real MediaSizeName, we disable the textfields and set the values
+					MediaSize mediaSize = MediaSize.getMediaSizeForName((MediaSizeName) mediaSizeNameObject);
+					pageWidthTextField.setEnabled(false);
+					pageHeightTextField.setEnabled(false);
+					// set the corresponding dimensions values for the selected papersize
+					if (landscapeOrientation) {
+						pageWidthTextField.setText(String.valueOf(mediaSize.getY(MediaSize.MM)));
+						pageHeightTextField.setText(String.valueOf(mediaSize.getX(MediaSize.MM)));
+					} else {
+						pageWidthTextField.setText(String.valueOf(mediaSize.getX(MediaSize.MM)));
+						pageHeightTextField.setText(String.valueOf(mediaSize.getY(MediaSize.MM)));
+					}
+				} else {
+					// in all other cases we enable the textfields
+					pageWidthTextField.setEnabled(true);
+					pageHeightTextField.setEnabled(true);
+				}
+			}
+		});
+        pageWidthTextField = dialog.addDoubleField(PDF_PAGE_WIDTH,pdfPageWidth,4,PDF_PAGE_TOOLTIP);
+        pageHeightTextField = dialog.addDoubleField(PDF_PAGE_HEIGHT,pdfPageHeight,4,PDF_PAGE_TOOLTIP);
+		pageWidthTextField.setEnabled(false);
+		pageHeightTextField.setEnabled(false);
+		
+		// RadioButton for orientation choise
+		dialog.addRadioButton(PORTRAIT, ORIENTATION_BUTTON_GROUP, true, PORTRAIT_TOOLTIP);
+		dialog.addRadioButton(LANDSCAPE, ORIENTATION_BUTTON_GROUP, false, LANDSCAPE_TOOLTIP);
+		// add a Listener for managing the width and height
+		dialog.getRadioButton(LANDSCAPE).addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (((JRadioButton)e.getSource()).isSelected()) {
+					if (!landscapeOrientation) { // we need a separate variable, because the ChangeEvent is fired multiple times
+						// in Landscape Mode we exchange width and height
+						landscapeOrientation = true;
+						String oldWidth = pageWidthTextField.getText();
+						pageWidthTextField.setText(pageHeightTextField.getText());
+						pageHeightTextField.setText(oldWidth);
+					}
+				} else {
+					if (landscapeOrientation) { // we need a separate variable, because the ChangeEvent is fired multiple times
+						// and back to portrait again
+						landscapeOrientation = false;
+						String oldWidth = pageWidthTextField.getText();
+						pageWidthTextField.setText(pageHeightTextField.getText());
+						pageHeightTextField.setText(oldWidth);
+					}
+				}
+			}
+		});
+		
         dialog.setVisible(true);
         if (dialog.wasOKPressed()){
            	removeTransparency = dialog.getBoolean(REMOVE_TRANSPARENCY);
@@ -247,6 +330,7 @@ public class PrintPlugIn extends AbstractPlugIn {
          	printToPDF = dialog.getBoolean(PRINT_TO_PDF);
          	pdfPageWidth = dialog.getDouble(PDF_PAGE_WIDTH);
          	pdfPageHeight = dialog.getDouble(PDF_PAGE_HEIGHT);
+			mediaSizeNameObject = dialog.getComboBox(PAPER_SIZE).getSelectedItem();
 			new Thread(new Runnable() {  //background the whole printing operation
 				public void run() {
 					try {
@@ -277,13 +361,18 @@ public class PrintPlugIn extends AbstractPlugIn {
         fileChooser.setFileFilter(fileFilter1);
         Calendar cal = Calendar.getInstance();
         Date date = cal.getTime();
-        SimpleDateFormat df = new SimpleDateFormat("MM-dd-yy_HHmm-ss");
+        SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT_STRING);
         String dateStr = df.format(date);
         String suggestedFileName = context.getTask().getName() + "_" + dateStr + ".pdf";        
         fileChooser.setSelectedFile(new File(suggestedFileName));
+		// restore the last output directory
+        String FILE_CHOOSER_DIRECTORY_KEY = SaveFileDataSourceQueryChooser.class.getName() + " - FILE CHOOSER DIRECTORY";
+		String lastOutputDirectory = (String) PersistentBlackboardPlugIn.get(context.getWorkbenchContext()).get(FILE_CHOOSER_DIRECTORY_KEY);
+		if (lastOutputDirectory != null) { // if the plugin runs the first time, there is nothing in the Blackboard
+			fileChooser.setCurrentDirectory(new File(lastOutputDirectory));
+		}
        	if (JFileChooser.APPROVE_OPTION != fileChooser.showSaveDialog(context.getLayerViewPanel()))
        		return;
-        String FILE_CHOOSER_DIRECTORY_KEY = SaveFileDataSourceQueryChooser.class.getName() + " - FILE CHOOSER DIRECTORY";
         PersistentBlackboardPlugIn.get(context.getWorkbenchContext()).put(FILE_CHOOSER_DIRECTORY_KEY, fileChooser.getCurrentDirectory().getAbsolutePath());
 		String pdfFileName  = fileChooser.getSelectedFile().getPath();
 		if (!(pdfFileName.toLowerCase().endsWith(".pdf")))
@@ -306,9 +395,9 @@ public class PrintPlugIn extends AbstractPlugIn {
     	ScaleBarRenderer.setEnabled(
     			ScaleBarRenderer.isEnabled(context.getLayerViewPanel())
     			,printPanel);  //transfer scale bar settings to print panel
-    	//NorthArrowRenderer.setEnabled(
-    	//		NorthArrowRenderer.isEnabled(context.getLayerViewPanel())
-    	//		,printPanel);  //transfer North Arrow settings to print panel
+    	NorthArrowRenderer.setEnabled(
+    			NorthArrowRenderer.isEnabled(context.getLayerViewPanel())
+    			,printPanel);  //transfer North Arrow settings to print panel
     	pdfDriver.setTaskFrame((TaskFrame) context.getWorkbenchFrame().getActiveInternalFrame());
 
     	pdfDriver.setPrintBorder(printBorder);
@@ -336,6 +425,13 @@ public class PrintPlugIn extends AbstractPlugIn {
     			// step 3: we open the document
     			document.open();
 
+				// add some metadata
+				document.addAuthor(System.getProperty("user.name"));
+				document.addCreator("OpenJUMP SkyPrinterPlugin");
+				document.addKeywords("OpenJUMP");
+				document.addSubject(PDF_SUBJECT);
+				document.addTitle(context.getTask().getName());
+				
     			// step 4: we grab the ContentByte and do some stuff with it
 
     			// we create a fontMapper and read all the fonts in the font directory
@@ -466,8 +562,18 @@ public class PrintPlugIn extends AbstractPlugIn {
     	printerDriver.setPrintLayerables(printLayerables);
     	try {
 
+			// clear all attributes, to avoid some lookup and pageformat setup problems
+			attributeSet.clear();
     		PrinterJob printerJob = PrinterJob.getPrinterJob();
-    		attributeSet.add(new JobName(context.getTask().getName(), null));
+			// set the orientation and MediaSize
+			if (landscapeOrientation) {
+				attributeSet.add(OrientationRequested.LANDSCAPE);
+			} else {
+				attributeSet.add(OrientationRequested.PORTRAIT);
+			}
+			if (mediaSizeNameObject instanceof MediaSizeName) {
+				attributeSet.add((MediaSizeName) mediaSizeNameObject);
+			}
 
     		DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
     		if (printService == null) {
@@ -498,6 +604,9 @@ public class PrintPlugIn extends AbstractPlugIn {
 //    		}
 
     		//-------------------- the actual print job --------------------------
+			// set the JobName here, because under some *nix OS (Linux, OS X) we
+			// do not get the printservices if a JobName is set during PrintServiceLookup
+    		attributeSet.add(new JobName(context.getTask().getName(), null));
     		printerJob.setPrintService(printService);
     		if (printerJob.printDialog(attributeSet)) { //OK pressed		
     			PageFormat pageFormat = PrinterDriver

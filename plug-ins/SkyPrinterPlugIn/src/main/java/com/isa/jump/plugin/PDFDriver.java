@@ -16,6 +16,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.util.Collection;
 import java.util.Iterator;
+import org.openjump.core.ui.plugin.view.NorthArrowRenderer;
 
 public class PDFDriver extends PrinterDriver {
 
@@ -78,15 +79,15 @@ public class PDFDriver extends PrinterDriver {
 			pdfContentByte.endLayer();
 			pdfArray.add(pdfLayer.getRef());
 		}
-		//if (NorthArrowRenderer.isEnabled(panel)) {
-		//	PdfLayer pdfLayer = new PdfLayer(NorthArrowRenderer.CONTENT_ID, writer);
-		//	pdfContentByte.beginLayer(pdfLayer);
-		//	Renderer renderer = new NorthArrowRenderer(panel);
-		//	renderer.copyTo(graphics);
-		//	renderer.clearImageCache();  //free memory
-		//	pdfContentByte.endLayer();
-		//	pdfArray.add(pdfLayer.getRef());
-		//}
+		if (NorthArrowRenderer.isEnabled(panel)) {
+			PdfLayer pdfLayer = new PdfLayer(NorthArrowRenderer.CONTENT_ID, writer);
+			pdfContentByte.beginLayer(pdfLayer);
+			Renderer renderer = new NorthArrowRenderer(panel);
+			renderer.copyTo(graphics);
+			renderer.clearImageCache();  //free memory
+			pdfContentByte.endLayer();
+			pdfArray.add(pdfLayer.getRef());
+		}
 
 		PdfDictionary pdfDictionary = new PdfDictionary();
 		pdfDictionary.put(PdfName.ORDER, pdfArray);
