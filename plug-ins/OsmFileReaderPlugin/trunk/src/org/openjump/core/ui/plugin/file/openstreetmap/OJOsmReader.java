@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.linemerge.LineMerger;
+import com.vividsolutions.jump.task.TaskMonitor;
 
 
 
@@ -80,19 +81,22 @@ public class OJOsmReader {
      * such as creating the way geometries. However, the parsing itself is
      * done in <code>#parseOSM()</code> via <code>#parse()</code> and <code>#parseRoot()</code>.
      * @param source
+     * @param monitor for reporting back progress to GUI. Can be null.
      * @return
      * @throws IllegalDataException
      * @see #parse()
      * @see #parseOSM()
      */
-    public boolean doParseDataSet(InputStream source) throws IllegalDataException {
+    public boolean doParseDataSet(InputStream source, TaskMonitor monitor) throws IllegalDataException {
     	if(source == null) return false;
-    	System.out.println("OJOsmReader.doParseDataSet: start parsing File " + source.toString());
+    	System.out.println("OJOsmReader.doParseDataSet: start parsing File ");
         try {
             InputStreamReader ir = UTFInputStreamReader.create(source, "UTF-8");
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
             setParser(parser);
+            if(monitor != null){monitor.report("parsing OSM file");}
             parse();
+            if(monitor != null){monitor.report("finished parsing");}
         	System.out.println("OJOsmReader.doParseDataSet: finished parsing");
             //prepareDataSet(); // [sstein] : not needed, calls originally dataset assembling methods 
             					//  from org.openstreetmap.josm.io.AbstractReader
@@ -100,30 +104,43 @@ public class OJOsmReader {
             //add only nodes that have tags/keys (except for the create_by key)
             //TODO: check/output if there are points that are not used in either a way or a relation
             Iterator<Long> keySetIterator = this.allNodes.keySet().iterator();
+            int nodeCount = 0; int maxNodeCount = this.allNodes.size();
             while(keySetIterator.hasNext()){
-              Long key = keySetIterator.next();
-              OjOsmNode tempn = this.allNodes.get(key);
-              if(tempn.hasKeys()){
-            	  // exclude those nodes that have only the "created_by" tag
-            	  if((tempn.getKeys().size() == 1) && (tempn.hasKey("created_by"))){
+            	if(monitor != null){
+            		monitor.report(nodeCount, maxNodeCount, "Copying nodes with tags.");
+            	}
+            	Long key = keySetIterator.next();
+            	OjOsmNode tempn = this.allNodes.get(key);
+            	if(tempn.hasKeys()){
+            		// exclude those nodes that have only the "created_by" tag
+            		if((tempn.getKeys().size() == 1) && (tempn.hasKey("created_by"))){
             		  // discard
-            	  }
-            	  else{
+            		}
+            		else{
             		  this.dataset.add(tempn);
-            	  }
-              }
+            		}
+            	}
+            	nodeCount++;
             }
             //assemble way and relation geometries
+        	System.out.println("OJOsmReader.doParseDataSet: checking for invalid node geoms");
+        	checkForInvalidNodeGeoms(this.allNodes, monitor);
+        	System.out.println("OJOsmReader.doParseDataSet: assembling way geometries");
+            this.createWayGeoms(monitor);
+            checkForInvalidWayGeoms(this.allWays, monitor);
+            //we can assembley the relations only if have the ways and nodes
         	System.out.println("OJOsmReader.doParseDataSet: assembling relation geometries");
-            this.createWayGeomsAndRelationGeometries();
+        	this.createRelationGeometries(monitor);
             System.out.println("OJOsmReader.doParseDataSet: adding ways and relations to output");
             //add all ways
+            if(monitor != null){monitor.report("adding OSM ways to output");}
             Iterator<Long> keySetIterator2 = this.allWays.keySet().iterator();
             while(keySetIterator2.hasNext()){
               Long key = keySetIterator2.next();
               this.dataset.add(this.allWays.get(key));
             }
             //add all relations
+            if(monitor != null){monitor.report("adding OSM relations to output");}
             Iterator<Long> keySetIterator3 = this.allRelations.keySet().iterator();
             while(keySetIterator3.hasNext()){
               Long key = keySetIterator3.next();
@@ -131,6 +148,7 @@ public class OJOsmReader {
             }
             //identify major land uses for items in the dataset only
             System.out.println("OJOsmReader.doParseDataSet: detecting mayor landuses");
+            if(monitor != null){monitor.report("detecting OSM object landuse");}
             this.detectMayorLanduses(dataset);
             
             return true;
@@ -580,8 +598,9 @@ public class OJOsmReader {
     
     private User createUser(String uid, String name) throws XMLStreamException {
         if (uid == null) {
-            if (name == null)
-                return null;
+            if (name == null){
+                return User.createLocalUser("dummyuser");
+            }
             return User.createLocalUser(name);
         }
         try {
@@ -593,17 +612,87 @@ public class OJOsmReader {
         return null;
     }
     
+	private static void checkForInvalidNodeGeoms(HashMap<Long, OjOsmNode> allNodesT, TaskMonitor monitor) {
+        Iterator<Long> keySetIterator = allNodesT.keySet().iterator();
+        ArrayList<Long> invalidNodeIds = new ArrayList<Long>(); 
+        int nodeCount = 0; int maxNodeCount = allNodesT.size();
+        while(keySetIterator.hasNext()){
+        	if(monitor != null){
+        		monitor.report(nodeCount, maxNodeCount, "Checking node geometries.");
+        	}
+        	Long key = keySetIterator.next();
+          	OjOsmNode tempn = allNodesT.get(key);
+          	Geometry geom = tempn.getGeom();
+          	if(geom.isValid() ==  false){
+          		invalidNodeIds.add(key);
+          	}
+          	nodeCount++;
+        }
+        if(invalidNodeIds.size() > 0 ){
+        	System.out.println("OjOsmReader.checkForInvalidNodeGeoms() : Found invalid node geometries ...deleting these");
+        	for (Iterator iterator = invalidNodeIds.iterator(); iterator.hasNext();) {
+				Long id = (Long) iterator.next();
+				allNodesT.remove(id);
+			}
+        }
+        else{
+        	System.out.println("OjOsmReader.checkForInvalidNodeGeoms() : All node geometries are valid");
+        }
+	}
+	
+	private static void checkForInvalidWayGeoms(HashMap<Long, OjOsmWay> allWaysT, TaskMonitor monitor) {
+        Iterator<Long> keySetIterator = allWaysT.keySet().iterator();
+        ArrayList<Long> invalidWayIds = new ArrayList<Long>(); 
+        int wayCount = 0; int mayWayCount = allWaysT.size();
+        while(keySetIterator.hasNext()){
+        	if(monitor != null){
+        		monitor.report(wayCount, mayWayCount, "Checking way geometries.");
+        	}
+        	wayCount++;
+        	Long key = keySetIterator.next();
+        	OjOsmWay tempn = allWaysT.get(key);
+        	Geometry geom = tempn.getGeom();
+        	boolean valid = false;
+        	try{
+        	  //we need try-catch, because we may have already now geoms with null points
+        	  valid = geom.isValid();
+        	}
+        	catch(Exception e){
+        	  //eat it, because if we get an exception we can't use it anyway
+        	}
+        	if(valid ==  false){
+        	  invalidWayIds.add(key);
+        	}
+        }
+        if(invalidWayIds.size() > 0 ){
+        	System.out.println("OjOsmReader.checkForInvalidWayGeoms() : found invalid way geometries ...deleting these.");
+        	for (Iterator iterator = invalidWayIds.iterator(); iterator.hasNext();) {
+				Long id = (Long) iterator.next();
+				allWaysT.remove(id);
+			}
+        }
+        else{
+        	System.out.println("OjOsmReader.checkForInvalidWayGeoms() : All way geometries are valid");
+        }
+	}
+	
     /**
      * Creates for each way object in <code>allWays</code> the geometry. Usually this is a LineString.
      * However, it can also be an area if the tag/key "area"="yes" exists.
      * Then it calls <code>#createRelationGeometries()</code>.  
+     * @param monitor for GUI feedback; can be null.
      * @see #createRelationGeometries()
      */
-    private void createWayGeomsAndRelationGeometries() {
+    private void createWayGeoms(TaskMonitor monitor) {
     	GeometryFactory gf = new GeometryFactory();
     	//iterate over all ways, and retrieve the node Ids with their geometries
     	Iterator<Long> keySetIterator = this.allWays.keySet().iterator();
+    	int wayCount = 0; int mayWayCount = this.allWays.size();
     	while(keySetIterator.hasNext()){
+        	if(monitor != null){
+        		monitor.report(wayCount, mayWayCount, "Creating way geometries.");
+        	}
+        	wayCount++;
     		Long key = keySetIterator.next();
     		OjOsmWay w = this.allWays.get(key);
     		ArrayList<Long> nodeIds = w.getNodeIds();
@@ -625,35 +714,44 @@ public class OJOsmReader {
     		Geometry g;
     		boolean hasAreaTag = false;
     		hasAreaTag = w.hasKey("area");
-    		if(w.isClosed() && hasAreaTag){
-    			if(w.get("area").equalsIgnoreCase("yes")){
-    				LinearRing lr = gf.createLinearRing(coords);
-    				g = gf.createPolygon(lr, null);
-    			}
-    			else{
-    				g = gf.createLineString(coords);
-    			}
+    		if(coords.length >= 2){
+	    		if(w.isClosed() && hasAreaTag){
+	    			if(w.get("area").equalsIgnoreCase("yes")){
+	    				LinearRing lr = gf.createLinearRing(coords);
+	    				g = gf.createPolygon(lr, null);
+	    			}
+	    			else{
+	    				g = gf.createLineString(coords);
+	    			}
+	    		}
+	    		else{
+	        		g = gf.createLineString(coords);	
+	    		}
     		}
     		else{
-        		g = gf.createLineString(coords);	
+    			g = gf.createMultiPoint(coords);
     		}
     		w.setGeom(g); 
     	}
-		// now that we have the way geometries we can create relation geometries
-    	this.createRelationGeometries();
     }
     
     /**
      * Creates for each relation object in <code>allRelations</code> the geometry.
      * This method needs to be called after the way geometries are created, and therefore
      * is called from within the method <code>#createWayGeomsAndRelationGeometries()</code>.
+     * @param monitor for GUI messages; can be null.
      * @see createWayGeomsAndRelationGeometries()
      */
-    private void createRelationGeometries(){
+    private void createRelationGeometries(TaskMonitor monitor){
     	GeometryFactory gf = new GeometryFactory();
     	//iterate over all ways, and retrieve the node Ids with their geometries
     	Iterator<Long> keySetIterator = this.allRelations.keySet().iterator();
+    	int relationCount=0; int maxRelCount = this.allRelations.size();
     	while(keySetIterator.hasNext()){
+        	if(monitor != null){
+        		monitor.report(relationCount, maxRelCount, "Assembling relation geometry.");
+        	}
+        	relationCount++;
     		Long key = keySetIterator.next();
     		OjOsmRelation rel = this.allRelations.get(key);
     		//check if there is a multipolygon tag, so we can do some decisions later
@@ -739,40 +837,40 @@ public class OJOsmReader {
     			}
     		}//end iteration over all members
 			ArrayList<Geometry> allMemberGeoms = new ArrayList<Geometry>();
+			/*
     		if(hasWays && hasNodes){
-    			System.out.println("OJOsmReader: TODO: This is a geometry collection of points and lines. Geometry creation still needs to be implemented.");
+    			System.out.println("OJOsmReader: This dataset has geometry collection with points and lines mixed.");
     		}
-    		else{
-	    		if(hasWays){
-    				// build the relation geometries based on ways
-	    			
-	    			if(outerLS.size() > 0){
-	    				ArrayList<Polygon> outerPolys = this.createPolygonsFromRelationMemberWays(outerLS, wayCollection);
-	    				//assuming that we can have inner ways only if we have outer way
-	    				//now check if we have inner polys
-	    				ArrayList<Polygon> innerPolys = null;
-	    				ArrayList<Geometry> multiPolys = null;
-	    				if(innerLS.size() > 0){
-	    					innerPolys = this.createPolygonsFromRelationMemberWays(innerLS, wayCollection);
-		    				multiPolys = this.substractRelationPolygons(outerPolys, innerPolys, wayCollection);
-		    				allMemberGeoms.addAll(multiPolys);
-	    				}
-	    				else{
-	    					allMemberGeoms.addAll(outerPolys);
-	    				}
+    		*/
+    		if(hasWays){
+   				// build the relation geometries based on ways
+    			
+    			if(outerLS.size() > 0){
+    				ArrayList<Polygon> outerPolys = this.createPolygonsFromRelationMemberWays(outerLS, wayCollection);
+    				//assuming that we can have inner ways only if we have outer way
+    				//now check if we have inner polys
+    				ArrayList<Polygon> innerPolys = null;
+    				ArrayList<Geometry> multiPolys = null;
+    				if(innerLS.size() > 0){
+    					innerPolys = this.createPolygonsFromRelationMemberWays(innerLS, wayCollection);
+	    				multiPolys = this.substractRelationPolygons(outerPolys, innerPolys, wayCollection);
+	    				allMemberGeoms.addAll(multiPolys);
+	   				}
+	   				else{
+	   					allMemberGeoms.addAll(outerPolys);
+	   				}
 
-	    			}// end (outerLS > 0);
-	    			Geometry gways = gf.createGeometryCollection(null);
-	    			if(wayCollection.size() > 0){
-	    				LineString[] lines = wayCollection.toArray(new LineString[wayCollection.size()]);
-	    				gways = gf.createGeometryCollection(lines);
-		    			allMemberGeoms.add(gways);
-	    			}
-	    		}
-	    		if(hasNodes){
-	    			Coordinate[] pointCoords = nodeCoords.toArray(new Coordinate[nodeCoords.size()]);
-	    			allMemberGeoms.add(gf.createMultiPoint(pointCoords));
-	    		}
+    			}// end (outerLS > 0);
+    			Geometry gways = gf.createGeometryCollection(null);
+    			if(wayCollection.size() > 0){
+    				LineString[] lines = wayCollection.toArray(new LineString[wayCollection.size()]);
+    				gways = gf.createGeometryCollection(lines);
+	    			allMemberGeoms.add(gways);
+    			}
+    		}
+    		if(hasNodes){
+    			Coordinate[] pointCoords = nodeCoords.toArray(new Coordinate[nodeCoords.size()]);
+    			allMemberGeoms.add(gf.createMultiPoint(pointCoords));
     		}
     		Geometry[] allGeomArray = dissolveGeomCollections(allMemberGeoms);
     		g=gf.createGeometryCollection(allGeomArray);
@@ -801,7 +899,10 @@ public class OJOsmReader {
 		// concat the different linestrings (see also OSM feature with id 1846627 - that seem to be closed)
 		Geometry unionGeometry = outerOrInnerLS.get(0);
 		for (int j = 1; j < outerOrInnerLS.size(); j++) {
-			unionGeometry = unionGeometry.union(outerOrInnerLS.get(j));
+			//check first if we have valid geoms: because we may not
+			if(outerOrInnerLS.get(j).isValid()){
+				unionGeometry = unionGeometry.union(outerOrInnerLS.get(j));
+			}
 		}
 		/*  //maybe new code (but it requires more changes below)
 		LineMerger lm = new LineMerger();
@@ -812,13 +913,19 @@ public class OJOsmReader {
 		ArrayList<Polygon> createdPolygons = new ArrayList<Polygon>();
 		if(unionGeometry instanceof LineString){
 			//check if it is closed
-			if (((LineString) unionGeometry).isClosed()){
-				Polygon p = gf.createPolygon(unionGeometry.getCoordinates());
-				createdPolygons.add(p);
-			}
-			else{
-				//not closed, so we add it to the ways
-				allWays.add((LineString)unionGeometry);
+			boolean closed = false;
+			try {
+				closed = ((LineString) unionGeometry).isClosed();
+				if (closed){
+					Polygon p = gf.createPolygon(unionGeometry.getCoordinates());
+					createdPolygons.add(p);
+				}
+				else{
+					//not closed, so we add it to the ways
+					allWays.add((LineString)unionGeometry);
+				}
+			} catch (Exception e) {
+				System.out.println("OJOsmReader.createPolygonsFromRelationMemberWays: can't evaluate if LineString is closed. LineString: " + unionGeometry.toString());
 			}
 		}
 		else if(unionGeometry instanceof MultiLineString){

@@ -108,7 +108,8 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
         try {
             in = new FileInputStream(selFile);
             OJOsmReader osmr = new OJOsmReader();
-            worked = osmr.doParseDataSet(in);
+            System.out.println("LoadOSMFilePlugin: Start reading OSM File: " + selFile.getName());
+            worked = osmr.doParseDataSet(in, monitor);
             if(worked){
             	data = osmr.getDataset();
             }

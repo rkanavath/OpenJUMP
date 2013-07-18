@@ -118,7 +118,14 @@ public class User {
      * @return the user name. Never <code>null</code>, but may be the empty string
      */
     public String getName() {
-        return join("/", names);
+    	String s =  "";
+    	try{
+    		s =	join("/", names);
+    	}
+    	catch(Exception e){
+    		System.out.println("OSM User.getName() : exception thrown : no name");
+    	}
+        return s;
     }
 
     /**
