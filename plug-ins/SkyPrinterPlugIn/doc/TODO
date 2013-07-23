@@ -5,7 +5,7 @@
 + why do i get "Warning: Printer not found" if i try to print to a printer (JobName Problem during printservicelookup)
 + i18n
 + northarrow
-- scale true print
++ scale true print
 - print copyright on bottom
 - determine automatically the correct unit (mm or inch) for the mediaSize.getY() call and the PDF-page-tooltip
 - progressbar to inform the user about the (sometimes long running) print progress

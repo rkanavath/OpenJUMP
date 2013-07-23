@@ -43,8 +43,10 @@ import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.datasource.SaveFileDataSourceQueryChooser;
@@ -85,6 +87,8 @@ import javax.print.attribute.standard.OrientationRequested;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.openjump.core.ui.plugin.view.NorthArrowRenderer;
+import org.openjump.core.ui.plugin.view.helpclassescale.ShowScaleRenderer;
+import org.openjump.core.ui.util.ScreenScale;
 
 /**
  * This class installs a File->Print menu option and
@@ -139,6 +143,8 @@ public class PrintPlugIn extends AbstractPlugIn {
 	private final String ORIENTATION_BUTTON_GROUP = "orientationButtonGroup";
 	private final String DATE_FORMAT_STRING    = I18N_.getText("print", "PrintPlugIn.dateFormatString");
 	private final String PDF_SUBJECT           = I18N_.getText("print", "PrintPlugIn.PDF-Subject");
+    private final String SCALE_PRINT           = I18N_.getText("print", "PrintPlugIn.scale");
+    private final String SCALE_PRINT_TOOLTIP   = I18N_.getText("print", "PrintPlugIn.scale-true-printing");
 
 	private boolean printToPDF = false;
 	private PlugInContext pluginContext;
@@ -169,6 +175,7 @@ public class PrintPlugIn extends AbstractPlugIn {
 	private JTextField pageHeightTextField;
 	private boolean landscapeOrientation = false;
 	private Object mediaSizeNameObject = MediaSizeName.ISO_A4;
+    private String scaleValue;
 
 
 	//TODO: plugin to set page format (PrintRequestAttributeSet)
@@ -301,6 +308,10 @@ public class PrintPlugIn extends AbstractPlugIn {
 			}
 		});
 		
+        // scale true printing
+        dialog.addComboBox(SCALE_PRINT, "", Arrays.asList("", "1:100", "1:1000", "1:2500", "1:5000", "1:10000"), SCALE_PRINT_TOOLTIP);
+        dialog.getComboBox(SCALE_PRINT).setEditable(true);
+        
         dialog.setVisible(true);
         if (dialog.wasOKPressed()){
            	removeTransparency = dialog.getBoolean(REMOVE_TRANSPARENCY);
@@ -331,13 +342,19 @@ public class PrintPlugIn extends AbstractPlugIn {
          	pdfPageWidth = dialog.getDouble(PDF_PAGE_WIDTH);
          	pdfPageHeight = dialog.getDouble(PDF_PAGE_HEIGHT);
 			mediaSizeNameObject = dialog.getComboBox(PAPER_SIZE).getSelectedItem();
+            scaleValue = (String) dialog.getComboBox(SCALE_PRINT).getSelectedItem();
 			new Thread(new Runnable() {  //background the whole printing operation
 				public void run() {
 					try {
+                        // we must set a resolution of 72 dpi to get the correct scale for the ShowScaleRenderer
+                        int oldScreenResolution = ScreenScale.getResolution();
+                        ScreenScale.setResolution(72);
 						if (printToPDF)
 							pdfCurrentWindow(context);
 						else
 							printCurrentWindow(context);
+                        // restore the old value
+                        ScreenScale.setResolution(oldScreenResolution);
 		    		} catch (PrinterException e) { 
 		    			context.getErrorHandler().handleThrowable(e);
 //		    			e.printStackTrace();
@@ -398,6 +415,9 @@ public class PrintPlugIn extends AbstractPlugIn {
     	NorthArrowRenderer.setEnabled(
     			NorthArrowRenderer.isEnabled(context.getLayerViewPanel())
     			,printPanel);  //transfer North Arrow settings to print panel
+		ShowScaleRenderer.setEnabled(
+				ShowScaleRenderer.isEnabled(context.getLayerViewPanel())
+				, printPanel);
     	pdfDriver.setTaskFrame((TaskFrame) context.getWorkbenchFrame().getActiveInternalFrame());
 
     	pdfDriver.setPrintBorder(printBorder);
@@ -543,10 +563,13 @@ public class PrintPlugIn extends AbstractPlugIn {
     	ScaleBarRenderer.setEnabled(
     			ScaleBarRenderer.isEnabled(context.getLayerViewPanel())
     			,printPanel);  //transfer scale bar settings to print panel
-    	//NorthArrowRenderer.setEnabled(
-    	//		NorthArrowRenderer.isEnabled(context.getLayerViewPanel())
-    	//		,printPanel);  //transfer North Arrow settings to print panel
-    	printerDriver.setTaskFrame((TaskFrame) context.getWorkbenchFrame().getActiveInternalFrame());
+    	NorthArrowRenderer.setEnabled(
+    			NorthArrowRenderer.isEnabled(context.getLayerViewPanel())
+    			,printPanel);  //transfer North Arrow settings to print panel
+		ShowScaleRenderer.setEnabled(
+				ShowScaleRenderer.isEnabled(context.getLayerViewPanel())
+				, printPanel);
+        printerDriver.setTaskFrame((TaskFrame) context.getWorkbenchFrame().getActiveInternalFrame());
 
     	printerDriver.setPrintBorder(printBorder);
 //    	if (!printerDriver.setResolutionFactor(resolutionFactor)) {
@@ -731,7 +754,33 @@ public class PrintPlugIn extends AbstractPlugIn {
     		extentInPixelsY = (int) Math.round((ratio * pageFormat.getImageableWidth()) * resolutionFactor);
     	}
     	printPanel.setSize(extentInPixelsX, extentInPixelsY);
-    	printPanel.getViewport().zoom(printEnvelope);
+
+        // the following is for scale true printing
+        // try to parse the scaleValue from the ComboBox
+        double scale;
+        try {
+            // first remove "1:" and second all non numeric stuff
+            scale = Double.parseDouble(scaleValue.replaceFirst("^.*:", "").replaceAll("[^0-9]*", ""));
+        }
+        catch (NumberFormatException nfe) {
+            scale = 0;
+        }
+        // if we have a valid scale value, we scale
+        if (scale > 0) {
+            // compute the actual center on the screen
+            Envelope screenEnvelope = pluginContext.getLayerViewPanel().getViewport().getEnvelopeInModelCoordinates();
+            double xCenter = screenEnvelope.getMinX() + screenEnvelope.getWidth() / 2;
+            double yCenter = screenEnvelope.getMinY() + screenEnvelope.getHeight() / 2;
+
+            // envelope width/height for the scale
+            double scaledEnvelopeWidth = extentInPixelsX / 72d * 2.54d / 100d * scale;
+            double scaledEnvelopeHeight =  extentInPixelsY / 72d * 2.54d / 100d * scale;
+            // the new scaled Envelope
+            Envelope scaledEnvelope = new Envelope(xCenter - scaledEnvelopeWidth / 2d, xCenter + scaledEnvelopeWidth / 2d, yCenter - scaledEnvelopeHeight / 2d, yCenter + scaledEnvelopeHeight / 2d);
+            printPanel.getViewport().zoom(scaledEnvelope);
+        } else {
+        	printPanel.getViewport().zoom(printEnvelope);
+        }
     }
 }
 

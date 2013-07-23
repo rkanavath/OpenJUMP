@@ -1,5 +1,9 @@
 # for display continuity sake please use 2 spaces instead of tabs
 
+2013-07-23 Matthias Scholz <ms@jammerhund.de>
+  * ShowScaleRenderer integrated
+  * scale true printing integrated
+
 2013-07-18 Matthias Scholz <ms@jammerhund.de>
   * PrintPlugIn:
     - pdfCurrentWindow():

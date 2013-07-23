@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import org.openjump.core.ui.plugin.view.NorthArrowRenderer;
+import org.openjump.core.ui.plugin.view.helpclassescale.ShowScaleRenderer;
 
 /**
  * This class performs basic vector or raster printing of the LayerViewPanel
@@ -122,6 +123,11 @@ public class PrinterDriver implements Printable {
 		}
 		if (NorthArrowRenderer.isEnabled(panel)) {
 			Renderer renderer = new NorthArrowRenderer(panel);
+			renderer.copyTo(graphics);
+			renderer.clearImageCache();  //free memory
+		}
+		if (ShowScaleRenderer.isEnabled(panel)) {
+			Renderer renderer = new ShowScaleRenderer(panel);
 			renderer.copyTo(graphics);
 			renderer.clearImageCache();  //free memory
 		}

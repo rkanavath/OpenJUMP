@@ -17,6 +17,7 @@ import java.awt.print.PrinterException;
 import java.util.Collection;
 import java.util.Iterator;
 import org.openjump.core.ui.plugin.view.NorthArrowRenderer;
+import org.openjump.core.ui.plugin.view.helpclassescale.ShowScaleRenderer;
 
 public class PDFDriver extends PrinterDriver {
 
@@ -83,6 +84,15 @@ public class PDFDriver extends PrinterDriver {
 			PdfLayer pdfLayer = new PdfLayer(NorthArrowRenderer.CONTENT_ID, writer);
 			pdfContentByte.beginLayer(pdfLayer);
 			Renderer renderer = new NorthArrowRenderer(panel);
+			renderer.copyTo(graphics);
+			renderer.clearImageCache();  //free memory
+			pdfContentByte.endLayer();
+			pdfArray.add(pdfLayer.getRef());
+		}
+		if (ShowScaleRenderer.isEnabled(panel)) {
+			PdfLayer pdfLayer = new PdfLayer(ShowScaleRenderer.CONTENT_ID, writer);
+			pdfContentByte.beginLayer(pdfLayer);
+			Renderer renderer = new ShowScaleRenderer(panel);
 			renderer.copyTo(graphics);
 			renderer.clearImageCache();  //free memory
 			pdfContentByte.endLayer();
