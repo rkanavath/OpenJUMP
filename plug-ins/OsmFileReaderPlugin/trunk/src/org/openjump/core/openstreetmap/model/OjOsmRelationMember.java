@@ -1,4 +1,4 @@
-package org.openjump.core.ui.plugin.file.openstreetmap;
+package org.openjump.core.openstreetmap.model;
 
 public class OjOsmRelationMember {
 	
@@ -42,7 +42,7 @@ public class OjOsmRelationMember {
 		}
 	}
 	
-    static int getOsmPrimitiveTypeFromParsedString(String parsedTypeValue){
+    public static int getOsmPrimitiveTypeFromParsedString(String parsedTypeValue){
     	int type = -1;
     	if(parsedTypeValue.equalsIgnoreCase("node")){
     		type = OjOsmPrimitive.OSM_PRIMITIVE_NODE;
@@ -56,7 +56,7 @@ public class OjOsmRelationMember {
     	return type;
     }
     
-    static boolean isInnerWay(String role){
+    public static boolean isInnerWay(String role){
     	boolean isInner = false;
     	if(role.equalsIgnoreCase("inner")){
     		isInner = true;
@@ -64,7 +64,7 @@ public class OjOsmRelationMember {
     	return isInner;
     }
     
-    static boolean isOuterWay(String role){
+    public static boolean isOuterWay(String role){
     	boolean isInner = false;
     	if(role.equalsIgnoreCase("outer")){
     		isInner = true;

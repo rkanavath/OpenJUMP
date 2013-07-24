@@ -1,11 +1,10 @@
 // License: GPL. See LICENSE file for details.
-package org.openjump.core.ui.plugin.file.openstreetmap;
+package org.openjump.core.openstreetmap.reader;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -17,6 +16,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.openjump.core.geomutils.algorithm.GeometryConverter;
+import org.openjump.core.openstreetmap.model.OjOsmNode;
+import org.openjump.core.openstreetmap.model.OjOsmPrimitive;
+import org.openjump.core.openstreetmap.model.OjOsmRelation;
+import org.openjump.core.openstreetmap.model.OjOsmRelationMember;
+import org.openjump.core.openstreetmap.model.OjOsmWay;
+import org.openjump.core.openstreetmap.model.Tagged;
+import org.openjump.core.openstreetmap.model.User;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -26,7 +32,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.operation.linemerge.LineMerger;
 import com.vividsolutions.jump.task.TaskMonitor;
 
 
@@ -891,12 +896,13 @@ public class OJOsmReader {
      */
 	private ArrayList<Polygon> createPolygonsFromRelationMemberWays(ArrayList<LineString> outerOrInnerLS, ArrayList<LineString> allWays){
 		GeometryFactory gf = new GeometryFactory();
-		//Union/merge all the single LineStrings
-		//so we handle the case when a polygon outline is formed by many single lines
-		//the line merger will do the node-ing, etc.
+		// Union/merge all the single LineStrings
+		// so we handle the case when a polygon outline is formed by many single lines
+		// the line merger will do the node-ing, etc.
 
-		// TODO: it looks like i should use the LineMerger and not just noding to
+		// Note: I was thinking that I may need tu use the LineMerger and not just noding to
 		// concat the different linestrings (see also OSM feature with id 1846627 - that seem to be closed)
+		// However, Martin Davis said on the JTS list that both, union and linemerger, can be used.
 		Geometry unionGeometry = outerOrInnerLS.get(0);
 		for (int j = 1; j < outerOrInnerLS.size(); j++) {
 			//check first if we have valid geoms: because we may not
@@ -904,12 +910,7 @@ public class OJOsmReader {
 				unionGeometry = unionGeometry.union(outerOrInnerLS.get(j));
 			}
 		}
-		/*  //maybe new code (but it requires more changes below)
-		LineMerger lm = new LineMerger();
-		lm.add(outerOrInnerLS);
-		Collection<Geometry> mergedGeoms = lm.getMergedLineStrings();
-		*/
-		//we should have a MultiLineString now, however, we may also get only one
+		// we should have a MultiLineString now, however, we may also get only one
 		ArrayList<Polygon> createdPolygons = new ArrayList<Polygon>();
 		if(unionGeometry instanceof LineString){
 			//check if it is closed

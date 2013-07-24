@@ -1,4 +1,4 @@
-package org.openjump.core.ui.plugin.file.openstreetmap;
+package org.openjump.core.openstreetmap.model;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -509,7 +509,6 @@ public class OjOsmPrimitive implements Tagged{
         if (isNew() && changesetId > 0)
             throw new IllegalStateException("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is " + changesetId);
 
-        int old = this.changesetId;
         this.changesetId = changesetId;
     }
 

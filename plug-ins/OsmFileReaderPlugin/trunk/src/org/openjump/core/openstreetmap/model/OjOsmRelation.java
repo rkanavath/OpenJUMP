@@ -1,4 +1,4 @@
-package org.openjump.core.ui.plugin.file.openstreetmap;
+package org.openjump.core.openstreetmap.model;
 
 import java.util.ArrayList;
 

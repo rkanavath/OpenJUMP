@@ -19,11 +19,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileFilter;
 
+import org.openjump.core.openstreetmap.model.OjOsmPrimitive;
+import org.openjump.core.openstreetmap.model.OjOsmRelation;
+import org.openjump.core.openstreetmap.model.OjOsmWay;
+import org.openjump.core.openstreetmap.reader.OJOsmReader;
 import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
-import org.openjump.core.ui.plugin.file.openstreetmap.OJOsmReader;
-import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmPrimitive;
-import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmRelation;
-import org.openjump.core.ui.plugin.file.openstreetmap.OjOsmWay;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jump.feature.AttributeType;

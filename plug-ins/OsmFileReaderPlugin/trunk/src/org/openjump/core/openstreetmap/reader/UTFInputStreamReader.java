@@ -1,5 +1,5 @@
 // License: GPL. See LICENSE file for details.
-package org.openjump.core.ui.plugin.file.openstreetmap;
+package org.openjump.core.openstreetmap.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
