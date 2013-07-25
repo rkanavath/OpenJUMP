@@ -4,7 +4,7 @@
  * 
  * created: 3. July 2013
  */
-package org.openjump.core.ui.plugin.file;
+package org.openjump.core.ui.plugin.file.osm;
 
 import java.io.Closeable;
 import java.io.File;
