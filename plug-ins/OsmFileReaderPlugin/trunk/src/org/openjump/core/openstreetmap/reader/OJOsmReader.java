@@ -1,4 +1,7 @@
-// License: GPL. See LICENSE file for details.
+/*
+ *  License: GPL. See LICENSE file for details.
+ *  Adapted from JOSM by Stefan Steiniger for use in OpenJUMP [25.July.2013] 
+ */
 package org.openjump.core.openstreetmap.reader;
 
 import java.io.InputStream;

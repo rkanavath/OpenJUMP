@@ -1,4 +1,7 @@
-// License: GPL. For details, see LICENSE file.
+/*
+ *  License: GPL. See licence file for details.
+ *  Adapted from JOSM by Stefan Steiniger for use in OpenJUMP [25.July.2013] 
+ */
 package org.openjump.core.openstreetmap.model;
 
 import java.util.Collection;

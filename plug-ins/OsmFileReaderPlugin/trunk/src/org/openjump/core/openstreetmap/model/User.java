@@ -1,4 +1,8 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+/*
+ *  License: GPL. Copyright 2007 by Immanuel Scholz and others
+ *  Adapted from JOSM by Stefan Steiniger for use in OpenJUMP [25.July.2013] 
+ */
+
 package org.openjump.core.openstreetmap.model;
 
 import java.util.ArrayList;

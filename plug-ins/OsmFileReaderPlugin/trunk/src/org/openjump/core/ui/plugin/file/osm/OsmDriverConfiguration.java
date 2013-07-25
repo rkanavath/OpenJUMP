@@ -1,7 +1,7 @@
 /*
- * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Micha�l MICHAUD
- * michael.michaud@free.fr
+ * Class allowing read capabilities for OpenStreetMap osm format
+ * Copyright (C) 2013 Stefan Steiniger
+ * sstein@geo.uzh.ch
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -34,7 +34,7 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 /**
  * Extension loading a driver for OpenStreetMap xml - osm - files
  * @author Stefan Steiniger
- * @version 1.0 (2013-07-24)
+ * @version 1.0 (2013-July-24)
  */
 
 public class OsmDriverConfiguration extends Extension {

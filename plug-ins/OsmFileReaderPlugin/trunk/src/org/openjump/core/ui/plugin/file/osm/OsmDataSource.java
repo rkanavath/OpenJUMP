@@ -1,3 +1,22 @@
+/*
+ * Class offering read capabilities for *.osm format
+ * Copyright (C) 2013 Stefan Steiniger
+ * sstein@geo.uzh.ch
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 package org.openjump.core.ui.plugin.file.osm;
 
 import java.io.Closeable;
@@ -23,6 +42,11 @@ import com.vividsolutions.jump.io.datasource.Connection;
 import com.vividsolutions.jump.io.datasource.DataSource;
 import com.vividsolutions.jump.task.TaskMonitor;
 
+/**
+ * Allows loading/reading of OpenStreetMap XML files into OpenJUMP using the DataSource Framework.
+ * @author Stefan Steiniger, sstein
+ * @version 1.0 (25.July.2013)
+ */
 public class OsmDataSource extends DataSource {
 
 	private static final Logger LOG = Logger.getLogger("org.openjump.core.ui.plugin.file.osm.OsmDataSource");
@@ -38,26 +62,6 @@ public class OsmDataSource extends DataSource {
 
                         try {
                         	String selFile = (String)getProperties().get(FILE_KEY);
-                        	/*
-                            csv.setFeatureSchema();
-                            FeatureCollection fc = new FeatureDataset(csv.getFeatureSchema());
-                            //System.out.println(csv);
-                            Iterator<Feature> iterator = csv.iterator();
-                            while (iterator.hasNext()) {
-                                try {
-                                    Feature f = iterator.next();
-                                    if (f!=null) {
-                                        fc.add(f);
-                                    } else {
-                                        System.out.println("Could't read feature");
-                                    }
-                                }
-                                catch(Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            exceptions.addAll(csv.getExceptions());
-                            */
                         	
                     		monitor.allowCancellationRequests();
                     		
