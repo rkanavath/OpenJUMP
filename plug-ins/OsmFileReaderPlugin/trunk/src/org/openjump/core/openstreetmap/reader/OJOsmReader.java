@@ -63,6 +63,8 @@ public class OJOsmReader {
     HashMap<Long, OjOsmWay> allWays = new HashMap<Long, OjOsmWay>();
     HashMap<Long, OjOsmRelation> allRelations = new HashMap<Long, OjOsmRelation>();
     Envelope osmFileEnvelope = null;
+    
+    TaskMonitor monitor = null;
 
 	/**
      * constructor (for private and subclasses use only)
@@ -100,8 +102,9 @@ public class OJOsmReader {
      * @see #parse()
      * @see #parseOSM()
      */
-    public boolean doParseDataSet(InputStream source, TaskMonitor monitor) throws IllegalDataException {
+    public boolean doParseDataSet(InputStream source, TaskMonitor tmonitor) throws IllegalDataException {
     	if(source == null) return false;
+    	this.monitor = tmonitor;
     	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: start parsing File");
         try {
             InputStreamReader ir = UTFInputStreamReader.create(source, "UTF-8");
@@ -253,15 +256,19 @@ public class OJOsmReader {
         if (parser.getAttributeValue(null, "upload-changeset") != null) {
             uploadChangesetId = getLong("upload-changeset");
         }
+        boolean cancel = false;
         while (true) {
             int event = parser.next();
             
-            /*
-            if (cancel) {
+            if(this.monitor != null){ //this is from OJ
+            	if(monitor.isCancelRequested()){
+            		cancel = true;
+            	}
+            }
+            if (cancel) {//this is from JOSM
                 cancel = false;
                 throwException("Reading was canceled");
             }
-            */
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (parser.getLocalName().equals("bounds")) {
                     this.osmFileEnvelope = parseBounds(generator); //[sstein] don't really need the bounds for OpenJUMP FeatureDatasets

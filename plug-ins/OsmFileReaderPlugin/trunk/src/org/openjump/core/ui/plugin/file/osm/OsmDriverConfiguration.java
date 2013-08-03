@@ -34,7 +34,7 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 /**
  * Extension loading a driver for OpenStreetMap xml - osm - files
  * @author Stefan Steiniger
- * @version 1.0 (2013-July-24)
+ * @version 1.0.1 (2013-Aug-3)
  */
 
 public class OsmDriverConfiguration extends Extension {
@@ -44,7 +44,7 @@ public class OsmDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "1.0.0 (2013-07-24)";
+        return "1.0.1 (2013-08-03)";
     }
 
     public void configure(PlugInContext context) throws Exception {
