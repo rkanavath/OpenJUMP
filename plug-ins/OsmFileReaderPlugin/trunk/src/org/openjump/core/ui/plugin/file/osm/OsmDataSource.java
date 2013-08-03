@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import org.openjump.core.openstreetmap.model.OjOsmPrimitive;
 import org.openjump.core.openstreetmap.model.OjOsmRelation;
 import org.openjump.core.openstreetmap.reader.OJOsmReader;
+import org.openjump.core.ui.plugin.view.SuperZoomPanTool;
 
 import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.BasicFeature;
@@ -41,6 +42,8 @@ import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.io.datasource.Connection;
 import com.vividsolutions.jump.io.datasource.DataSource;
 import com.vividsolutions.jump.task.TaskMonitor;
+import com.vividsolutions.jump.workbench.JUMPWorkbench;
+import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
 
 /**
  * Allows loading/reading of OpenStreetMap XML files into OpenJUMP using the DataSource Framework.
@@ -49,7 +52,7 @@ import com.vividsolutions.jump.task.TaskMonitor;
  */
 public class OsmDataSource extends DataSource {
 
-	private static final Logger LOG = Logger.getLogger("org.openjump.core.ui.plugin.file.osm.OsmDataSource");
+	private static Logger LOG = Logger.getLogger(OsmDataSource.class.toString());
 	
 	@Override
 	public Connection getConnection() {
@@ -66,14 +69,13 @@ public class OsmDataSource extends DataSource {
                     		monitor.allowCancellationRequests();
                     		
                     		monitor.report("reading OSM file");
-
                             FileInputStream in = null;
                             boolean worked = false;
                             ArrayList data = null;
                             try {
                                 in = new FileInputStream(selFile);
                                 OJOsmReader osmr = new OJOsmReader();
-                                LOG.info("LoadOSMFilePlugin: Start reading OSM File: " + selFile);
+                                JUMPWorkbench.getInstance().getFrame().log("LoadOSMFilePlugin: Start reading OSM File: " + selFile);
                                 worked = osmr.doParseDataSet(in, monitor);
                                 if(worked){
                                 	data = osmr.getDataset();

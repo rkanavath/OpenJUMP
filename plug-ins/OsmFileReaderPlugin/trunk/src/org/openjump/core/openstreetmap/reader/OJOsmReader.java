@@ -10,6 +10,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +37,9 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jump.task.TaskMonitor;
+import com.vividsolutions.jump.workbench.JUMPWorkbench;
+import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
 
 
 
@@ -90,6 +94,7 @@ public class OJOsmReader {
      * done in <code>#parseOSM()</code> via <code>#parse()</code> and <code>#parseRoot()</code>.
      * @param source
      * @param monitor for reporting back progress to GUI. Can be null.
+     * @param context for reporting to log. Can be null.
      * @return
      * @throws IllegalDataException
      * @see #parse()
@@ -97,7 +102,7 @@ public class OJOsmReader {
      */
     public boolean doParseDataSet(InputStream source, TaskMonitor monitor) throws IllegalDataException {
     	if(source == null) return false;
-    	System.out.println("OJOsmReader.doParseDataSet: start parsing File ");
+    	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: start parsing File");
         try {
             InputStreamReader ir = UTFInputStreamReader.create(source, "UTF-8");
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
@@ -131,15 +136,15 @@ public class OJOsmReader {
             	nodeCount++;
             }
             //assemble way and relation geometries
-        	System.out.println("OJOsmReader.doParseDataSet: checking for invalid node geoms");
+            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: checking for invalid node geoms");
         	checkForInvalidNodeGeoms(this.allNodes, monitor);
-        	System.out.println("OJOsmReader.doParseDataSet: assembling way geometries");
+        	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: assembling way geometries");
             this.createWayGeoms(monitor);
             checkForInvalidWayGeoms(this.allWays, monitor);
             //we can assembley the relations only if have the ways and nodes
-        	System.out.println("OJOsmReader.doParseDataSet: assembling relation geometries");
+            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: assembling relation geometries");
         	this.createRelationGeometries(monitor);
-            System.out.println("OJOsmReader.doParseDataSet: adding ways and relations to output");
+        	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: adding ways and relations to output");
             //add all ways
             if(monitor != null){monitor.report("adding OSM ways to output");}
             Iterator<Long> keySetIterator2 = this.allWays.keySet().iterator();
@@ -155,7 +160,7 @@ public class OJOsmReader {
               this.dataset.add(this.allRelations.get(key));
             }
             //identify major land uses for items in the dataset only
-            System.out.println("OJOsmReader.doParseDataSet: detecting mayor landuses");
+            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: detecting mayor landuses");
             if(monitor != null){monitor.report("detecting OSM object landuse");}
             this.detectMayorLanduses(dataset);
             
@@ -204,7 +209,7 @@ public class OJOsmReader {
     
     protected void parseUnknown(boolean printWarning) throws XMLStreamException {
         if (printWarning) {
-            System.out.println("Undefined element " + parser.getLocalName() + " found in input stream. Skipping.");
+        	JUMPWorkbench.getInstance().getFrame().log("Undefined element <" + parser.getLocalName() + "> found in input stream. Skipping.");
         }
         while (true) {
             int event = parser.next();
@@ -637,14 +642,14 @@ public class OJOsmReader {
           	nodeCount++;
         }
         if(invalidNodeIds.size() > 0 ){
-        	System.out.println("OjOsmReader.checkForInvalidNodeGeoms() : Found invalid node geometries ...deleting these");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidNodeGeoms() : Found invalid node geometries ...deleting these");
         	for (Iterator iterator = invalidNodeIds.iterator(); iterator.hasNext();) {
 				Long id = (Long) iterator.next();
 				allNodesT.remove(id);
 			}
         }
         else{
-        	System.out.println("OjOsmReader.checkForInvalidNodeGeoms() : All node geometries are valid");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidNodeGeoms() : All node geometries are valid");
         }
 	}
 	
@@ -673,14 +678,14 @@ public class OJOsmReader {
         	}
         }
         if(invalidWayIds.size() > 0 ){
-        	System.out.println("OjOsmReader.checkForInvalidWayGeoms() : found invalid way geometries ...deleting these.");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidWayGeoms() : found invalid way geometries ...deleting these.");
         	for (Iterator iterator = invalidWayIds.iterator(); iterator.hasNext();) {
 				Long id = (Long) iterator.next();
 				allWaysT.remove(id);
 			}
         }
         else{
-        	System.out.println("OjOsmReader.checkForInvalidWayGeoms() : All way geometries are valid");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidWayGeoms() : All way geometries are valid");
         }
 	}
 	
@@ -715,7 +720,7 @@ public class OJOsmReader {
 	    			tnode.setUsedInAWay(true);
     			}
     			catch(Exception e){
-    				System.out.println("OjOsmReader.createWayGeoms...(): 'node' for way creation not found. Node Id: " + nid);
+    				JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createWayGeoms...(): 'node' for way creation not found. Node Id: " + nid);
     			}
     			i++;
     		}
@@ -814,11 +819,11 @@ public class OJOsmReader {
     					else{//way == null
     						rel.setMissingMembers(true);
     						member.setIdNotFoundInDataset(true);
-    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. Relation ID: " + rel.getId() + ", Member Id: " + member.getMemberId());
+    						JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. Relation ID: " + rel.getId() + ", Member Id: " + member.getMemberId());
     					}
     				}
     				catch(Exception e){
-   						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. No ways existing in dataset. Relation ID: "+ rel.getId());
+    					JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. No ways existing in dataset. Relation ID: "+ rel.getId());
     				}
     			}
     			else if(member.getOsmPrimitiveType() == OjOsmPrimitive.OSM_PRIMITIVE_NODE) {
@@ -833,23 +838,18 @@ public class OJOsmReader {
     					else{
     						rel.setMissingMembers(true);
     						member.setIdNotFoundInDataset(true);
-    						System.out.println("OjOsmReader.createRelationGeometries(): relation member of type 'node' not found. Relation ID: " + rel.getId() + ", Node/Member Id: " + member.getMemberId());
+    						JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): relation member of type 'node' not found. Relation ID: " + rel.getId() + ", Node/Member Id: " + member.getMemberId());
     					}
     				}
     				catch(Exception e){
-    					System.out.println("OjOsmReader.createRelationGeometries(): no list of 'nodes' found. Relation ID: "+ rel.getId());
+    					JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): no list of 'nodes' found. Relation ID: "+ rel.getId());
     				}
     			}
     			else{
-    				System.out.println("Relation member is of unknown type: " + member.getOsmPrimitiveType() + ". Skipping Member.");
+    				JUMPWorkbench.getInstance().getFrame().log("Relation member is of unknown type: " + member.getOsmPrimitiveType() + ". Skipping Member.");
     			}
     		}//end iteration over all members
 			ArrayList<Geometry> allMemberGeoms = new ArrayList<Geometry>();
-			/*
-    		if(hasWays && hasNodes){
-    			System.out.println("OJOsmReader: This dataset has geometry collection with points and lines mixed.");
-    		}
-    		*/
     		if(hasWays){
    				// build the relation geometries based on ways
     			
@@ -929,7 +929,7 @@ public class OJOsmReader {
 					allWays.add((LineString)unionGeometry);
 				}
 			} catch (Exception e) {
-				System.out.println("OJOsmReader.createPolygonsFromRelationMemberWays: can't evaluate if LineString is closed. LineString: " + unionGeometry.toString());
+				JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.createPolygonsFromRelationMemberWays: can't evaluate if LineString is closed. LineString: " + unionGeometry.toString());
 			}
 		}
 		else if(unionGeometry instanceof MultiLineString){
@@ -948,7 +948,7 @@ public class OJOsmReader {
 			}
 		}
 		else{
-			System.out.println("unionGeometry of outerLS is neither a single LineString nor a MultiLineString - help!!!");
+			JUMPWorkbench.getInstance().getFrame().log("unionGeometry of outerLS is neither a single LineString nor a MultiLineString - help!!!");
 		}
     	return createdPolygons;
     }
@@ -1032,13 +1032,11 @@ public class OJOsmReader {
      * @return a new dataset with identified landuses.
      */
     private ArrayList<OjOsmPrimitive> detectMayorLanduses(ArrayList<OjOsmPrimitive> osmFeatureData){
-    	System.out.println("TODO: implement me: OJOsmReader.detectMayorLanduses()");
+
     	ArrayList<OjOsmPrimitive> osmFeaturesWithLuType = new ArrayList<OjOsmPrimitive>();
     	for (Iterator iterator = osmFeatureData.iterator(); iterator.hasNext();) {
 			OjOsmPrimitive ojOsmPrimitive = (OjOsmPrimitive) iterator.next();
-	    	//TODO: implement this, based on tag parsing
-	    	//      in particular identify: roads, rail, bridge, landmark, 
-			//      building, natural landuse + "other" category
+
 			GeometryFactory gf = new GeometryFactory();
 			/* == Ways ==*/
 			if(ojOsmPrimitive instanceof OjOsmWay){
@@ -1128,7 +1126,7 @@ public class OJOsmReader {
 			}
 			/* == Nodes ==*/
 			else if(ojOsmPrimitive instanceof OjOsmNode){
-				//TODO: implement lu type detection for nodes	
+
 				if (ojOsmPrimitive.hasKey("highway")){
 					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("highway"));
 				}
@@ -1149,7 +1147,7 @@ public class OJOsmReader {
 				}
 			}
 			else if(ojOsmPrimitive instanceof OjOsmRelation){
-				//TODO: implement lu type detection for relations
+
 				if(ojOsmPrimitive.hasKey("type")){
 					String relType = ojOsmPrimitive.get("type");
 					if(relType.equalsIgnoreCase("multipolygon")){

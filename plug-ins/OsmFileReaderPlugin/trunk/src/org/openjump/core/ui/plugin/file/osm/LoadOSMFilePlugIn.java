@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -108,7 +109,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
         try {
             in = new FileInputStream(selFile);
             OJOsmReader osmr = new OJOsmReader();
-            System.out.println("LoadOSMFilePlugin: Start reading OSM File: " + selFile.getName());
+            context.getWorkbenchFrame().log("Start reading OSM File: " + selFile.getName());
             worked = osmr.doParseDataSet(in, monitor);
             if(worked){
             	data = osmr.getDataset();
