@@ -96,7 +96,6 @@ public class OJOsmReader {
      * done in <code>#parseOSM()</code> via <code>#parse()</code> and <code>#parseRoot()</code>.
      * @param source
      * @param monitor for reporting back progress to GUI. Can be null.
-     * @param context for reporting to log. Can be null.
      * @return
      * @throws IllegalDataException
      * @see #parse()
