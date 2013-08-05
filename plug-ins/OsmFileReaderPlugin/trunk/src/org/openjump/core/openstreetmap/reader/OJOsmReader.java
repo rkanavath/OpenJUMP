@@ -36,6 +36,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
@@ -113,6 +114,7 @@ public class OJOsmReader {
             parse();
             if(monitor != null){monitor.report("finished parsing");}
         	System.out.println("OJOsmReader.doParseDataSet: finished parsing");
+        	System.gc();
             //prepareDataSet(); // [sstein] : not needed, calls originally dataset assembling methods 
             					//  from org.openstreetmap.josm.io.AbstractReader
             
@@ -137,14 +139,19 @@ public class OJOsmReader {
             	}
             	nodeCount++;
             }
-            //assemble way and relation geometries
+            if(monitor != null){monitor.report("checking for invalid node geoms");}
             JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: checking for invalid node geoms");
         	checkForInvalidNodeGeoms(this.allNodes, monitor);
+            //assemble way and relation geometries
         	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: assembling way geometries");
+            if(monitor != null){monitor.report("assembling way geometries");}
             this.createWayGeoms(monitor);
+            if(monitor != null){monitor.report("checking for invalid way geoms");}
             checkForInvalidWayGeoms(this.allWays, monitor);
+        	System.gc();
             //we can assembley the relations only if have the ways and nodes
             JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: assembling relation geometries");
+            if(monitor != null){monitor.report("assembling relation geometries");}
         	this.createRelationGeometries(monitor);
         	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: adding ways and relations to output");
             //add all ways
@@ -161,6 +168,13 @@ public class OJOsmReader {
               Long key = keySetIterator3.next();
               this.dataset.add(this.allRelations.get(key));
             }
+            //-- do some cleaning up
+            //remove all data that is not to be displayed
+            this.allNodes = null;
+            this.allWays = null;
+            this.allRelations = null;
+            System.gc();
+            //-- end of cleaning up
             //identify major land uses for items in the dataset only
             JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: detecting mayor landuses");
             if(monitor != null){monitor.report("detecting OSM object landuse");}
@@ -256,10 +270,11 @@ public class OJOsmReader {
             uploadChangesetId = getLong("upload-changeset");
         }
         boolean cancel = false;
+        int itemnum = 0;
         while (true) {
             int event = parser.next();
-            
             if(this.monitor != null){ //this is from OJ
+            	monitor.report(itemnum, -1, "objects parsed");
             	if(monitor.isCancelRequested()){
             		cancel = true;
             	}
@@ -286,8 +301,10 @@ public class OJOsmReader {
                 } else {
                     parseUnknown();
                 }
-            } else if (event == XMLStreamConstants.END_ELEMENT)
+            } else if (event == XMLStreamConstants.END_ELEMENT){
                 return;
+            }
+            itemnum++;
         }
     }
     
@@ -761,7 +778,7 @@ public class OJOsmReader {
      * @param monitor for GUI messages; can be null.
      * @see createWayGeomsAndRelationGeometries()
      */
-    private void createRelationGeometries(TaskMonitor monitor){
+    private void createRelationGeometries(TaskMonitor monitor) throws Exception{
     	GeometryFactory gf = new GeometryFactory();
     	//iterate over all ways, and retrieve the node Ids with their geometries
     	Iterator<Long> keySetIterator = this.allRelations.keySet().iterator();
@@ -769,6 +786,9 @@ public class OJOsmReader {
     	while(keySetIterator.hasNext()){
         	if(monitor != null){
         		monitor.report(relationCount, maxRelCount, "Assembling relation geometry.");
+        		if(monitor.isCancelRequested()){
+        			throwException("Reading was canceled");
+        		}
         	}
         	relationCount++;
     		Long key = keySetIterator.next();
@@ -867,7 +887,7 @@ public class OJOsmReader {
     				ArrayList<Geometry> multiPolys = null;
     				if(innerLS.size() > 0){
     					innerPolys = this.createPolygonsFromRelationMemberWays(innerLS, wayCollection);
-	    				multiPolys = this.substractRelationPolygons(outerPolys, innerPolys, wayCollection);
+	    				multiPolys = this.substractRelationPolygons(outerPolys, innerPolys, wayCollection, rel.getId());
 	    				allMemberGeoms.addAll(multiPolys);
 	   				}
 	   				else{
@@ -968,11 +988,12 @@ public class OJOsmReader {
 	 * @param outerPolys are the polygons of a relation that may have holes. 
 	 * @param innerPolys i.e. the holes to be created in the outer polygons.
 	 * @param wayCollection
+	 * @param relationID, used only for console output in case of JTS TopologyExceptions
 	 * @return List of (outer) polygons with and without holes.
 	 */
 	private ArrayList<Geometry> substractRelationPolygons(
 			ArrayList<Polygon> outerPolys, ArrayList<Polygon> innerPolys,
-			ArrayList<LineString> wayCollection) {
+			ArrayList<LineString> wayCollection, long relationID) {
 		// Geometry.difference() is not implemented for Geometry collections - so we have to do
 		// it by hand and therefore do use the lists.
 		// Assuming there are not too many outer and inner lines we do not use an index for 
@@ -986,11 +1007,18 @@ public class OJOsmReader {
 			while(i < innerPolys.size()){
 				Polygon innerPoly = innerPolys.get(i);
 				if(outerPoly.covers(innerPoly)){
-					outerPoly = outerPoly.difference(innerPoly); //note, a difference may end-up being not a polygon anymore
-					// assuming that each innerPoly is covered only by one
-					// outerPoly we remove it
-					innerPolys.remove(i);
-					// in this case we do not raise the list index
+					try{
+						outerPoly = outerPoly.difference(innerPoly); //note, a difference may end-up being not a polygon anymore
+						// assuming that each innerPoly is covered only by one
+						// outerPoly we remove it
+						innerPolys.remove(i);
+						// in this case we do not raise the list index
+					}
+					catch(TopologyException e){
+						//we assume it is not covered and raise the index
+						JUMPWorkbench.getInstance().getFrame().log("ERROR: OJOSMReader.substractRelationPolygons: JTS TopolgyException for >outerPoly.difference(innerPoly)<, for Relation, " + relationID);
+						i++;
+					}
 				}
 				else{//innerPoly is not covered by outerPoly
 					i++;
