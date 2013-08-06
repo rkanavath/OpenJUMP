@@ -753,8 +753,15 @@ public class OJOsmReader {
     		if(coords.length >= 2){
 	    		if(w.isClosed() && hasAreaTag){
 	    			if(w.get("area").equalsIgnoreCase("yes")){
-	    				LinearRing lr = gf.createLinearRing(coords);
-	    				g = gf.createPolygon(lr, null);
+	    				try{
+		    				LinearRing lr = gf.createLinearRing(coords);
+		    				g = gf.createPolygon(lr, null);
+	    				}
+	    				catch(IllegalArgumentException e){
+	    					//e.g. Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+	    					JUMPWorkbench.getInstance().getFrame().log("ERROR: OjOsmReader.createWayGeoms...(): IllegalArgumentException for gf.createPolygon(lr, null). way Id: " + w.getId());
+	    					g = gf.createLineString(coords);
+	    				}
 	    			}
 	    			else{
 	    				g = gf.createLineString(coords);
@@ -947,8 +954,14 @@ public class OJOsmReader {
 			try {
 				closed = ((LineString) unionGeometry).isClosed();
 				if (closed){
-					Polygon p = gf.createPolygon(unionGeometry.getCoordinates());
-					createdPolygons.add(p);
+					try{
+						Polygon p = gf.createPolygon(unionGeometry.getCoordinates());
+						createdPolygons.add(p);
+					}
+					catch(IllegalArgumentException e){
+						// thrown when Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+						allWays.add((LineString)unionGeometry);
+					}
 				}
 				else{
 					//not closed, so we add it to the ways
@@ -964,8 +977,14 @@ public class OJOsmReader {
 			for (int j = 0; j < lines.getNumGeometries(); j++) {
 				LineString lst = (LineString)lines.getGeometryN(j);
 				if(lst.isClosed()){
-					Polygon pt = gf.createPolygon(lst.getCoordinates());
-					createdPolygons.add(pt);
+					try{
+						Polygon pt = gf.createPolygon(lst.getCoordinates());
+						createdPolygons.add(pt);
+					}
+					catch(IllegalArgumentException e){
+						// thrown when Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+						allWays.add(lst);
+					}
 				}
 				else{
 					//not closed, so we add to ways
@@ -1078,7 +1097,13 @@ public class OJOsmReader {
 					ojOsmPrimitive.setLandUseDescription("building");
 					Geometry geom = ojOsmPrimitive.getGeom();
 					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
-						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						try{
+							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						}
+						catch(IllegalArgumentException e){
+							//case: Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+							//just eat it
+						}
 					}
 				}
 				else if (ojOsmPrimitive.hasKey("highway")){
@@ -1111,7 +1136,13 @@ public class OJOsmReader {
 					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("natural"));
 					Geometry geom = ojOsmPrimitive.getGeom();
 					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
-						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						try{
+							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						}
+						catch(IllegalArgumentException e){
+							//case: Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+							//just eat it
+						}
 					}
 				}
 				else if (ojOsmPrimitive.hasKey("parking")){
@@ -1119,7 +1150,13 @@ public class OJOsmReader {
 					if(ojOsmPrimitive.get("parking").equalsIgnoreCase("surface")){
 						Geometry geom = ojOsmPrimitive.getGeom();
 						if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
-							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+							try{
+								ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+							}
+							catch(IllegalArgumentException e){
+								//case: Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+								//just eat it
+							}
 						}
 					}
 				}
@@ -1128,7 +1165,13 @@ public class OJOsmReader {
 						ojOsmPrimitive.setLandUseDescription("parking");
 						Geometry geom = ojOsmPrimitive.getGeom();
 						if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
-							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+							try{
+								ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+							}
+							catch(IllegalArgumentException e){
+								//case: Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+								//just eat it
+							}
 						}
 					}
 				}
@@ -1136,21 +1179,39 @@ public class OJOsmReader {
 					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("landuse"));
 					Geometry geom = ojOsmPrimitive.getGeom();
 					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
-						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						try{
+							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						}
+						catch(IllegalArgumentException e){
+							//case: Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+							//just eat it
+						}
 					}
 				}
 				else if (ojOsmPrimitive.hasKey("sport")){
 					ojOsmPrimitive.setLandUseDescription(ojOsmPrimitive.get("sport"));
 					Geometry geom = ojOsmPrimitive.getGeom();
 					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
-						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						try{
+							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						}
+						catch(IllegalArgumentException e){
+							//case: Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+							//just eat it
+						}
 					}
 				}
 				else if (ojOsmPrimitive.hasKey("leisure")){
 					ojOsmPrimitive.setLandUseDescription("leisure: "+ ojOsmPrimitive.get("leisure"));
 					Geometry geom = ojOsmPrimitive.getGeom();
 					if((geom instanceof LineString) && ((OjOsmWay) ojOsmPrimitive).isClosed()){
-						ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						try{
+							ojOsmPrimitive.setGeom(gf.createPolygon(geom.getCoordinates()));
+						}
+						catch(IllegalArgumentException e){
+							//case: Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
+							//just eat it
+						}
 					}
 				}
 				else if (ojOsmPrimitive.hasKey("waterway")){
