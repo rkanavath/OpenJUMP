@@ -27,6 +27,7 @@ import org.openjump.core.openstreetmap.model.OjOsmRelationMember;
 import org.openjump.core.openstreetmap.model.OjOsmWay;
 import org.openjump.core.openstreetmap.model.Tagged;
 import org.openjump.core.openstreetmap.model.User;
+import org.openjump.core.ui.plugin.file.osm.language.I18NPlug;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -79,6 +80,10 @@ public class OJOsmReader {
 		return dataset;
 	}
     
+    /**
+     * (JTS) Envelope of the data, retrieved from the OSM "bounds" tag.
+     * @return envelope, which can be null. 
+     */
 	public Envelope getOsmFileEnvelope() {
 		return osmFileEnvelope;
 	}
@@ -105,15 +110,15 @@ public class OJOsmReader {
     public boolean doParseDataSet(InputStream source, TaskMonitor tmonitor) throws IllegalDataException {
     	if(source == null) return false;
     	this.monitor = tmonitor;
-    	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: start parsing File");
+    	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet():" + I18NPlug.getI18N("drivers.osm.OJOsmReader.start-parsing-file"));
         try {
             InputStreamReader ir = UTFInputStreamReader.create(source, "UTF-8");
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
             setParser(parser);
-            if(monitor != null){monitor.report("parsing OSM file");}
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.parsing-OSM-file"));}
             parse();
-            if(monitor != null){monitor.report("finished parsing");}
-        	System.out.println("OJOsmReader.doParseDataSet: finished parsing");
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.finished-parsing"));}
+            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet():" + I18NPlug.getI18N("drivers.osm.OJOsmReader.finished-parsing"));
         	System.gc();
             //prepareDataSet(); // [sstein] : not needed, calls originally dataset assembling methods 
             					//  from org.openstreetmap.josm.io.AbstractReader
@@ -124,7 +129,7 @@ public class OJOsmReader {
             int nodeCount = 0; int maxNodeCount = this.allNodes.size();
             while(keySetIterator.hasNext()){
             	if(monitor != null){
-            		monitor.report(nodeCount, maxNodeCount, "Copying nodes with tags.");
+            		monitor.report(nodeCount, maxNodeCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.copying-nodes-with-tags"));
             	}
             	Long key = keySetIterator.next();
             	OjOsmNode tempn = this.allNodes.get(key);
@@ -139,30 +144,30 @@ public class OJOsmReader {
             	}
             	nodeCount++;
             }
-            if(monitor != null){monitor.report("checking for invalid node geoms");}
-            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: checking for invalid node geoms");
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.checking-for-invalid-node-geoms"));}
+            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.checking-for-invalid-node-geoms"));
         	checkForInvalidNodeGeoms(this.allNodes, monitor);
             //assemble way and relation geometries
-        	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: assembling way geometries");
-            if(monitor != null){monitor.report("assembling way geometries");}
+        	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.assembling-way-geometries"));
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.assembling-way-geometries"));}
             this.createWayGeoms(monitor);
-            if(monitor != null){monitor.report("checking for invalid way geoms");}
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.checking-for-invalid-way-geoms"));}
             checkForInvalidWayGeoms(this.allWays, monitor);
         	System.gc();
             //we can assembley the relations only if have the ways and nodes
-            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: assembling relation geometries");
-            if(monitor != null){monitor.report("assembling relation geometries");}
+            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.assembling-relation-geometries"));
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.assembling-relation-geometries"));}
         	this.createRelationGeometries(monitor);
-        	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: adding ways and relations to output");
+        	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.adding-ways-and-relations-to-output"));
             //add all ways
-            if(monitor != null){monitor.report("adding OSM ways to output");}
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.adding-OSM-ways-to-output"));}
             Iterator<Long> keySetIterator2 = this.allWays.keySet().iterator();
             while(keySetIterator2.hasNext()){
               Long key = keySetIterator2.next();
               this.dataset.add(this.allWays.get(key));
             }
             //add all relations
-            if(monitor != null){monitor.report("adding OSM relations to output");}
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.adding-OSM-relations-to-output"));}
             Iterator<Long> keySetIterator3 = this.allRelations.keySet().iterator();
             while(keySetIterator3.hasNext()){
               Long key = keySetIterator3.next();
@@ -176,8 +181,8 @@ public class OJOsmReader {
             System.gc();
             //-- end of cleaning up
             //identify major land uses for items in the dataset only
-            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet: detecting mayor landuses");
-            if(monitor != null){monitor.report("detecting OSM object landuse");}
+            JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.detecting-OSM-object-landuse"));
+            if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.detecting-OSM-object-landuse"));}
             this.detectMayorLanduses(dataset);
             
             return true;
@@ -225,7 +230,9 @@ public class OJOsmReader {
     
     protected void parseUnknown(boolean printWarning) throws XMLStreamException {
         if (printWarning) {
-        	JUMPWorkbench.getInstance().getFrame().log("Undefined element <" + parser.getLocalName() + "> found in input stream. Skipping.");
+        	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.parseUnknown(): " + 
+        			I18NPlug.getI18N("drivers.osm.OJOsmReader.Undefined-element-found-in-input-stream") + ": <" 
+        			+ parser.getLocalName() + ">. Skipping. Line: " + parser.getLocation().getLineNumber());
         }
         while (true) {
             int event = parser.next();
@@ -254,10 +261,10 @@ public class OJOsmReader {
     	
         String v = parser.getAttributeValue(null, "version");
         if (v == null) {
-            throwException("Missing mandatory attribute ''version''.");
+            throwException(I18NPlug.getI18N("drivers.osm.OJOsmReader.Missing-mandatory-OSM-attribute") +" ''version''.");
         }
         if (!(v.equals("0.5") || v.equals("0.6"))) {
-            throwException("Unsupported version: " + v);
+            throwException(I18NPlug.getI18N("drivers.osm.OJOsmReader.Unsupported-OSM-version") +":" + v);
         }
         //ds.setVersion(v);
         String upload = parser.getAttributeValue(null, "upload");
@@ -274,14 +281,14 @@ public class OJOsmReader {
         while (true) {
             int event = parser.next();
             if(this.monitor != null){ //this is from OJ
-            	monitor.report(itemnum, -1, "objects parsed");
+            	monitor.report(itemnum, -1, I18NPlug.getI18N("drivers.osm.OJOsmReader.objects-parsed"));
             	if(monitor.isCancelRequested()){
             		cancel = true;
             	}
             }
             if (cancel) {//this is from JOSM
                 cancel = false;
-                throwException("Reading was canceled");
+                throwException(I18NPlug.getI18N("drivers.osm.OJOsmReader.Reading-was-canceled"));
             }
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (parser.getLocalName().equals("bounds")) {
@@ -654,7 +661,7 @@ public class OJOsmReader {
         int nodeCount = 0; int maxNodeCount = allNodesT.size();
         while(keySetIterator.hasNext()){
         	if(monitor != null){
-        		monitor.report(nodeCount, maxNodeCount, "Checking node geometries.");
+        		monitor.report(nodeCount, maxNodeCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.checked-node-geometries"));
         	}
         	Long key = keySetIterator.next();
           	OjOsmNode tempn = allNodesT.get(key);
@@ -665,14 +672,14 @@ public class OJOsmReader {
           	nodeCount++;
         }
         if(invalidNodeIds.size() > 0 ){
-        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidNodeGeoms() : Found invalid node geometries ...deleting these");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidNodeGeoms() : " + I18NPlug.getI18N("drivers.osm.OJOsmReader.found-invalid-node-geometries-...-deleting-them"));
         	for (Iterator iterator = invalidNodeIds.iterator(); iterator.hasNext();) {
 				Long id = (Long) iterator.next();
 				allNodesT.remove(id);
 			}
         }
         else{
-        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidNodeGeoms() : All node geometries are valid");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidNodeGeoms() : " + I18NPlug.getI18N("drivers.osm.OJOsmReader.all-node-geometries-are-valid"));
         }
 	}
 	
@@ -682,7 +689,7 @@ public class OJOsmReader {
         int wayCount = 0; int mayWayCount = allWaysT.size();
         while(keySetIterator.hasNext()){
         	if(monitor != null){
-        		monitor.report(wayCount, mayWayCount, "Checking way geometries.");
+        		monitor.report(wayCount, mayWayCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.checked-way-geometries"));
         	}
         	wayCount++;
         	Long key = keySetIterator.next();
@@ -701,14 +708,14 @@ public class OJOsmReader {
         	}
         }
         if(invalidWayIds.size() > 0 ){
-        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidWayGeoms() : found invalid way geometries ...deleting these.");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidWayGeoms() : " + I18NPlug.getI18N("drivers.osm.OJOsmReader.found-invalid-way-geometries-...-deleting-them"));
         	for (Iterator iterator = invalidWayIds.iterator(); iterator.hasNext();) {
 				Long id = (Long) iterator.next();
 				allWaysT.remove(id);
 			}
         }
         else{
-        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidWayGeoms() : All way geometries are valid");
+        	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidWayGeoms() : " + I18NPlug.getI18N("drivers.osm.OJOsmReader.all-way-geometries-are-valid"));
         }
 	}
 	
@@ -726,7 +733,7 @@ public class OJOsmReader {
     	int wayCount = 0; int mayWayCount = this.allWays.size();
     	while(keySetIterator.hasNext()){
         	if(monitor != null){
-        		monitor.report(wayCount, mayWayCount, "Creating way geometries.");
+        		monitor.report(wayCount, mayWayCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.created-way-geometries"));
         	}
         	wayCount++;
     		Long key = keySetIterator.next();
@@ -743,7 +750,7 @@ public class OJOsmReader {
 	    			tnode.setUsedInAWay(true);
     			}
     			catch(Exception e){
-    				JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createWayGeoms...(): 'node' for way creation not found. Node Id: " + nid);
+    				JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createWayGeoms(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.node-for-way-creation-not-found") + ". Node-ID:" + nid);
     			}
     			i++;
     		}
@@ -759,7 +766,7 @@ public class OJOsmReader {
 	    				}
 	    				catch(IllegalArgumentException e){
 	    					//e.g. Invalid number of points in LinearRing (found 3 - must be 0 or >= 4)
-	    					JUMPWorkbench.getInstance().getFrame().log("ERROR: OjOsmReader.createWayGeoms...(): IllegalArgumentException for gf.createPolygon(lr, null). way Id: " + w.getId());
+	    					JUMPWorkbench.getInstance().getFrame().log("ERROR: OjOsmReader.createWayGeoms(): IllegalArgumentException for gf.createPolygon(lr, null). Way-ID: " + w.getId());
 	    					g = gf.createLineString(coords);
 	    				}
 	    			}
@@ -792,9 +799,9 @@ public class OJOsmReader {
     	int relationCount=0; int maxRelCount = this.allRelations.size();
     	while(keySetIterator.hasNext()){
         	if(monitor != null){
-        		monitor.report(relationCount, maxRelCount, "Assembling relation geometry.");
+        		monitor.report(relationCount, maxRelCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.assembled-relation-geometries"));
         		if(monitor.isCancelRequested()){
-        			throwException("Reading was canceled");
+        			throwException(I18NPlug.getI18N("drivers.osm.OJOsmReader.Reading-was-canceled"));
         		}
         	}
         	relationCount++;
@@ -834,12 +841,12 @@ public class OJOsmReader {
 			    						outerLS.add(ls);
 			    					}
 			    					else{
-			    						System.out.println("Relation member with id "+member.getMemberId()+" of type 'way' has an unrecognized role type: "+ member.getRole() +". Adding it to way collection");
+			    						System.out.println("Relation member with ID "+member.getMemberId()+" of type 'way' has an unrecognized role type: >"+ member.getRole() +"<. Adding it to way collection");
 				    					wayCollection.add(ls);
 			    					}
 			    				}
 			    				else{
-			    					System.out.println("Relation member with id "+member.getMemberId()+" of type 'way' has no role assigned. Adding it to way collection");
+			    					System.out.println("Relation member with ID "+member.getMemberId()+" of type 'way' has no role assigned. Adding it to way collection");
 			    					wayCollection.add(ls);
 			    				}
     						}
@@ -852,11 +859,11 @@ public class OJOsmReader {
     					else{//way == null
     						rel.setMissingMembers(true);
     						member.setIdNotFoundInDataset(true);
-    						JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. Relation ID: " + rel.getId() + ", Member Id: " + member.getMemberId());
+    						JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.relation-member-of-type-way-not-found")  + ". Relation-ID: " + rel.getId() + ", Way-ID: " + member.getMemberId());
     					}
     				}
     				catch(Exception e){
-    					JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): relation member of type 'way' not found. No ways existing in dataset. Relation ID: "+ rel.getId());
+    					JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.relation-member-of-type-way-not-found.-No-ways-existing-in-dataset") + ". Relation-ID: "+ rel.getId());
     				}
     			}
     			else if(member.getOsmPrimitiveType() == OjOsmPrimitive.OSM_PRIMITIVE_NODE) {
@@ -871,15 +878,15 @@ public class OJOsmReader {
     					else{
     						rel.setMissingMembers(true);
     						member.setIdNotFoundInDataset(true);
-    						JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): relation member of type 'node' not found. Relation ID: " + rel.getId() + ", Node/Member Id: " + member.getMemberId());
+    						JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.relation-member-of-type-node-not-found") +". Relation-ID: " + rel.getId() + ", Node/Member-ID: " + member.getMemberId());
     					}
     				}
     				catch(Exception e){
-    					JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): no list of 'nodes' found. Relation ID: "+ rel.getId());
+    					JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.relation-member-of-type-node-not-found.-No-nodes-existing-in-dataset") + ". Relation-ID: "+ rel.getId());
     				}
     			}
     			else{
-    				JUMPWorkbench.getInstance().getFrame().log("Relation member is of unknown type: " + member.getOsmPrimitiveType() + ". Skipping Member.");
+    				JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.createRelationGeometries(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.relation-member-is-of-unknown-type") + ": <" + member.getOsmPrimitiveType() + "<. Skipping Member.");
     			}
     		}//end iteration over all members
 			ArrayList<Geometry> allMemberGeoms = new ArrayList<Geometry>();
@@ -968,7 +975,7 @@ public class OJOsmReader {
 					allWays.add((LineString)unionGeometry);
 				}
 			} catch (Exception e) {
-				JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.createPolygonsFromRelationMemberWays: can't evaluate if LineString is closed. LineString: " + unionGeometry.toString());
+				JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.createPolygonsFromRelationMemberWays(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.cant-evaluate-if-LineString-is-closed") + ". LineString: " + unionGeometry.toString());
 			}
 		}
 		else if(unionGeometry instanceof MultiLineString){
@@ -993,7 +1000,7 @@ public class OJOsmReader {
 			}
 		}
 		else{
-			JUMPWorkbench.getInstance().getFrame().log("unionGeometry of outerLS is neither a single LineString nor a MultiLineString - help!!!");
+			JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.createPolygonsFromRelationMemberWays(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.unionGeometry-of-outerLS-is-neither-a-single-LineString-nor-a-MultiLineString") + " HELP!!!");
 		}
     	return createdPolygons;
     }
@@ -1035,7 +1042,7 @@ public class OJOsmReader {
 					}
 					catch(TopologyException e){
 						//we assume it is not covered and raise the index
-						JUMPWorkbench.getInstance().getFrame().log("ERROR: OJOSMReader.substractRelationPolygons: JTS TopolgyException for >outerPoly.difference(innerPoly)<, for Relation, " + relationID);
+						JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.substractRelationPolygons(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.ERROR-JTS-TopolgyException-for-outerPoly.difference(innerPoly).-Cant-create-hole.-Keeping-as-line") + ". Relation-ID:" +relationID);
 						i++;
 					}
 				}

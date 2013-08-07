@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import org.openjump.core.openstreetmap.model.OjOsmPrimitive;
 import org.openjump.core.openstreetmap.model.OjOsmRelation;
 import org.openjump.core.openstreetmap.reader.OJOsmReader;
+import org.openjump.core.ui.plugin.file.osm.language.I18NPlug;
 import org.openjump.core.ui.plugin.view.SuperZoomPanTool;
 
 import com.vividsolutions.jump.feature.AttributeType;
@@ -44,6 +45,7 @@ import com.vividsolutions.jump.io.datasource.DataSource;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
+
 
 /**
  * Allows loading/reading of OpenStreetMap XML files into OpenJUMP using the DataSource Framework.
@@ -68,14 +70,14 @@ public class OsmDataSource extends DataSource {
                         	
                     		monitor.allowCancellationRequests();
                     		
-                    		monitor.report("reading OSM file");
+                    		monitor.report(I18NPlug.getI18N("drivers.osm.reading-OSM-file"));
                             FileInputStream in = null;
                             boolean worked = false;
                             ArrayList data = null;
                             try {
                                 in = new FileInputStream(selFile);
                                 OJOsmReader osmr = new OJOsmReader();
-                                JUMPWorkbench.getInstance().getFrame().log("LoadOSMFilePlugin: Start reading OSM File: " + selFile);
+                                JUMPWorkbench.getInstance().getFrame().log("OsmDataSource:" + I18NPlug.getI18N("drivers.osm.Start-reading-OSM-file") + ":" + selFile);
                                 worked = osmr.doParseDataSet(in, monitor);
                                 if(worked){
                                 	data = osmr.getDataset();
@@ -85,7 +87,7 @@ public class OsmDataSource extends DataSource {
                                 }
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
-                                throw new IOException("File " + selFile + " does not exist.");
+                                throw new IOException(I18NPlug.getI18N("drivers.osm.OSM-file-does-not-exist") +":" + selFile );
                             } finally {
                                 close(in);
                             }
@@ -125,11 +127,11 @@ public class OsmDataSource extends DataSource {
                     		AttributeType t7 = AttributeType.STRING;
                     		fsvx.addAttribute(sLuType, t7);
                     		
-                    		String sName = "name";		
+                    		String sName = I18NPlug.getI18N("drivers.osm.OSM-name");		
                     		AttributeType t8 = AttributeType.STRING;
                     		fsvx.addAttribute(sName, t8);
                     		
-                    		String sUsedInRelation = "part of relation";		
+                    		String sUsedInRelation = I18NPlug.getI18N("drivers.osm.part-of-OSM-relation");		
                     		AttributeType t9 = AttributeType.STRING;
                     		fsvx.addAttribute(sUsedInRelation, t9);
                     		
@@ -195,18 +197,18 @@ public class OsmDataSource extends DataSource {
                     			fNew.setAttribute(sLuType, luTypeText);
                     			String usedInRelationText = "";
                     			if(osmPrim.isUsedInARelation()){
-                    				usedInRelationText="yes";
+                    				usedInRelationText=I18NPlug.getI18N("drivers.osm.yes");
                     			}
                     			else{
-                    				usedInRelationText="no";
+                    				usedInRelationText=I18NPlug.getI18N("drivers.osm.no");
                     			}
                     			if(osmPrim instanceof OjOsmRelation){
                     				OjOsmRelation rel = (OjOsmRelation)osmPrim;
                     				if(rel.isMissingMembers()){
-                    					usedInRelationText = usedInRelationText + " - missing own members.";
+                    					usedInRelationText = usedInRelationText + " - " + I18NPlug.getI18N("drivers.osm.missing-own-members");
                     				}
                     				else{
-                    					usedInRelationText = usedInRelationText + " - all members found";
+                    					usedInRelationText = usedInRelationText + " - " + I18NPlug.getI18N("drivers.osm.all-members-found");
                     				}
                     			}
                     			fNew.setAttribute(sUsedInRelation, usedInRelationText);
