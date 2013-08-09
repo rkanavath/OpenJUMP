@@ -25,6 +25,7 @@ import org.openjump.core.openstreetmap.model.OjOsmRelation;
 import org.openjump.core.openstreetmap.model.OjOsmWay;
 import org.openjump.core.openstreetmap.reader.OJOsmReader;
 import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
+import org.openjump.core.ui.plugin.file.osm.language.I18NPlug;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jump.feature.AttributeType;
@@ -56,7 +57,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
         context.getFeatureInstaller().addMainMenuPlugin(
         		this,
                 new String[] {MenuNames.PLUGINS}, 	//menu path
-                "Load OSM File ...", 
+                I18NPlug.getI18N("drivers.osm.reading-OSM-file") + "...", 
                 false,
                 null,
                 createEnableCheck(context.getWorkbenchContext()), -1);     
@@ -80,7 +81,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 	
 	public String getName(){
 		//return I18N.get("org.openjump.plugin.loadOTPgraph");
-		return "Load OSM File";
+		return I18NPlug.getI18N("drivers.osm.reading-OSM-file") + "...";
 	}
 	
 	public boolean execute(PlugInContext context) throws Exception{
@@ -101,7 +102,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 	
 		monitor.allowCancellationRequests();
 		
-		monitor.report("reading OSM file");
+		monitor.report(I18NPlug.getI18N("drivers.osm.reading-OSM-file"));
 
         FileInputStream in = null;
         boolean worked = false;
@@ -109,7 +110,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
         try {
             in = new FileInputStream(selFile);
             OJOsmReader osmr = new OJOsmReader();
-            context.getWorkbenchFrame().log("Start reading OSM File: " + selFile.getName());
+            context.getWorkbenchFrame().log(I18NPlug.getI18N("drivers.osm.Start-reading-OSM-file") + selFile.getName());
             worked = osmr.doParseDataSet(in, monitor);
             if(worked){
             	data = osmr.getDataset();
@@ -119,7 +120,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new IOException("File " + selFile.getName() + " does not exist.");
+            throw new IOException(I18NPlug.getI18N("drivers.osm.OSM-file-does-not-exist") +":" + selFile );
         } finally {
             close(in);
         }
