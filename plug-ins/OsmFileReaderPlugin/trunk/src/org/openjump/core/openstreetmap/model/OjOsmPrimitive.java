@@ -412,7 +412,8 @@ public class OjOsmPrimitive implements Tagged{
      */
     public long getId() {
         long id = this.id;
-        return id >= 0?id:0;
+        //return id >= 0?id:0; // [sstein, 9.Aug.2013] not sure why this was here, but this causes that objects with negative ids are not found.
+        return id;
     }
 
     /**
