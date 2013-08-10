@@ -61,9 +61,9 @@ public class OJOsmReader {
 
     protected XMLStreamReader parser;
     private ArrayList<OjOsmPrimitive> dataset = null;
-    HashMap<Long, OjOsmNode> allNodes = new HashMap<Long, OjOsmNode>();
-    HashMap<Long, OjOsmWay> allWays = new HashMap<Long, OjOsmWay>();
-    HashMap<Long, OjOsmRelation> allRelations = new HashMap<Long, OjOsmRelation>();
+    HashMap<String, OjOsmNode> allNodes = new HashMap<String, OjOsmNode>();
+    HashMap<String, OjOsmWay> allWays = new HashMap<String, OjOsmWay>();
+    HashMap<String, OjOsmRelation> allRelations = new HashMap<String, OjOsmRelation>();
     Envelope osmFileEnvelope = null;
     
     TaskMonitor monitor = null;
@@ -125,13 +125,13 @@ public class OJOsmReader {
             
             //add only nodes that have tags/keys (except for the create_by key)
             //TODO: check/output if there are points that are not used in either a way or a relation
-            Iterator<Long> keySetIterator = this.allNodes.keySet().iterator();
+            Iterator<String> keySetIterator = this.allNodes.keySet().iterator();
             int nodeCount = 0; int maxNodeCount = this.allNodes.size();
             while(keySetIterator.hasNext()){
             	if(monitor != null){
             		monitor.report(nodeCount, maxNodeCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.copying-nodes-with-tags"));
             	}
-            	Long key = keySetIterator.next();
+            	String key = keySetIterator.next();
             	OjOsmNode tempn = this.allNodes.get(key);
             	if(tempn.hasKeys()){
             		// exclude those nodes that have only the "created_by" tag
@@ -161,16 +161,16 @@ public class OJOsmReader {
         	JUMPWorkbench.getInstance().getFrame().log("OJOsmReader.doParseDataSet(): " + I18NPlug.getI18N("drivers.osm.OJOsmReader.adding-ways-and-relations-to-output"));
             //add all ways
             if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.adding-OSM-ways-to-output"));}
-            Iterator<Long> keySetIterator2 = this.allWays.keySet().iterator();
+            Iterator<String> keySetIterator2 = this.allWays.keySet().iterator();
             while(keySetIterator2.hasNext()){
-              Long key = keySetIterator2.next();
+              String key = keySetIterator2.next();
               this.dataset.add(this.allWays.get(key));
             }
             //add all relations
             if(monitor != null){monitor.report(I18NPlug.getI18N("drivers.osm.OJOsmReader.adding-OSM-relations-to-output"));}
-            Iterator<Long> keySetIterator3 = this.allRelations.keySet().iterator();
+            Iterator<String> keySetIterator3 = this.allRelations.keySet().iterator();
             while(keySetIterator3.hasNext()){
-              Long key = keySetIterator3.next();
+              String key = keySetIterator3.next();
               this.dataset.add(this.allRelations.get(key));
             }
             //-- do some cleaning up
@@ -296,13 +296,13 @@ public class OJOsmReader {
                     						// but we may parse them as well to have an envelope
                 } else if (parser.getLocalName().equals("node")) {
                     OjOsmNode node = parseNode();
-                    this.allNodes.put(node.getId(), node);
+                    this.allNodes.put(String.valueOf(node.getId()), node);
                 } else if (parser.getLocalName().equals("way")) {
                     OjOsmWay way = parseWay();
-                    this.allWays.put(way.getId(), way);
+                    this.allWays.put(String.valueOf(way.getId()), way);
                 } else if (parser.getLocalName().equals("relation")) {//TODO: keep working/debugging from here on
                     OjOsmRelation relation = parseRelation();
-                    this.allRelations.put(relation.getId(), relation);
+                    this.allRelations.put(String.valueOf(relation.getId()), relation);
                 } else if (parser.getLocalName().equals("changeset")) {
                     //parseChangeset(uploadChangesetId);
                 } else {
@@ -655,15 +655,15 @@ public class OJOsmReader {
         return null;
     }
     
-	private static void checkForInvalidNodeGeoms(HashMap<Long, OjOsmNode> allNodesT, TaskMonitor monitor) {
-        Iterator<Long> keySetIterator = allNodesT.keySet().iterator();
-        ArrayList<Long> invalidNodeIds = new ArrayList<Long>(); 
+	private static void checkForInvalidNodeGeoms(HashMap<String, OjOsmNode> allNodesT, TaskMonitor monitor) {
+        Iterator<String> keySetIterator = allNodesT.keySet().iterator();
+        ArrayList<String> invalidNodeIds = new ArrayList<String>(); 
         int nodeCount = 0; int maxNodeCount = allNodesT.size();
         while(keySetIterator.hasNext()){
         	if(monitor != null){
         		monitor.report(nodeCount, maxNodeCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.checked-node-geometries"));
         	}
-        	Long key = keySetIterator.next();
+        	String key = keySetIterator.next();
           	OjOsmNode tempn = allNodesT.get(key);
           	Geometry geom = tempn.getGeom();
           	if(geom.isValid() ==  false){
@@ -674,7 +674,7 @@ public class OJOsmReader {
         if(invalidNodeIds.size() > 0 ){
         	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidNodeGeoms() : " + I18NPlug.getI18N("drivers.osm.OJOsmReader.found-invalid-node-geometries-...-deleting-them"));
         	for (Iterator iterator = invalidNodeIds.iterator(); iterator.hasNext();) {
-				Long id = (Long) iterator.next();
+				String id = (String) iterator.next();
 				allNodesT.remove(id);
 			}
         }
@@ -683,16 +683,16 @@ public class OJOsmReader {
         }
 	}
 	
-	private static void checkForInvalidWayGeoms(HashMap<Long, OjOsmWay> allWaysT, TaskMonitor monitor) {
-        Iterator<Long> keySetIterator = allWaysT.keySet().iterator();
-        ArrayList<Long> invalidWayIds = new ArrayList<Long>(); 
+	private static void checkForInvalidWayGeoms(HashMap<String, OjOsmWay> allWaysT, TaskMonitor monitor) {
+        Iterator<String> keySetIterator = allWaysT.keySet().iterator();
+        ArrayList<String> invalidWayIds = new ArrayList<String>(); 
         int wayCount = 0; int mayWayCount = allWaysT.size();
         while(keySetIterator.hasNext()){
         	if(monitor != null){
         		monitor.report(wayCount, mayWayCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.checked-way-geometries"));
         	}
         	wayCount++;
-        	Long key = keySetIterator.next();
+        	String key = keySetIterator.next();
         	OjOsmWay tempn = allWaysT.get(key);
         	Geometry geom = tempn.getGeom();
         	boolean valid = false;
@@ -710,7 +710,7 @@ public class OJOsmReader {
         if(invalidWayIds.size() > 0 ){
         	JUMPWorkbench.getInstance().getFrame().log("OjOsmReader.checkForInvalidWayGeoms() : " + I18NPlug.getI18N("drivers.osm.OJOsmReader.found-invalid-way-geometries-...-deleting-them"));
         	for (Iterator iterator = invalidWayIds.iterator(); iterator.hasNext();) {
-				Long id = (Long) iterator.next();
+				String id = (String) iterator.next();
 				allWaysT.remove(id);
 			}
         }
@@ -729,14 +729,14 @@ public class OJOsmReader {
     private void createWayGeoms(TaskMonitor monitor) {
     	GeometryFactory gf = new GeometryFactory();
     	//iterate over all ways, and retrieve the node Ids with their geometries
-    	Iterator<Long> keySetIterator = this.allWays.keySet().iterator();
+    	Iterator<String> keySetIterator = this.allWays.keySet().iterator();
     	int wayCount = 0; int mayWayCount = this.allWays.size();
     	while(keySetIterator.hasNext()){
         	if(monitor != null){
         		monitor.report(wayCount, mayWayCount, I18NPlug.getI18N("drivers.osm.OJOsmReader.created-way-geometries"));
         	}
         	wayCount++;
-    		Long key = keySetIterator.next();
+    		String key = keySetIterator.next();
     		OjOsmWay w = this.allWays.get(key);
     		ArrayList<Long> nodeIds = w.getNodeIds();
     		int numNodes = nodeIds.size();
@@ -745,7 +745,7 @@ public class OJOsmReader {
     		for (Iterator iteratorNodeId = nodeIds.iterator(); iteratorNodeId.hasNext();) {
     			Long nid = (Long) iteratorNodeId.next();
     			try{
-	    			OjOsmNode tnode = this.allNodes.get(nid);
+	    			OjOsmNode tnode = this.allNodes.get(String.valueOf(nid));
 	    			coords[i] = tnode.getCoord();
 	    			tnode.setUsedInAWay(true);
     			}
@@ -795,7 +795,7 @@ public class OJOsmReader {
     private void createRelationGeometries(TaskMonitor monitor) throws Exception{
     	GeometryFactory gf = new GeometryFactory();
     	//iterate over all ways, and retrieve the node Ids with their geometries
-    	Iterator<Long> keySetIterator = this.allRelations.keySet().iterator();
+    	Iterator<String> keySetIterator = this.allRelations.keySet().iterator();
     	int relationCount=0; int maxRelCount = this.allRelations.size();
     	while(keySetIterator.hasNext()){
         	if(monitor != null){
@@ -805,7 +805,7 @@ public class OJOsmReader {
         		}
         	}
         	relationCount++;
-    		Long key = keySetIterator.next();
+    		String key = keySetIterator.next();
     		OjOsmRelation rel = this.allRelations.get(key);
     		//check if there is a multipolygon tag, so we can do some decisions later
     		boolean isMultiPolygon = rel.isMultiPolygon();
@@ -824,7 +824,7 @@ public class OJOsmReader {
     			if(member.getOsmPrimitiveType() == OjOsmPrimitive.OSM_PRIMITIVE_WAY){
     				hasWays = true;
     				try{
-    					OjOsmWay way = this.allWays.get(member.getMemberId());
+    					OjOsmWay way = this.allWays.get(String.valueOf(member.getMemberId()));
     					if(way != null){ //because we may not have a way with that ID stored in this file
     						member.setIdNotFoundInDataset(false);
 	    					Coordinate[] wayCoords = way.getGeom().getCoordinates();
@@ -869,7 +869,7 @@ public class OJOsmReader {
     			else if(member.getOsmPrimitiveType() == OjOsmPrimitive.OSM_PRIMITIVE_NODE) {
     				hasNodes = true;
     				try{
-    					OjOsmNode node = this.allNodes.get(member.getMemberId());
+    					OjOsmNode node = this.allNodes.get(String.valueOf(member.getMemberId()));
     					if(node != null){
     						member.setIdNotFoundInDataset(false);
 	    					nodeCoords.add(node.getCoord());
