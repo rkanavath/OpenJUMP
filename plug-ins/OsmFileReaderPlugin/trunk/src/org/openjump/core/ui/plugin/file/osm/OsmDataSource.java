@@ -20,9 +20,9 @@
 package org.openjump.core.ui.plugin.file.osm;
 
 import java.io.Closeable;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,7 +32,6 @@ import org.openjump.core.openstreetmap.model.OjOsmPrimitive;
 import org.openjump.core.openstreetmap.model.OjOsmRelation;
 import org.openjump.core.openstreetmap.reader.OJOsmReader;
 import org.openjump.core.ui.plugin.file.osm.language.I18NPlug;
-import org.openjump.core.ui.plugin.view.SuperZoomPanTool;
 
 import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.BasicFeature;
@@ -40,11 +39,11 @@ import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.feature.FeatureCollection;
 import com.vividsolutions.jump.feature.FeatureDataset;
 import com.vividsolutions.jump.feature.FeatureSchema;
+import com.vividsolutions.jump.io.CompressedFile;
 import com.vividsolutions.jump.io.datasource.Connection;
 import com.vividsolutions.jump.io.datasource.DataSource;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
-import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
 
 
 /**
@@ -66,18 +65,21 @@ public class OsmDataSource extends DataSource {
                     public FeatureCollection executeQuery(String query, Collection exceptions, TaskMonitor monitor) {
 
                         try {
-                        	String selFile = (String)getProperties().get(FILE_KEY);
+                          // fetch filepath and possible entry of an archive (empty for ordinary files)
+                        	String filePath = (String)getProperties().get(FILE_KEY);
+                        	String compressedEntry = (String)getProperties().get("CompressedFile");
                         	
                     		monitor.allowCancellationRequests();
                     		
                     		monitor.report(I18NPlug.getI18N("drivers.osm.reading-OSM-file"));
-                            FileInputStream in = null;
+                            InputStream in = null;
                             boolean worked = false;
-                            ArrayList data = null;
+                            ArrayList<OjOsmPrimitive> data = null;
                             try {
-                                in = new FileInputStream(selFile);
+                                // CompressedFile can deal with ordinary _and_ compressed files :)
+                                in = CompressedFile.openFile(filePath, compressedEntry);
                                 OJOsmReader osmr = new OJOsmReader();
-                                JUMPWorkbench.getInstance().getFrame().log("OsmDataSource:" + I18NPlug.getI18N("drivers.osm.Start-reading-OSM-file") + ":" + selFile);
+                                JUMPWorkbench.getInstance().getFrame().log("OsmDataSource:" + I18NPlug.getI18N("drivers.osm.Start-reading-OSM-file") + ":" + filePath);
                                 worked = osmr.doParseDataSet(in, monitor);
                                 if(worked){
                                 	data = osmr.getDataset();
@@ -87,7 +89,7 @@ public class OsmDataSource extends DataSource {
                                 }
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
-                                throw new IOException(I18NPlug.getI18N("drivers.osm.OSM-file-does-not-exist") +":" + selFile );
+                                throw new IOException(I18NPlug.getI18N("drivers.osm.OSM-file-does-not-exist") +":" + filePath );
                             } finally {
                                 close(in);
                             }
