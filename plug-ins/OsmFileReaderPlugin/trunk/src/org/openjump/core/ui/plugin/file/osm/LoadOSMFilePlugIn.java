@@ -129,7 +129,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 		fsvx.addAttribute("Geometry", AttributeType.GEOMETRY);
 
 		String sfieldID = "osm_id";		
-		AttributeType t0 = AttributeType.INTEGER;
+		AttributeType t0 = AttributeType.STRING;
 		fsvx.addAttribute(sfieldID, t0);
 		
 		String sfieldType = "osm_primitive";		
@@ -194,7 +194,7 @@ public class LoadOSMFilePlugIn extends AbstractThreadedUiPlugIn{
 
 			fNew.setGeometry(osmPrim.getGeom());
 			Long lid = osmPrim.getId();
-			fNew.setAttribute(sfieldID, new Integer(lid.intValue()));
+			fNew.setAttribute(sfieldID, new String(String.valueOf(lid)));
 			String osmPrimType = osmPrim.getOsmTypeAsString();
 			if (osmPrim instanceof OjOsmRelation){
 				OjOsmRelation rel = (OjOsmRelation)osmPrim;
