@@ -1255,27 +1255,30 @@ public class OJOsmReader {
 					if(relType.equalsIgnoreCase("multipolygon")){
 						relType = "";
 					}
+					else{
+					    relType = relType + ": ";
+					}
 					ojOsmPrimitive.setLandUseDescription(relType);
 					if (ojOsmPrimitive.hasKey("natural")){
-						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("natural"));
+						ojOsmPrimitive.setLandUseDescription(relType + ojOsmPrimitive.get("natural"));
 					}
 					if (ojOsmPrimitive.hasKey("route")){
-						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("route"));
+						ojOsmPrimitive.setLandUseDescription(relType + ojOsmPrimitive.get("route"));
 					}
 					if (ojOsmPrimitive.hasKey("waterway")){
-						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("waterway"));
+						ojOsmPrimitive.setLandUseDescription(relType + ojOsmPrimitive.get("waterway"));
 					}
 					if (ojOsmPrimitive.hasKey("boundary")){
-						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("boundary"));
+						ojOsmPrimitive.setLandUseDescription(relType + ojOsmPrimitive.get("boundary"));
 					}
 					if (ojOsmPrimitive.hasKey("site")){
-						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("site"));
+						ojOsmPrimitive.setLandUseDescription(relType + ojOsmPrimitive.get("site"));
 					}
 					if (ojOsmPrimitive.hasKey("destination_sign")){
-						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("destination_sign"));
+						ojOsmPrimitive.setLandUseDescription(relType + ojOsmPrimitive.get("destination_sign"));
 					}
 					if (ojOsmPrimitive.hasKey("public_transport")){
-						ojOsmPrimitive.setLandUseDescription(relType +":"+ ojOsmPrimitive.get("public_transport"));
+						ojOsmPrimitive.setLandUseDescription(relType + ojOsmPrimitive.get("public_transport"));
 					}
 				}
 			}
