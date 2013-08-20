@@ -82,6 +82,8 @@ public class OsmDataSource extends DataSource {
                             OJOsmReader osmr = new OJOsmReader();
                             JUMPWorkbench.getInstance().getFrame().log("OsmDataSource:" + I18NPlug.getI18N("drivers.osm.Start-reading-OSM-file") + ":" + filePath);
                             worked = osmr.doParseDataSet(in, monitor);
+                            // close stream early 
+                            close(in);
                             if(worked){
                                 data = osmr.getDataset();
                             }
