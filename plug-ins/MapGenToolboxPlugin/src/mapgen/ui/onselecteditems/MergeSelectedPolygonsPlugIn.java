@@ -72,6 +72,7 @@ import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
+import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 
 
@@ -105,7 +106,7 @@ public class MergeSelectedPolygonsPlugIn extends ThreadedBasePlugIn{
 		FeatureInstaller featureInstaller = new FeatureInstaller(context.getWorkbenchContext());
 		featureInstaller.addMainMenuItem(
 				this,								//exe				
-				new String[] {"PlugIns","Map Generalisation","Not Scale Dependent Algorithms", "Polygons"}, 	//menu path
+				new String[] {MenuNames.PLUGINS,"Map Generalisation","Not Scale Dependent Algorithms", "Polygons"}, 	//menu path
 				"Merge Polyons", //name methode .getName recieved by AbstractPlugIn 
 				false,			//checkbox
 				null,			//icon

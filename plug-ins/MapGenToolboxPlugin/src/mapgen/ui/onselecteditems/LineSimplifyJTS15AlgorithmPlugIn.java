@@ -58,6 +58,7 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.plugin.ThreadedPlugIn;
 import com.vividsolutions.jump.workbench.ui.EditTransaction;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
+import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 
@@ -85,7 +86,7 @@ public class LineSimplifyJTS15AlgorithmPlugIn extends AbstractPlugIn implements 
         FeatureInstaller featureInstaller = new FeatureInstaller(context.getWorkbenchContext());
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
-                new String[] {"PlugIns","Map Generalisation","Not Scale Dependent Algorithms", "Lines"}, 	//menu path
+                new String[] {MenuNames.PLUGINS,"Map Generalisation","Not Scale Dependent Algorithms", "Lines"}, 	//menu path
                 this.getName(), //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon
