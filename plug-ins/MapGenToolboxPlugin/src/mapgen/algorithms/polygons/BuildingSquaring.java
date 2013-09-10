@@ -33,7 +33,10 @@ import com.vividsolutions.jts.geom.Polygon;
  *  Method does not support polygon holes, they are kept as they are.<p>
  *	Algorithm proposed by Mats Bader and A. Edwardes 
  *  (Agent Delivery D1) but is modified. 
-
+ *
+ * TODO: Michael Michaud has provided some sample buildings (see JPP bug report #145 SquareBuildingPlugIn of MapGen Toolbox)
+ * with situations that the algorithm does not handle yet. This needs to be addressed at some point.
+ * 
  * @author sstein
  *
  */
@@ -343,7 +346,7 @@ public class BuildingSquaring {
 	            
             }
             catch(Exception e){
-                System.out.println("BuildingSquaring: line intersection could not be calculatetd");
+                System.out.println("BuildingSquaring: line intersection could not be calculated");
             }
         }
     }
