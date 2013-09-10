@@ -57,6 +57,7 @@ public class PolygonMerge {
 			}
 	        else{
 	        	//System.out.println("PolygonMerge.constructor: polygons don't touch");
+	        	this.mergeSuccesfull = 0;
 	        }
 		}		
 	}
