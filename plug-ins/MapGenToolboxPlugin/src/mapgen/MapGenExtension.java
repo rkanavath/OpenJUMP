@@ -29,6 +29,14 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
  */
 public class MapGenExtension extends Extension{
 
+    public String getName() {
+        return "Map Generalization Toolbox (Stefan Steiniger - geo.uzh.ch)";
+    }
+
+    public String getVersion() {
+        return "1.1 (2013-09-11)";
+    }
+    
 	/**
 	 * calls PlugIn using class method xplugin.initialize() 
 	 */
