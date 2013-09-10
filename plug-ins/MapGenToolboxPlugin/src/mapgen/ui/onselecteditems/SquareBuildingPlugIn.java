@@ -93,8 +93,10 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
     private ZoomToSelectedItemsPlugIn myZoom = new ZoomToSelectedItemsPlugIn();
     private static String T1 = "MapScale";
     private static String T2 = "Max angle change in degrees";    
-    int scale = 1;
-    double maxAngle = 0;
+    private static String T3 = "Max allowed area change in percent";
+    int scale = 25000;
+    double maxAngle = 15.0;
+    double allowedAreaChange = 10;
 
     public void initialize(PlugInContext context) throws Exception {
         FeatureInstaller featureInstaller = new FeatureInstaller(context.getWorkbenchContext());
@@ -130,21 +132,23 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
     private void setDialogValues(MultiInputDialog dialog, PlugInContext context)
 	  {
 	    dialog.setSideBarDescription(
-	        "Square Building: MapScale influences max point displacement");
-	    dialog.addIntegerField(T1, 25000, 7,T1);
-	    dialog.addDoubleField(T2, 15.0,4);
+	        "Square Building: MapScale influences max point displacement. The value for 'Max allowed area change in percen' is used to identify transformation errors.");
+	    dialog.addIntegerField(T1, scale, 7,T1);
+	    dialog.addDoubleField(T2, maxAngle,4);
+	    dialog.addDoubleField(T3, allowedAreaChange,4);
 	  }
 
 	private void getDialogValues(MultiInputDialog dialog) {
 	    this.maxAngle = dialog.getDouble(T2);
 	    this.scale = dialog.getInteger(T1);
+	    this.allowedAreaChange = dialog.getDouble(T3);
 	  }
 
     public void run(TaskMonitor monitor, PlugInContext context) throws Exception{
         
 			monitor.allowCancellationRequests();
     	    //this.zoom2Feature(context);	    
-    	    this.square(context, this.scale, this.maxAngle, monitor);
+    	    this.square(context, this.scale, this.maxAngle, this.allowedAreaChange, monitor);
     	    System.gc();    		
     	}
 	
@@ -164,7 +168,7 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
 	}
 	
 	private boolean square(PlugInContext context, int scale, 
-	                           double maxDevAngle, TaskMonitor monitor) throws Exception{
+	                           double maxDevAngle, double allowedAreaChangeInPercent, TaskMonitor monitor) throws Exception{
 	    
 	    System.gc(); //flush garbage collector
 	    // --------------------------	    
@@ -198,7 +202,10 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
 	           	    BuildingSquaring squaring = new BuildingSquaring(poly,this.maxAngle, posAccuracy);
 	           	    //BuildingSquaring squaring = new BuildingSquaring(poly,this.maxAngle);    
 	           	    Polygon pout = squaring.getOutPolygon();
-	           	    if(pout.isValid()){
+	           	    double orgArea = poly.getArea();
+	           	    double areaChange = ( Math.abs( pout.getArea()  - orgArea) ) / ((orgArea) / 100.0);
+	           	    System.out.println("Feature id: " + f.getID() + " -> areaChange in Percent: " + areaChange + " <=>  limit: " + allowedAreaChangeInPercent);
+	           	    if(pout.isValid() && (areaChange <= allowedAreaChangeInPercent)){
 	           	    	transaction.setGeometry(count-1, pout);
 	           	    }
 	           	    else{
