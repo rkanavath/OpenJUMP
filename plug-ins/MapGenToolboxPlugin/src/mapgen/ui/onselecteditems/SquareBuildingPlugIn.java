@@ -49,8 +49,11 @@ import mapgen.agents.goals.BuildingGoals;
 import mapgen.algorithms.polygons.BuildingSquaring;
 import mapgen.constraints.buildings.BuildingSquareness;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jump.feature.Feature;
+import com.vividsolutions.jump.feature.FeatureCollection;
+import com.vividsolutions.jump.feature.FeatureDatasetFactory;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
@@ -64,8 +67,12 @@ import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 import com.vividsolutions.jump.workbench.ui.zoom.*;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import com.vividsolutions.jump.workbench.model.Layer;
+import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
+
 import java.util.Collection;
 
 /**
@@ -94,7 +101,7 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
                 new String[] {MenuNames.PLUGINS,"Map Generalisation","Scale Dependent Algorithms", "Buildings"}, 	//menu path
-                this.getName(), //name methode .getName recieved by AbstractPlugIn 
+                "Square Selected Buildings", //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon
                 createEnableCheck(context.getWorkbenchContext())); //enable check        
@@ -163,7 +170,9 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
 	    // --------------------------	    
 	    //-- get selected items
 	    final Collection features = context.getLayerViewPanel().getSelectionManager().getFeaturesWithSelectedItems();
-
+	    ArrayList<Geometry> notTransformedBuildings = new ArrayList<Geometry>();
+	    ArrayList<Geometry> resultErrorGeoms = new ArrayList<Geometry>();
+	    
 		EditTransaction transaction = new EditTransaction(features, this.getName(), layer(context),
 						this.isRollingBackInvalidEdits(context), false, context.getWorkbenchFrame());
 	    
@@ -187,8 +196,15 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
 		           	context.getWorkbenchFrame().setStatusMessage("conflicts detected!");  
 
 	           	    BuildingSquaring squaring = new BuildingSquaring(poly,this.maxAngle, posAccuracy);
-	           	    //BuildingSquaring squaring = new BuildingSquaring(poly,this.maxAngle);           	    
-	    			transaction.setGeometry(count-1, squaring.getOutPolygon());
+	           	    //BuildingSquaring squaring = new BuildingSquaring(poly,this.maxAngle);    
+	           	    Polygon pout = squaring.getOutPolygon();
+	           	    if(pout.isValid()){
+	           	    	transaction.setGeometry(count-1, pout);
+	           	    }
+	           	    else{
+	           	    	notTransformedBuildings.add(poly);
+	           	    	resultErrorGeoms.add(pout);
+	           	    }
 		        }       		
 	           	else{
 	           	    context.getWorkbenchFrame().setStatusMessage("no conflict detected!");
@@ -201,6 +217,16 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
 		    monitor.report(mytext);	       	
       	}//end loop for selection
        	transaction.commit();
+       	if(context != null){
+       		if(notTransformedBuildings.size() > 0){
+       			FeatureCollection fcNonTransformed = new FeatureDatasetFactory().createFromGeometry(notTransformedBuildings);
+       			context.addLayer(StandardCategoryNames.SYSTEM, "not squared original", fcNonTransformed);
+       		}
+       		if(resultErrorGeoms.size() > 0){
+       			FeatureCollection fcResTransformed = new FeatureDatasetFactory().createFromGeometry(resultErrorGeoms);
+       			context.addLayer(StandardCategoryNames.SYSTEM, "invalid results", fcResTransformed);
+       		}
+       	}
         return true;        
 	}
     
