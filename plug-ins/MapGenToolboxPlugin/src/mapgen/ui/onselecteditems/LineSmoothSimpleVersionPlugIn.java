@@ -106,7 +106,7 @@ public class LineSmoothSimpleVersionPlugIn extends AbstractPlugIn implements Thr
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
                 new String[] {MenuNames.PLUGINS,"Map Generalisation","Not Scale Dependent Algorithms", "Lines"}, 	//menu path
-                "Line Smoothing Simple Version", //name methode .getName recieved by AbstractPlugIn 
+                "Smooth Selected Lines - Simple Version", //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon
                 createEnableCheck(context.getWorkbenchContext())); //enable check        

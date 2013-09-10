@@ -98,7 +98,7 @@ public class SimplifyOutlineSelectedBuildingPlugIn extends AbstractPlugIn implem
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
                 new String[] {MenuNames.PLUGINS,"Map Generalisation", "Scale Dependent Algorithms","Buildings"}, 	//menu path
-                "Simplify Building", //name methode .getName recieved by AbstractPlugIn 
+                "Simplify Selected Building", //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon
                 createEnableCheck(context.getWorkbenchContext())); //enable check        

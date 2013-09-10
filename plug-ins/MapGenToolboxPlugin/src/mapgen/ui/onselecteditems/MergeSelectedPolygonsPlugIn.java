@@ -107,7 +107,7 @@ public class MergeSelectedPolygonsPlugIn extends ThreadedBasePlugIn{
 		featureInstaller.addMainMenuItem(
 				this,								//exe				
 				new String[] {MenuNames.PLUGINS,"Map Generalisation","Not Scale Dependent Algorithms", "Polygons"}, 	//menu path
-				"Merge Polyons", //name methode .getName recieved by AbstractPlugIn 
+				"Merge Selected Polyons", //name methode .getName recieved by AbstractPlugIn 
 				false,			//checkbox
 				null,			//icon
 				createEnableCheck(context.getWorkbenchContext())); //enable check        
