@@ -204,11 +204,11 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
 	           	    Polygon pout = squaring.getOutPolygon();
 	           	    double orgArea = poly.getArea();
 	           	    double areaChange = ( Math.abs( pout.getArea()  - orgArea) ) / ((orgArea) / 100.0);
-	           	    System.out.println("Feature id: " + f.getID() + " -> areaChange in Percent: " + areaChange + " <=>  limit: " + allowedAreaChangeInPercent);
 	           	    if(pout.isValid() && (areaChange <= allowedAreaChangeInPercent)){
 	           	    	transaction.setGeometry(count-1, pout);
 	           	    }
 	           	    else{
+		           	    System.out.println("Feature with ID " + f.getID() + " maybe invalid or large areaChange in Percent: " + areaChange + " <=>  limit: " + allowedAreaChangeInPercent);
 	           	    	notTransformedBuildings.add(poly);
 	           	    	resultErrorGeoms.add(pout);
 	           	    }

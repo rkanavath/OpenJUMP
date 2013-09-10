@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<JCSDataFile xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" >
+<JCSGMLInputTemplate>
+<CollectionElement>featureCollection</CollectionElement> 
+<FeatureElement>feature</FeatureElement>
+<GeometryElement>geometry</GeometryElement>
+<ColumnDefinitions>
+</ColumnDefinitions>
+</JCSGMLInputTemplate>
+
+<featureCollection>
+     <feature> 
+          <geometry>
+                <gml:Polygon>
+                  <gml:outerBoundaryIs>
+                  <gml:LinearRing>
+                    <gml:coordinates>118218.2,552753.1,NaN 
+                      118218.4,552757.1,-100.0 
+                      118224.4,552757.1,-100.0 
+                      118224.4,552753.1,-100.0 
+                      118218.2,552753.1,NaN </gml:coordinates>
+                  </gml:LinearRing>
+                  </gml:outerBoundaryIs>
+                </gml:Polygon>
+          </geometry>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Polygon>
+                  <gml:outerBoundaryIs>
+                  <gml:LinearRing>
+                    <gml:coordinates>166124.8,631178.4,NaN 
+                      166124.8,631183.8,-100.0 
+                      166119.0,631183.8,-100.0 
+                      166119.0,631193.0,-100.0 
+                      166126.5,631193.0,-100.0 
+                      166126.5,631190.5,-100.0 
+                      166135.8,631190.5,-100.0 
+                      166135.8,631178.2,-100.0 
+                      166124.8,631178.4,NaN </gml:coordinates>
+                  </gml:LinearRing>
+                  </gml:outerBoundaryIs>
+                </gml:Polygon>
+          </geometry>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Polygon>
+                  <gml:outerBoundaryIs>
+                  <gml:LinearRing>
+                    <gml:coordinates>166049.3,630961.1,NaN 
+                      166056.7,630961.1,-100.0 
+                      166056.7,630952.4,-100.0 
+                      166051.0,630952.4,-100.0 
+                      166049.3,630952.4,-100.0 
+                      166049.3,630961.1,-100.0 </gml:coordinates>
+                  </gml:LinearRing>
+                  </gml:outerBoundaryIs>
+                </gml:Polygon>
+          </geometry>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Polygon>
+                  <gml:outerBoundaryIs>
+                  <gml:LinearRing>
+                    <gml:coordinates>161215.0,608976.5,NaN 
+                      161215.0,608979.3,-100.0 
+                      161221.0,608979.1,-100.0 
+                      161220.4,608965.9,-100.0 
+                      161214.6,608966.3,-100.0 
+                      161214.6,608968.2,-100.0 
+                      161215.0,608976.5,NaN </gml:coordinates>
+                  </gml:LinearRing>
+                  </gml:outerBoundaryIs>
+                </gml:Polygon>
+          </geometry>
+     </feature>
+
+     <feature> 
+          <geometry>
+                <gml:Polygon>
+                  <gml:outerBoundaryIs>
+                  <gml:LinearRing>
+                    <gml:coordinates>407660.3,423678.9,NaN 
+                      407659.2,423680.7,-100.0 
+                      407666.8,423685.3,-100.0 
+                      407673.4,423673.9,-100.0 
+                      407665.8,423669.6,-100.0 
+                      407664.1,423672.4,-100.0 
+                      407660.3,423678.9,NaN </gml:coordinates>
+                  </gml:LinearRing>
+                  </gml:outerBoundaryIs>
+                </gml:Polygon>
+          </geometry>
+     </feature>
+
+     </featureCollection>
+</JCSDataFile>

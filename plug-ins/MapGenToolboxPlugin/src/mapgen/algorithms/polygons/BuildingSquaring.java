@@ -386,6 +386,13 @@ public class BuildingSquaring {
     public void setInPolygon(Polygon inPolygon) {
         this.inPolygon = inPolygon;
     }
+    /**
+     * Retrieve the Squaring Result.
+     * Note, the resulting geometry needs to be checked for validity (using geom.isValid()).<p>
+     * Also a test of the polygon/building area before and after squaring helps to identify
+     * problematic squaring results (e.g. when line intersections could not be calculated). 
+     * @return
+     */
     public Polygon getOutPolygon() {
         return outPolygon;
     }
