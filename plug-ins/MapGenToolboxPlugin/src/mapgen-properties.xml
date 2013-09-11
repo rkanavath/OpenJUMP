@@ -12,4 +12,8 @@
  <plug-in>mapgen.ui.onselecteditems.LineSmoothSimpleVersionPlugIn</plug-in>
  <plug-in>mapgen.ui.onselecteditems.LineSimplifyJTS15AlgorithmPlugIn</plug-in>
  <plug-in>mapgen.ui.onselecteditems.MergeSelectedPolygonsPlugIn</plug-in>  
+ <!--plug-in> ====== Michaels gen-PlugIns ===== </plug-in-->
+ <plug-in>fr.michaelm.jump.plugin.smooth.BezierSmootherPlugIn</plug-in>  
+ <!--plug-in> ====== Larrys gen-PlugIns ===== </plug-in-->
+ <plug-in>com.isa.jump.plugin.OrthogonalizePlugIn</plug-in>
 </workbench>

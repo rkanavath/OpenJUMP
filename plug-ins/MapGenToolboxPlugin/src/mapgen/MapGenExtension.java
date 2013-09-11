@@ -16,21 +16,28 @@ import mapgen.ui.onselecteditems.SimplifyBuildingToRectanglePlugIn;
 import mapgen.ui.onselecteditems.SimplifyOutlineSelectedBuildingPlugIn;
 import mapgen.ui.onselecteditems.SquareBuildingPlugIn;
 
+import com.isa.jump.plugin.OrthogonalizePlugIn;
+import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
+import fr.michaelm.jump.plugin.smooth.BezierSmootherPlugIn;
+
 /**
  * @author sstein
- *
- *  - this class loads the PlugIn into Jump 
- *
- *  - class has to be called "Extension" on the end of classname
- *    to use the PlugIn in Jump 
+ * @author mmichaud
+ * @author mbedward
+ * @author lbecker
+ *   
+ *  Loads several functions useful for map generalization 
  */
 public class MapGenExtension extends Extension{
 
+    public final static String SMOOTH = "fr.michaelm.jump.plugin.smooth";
+    public final static String SMOOTHING = I18N.getText(SMOOTH, "smoothing");
+    
     public String getName() {
-        return "Map Generalization Toolbox (Stefan Steiniger - geo.uzh.ch)";
+        return "Map Generalization Toolbox (Stefan Steiniger, Micha&euml;l Michaud, Michael Bedward, Larry Becker)";
     }
 
     public String getVersion() {
@@ -54,7 +61,8 @@ public class MapGenExtension extends Extension{
 		new LineSmoothSimpleVersionPlugIn().initialize(context);
 		new LineSimplifyJTS15AlgorithmPlugIn().initialize(context);
 		new MergeSelectedPolygonsPlugIn().initialize(context);
-		
+		new BezierSmootherPlugIn().initialize(context);
+		new OrthogonalizePlugIn().initialize(context);
 	}
 	
 }

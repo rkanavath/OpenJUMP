@@ -132,7 +132,7 @@ public class SquareBuildingPlugIn extends AbstractPlugIn implements ThreadedPlug
     private void setDialogValues(MultiInputDialog dialog, PlugInContext context)
 	  {
 	    dialog.setSideBarDescription(
-	        "Square Building: MapScale influences max point displacement. The value for 'Max allowed area change in percen' is used to identify transformation errors.");
+	        "Square Building: MapScale influences max point displacement. The value for 'Max allowed area change in percent' is used to identify transformation errors. You can try then the 'Orthogonalize' function as well.");
 	    dialog.addIntegerField(T1, scale, 7,T1);
 	    dialog.addDoubleField(T2, maxAngle,4);
 	    dialog.addDoubleField(T3, allowedAreaChange,4);
