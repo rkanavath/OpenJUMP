@@ -3,16 +3,16 @@ MapGen Toolbox Version 1.1 - 11. Sept. 2013
 MapGen Toolbox Installation instructions
 ----------------------------------------
 
-copy the following files into OpenJUMPs /ext folder:
+copy the following files into OpenJUMPs "ext" folder:
 - mapgentoolboxplugin_v1_1.jar
 - jmat_5.0.jar
 
 restart OpenJUMP.
 
 You should find a new set of functions under the main menu item 
-Plugins > Map Generalisation 
+Plugins > Generalization > ...
 
-For the distribution license terms under which the software/toolbox can be used see the license.txt file.
+For the license terms under which the software/toolbox can be used see the license.txt file.
 
 Changes to Version 1.0 from 2006
 --------------------------------
