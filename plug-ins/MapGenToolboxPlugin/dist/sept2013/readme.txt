@@ -1,4 +1,4 @@
-MapGen Toolbox Version 1.1 - 10. Sept. 2013
+MapGen Toolbox Version 1.1 - 11. Sept. 2013
 
 MapGen Toolbox Installation instructions
 ----------------------------------------
@@ -17,5 +17,6 @@ For the distribution license terms under which the software/toolbox can be used 
 Changes to Version 1.0 from 2006
 --------------------------------
 - minor updates: placed in correct OpenJUMP menu "Plugins" and improved spelling of Function names.
-- Updated the function "Square Selected Buildings", to check the outputs of the squaring algorithms. For that a new value (allowed change in area) needs to be provided by the user. Produced invalid geometries and squaring results with a large deviation in area from input building are now returned in a separate layer. These problematic buildings should then be generalized manually by the user.
-
+- updated the function "Square Selected Buildings", to check the outputs of the squaring algorithms. For that a new value (allowed change in area) needs to be provided by the user. Produced invalid geometries and squaring results with a large deviation in area from input building are now returned in a separate layer. These problematic buildings should then be generalized manually by the user.
+- added Bezier curve based Smoothing Plugin by Michael Michaud and Michael Bedward 
+- added Orthogonalize Plugin by Larry Becker 
