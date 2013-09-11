@@ -81,7 +81,7 @@ public class ChangeElongationSelectedBuildingPlugIn extends AbstractPlugIn imple
         FeatureInstaller featureInstaller = new FeatureInstaller(context.getWorkbenchContext());
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
-                new String[] {MenuNames.PLUGINS,"Map Generalisation","Not Scale Dependent Algorithms" ,"Buildings"}, 	//menu path
+                new String[] {MenuNames.PLUGINS, MenuNames.GENERALIZATION, "Not Scale Dependent Algorithms" ,"Buildings"}, 	//menu path
                 "Change Elongation of Selected Buildings", //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon

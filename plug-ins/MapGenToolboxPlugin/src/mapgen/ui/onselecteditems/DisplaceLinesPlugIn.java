@@ -91,7 +91,7 @@ public class DisplaceLinesPlugIn extends AbstractPlugIn implements ThreadedPlugI
         FeatureInstaller featureInstaller = new FeatureInstaller(context.getWorkbenchContext());
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
-                new String[] {MenuNames.PLUGINS,"Map Generalisation", "Scale Dependent Algorithms","Lines"}, 	//menu path
+                new String[] {MenuNames.PLUGINS, MenuNames.GENERALIZATION, "Scale Dependent Algorithms","Lines"}, 	//menu path
                 "Displace Selected Lines", //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon

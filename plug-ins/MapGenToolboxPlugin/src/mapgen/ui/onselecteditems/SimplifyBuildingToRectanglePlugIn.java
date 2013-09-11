@@ -70,7 +70,7 @@ public class SimplifyBuildingToRectanglePlugIn extends AbstractPlugIn implements
         FeatureInstaller featureInstaller = new FeatureInstaller(context.getWorkbenchContext());
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
-                new String[] {MenuNames.PLUGINS,"Map Generalisation","Not Scale Dependent Algorithms" ,"Buildings"}, 	//menu path
+                new String[] {MenuNames.PLUGINS, MenuNames.GENERALIZATION,"Not Scale Dependent Algorithms" ,"Buildings"}, 	//menu path
                 "Simplify Selected Building to Rectangle", //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon

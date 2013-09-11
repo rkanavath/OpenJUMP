@@ -86,7 +86,7 @@ public class LineSimplifyJTS15AlgorithmPlugIn extends AbstractPlugIn implements 
         FeatureInstaller featureInstaller = new FeatureInstaller(context.getWorkbenchContext());
     	featureInstaller.addMainMenuItem(
     	        this,								//exe
-                new String[] {MenuNames.PLUGINS,"Map Generalisation","Not Scale Dependent Algorithms", "Lines"}, 	//menu path
+                new String[] {MenuNames.PLUGINS, MenuNames.GENERALIZATION,"Not Scale Dependent Algorithms", "Lines"}, 	//menu path
                 "Simplify Selected Lines (JTS Algorithm)", //name methode .getName recieved by AbstractPlugIn 
                 false,			//checkbox
                 null,			//icon
