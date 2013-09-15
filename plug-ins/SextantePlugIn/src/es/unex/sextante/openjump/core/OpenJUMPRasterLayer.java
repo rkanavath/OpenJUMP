@@ -307,14 +307,12 @@ public class OpenJUMPRasterLayer
    }
 
 
-   @Override
    public void free() {
    // TODO Auto-generated method stub
 
    }
 
 
-   @Override
    public Object getBaseDataObject() {
 
       return m_Layer;
@@ -322,7 +320,6 @@ public class OpenJUMPRasterLayer
    }
 
 
-   @Override
    public IOutputChannel getOutputChannel() {
 
       return new FileOutputChannel(m_sFilename);

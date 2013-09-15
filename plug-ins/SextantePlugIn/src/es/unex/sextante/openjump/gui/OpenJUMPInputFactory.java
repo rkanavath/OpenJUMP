@@ -216,7 +216,6 @@ public class OpenJUMPInputFactory
    }
 
 
-   @Override
    public String[] get3DRasterLayerInputExtensions() {
 
       return new String[] { "asc3d" };

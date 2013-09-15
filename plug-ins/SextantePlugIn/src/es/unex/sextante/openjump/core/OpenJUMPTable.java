@@ -301,11 +301,9 @@ public class OpenJUMPTable
    }
 
 
-   @Override
    public void free() {}
 
 
-   @Override
    public Object getBaseDataObject() {
 
       return m_FC;
@@ -313,7 +311,6 @@ public class OpenJUMPTable
    }
 
 
-   @Override
    public IOutputChannel getOutputChannel() {
 
       return new FileOutputChannel(m_sFilename);

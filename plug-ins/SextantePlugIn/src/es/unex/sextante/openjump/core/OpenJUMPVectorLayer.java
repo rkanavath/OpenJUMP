@@ -341,7 +341,6 @@ public class OpenJUMPVectorLayer
    }
 
 
-   @Override
    public IFeatureIterator iterator() {
 
       return new OpenJUMPFeatureIterator(m_BaseLayer, getFilters());
@@ -349,7 +348,6 @@ public class OpenJUMPVectorLayer
    }
 
 
-   @Override
    public boolean canBeEdited() {
 
       return false;
@@ -357,11 +355,9 @@ public class OpenJUMPVectorLayer
    }
 
 
-   @Override
    public void free() {}
 
 
-   @Override
    public IOutputChannel getOutputChannel() {
 
       return new FileOutputChannel(m_sFilename);
