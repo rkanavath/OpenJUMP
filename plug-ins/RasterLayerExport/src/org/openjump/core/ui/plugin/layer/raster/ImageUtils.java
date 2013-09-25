@@ -22,21 +22,15 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.ImageWriteException;
-import org.apache.commons.imaging.Sanselan;
-import org.apache.commons.imaging.SanselanConstants;
-import org.apache.commons.imaging.formats.png.PngConstants;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingConstants;
 import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
-import org.apache.log4j.Logger;
-import org.openjump.core.rasterimage.RasterImageLayer;
+ 
 
 
 public class ImageUtils {
 
-    /** Log */
-    private final static Logger LOGGER = Logger.getLogger(ImageUtils.class);
-
-    
-   
+ 
     
     /**
      * Writes a buffered image to a output stream, as format JPG2000
@@ -56,7 +50,10 @@ public class ImageUtils {
         if (image == null) {
             throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
         }
-        ImageIO.write(image, "jpeg 2000", out); //$NON-NLS-1$
+       // ImageIO.getWriterFormatNames().
+      
+        
+      ImageIO.write(image, "jpeg 2000", out); //$NON-NLS-1$
     }
     
     /**
@@ -103,9 +100,19 @@ public class ImageUtils {
         if (image == null) {
             throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
         }
-      ImageIO.write(image, "png", out); //$NON-NLS-1$
+        
+        ImageFormat format = ImageFormat.IMAGE_FORMAT_PNG;
+        Map<String,Object> params = new HashMap<String,Object>();
+       
+        Imaging.writeImage(image, out, format, params);
+        
+       
+        
+      //ImageIO.write(image, "png", out); //$NON-NLS-1$
     }
 
+   
+    
     
    
     
@@ -125,14 +132,44 @@ public class ImageUtils {
         if (image == null) {
             throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
         }
-        ICC_Profile iccProfile = ICC_Profile.getInstance(ICC_ColorSpace.CS_sRGB);
+        ImageFormat format = ImageFormat.IMAGE_FORMAT_BMP;
+        Map<String,Object> params = new HashMap<String,Object>();
+       
+        Imaging.writeImage(image, out, format, params);
+        
+        
+        
+      /*  ICC_Profile iccProfile = ICC_Profile.getInstance(ICC_ColorSpace.CS_sRGB);
         ColorSpace cSpace = new ICC_ColorSpace(iccProfile);
         ColorConvertOp op = new ColorConvertOp(image.getColorModel().getColorSpace(), cSpace, null);
         BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.OPAQUE);
         op.filter(image, newImage);
-        ImageIO.write(newImage, "bmp", out); //$NON-NLS-1$
+        ImageIO.write(newImage, "bmp", out); */
     }
    
+    
+    /**
+     * Writes a buffered image to a output stream, as format BMP 
+     * Converting buffered image to RGB
+     * @param out
+     * @param image
+     * @throws IOException
+     * @throws ImageWriteException 
+     */
+    public static void writeBufferedImageAsGIF( OutputStream out, 
+            BufferedImage image ) throws IOException, ImageWriteException {
+    	if (out == null) {
+            throw new IllegalArgumentException("Null 'out' argument."); //$NON-NLS-1$
+        }
+        if (image == null) {
+            throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
+        }
+        
+         
+       ImageIO.write(image, "gif", out); //$NON-NLS-1$
+    }
+    
+    
     
 
     /**
@@ -154,14 +191,14 @@ public class ImageUtils {
 
         ImageFormat format = ImageFormat.IMAGE_FORMAT_TIFF;
         Map<String,Object> params = new HashMap<String,Object>();
-        params.put(SanselanConstants.PARAM_KEY_COMPRESSION, new Integer(
+        
+        params.put(ImagingConstants.PARAM_KEY_COMPRESSION, new Integer(
            TiffConstants.TIFF_COMPRESSION_PACKBITS));
- 
-         Sanselan.writeImage(image, out, format, params);
+        Imaging.writeImage(image, out, format, params);
     
             }
     
-    
+   
 
     /**
      * Writes a buffered image to a output stream, as format PNG and with 
@@ -183,14 +220,17 @@ public class ImageUtils {
             throw new IllegalArgumentException("Null 'image' argument."); //$NON-NLS-1$
         }
         
-        Image transpImg2 = TransformColorToTransparency(image, Color.WHITE);
-        BufferedImage resultImage2 = ImageToBufferedImage(transpImg2, image.getWidth(), image.getHeight());
+        Image transpImg2 = transformColorToTransparency(image, Color.WHITE);
+        BufferedImage resultImage2 = imageToBufferedImage(transpImg2, image.getWidth(), image.getHeight());
 
         ImageIO.write(resultImage2, "png", out); //$NON-NLS-1$
     }
     
+ 
     
-    private static BufferedImage ImageToBufferedImage(Image image, int width, int height)
+    
+    
+    private static BufferedImage imageToBufferedImage(Image image, int width, int height)
     {
       BufferedImage dest = new BufferedImage(
           width, height, BufferedImage.TYPE_INT_ARGB);
@@ -200,7 +240,7 @@ public class ImageUtils {
       return dest;
     }
     
-    private static Image TransformColorToTransparency(BufferedImage image, Color c1)
+    private static Image transformColorToTransparency(BufferedImage image, Color c1)
     {
       // Primitive test, just an example
       final int r1 = c1.getRed();
