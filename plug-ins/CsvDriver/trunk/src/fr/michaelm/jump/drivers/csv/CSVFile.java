@@ -23,6 +23,7 @@ package fr.michaelm.jump.drivers.csv;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jump.feature.AttributeType;
@@ -97,7 +98,6 @@ public class CSVFile {
      */
     public CSVFile(String filePath) throws IOException, CSVFileException {
         setFilePath(filePath);
-        //this.filePath = filePath;
         //init();
     }
     
@@ -476,14 +476,12 @@ public class CSVFile {
         
     }
     
-    
+
+    /** @return a Feature from a record line.*/
     public Feature getFeature(String line) throws com.vividsolutions.jts.io.ParseException {
-        //List<String> fieldList = new ArrayList<String>();
-        //Matcher matcher = fieldSeparator.getFieldPattern().matcher(line);
         String[] fields = tokenize(line);
         Feature feature = new BasicFeature(schema);
         feature.setGeometry(getGeometry(fields));
-        //List geomCol = Arrays.asList(geometryColumns);
         for (int i = 0 ; i < fields.length ; i++) {
             boolean geom = false; // this is not a geometry column
             for (int j = 0 ; j < geometryColumns.length ; j++) {
@@ -513,17 +511,33 @@ public class CSVFile {
         return feature;
     }
     
-    
-    public Geometry getGeometry(String[] fields) throws com.vividsolutions.jts.io.ParseException, NumberFormatException {
+
+    /** Get the Geometry from an array of String, using the geometryColumn attribute of this CSVFile.*/
+    public Geometry getGeometry(String[] fields) throws com.vividsolutions.jts.io.ParseException, NumberFormatException, ArrayIndexOutOfBoundsException {
         if (geometryColumns.length == 1) {
-            return WKT_READER.read(fields[geometryColumns[0]]);
+            if (fields.length <= geometryColumns[0])
+                throw new IndexOutOfBoundsException("Field " + geometryColumns[0] + " is needed for geometry but "
+                        + Arrays.toString(fields) + " has only " + fields.length + " fields");
+            try {
+                return WKT_READER.read(fields[geometryColumns[0]]);
+            } catch (ParseException e) {
+                throw new ParseException("Can't parse string '" + fields[geometryColumns[0]] +
+                    "' as double with this CSVFile using fieldSeparator '" + fieldSeparator + "'");
+            }
         }
         else if (geometryColumns.length == 2) {
+            if (fields.length <= geometryColumns[0] || fields.length <= geometryColumns[1])
+                throw new IndexOutOfBoundsException("Fields " + geometryColumns[0] + " and " + geometryColumns[1]
+                        + " are needed for geometry but " + Arrays.toString(fields) + " has only " + fields.length + " fields");
             return GEOMETRY_FACTORY.createPoint(new Coordinate(
                 Double.parseDouble(fields[geometryColumns[0]]),
                 Double.parseDouble(fields[geometryColumns[1]])));
         }
         else if (geometryColumns.length == 3) {
+            if (fields.length <= geometryColumns[0] || fields.length <= geometryColumns[1] || fields.length <= geometryColumns[2])
+                throw new IndexOutOfBoundsException("Fields " + geometryColumns[0] + " and " + geometryColumns[1]
+                        + " and " + geometryColumns[2] + " is needed for geometry but " + Arrays.toString(fields)
+                        + " has only " + fields.length + " fields");
             return GEOMETRY_FACTORY.createPoint(new Coordinate(
                 Double.parseDouble(fields[geometryColumns[0]]),
                 Double.parseDouble(fields[geometryColumns[1]]),
@@ -531,8 +545,9 @@ public class CSVFile {
         }
         else return GEOMETRY_FACTORY.createGeometryCollection(new Geometry[0]); 
     }
-    
-    
+
+
+    /** Write a line containing column names to writer.*/
     public void writeSchema(Writer writer) throws IOException {
         if (writer != null && headerLine) {
             for (int i = 0 ; i < columns.length ; i++) {
@@ -547,7 +562,8 @@ public class CSVFile {
         }
     }
     
-    
+
+    /** Write a line containing data types to writer.*/
     public void writeDataTypes(Writer writer) throws IOException {
         if (writer != null && dataTypeLine) {
             for (int i = 0 ; i < dataTypes.length ; i++) {
@@ -567,8 +583,14 @@ public class CSVFile {
         else if (type.equals(AttributeType.GEOMETRY)) return "GEOMETRY";
         else return "STRING";
     }
-    
-    
+
+
+    /**
+     * Write a Feature in the CSV format denoted by this CSVFile object.
+     * @param writer the writer to write to
+     * @param feature the feature to write
+     * @throws IOException
+     */
     public void writeFeature(Writer writer, Feature feature) throws IOException {
         if (writer != null) {
             for (int i = 0 ; i < columns.length ; i++) {
@@ -599,12 +621,13 @@ public class CSVFile {
         return exceptions.size() > 0;
     }
     
-    
+
+    /** Get all exceptions thrown during the CSV File parsing.*/
     public List<Exception> getExceptions() {
         return exceptions;
     }
 
-    
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer("CSVFile Properties={\n");
         sb.append("    filePath        =" + filePath + "\n");

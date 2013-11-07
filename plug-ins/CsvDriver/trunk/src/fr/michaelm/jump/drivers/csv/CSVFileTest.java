@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Michaël MICHAUD
+ * Copyright (C) 2012 Michaï¿½l MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@ public class CSVFileTest {
     
     public static void main(String[] args) {
         try {
-            String dir = "C:\\Users\\Michaël\\DATA\\TESTS\\TestTextFormat\\";
+            String dir = "C:\\Users\\MichaÃ«l\\DATA\\TESTS\\TestTextFormat\\";
             testDir(dir);
             //testPirolCSVFile(dir + "tab_wkt.pirol");
         } catch (IOException ioe) {

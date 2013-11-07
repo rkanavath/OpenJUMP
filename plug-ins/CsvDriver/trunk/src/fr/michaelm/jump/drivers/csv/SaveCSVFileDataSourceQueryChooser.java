@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Michaël MICHAUD
+ * Copyright (C) 2012 Michaï¿½l MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -32,17 +32,21 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.HashMap;
 
+import com.vividsolutions.jump.io.datasource.DataSourceQuery;
 import com.vividsolutions.jump.workbench.datasource.SaveFileDataSourceQueryChooser;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
+import com.vividsolutions.jump.workbench.ui.GUIUtil;
 
 import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 
 /**
  * SaveFileDataSourceQueryChooser for text formats
- * @author Michaël Michaud
+ * @author Micha&euml;l Michaud
  * @version 0.6 (2012-03-25)
  */
 
@@ -92,11 +96,14 @@ public class SaveCSVFileDataSourceQueryChooser extends SaveFileDataSourceQueryCh
             return south;
     }
 
+
     protected Map toProperties(File file) {
         HashMap properties = new HashMap(super.toProperties(file));
-        properties.put(I18NPlug.getI18N("drivers.csv.field-separator"), fieldSeparator.getSelectedItem());
-        properties.put(I18NPlug.getI18N("drivers.csv.data-type-line"), new Boolean(dataTypes.isSelected()));
-        properties.put(I18NPlug.getI18N("drivers.csv.select-attributes"), new Boolean(selectAttributes.isSelected()));
+        properties.put(CSVDataSource.SAVED_AS, true);
+        properties.put(CSVDataSource.CHARSET, Charset.defaultCharset().name());
+        properties.put(CSVDataSource.FIELD_SEPARATOR, fieldSeparator.getSelectedItem());
+        properties.put(CSVDataSource.DATA_TYPE_LINE, dataTypes.isSelected());
+        properties.put(CSVDataSource.ATTRIBUTE_SELECTION, selectAttributes.isSelected());
         return properties;
     }
 

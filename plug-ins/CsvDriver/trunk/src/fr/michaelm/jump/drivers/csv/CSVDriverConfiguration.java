@@ -33,10 +33,7 @@ import org.openjump.core.ui.swing.factory.field.FieldComponentFactoryRegistry;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
@@ -45,12 +42,16 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 0.6.6 (2012-10-02)
+ * @version 0.8.0 (2013-11-07)
  */
+// 0.8.0 (2013-11-07) make csv-driver persistable in an OpenJUMP project (fix a number of problems)
+//                    use fixed english keys for persistence instead of I18N
+//                    (this change breaks the format of previously saved projects containing csv files)
 // 0.7.0 (2013-03-24) make csv-driver persistable in an OpenJUMP project
 // 0.6.6 (2012-10-02) make csv-driver compatible with SaveDatasetsPlugIn and 
 //       improved error management (+I18N)
-// 0.6.5 (2012-08-11) add geometry column with empty geometry collections if missing
+// 0.6.5 (2012-08-11) add geometry column with empty geometry collections if
+//       geometry is missing
 // 0.6.1 (2012-06-19) fix an UnsupportedCharsetException
 // 0.6   (2012-04-16) replace 0.5 version of text driver by a completly new one
 //       merging pirol and michael's drivers
@@ -67,7 +68,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "0.7.0 (2013-07-14)";
+        return "0.8.0 (2013-11-07)";
     }
 
     public void configure(PlugInContext context) throws Exception {
@@ -141,13 +142,35 @@ public class CSVDriverConfiguration extends Extension {
         csvExtensions.add("csv");
 
         DataSourceFileLayerLoader csvOptionsFileLoader = new DataSourceFileLayerLoader(
-            wcontext, CSVDataSource.class, "csv (set options)", csvExtensions);
+            wcontext, CSVDataSource.class, "csv (set options)", csvExtensions){
+
+            protected Map<String,Object> toProperties(URI uri, Map<String,Object> options) {
+                Map<String,Object> properties = super.toProperties(uri, toProperties(options));
+                return properties;
+            }
+
+            // [mmichaud 2013-11-07] change internationalized options to fixed keys properties
+            // This is necessary to use persist CSVDataSource in the project file
+            private final Map<String,Object> toProperties(Map <String,Object> options) {
+                Map<String,Object> properties = new HashMap<String,Object>();
+                properties.put(CSVDataSource.CHARSET, options.get(I18NPlug.getI18N("drivers.csv.encoding")));
+                properties.put(CSVDataSource.COMMENT_LINE_PATTERN, options.get(I18NPlug.getI18N("drivers.csv.comment-line-pattern")));
+                properties.put(CSVDataSource.FIELD_SEPARATOR, options.get(I18NPlug.getI18N("drivers.csv.field-separator")));
+                properties.put(CSVDataSource.HEADER_LINE, options.get(I18NPlug.getI18N("drivers.csv.header-line")));
+                properties.put(CSVDataSource.DATA_TYPE_LINE, options.get(I18NPlug.getI18N("drivers.csv.data-type-line")));
+                properties.put(CSVDataSource.X_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.x")));
+                properties.put(CSVDataSource.Y_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.y")));
+                properties.put(CSVDataSource.Z_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.z")));
+                properties.put(CSVDataSource.WKT_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.wkt")));
+                return properties;
+            }
+        };
  
         csvOptionsFileLoader.addOption(I18NPlug.getI18N("drivers.csv.encoding"), 
                 "CharsetChooser", Charset.defaultCharset(), true);
         csvOptionsFileLoader.addOption(I18NPlug.getI18N("drivers.csv.comment-line-pattern"), 
                 "CommentLinePatternChooser", "^###COMMENT###$", true);
-        csvOptionsFileLoader.addOption(I18NPlug.getI18N("drivers.csv.field-separator"), 
+        csvOptionsFileLoader.addOption(I18NPlug.getI18N("drivers.csv.field-separator"),
                 "FieldSeparatorChooser", "{tab}", true);
         csvOptionsFileLoader.addOption(I18NPlug.getI18N("drivers.csv.header-line"), 
                 "HeaderLineOption", Boolean.TRUE, true);
@@ -169,7 +192,29 @@ public class CSVDriverConfiguration extends Extension {
         wktExtensions.add("wkt");
 
         DataSourceFileLayerLoader wktOptionsFileLoader = new DataSourceFileLayerLoader(
-            wcontext, CSVDataSource.class, "wkt (set options)", wktExtensions);
+            wcontext, CSVDataSource.class, "wkt (set options)", wktExtensions) {
+
+            protected Map<String,Object> toProperties(URI uri, Map<String,Object> options) {
+                Map<String,Object> properties = super.toProperties(uri, toProperties(options));
+                return properties;
+            }
+
+            // [mmichaud 2013-11-07] change internationalized options to fixed keys properties
+            // This is necessary to use persist CSVDataSource in the project file
+            private final Map<String,Object> toProperties(Map <String,Object> options) {
+                Map<String,Object> properties = new HashMap<String,Object>();
+                properties.put(CSVDataSource.CHARSET, options.get(I18NPlug.getI18N("drivers.csv.encoding")));
+                properties.put(CSVDataSource.COMMENT_LINE_PATTERN, options.get(I18NPlug.getI18N("drivers.csv.comment-line-pattern")));
+                properties.put(CSVDataSource.FIELD_SEPARATOR, options.get(I18NPlug.getI18N("drivers.csv.field-separator")));
+                properties.put(CSVDataSource.HEADER_LINE, options.get(I18NPlug.getI18N("drivers.csv.header-line")));
+                properties.put(CSVDataSource.DATA_TYPE_LINE, options.get(I18NPlug.getI18N("drivers.csv.data-type-line")));
+                properties.put(CSVDataSource.X_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.x")));
+                properties.put(CSVDataSource.Y_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.y")));
+                properties.put(CSVDataSource.Z_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.z")));
+                properties.put(CSVDataSource.WKT_COLUMN, options.get(I18NPlug.getI18N("drivers.csv.wkt")));
+                return properties;
+            }
+        };
  
         wktOptionsFileLoader.addOption(I18NPlug.getI18N("drivers.csv.encoding"), 
                 "CharsetChooser", Charset.defaultCharset(), true);
@@ -195,8 +240,9 @@ public class CSVDriverConfiguration extends Extension {
         DataSourceFileLayerLoader csvAutoFileLoader = new DataSourceFileLayerLoader(
             wcontext, CSVDataSource.class, "csv (auto)", csvExtensions) {
 
-            protected Map<String, Object> toProperties(URI uri, Map<String, Object> options) {
-                Map<String,Object> properties = super.toProperties(uri, options);
+            protected Map<String,Object> toProperties(URI uri, Map<String,Object> options) {
+
+                Map<String,Object> properties = super.toProperties(uri, /*toProperties(options)*/ new HashMap<String, Object>());
                 try {
                     final CSVFile csvFile = new AutoCSVFile(uri.getPath());
                     properties.put("CSV_FILE", csvFile);
@@ -206,7 +252,7 @@ public class CSVDriverConfiguration extends Extension {
                     e.printStackTrace();
                 }
                 return properties;
-            }    
+            }
         };
         wcontext.getRegistry().createEntry(FileLayerLoader.KEY, csvAutoFileLoader);
 
@@ -225,6 +271,7 @@ public class CSVDriverConfiguration extends Extension {
             .addSaveDataSourceQueryChooser(saveCSVFileDataSourceQC);
 
     }
+
     
     private Charset[] createCommonCharsetArray() {
         // http://stackoverflow.com/questions/8509339/what-is-the-most-common-encoding-of-each-language

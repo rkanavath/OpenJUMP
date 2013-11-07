@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Michaël MICHAUD
+ * Copyright (C) 2012 Michaï¿½l MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -51,6 +51,9 @@ import com.vividsolutions.jump.task.TaskMonitor;
  * @author Micha&euml;l MICHAUD
  * @version 0.6 (2012-03-25)
  */
+ // 0.8 (2013-11-07) resolve a problem of persistence in Project file
+ //     + several bugs
+ // a layer save as csv will be persisted as an AutoCSVFile
  // 0.6 complete rewrite of the txt driver, becoming the csv driver
  // XYZDatSource driver (replaced by CSVDataSource) 
  // 0.5 (2012-03-04)
@@ -59,6 +62,20 @@ import com.vividsolutions.jump.task.TaskMonitor;
 public class CSVDataSource extends DataSource {
 
     private static final Logger LOG = Logger.getLogger("fr.michaelm.jump.drivers.csv.CSVDataSource");
+
+    public static final String CHARSET              = "Charset";
+    public static final String COMMENT_LINE_PATTERN = "Comment Line Pattern";
+    public static final String FIELD_SEPARATOR      = "Field Separator";
+    public static final String HEADER_LINE          = "Header Line";
+    public static final String DATA_TYPE_LINE       = "Data Type Line";
+
+    public static final String X_COLUMN             = "X-Column";
+    public static final String Y_COLUMN             = "Y-Column";
+    public static final String Z_COLUMN             = "Z-Column";
+    public static final String WKT_COLUMN           = "WKT-Column";
+
+    public static final String SAVED_AS             = "Saved as";
+    public static final String ATTRIBUTE_SELECTION  = "Attribute Selection";
     
     CSVFile csv;
     
@@ -70,31 +87,32 @@ public class CSVDataSource extends DataSource {
                 
                 csv = new CSVFile((String)getProperties().get(FILE_KEY));
                 
-                Charset encoding = (Charset)getProperties().get(I18NPlug.getI18N("drivers.csv.encoding"));
+                Charset encoding = (Charset)getProperties().get(CHARSET);
                 if (encoding != null) csv.setEncoding(encoding.name());
                 
-                Pattern commentLinePattern = (Pattern)getProperties().get(I18NPlug.getI18N("drivers.csv.comment-line-pattern"));
+                Pattern commentLinePattern = (Pattern)getProperties().get(COMMENT_LINE_PATTERN);
                 if (commentLinePattern != null) csv.setCommentLinePattern(commentLinePattern);
                 
-                FieldSeparator separator = (FieldSeparator)getProperties().get(I18NPlug.getI18N("drivers.csv.field-separator"));
+                FieldSeparator separator = (FieldSeparator)getProperties().get(FIELD_SEPARATOR);
                 if (separator != null) csv.setFieldSeparator(separator);
                 
-                Boolean headerLine = (Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.header-line"));
+                Boolean headerLine = (Boolean)getProperties().get(HEADER_LINE);
                 if (headerLine != null) csv.setHeaderLine(headerLine);
                 
-                Boolean dataTypeLine = (Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.data-type-line"));
+                Boolean dataTypeLine = (Boolean)getProperties().get(DATA_TYPE_LINE);
                 if (dataTypeLine != null) csv.setDataTypeLine(dataTypeLine);
                 
                 int x_index = -1, y_index = -1, z_index = -1, wkt_index = -1;
+                // X_COLUMN and Y_COLUMN properties are 1-based while indexes are 0-based
                 try {
-                    x_index = Integer.parseInt((String)getProperties().get(I18NPlug.getI18N("drivers.csv.x"))) - 1;
-                    y_index = Integer.parseInt((String)getProperties().get(I18NPlug.getI18N("drivers.csv.y"))) - 1;
+                    x_index = Integer.parseInt((String)getProperties().get(X_COLUMN)) - 1;
+                    y_index = Integer.parseInt((String)getProperties().get(Y_COLUMN)) - 1;
                 } catch(Exception e) {}
                 try {
-                    z_index = Integer.parseInt((String)getProperties().get(I18NPlug.getI18N("drivers.csv.z"))) - 1;
+                    z_index = Integer.parseInt((String)getProperties().get(Z_COLUMN)) - 1;
                 } catch(Exception e) {}
                 try {
-                    wkt_index = Integer.parseInt((String)getProperties().get(I18NPlug.getI18N("drivers.csv.wkt"))) - 1;
+                    wkt_index = Integer.parseInt((String)getProperties().get(WKT_COLUMN)) - 1;
                 } catch(Exception e) {}
                 int[] geomColumns = null;
                 if (wkt_index > -1) geomColumns = new int[]{wkt_index};
@@ -127,7 +145,6 @@ public class CSVDataSource extends DataSource {
                     try {
                         csv.setFeatureSchema();
                         FeatureCollection fc = new FeatureDataset(csv.getFeatureSchema());
-                        //System.out.println(csv);
                         Iterator<Feature> iterator = csv.iterator();
                         while (iterator.hasNext()) {
                             try {
@@ -153,16 +170,14 @@ public class CSVDataSource extends DataSource {
                 
                 public void executeUpdate(String update, FeatureCollection featureCollection, TaskMonitor monitor)
                         throws Exception {
-                    
-                    //CSVFile csv = new CSVFile();
-                    //csv.setFieldSeparator((FieldSeparator)getProperties().get(I18NPlug.getI18N("drivers.csv.field-separator")));
+
                     csv.setHeaderLine(true);
-                    //csv.setDataTypeLine((Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.data-type-line")));
                     boolean selectAttributes = false;
-                    if (getProperties().get(I18NPlug.getI18N("drivers.csv.select-attributes")) != null) {
-                        selectAttributes = (Boolean)getProperties().get(I18NPlug.getI18N("drivers.csv.select-attributes"));
+                    if (getProperties().get(ATTRIBUTE_SELECTION) != null) {
+                        selectAttributes = (Boolean)getProperties().get(ATTRIBUTE_SELECTION);
                     }
-                    int[] geometryColumns;
+                    Boolean dataTypeLine = (Boolean)getProperties().get(DATA_TYPE_LINE);
+                    if (dataTypeLine != null) csv.setDataTypeLine(dataTypeLine);
                     
                     File output = new File((String)getProperties().get(FILE_KEY));
                     Writer writer = new BufferedWriter(new FileWriter(output));
@@ -177,13 +192,13 @@ public class CSVDataSource extends DataSource {
                         types = new AttributeType[columns.length];
                         int count = 0;
                         for (int i = 0 ; i < columns.length; i++) {
-                            count++;
                             if (columns[i].equals("X")) types[i] = AttributeType.DOUBLE;
                             else if (columns[i].equals("Y")) types[i] = AttributeType.DOUBLE;
                             else if (columns[i].equals("Z")) types[i] = AttributeType.DOUBLE;
                             else break;
+                            count++;
                         }
-                        for (int i = count-1 ; i < columns.length; i++) {
+                        for (int i = count ; i < columns.length; i++) {
                             types[i] = fs.getAttributeType(fs.getAttributeIndex(columns[i]));
                         }
                     }
@@ -204,6 +219,15 @@ public class CSVDataSource extends DataSource {
                         csv.writeFeature(writer, feature);
                     }
                     writer.close();
+
+                    // [mmichaud 2013-11-06] resolve a problem of persistence in the project file
+                    if (getProperties().get(SAVED_AS) != null && ((Boolean)getProperties().get(SAVED_AS)).booleanValue()) {
+                        AutoCSVFile csvFile = new AutoCSVFile(csv.getFilePath());
+                        csv.setEncoding(csv.getCharset().name());
+                        csv.setFieldSeparator(csv.getFieldSeparator());
+                        csvFile.setDataTypeLine(csv.hasDataTypeLine());
+                        getProperties().put("CSV_FILE", csvFile);
+                    }
                 }
                 
                 public void close() {}

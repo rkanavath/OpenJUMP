@@ -54,6 +54,7 @@ public class AutoCSVFile extends CSVFile {
     // Pattern matching a unquoted, integer, decimal or scientic number
     // A non-comment line containing such a pattern is considered as a data line
     private final static Pattern NUMBER_PATTERN = Pattern.compile("[\\s\\|,;]-?\\d+(\\.\\d+([eE][-\\+]\\d+)?)?[\\s\\|,;]");
+
     // Pattern matching a WKT string
     // A non-comment line containing such a pattern is considered as a data line
     private final static Pattern WKT_PATTERN = Pattern.compile("(((MULTI)?(POINT|LINESTRING|POLYGON))|GEOMETRYCOLLECTION) ?( EMPTY|\\([\\(\\)\\d,\\. ]*\\))");
@@ -65,18 +66,21 @@ public class AutoCSVFile extends CSVFile {
     }
 
 
+    /** Create a AutoCSVFile from the file denoted by this filePath.*/
     public AutoCSVFile(String filePath) throws IOException, CSVFileException {
         super(filePath);
     }
-    
+
+
     protected void init() throws IOException, CSVFileException {
         setEncoding(guessEncoding());
         readHeaderLines();
     }
-    
+
+
     /**
-     * This test to guess the encoding of a file has been taken from 
-     * neoedmund'editor at http://code.google.com/p/neoeedit/
+     * Test to guess the encoding of a file (taken from
+     * neoedmund'editor at http://code.google.com/p/neoeedit/)
      */
     private String guessEncoding() throws IOException {
         // Main multi-bytes encodings
