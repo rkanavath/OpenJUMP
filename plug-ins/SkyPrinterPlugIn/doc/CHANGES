@@ -1,5 +1,12 @@
 # for display continuity sake please use 2 spaces instead of tabs
 
+2013-11-16 Matthias Scholz <ms@jammerhund.de>
+  * new build.xml, build.properties for build, run and jar the SkyPrinterPlugin
+    with ant.
+  * documentation in README
+  * some additional changes in conjunction with the ant build
+  * fix typo in german translation
+
 2013-07-23 Matthias Scholz <ms@jammerhund.de>
   * ShowScaleRenderer integrated
   * scale true printing integrated

@@ -101,6 +101,16 @@ public class PrintPlugIn extends AbstractPlugIn {
 
     I18N I18N_ = I18N.getInstance("print");
 
+    /**
+     * Name of this Plugin.
+     */
+    public static final String PRINT_PLUGIN_NAME = "Sky Print Plugin";
+
+    /**
+     * Version of this Plugin.
+     */
+    public static final String PRINT_PLUGIN_VERSION = "1.0";
+
     public static final double INCH = 72;
     public static final double MILLIMETER = 72.0/25.4;
     public double UNIT = MILLIMETER;
