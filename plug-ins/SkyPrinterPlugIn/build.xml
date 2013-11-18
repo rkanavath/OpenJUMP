@@ -28,6 +28,8 @@ build.properties file too.
             destdir="${build.classes}"
             classpathref="classpath"
             includeantruntime="false"
+            source="${java.targetversion}"
+            target="${java.targetversion}"
         />
         <copy todir="${build.classes}" description="we need the i18n files too">
             <fileset dir="${java.src}/main/resources" />

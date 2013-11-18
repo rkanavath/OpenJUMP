@@ -1,5 +1,10 @@
 # for display continuity sake please use 2 spaces instead of tabs
 
+2013-11-18 Matthias Scholz <ms@jammerhund.de>
+  * added some point in TODO
+  * added the option for building a specific java class version in build.xml and
+    build.properties
+
 2013-11-16 Matthias Scholz <ms@jammerhund.de>
   * new build.xml, build.properties for build, run and jar the SkyPrinterPlugin
     with ant.
