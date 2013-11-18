@@ -14,7 +14,9 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import org.openjump.core.ui.plugin.view.NorthArrowRenderer;
 import org.openjump.core.ui.plugin.view.helpclassescale.ShowScaleRenderer;
@@ -38,6 +40,9 @@ public class PDFDriver extends PrinterDriver {
 	protected void render(Graphics2D graphics, Collection layersReversed) 
 	throws Exception {
 		PdfArray pdfArray = new PdfArray();
+
+        ArrayList<PdfIndirectReference> pdfLayerRefs = new ArrayList<PdfIndirectReference>();
+
 		for (Iterator i = layersReversed.iterator(); i.hasNext();) {
 			Layerable layerable = (Layerable) i.next();
 			if (!layerable.isVisible()) continue;
@@ -68,8 +73,17 @@ public class PDFDriver extends PrinterDriver {
 				renderer.clearImageCache();  //free memory
 			}
 			pdfContentByte.endLayer();
-			pdfArray.add(pdfLayer.getRef());
+            // Put refs in a temporary list in order to reverse the list
+            // and get the same order in Pdf and in OpenJUMP LayerTrees
+            pdfLayerRefs.add(pdfLayer.getRef());
+			//pdfArray.add(pdfLayer.getRef());
 		}
+
+        // Reverse the order : order will be the same in OpenJUMP and Pdf LayerTrees
+        Collections.reverse(pdfLayerRefs);
+        for (PdfIndirectReference ref : pdfLayerRefs) {
+            pdfArray.add(ref);
+        }
 
 		if (ScaleBarRenderer.isEnabled(panel)) {
 			PdfLayer pdfLayer = new PdfLayer(ScaleBarRenderer.CONTENT_ID, writer);
