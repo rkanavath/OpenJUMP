@@ -54,6 +54,7 @@ import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.model.Layerable;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
+import com.vividsolutions.jump.workbench.plugin.EnableCheck;
 import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
@@ -104,7 +105,7 @@ public class PrintPlugIn extends AbstractPlugIn {
     /**
      * Name of this Plugin.
      */
-    public static final String PRINT_PLUGIN_NAME = "Sky Print Plugin";
+    public static final String PRINT_PLUGIN_NAME = "SkyPrinterPlugin";
 
     /**
      * Version of this Plugin.
@@ -139,6 +140,14 @@ public class PrintPlugIn extends AbstractPlugIn {
     //  private final String OUT_OF_RANGE          = I18N_.getText("print","out of range");
     private final String FINISHED_MESSAGE      = I18N_.getText("print","PrintPlugIn.Finished-message");
     private final String PRINT_TO_PDF          = I18N_.getText("print","PrintPlugIn.Print-to-PDF");
+    private final String PDF_META_TITLE        = I18N_.getText("print","PrintPlugIn.PDF-title");
+    private final String PDF_META_SUBJECT      = I18N_.getText("print","PrintPlugIn.PDF-subject");
+    private final String PDF_META_AUTHOR       = I18N_.getText("print","PrintPlugIn.PDF-author");
+    private final String PDF_META_KEYWORDS     = I18N_.getText("print","PrintPlugIn.PDF-keywords");
+    private final String PDF_META_TITLE_TOOLTIP    = I18N_.getText("print","PrintPlugIn.PDF-title-tooltip");
+    private final String PDF_META_SUBJECT_TOOLTIP  = I18N_.getText("print","PrintPlugIn.PDF-subject-tooltip");
+    private final String PDF_META_AUTHOR_TOOLTIP   = I18N_.getText("print","PrintPlugIn.PDF-author-tooltip");
+    private final String PDF_META_KEYWORDS_TOOLTIP = I18N_.getText("print","PrintPlugIn.PDF-keywords-tooltip");
     private final String SAVE_PDF              = I18N_.getText("print","PrintPlugIn.Save-PDF");
     private final String PDF_FILES              = I18N_.getText("print","PrintPlugIn.PDF-files");
     private final String PDF_PAGE_WIDTH        = I18N_.getText("print","PrintPlugIn.PDF-page-width");
@@ -179,6 +188,11 @@ public class PrintPlugIn extends AbstractPlugIn {
 	private ArrayList printLayerables;
 	private Envelope windowEnvelope = null;
 	private Geometry fence = null;
+    private JCheckBox printBorderCheckBox;
+    private JTextField pdfTitleTextField;
+    private JTextField pdfSubjectTextField;
+    private JTextField pdfAuthorTextField;
+    private JTextField pdfKeywordsTextField;
 	private double pdfPageWidth = 210;
 	private double pdfPageHeight = 297;
 	private JTextField pageWidthTextField;
@@ -244,6 +258,7 @@ public class PrintPlugIn extends AbstractPlugIn {
         		context.getLayerViewPanel().getSelectionManager()
         		.getSelectedItems().size() == 1);
         dialog.addCheckBox(PRINT_BORDER,printBorder);
+        printBorderCheckBox = dialog.getCheckBox(PRINT_BORDER);
         dialog.addCheckBox(REMOVE_BASIC_FILLS, removeBasicFills);
         dialog.addCheckBox(REMOVE_THEME_FILLS, removeThemeFills);
         dialog.addCheckBox(CHANGE_LINE_WIDTH, changeLineWidth);
@@ -255,6 +270,40 @@ public class PrintPlugIn extends AbstractPlugIn {
 //        dialog.addRadioButton(PRINT_AS_RASTER, PRINT_AS_GROUP, forceRaster,"");
 //        dialog.addRadioButton(PRINT_AS_VECTORS, PRINT_AS_GROUP, forceVector,"");
         dialog.addCheckBox(PRINT_TO_PDF, printToPDF);
+        // add ActionListener to enable/disable the print border checkbox and metadata fields
+        dialog.getCheckBox(PRINT_TO_PDF).addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                JCheckBox printToPdfCheckBox = (JCheckBox) e.getSource();
+                if (printToPdfCheckBox.isSelected()) {
+                    // disable border print, because in PDF print mode there is no border, only on real paper
+                    printBorderCheckBox.setEnabled(false);
+                    // enable the PDF metadata fields
+                    pdfTitleTextField.setEnabled(true);
+                    pdfSubjectTextField.setEnabled(true);
+                    pdfAuthorTextField.setEnabled(true);
+                    pdfKeywordsTextField.setEnabled(true);
+                } else {
+                    // enable border print in "normal" print mode
+                    printBorderCheckBox.setEnabled(true);
+                    // disable the PDF metadata fields
+                    pdfTitleTextField.setEnabled(false);
+                    pdfSubjectTextField.setEnabled(false);
+                    pdfAuthorTextField.setEnabled(false);
+                    pdfKeywordsTextField.setEnabled(false);
+                }
+            }
+        });
+        // PDF metadata
+        pdfTitleTextField = dialog.addTextField("     " + PDF_META_TITLE, context.getTask().getName(), 20, null, PDF_META_TITLE_TOOLTIP);
+        pdfSubjectTextField = dialog.addTextField("     " + PDF_META_SUBJECT, PDF_SUBJECT, 20, null, PDF_META_SUBJECT_TOOLTIP);
+        pdfAuthorTextField = dialog.addTextField("     " + PDF_META_AUTHOR, System.getProperty("user.name"), 20, null, PDF_META_AUTHOR_TOOLTIP);
+        pdfKeywordsTextField = dialog.addTextField("     " + PDF_META_KEYWORDS, "OpenJUMP", 20, null, PDF_META_KEYWORDS_TOOLTIP);
+        // disable the PDF metadata fields
+        pdfTitleTextField.setEnabled(false);
+        pdfSubjectTextField.setEnabled(false);
+        pdfAuthorTextField.setEnabled(false);
+        pdfKeywordsTextField.setEnabled(false);
 		// ComboBox for papersize selection
         dialog.addComboBox(PAPER_SIZE, MediaSizeName.ISO_A4, 
 				Arrays.asList(MediaSizeName.ISO_A3, MediaSizeName.ISO_A4, MediaSizeName.ISO_A5, 
@@ -319,7 +368,19 @@ public class PrintPlugIn extends AbstractPlugIn {
 		});
 		
         // scale true printing
-        dialog.addComboBox(SCALE_PRINT, "", Arrays.asList("", "1:100", "1:1000", "1:2500", "1:5000", "1:10000"), SCALE_PRINT_TOOLTIP);
+        // first determine the actual map scale
+        int actualScale = (int) Math.floor(ScreenScale.getHorizontalMapScale(context.getLayerViewPanel().getViewport()));
+        // build an array with possible, predefined scale factors, including the actual scale
+        int[] scaleFactors = {actualScale, 100, 1000, 2500, 5000, 10000};
+        // sort the array, because the actual scale should in the correct order viewed
+        Arrays.sort(scaleFactors);
+        // for the combobox we need a String array with the scale factors and have to insert "1:" on start
+        String[] stringScaleFactors = new String[scaleFactors.length];
+        for (int i = 0; i < scaleFactors.length; i++) {
+            stringScaleFactors[i] = "1:" + scaleFactors[i];
+        }
+        // add the combobox with the scale factors and the actual scale is selcted
+        dialog.addComboBox(SCALE_PRINT, "1:" + actualScale, Arrays.asList(stringScaleFactors), SCALE_PRINT_TOOLTIP);
         dialog.getComboBox(SCALE_PRINT).setEditable(true);
         
         dialog.setVisible(true);
@@ -335,7 +396,8 @@ public class PrintPlugIn extends AbstractPlugIn {
 //        		setForceRaster(true);        	
 //           	if (dialog.getBoolean(PRINT_AS_VECTORS))
 //           		setForceVector(true);       	    
-           	printBorder = dialog.getBoolean(PRINT_BORDER);
+         	printToPDF = dialog.getBoolean(PRINT_TO_PDF);
+           	printBorder = dialog.getBoolean(PRINT_BORDER) && !printToPDF; // disable, because in PDF print mode there is no border, only on real paper
            	removeBasicFills = dialog.getBoolean(REMOVE_BASIC_FILLS);
         	removeThemeFills = dialog.getBoolean(REMOVE_THEME_FILLS);
         	changeLineWidth = dialog.getBoolean(CHANGE_LINE_WIDTH);
@@ -348,7 +410,6 @@ public class PrintPlugIn extends AbstractPlugIn {
         		resolutionFactor = 1;
 //         	resolutionFactor = dialog.getInteger(RESOLUTION_MULTIPLIER);
 //         	resolutionFactor = dialog.getInteger(RESOLUTION_MULTIPLIER);
-         	printToPDF = dialog.getBoolean(PRINT_TO_PDF);
          	pdfPageWidth = dialog.getDouble(PDF_PAGE_WIDTH);
          	pdfPageHeight = dialog.getDouble(PDF_PAGE_HEIGHT);
 			mediaSizeNameObject = dialog.getComboBox(PAPER_SIZE).getSelectedItem();
@@ -456,11 +517,11 @@ public class PrintPlugIn extends AbstractPlugIn {
     			document.open();
 
 				// add some metadata
-				document.addAuthor(System.getProperty("user.name"));
-				document.addCreator("OpenJUMP SkyPrinterPlugin");
-				document.addKeywords("OpenJUMP");
-				document.addSubject(PDF_SUBJECT);
-				document.addTitle(context.getTask().getName());
+				document.addAuthor(pdfAuthorTextField.getText());
+				document.addCreator("OpenJUMP " + PRINT_PLUGIN_NAME + " " + PRINT_PLUGIN_VERSION);
+				document.addKeywords(pdfKeywordsTextField.getText());
+				document.addSubject(pdfSubjectTextField.getText());
+				document.addTitle(pdfTitleTextField.getText());
 				
     			// step 4: we grab the ContentByte and do some stuff with it
 
@@ -701,7 +762,7 @@ public class PrintPlugIn extends AbstractPlugIn {
     	.add(checkFactory.createTaskWindowMustBeActiveCheck())
     	.add(checkFactory.createAtLeastNLayersMustExistCheck(1));        
     }
-
+    
     /**
      * Construct a printing LayerViewPanel using the PlugInContext's LayerManager
      * @param layerManager
