@@ -188,6 +188,7 @@ public class PrintPlugIn extends AbstractPlugIn {
 	private ArrayList printLayerables;
 	private Envelope windowEnvelope = null;
 	private Geometry fence = null;
+    private JCheckBox printAreaInBoundsCheckBox;
     private JCheckBox printBorderCheckBox;
     private JTextField pdfTitleTextField;
     private JTextField pdfSubjectTextField;
@@ -253,10 +254,23 @@ public class PrintPlugIn extends AbstractPlugIn {
         dialog.getCheckBox(PRINT_AREA_IN_FENCE).setEnabled(
         		context.getLayerViewPanel().getFence() != null);
         
-        dialog.addCheckBox(PRINT_AREA_IN_BOUNDS, printFenceArea);
-        dialog.getCheckBox(PRINT_AREA_IN_BOUNDS).setEnabled(
-        		context.getLayerViewPanel().getSelectionManager()
-        		.getSelectedItems().size() == 1);
+        // printBoundsArea makes only sense if we do not printFenceArea, because we can only do one thing at same time
+        printBoundsArea = printFenceArea ? false : context.getLayerViewPanel()
+                .getSelectionManager().getSelectedItems().size() == 1;
+        printAreaInBoundsCheckBox = dialog.addCheckBox(PRINT_AREA_IN_BOUNDS, printBoundsArea);
+        printAreaInBoundsCheckBox.setEnabled(printBoundsArea);
+        //ActionListener to control the printAreaInBoundsCheckBox
+        dialog.getCheckBox(PRINT_AREA_IN_FENCE).addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                // printBoundsArea makes only sense if we do not printFenceArea, because we can only do one thing at same time
+                printBoundsArea = !((JCheckBox)e.getSource()).isSelected() && context.getLayerViewPanel().getSelectionManager().getSelectedItems().size() == 1;
+                printAreaInBoundsCheckBox.setEnabled(printBoundsArea);
+                // deselect if printBoundsArea is false
+                if (!printBoundsArea) printAreaInBoundsCheckBox.setSelected(false);
+            }
+        });
+        
         dialog.addCheckBox(PRINT_BORDER,printBorder);
         printBorderCheckBox = dialog.getCheckBox(PRINT_BORDER);
         dialog.addCheckBox(REMOVE_BASIC_FILLS, removeBasicFills);
@@ -306,7 +320,7 @@ public class PrintPlugIn extends AbstractPlugIn {
         pdfKeywordsTextField.setEnabled(false);
 		// ComboBox for papersize selection
         dialog.addComboBox(PAPER_SIZE, MediaSizeName.ISO_A4, 
-				Arrays.asList(MediaSizeName.ISO_A3, MediaSizeName.ISO_A4, MediaSizeName.ISO_A5, 
+				Arrays.asList(MediaSizeName.ISO_A0, MediaSizeName.ISO_A1, MediaSizeName.ISO_A2, MediaSizeName.ISO_A3, MediaSizeName.ISO_A4, MediaSizeName.ISO_A5, 
 				MediaSizeName.NA_LETTER, PAPER_SIZE_CUSTOM), PAPER_SIZE_TOOLTIP);
 		// add a Listener for managing the width and height fields
 		dialog.getComboBox(PAPER_SIZE).addActionListener(new ActionListener() {
@@ -375,10 +389,11 @@ public class PrintPlugIn extends AbstractPlugIn {
         // sort the array, because the actual scale should in the correct order viewed
         Arrays.sort(scaleFactors);
         // for the combobox we need a String array with the scale factors and have to insert "1:" on start
-        String[] stringScaleFactors = new String[scaleFactors.length];
+        String[] stringScaleFactors = new String[scaleFactors.length + 1];
         for (int i = 0; i < scaleFactors.length; i++) {
             stringScaleFactors[i] = "1:" + scaleFactors[i];
         }
+        stringScaleFactors[scaleFactors.length] = "maximum size";
         // add the combobox with the scale factors and the actual scale is selcted
         dialog.addComboBox(SCALE_PRINT, "1:" + actualScale, Arrays.asList(stringScaleFactors), SCALE_PRINT_TOOLTIP);
         dialog.getComboBox(SCALE_PRINT).setEditable(true);
@@ -818,6 +833,12 @@ public class PrintPlugIn extends AbstractPlugIn {
         		printEnvelope = computePrintPageEnvelope(windowEnvelope, pageFormat);
         	}
     	}
+        if (scaleValue.equals("maximum size")) {
+            System.out.println("printEnvelope:\t" + printEnvelope);
+            System.out.println("windowEnvelope:\t" + windowEnvelope);
+//            printEnvelope = computePrintPageEnvelope(windowEnvelope, pageFormat);
+        }
+
     	int extentInPixelsX = (int) (pageFormat.getImageableWidth() * resolutionFactor);
     	int extentInPixelsY = (int) (pageFormat.getImageableHeight() * resolutionFactor);
     	if (!expandToFit){
@@ -827,14 +848,18 @@ public class PrintPlugIn extends AbstractPlugIn {
     	printPanel.setSize(extentInPixelsX, extentInPixelsY);
 
         // the following is for scale true printing
-        // try to parse the scaleValue from the ComboBox
-        double scale;
-        try {
-            // first remove "1:" and second all non numeric stuff
-            scale = Double.parseDouble(scaleValue.replaceFirst("^.*:", "").replaceAll("[^0-9]*", ""));
-        }
-        catch (NumberFormatException nfe) {
-            scale = 0;
+        // we print only in the specified scale, if we are not in printFenceArea
+        // or printBoundsArea mode, because this makes no sense.
+        double scale = 0;
+        if (!(printFenceArea && (fence != null)) && !printBoundsArea) {
+            // try to parse the scaleValue from the ComboBox
+            try {
+                // first remove "1:" and second all non numeric stuff
+                scale = Double.parseDouble(scaleValue.replaceFirst("^.*:", "").replaceAll("[^0-9]*", ""));
+            }
+            catch (NumberFormatException nfe) {
+                scale = 0;
+            }
         }
         // if we have a valid scale value, we scale
         if (scale > 0) {

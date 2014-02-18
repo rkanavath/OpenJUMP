@@ -1,5 +1,15 @@
 # for display continuity sake please use 2 spaces instead of tabs
 
+2014.02.18 Matthias Scholz <ms@jammerhund.de>
+  * Finnish translation added
+  * PrintPlugin:
+    - Papersize A0-A2 added
+    - bugfix in initLayerViewPanel() for "Print Area in Fence" and "Print Area
+      in Selection Bounds" is now correctly printed
+    - better behaviour of the selection and enabled state of the "Print Area in
+      Fence" and "Print Area in Selection Bounds" buttouns in execute()
+  * start working on "maximum size" scale feature
+
 2013-11-22 Matthias Scholz <ms@jammerhund.de>
   * PrintPlugin:
     - show the actual map scale in correct sort order in the scale true combobox
