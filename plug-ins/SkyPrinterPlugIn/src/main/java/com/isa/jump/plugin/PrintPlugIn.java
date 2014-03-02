@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jump.I18N;
+import com.vividsolutions.jump.geom.EnvelopeUtil;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.datasource.SaveFileDataSourceQueryChooser;
 import com.vividsolutions.jump.workbench.model.Layer;
@@ -164,6 +165,8 @@ public class PrintPlugIn extends AbstractPlugIn {
 	private final String PDF_SUBJECT           = I18N_.getText("print", "PrintPlugIn.PDF-Subject");
     private final String SCALE_PRINT           = I18N_.getText("print", "PrintPlugIn.scale");
     private final String SCALE_PRINT_TOOLTIP   = I18N_.getText("print", "PrintPlugIn.scale-true-printing");
+    private final String SCALE_MAXIMUM_VIEW    = I18N_.getText("print", "PrintPlugIn.scale-maximum-view");
+    private final String SCALE_FULL_EXTENT    = I18N_.getText("print", "PrintPlugIn.scale-full-extent");
 
 	private boolean printToPDF = false;
 	private PlugInContext pluginContext;
@@ -389,11 +392,12 @@ public class PrintPlugIn extends AbstractPlugIn {
         // sort the array, because the actual scale should in the correct order viewed
         Arrays.sort(scaleFactors);
         // for the combobox we need a String array with the scale factors and have to insert "1:" on start
-        String[] stringScaleFactors = new String[scaleFactors.length + 1];
+        String[] stringScaleFactors = new String[scaleFactors.length + 2];
         for (int i = 0; i < scaleFactors.length; i++) {
             stringScaleFactors[i] = "1:" + scaleFactors[i];
         }
-        stringScaleFactors[scaleFactors.length] = "maximum size";
+        stringScaleFactors[scaleFactors.length] = SCALE_MAXIMUM_VIEW;
+        stringScaleFactors[scaleFactors.length + 1] = SCALE_FULL_EXTENT;
         // add the combobox with the scale factors and the actual scale is selcted
         dialog.addComboBox(SCALE_PRINT, "1:" + actualScale, Arrays.asList(stringScaleFactors), SCALE_PRINT_TOOLTIP);
         dialog.getComboBox(SCALE_PRINT).setEditable(true);
@@ -823,20 +827,19 @@ public class PrintPlugIn extends AbstractPlugIn {
     protected void initLayerViewPanel(PageFormat pageFormat) throws Exception {
     	if ((printFenceArea) && (fence != null)) {
     		printEnvelope = computePrintPageEnvelope(fence.getEnvelopeInternal(),
-    				pageFormat);
-    	} else {
-        	if (printBoundsArea) {
-        		printEnvelope = computePrintPageEnvelope(((Geometry) (pluginContext.getLayerViewPanel().getSelectionManager()
-                		.getSelectedItems().iterator().next())).getEnvelopeInternal(),
-        				pageFormat);
-        	} else {
-        		printEnvelope = computePrintPageEnvelope(windowEnvelope, pageFormat);
-        	}
-    	}
-        if (scaleValue.equals("maximum size")) {
-            System.out.println("printEnvelope:\t" + printEnvelope);
-            System.out.println("windowEnvelope:\t" + windowEnvelope);
-//            printEnvelope = computePrintPageEnvelope(windowEnvelope, pageFormat);
+                pageFormat);
+    	} else if (printBoundsArea) {
+            printEnvelope = computePrintPageEnvelope(((Geometry) (pluginContext.getLayerViewPanel().getSelectionManager()
+                .getSelectedItems().iterator().next())).getEnvelopeInternal(),
+                pageFormat);
+        } else if (scaleValue.equals(SCALE_MAXIMUM_VIEW)) {
+            // we print the on screen area/view in the maximum on the paper: printEnvelope = LayerViewpanels Envelope
+            printEnvelope = computePrintPageEnvelope(pluginContext.getLayerViewPanel().getViewport().getEnvelopeInModelCoordinates(), pageFormat);
+        } else if (scaleValue.equals(SCALE_FULL_EXTENT)) {
+            // we print in the maxumum extent of all visible layers minus 0.03 (for a small border)
+            printEnvelope = computePrintPageEnvelope(EnvelopeUtil.bufferByFraction(pluginContext.getLayerManager().getEnvelopeOfAllLayers(true), 0.03), pageFormat);
+        } else {
+            printEnvelope = computePrintPageEnvelope(windowEnvelope, pageFormat);
         }
 
     	int extentInPixelsX = (int) (pageFormat.getImageableWidth() * resolutionFactor);
@@ -851,7 +854,7 @@ public class PrintPlugIn extends AbstractPlugIn {
         // we print only in the specified scale, if we are not in printFenceArea
         // or printBoundsArea mode, because this makes no sense.
         double scale = 0;
-        if (!(printFenceArea && (fence != null)) && !printBoundsArea) {
+        if (!(printFenceArea && (fence != null)) && !printBoundsArea && !scaleValue.equals(SCALE_MAXIMUM_VIEW) && !scaleValue.equals(SCALE_FULL_EXTENT)) {
             // try to parse the scaleValue from the ComboBox
             try {
                 // first remove "1:" and second all non numeric stuff

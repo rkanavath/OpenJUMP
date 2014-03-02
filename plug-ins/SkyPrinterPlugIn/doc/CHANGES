@@ -1,5 +1,10 @@
 # for display continuity sake please use 2 spaces instead of tabs
 
+2014.03.02 Matthias Scholz <ms@jammerhund.de>
+  * PrintPlugin:
+    - new scale modes for printing the maximum of the screen view and the full
+      map extent
+
 2014.02.18 Matthias Scholz <ms@jammerhund.de>
   * Finnish translation added
   * PrintPlugin:
