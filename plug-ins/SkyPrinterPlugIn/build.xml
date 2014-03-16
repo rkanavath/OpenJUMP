@@ -10,7 +10,7 @@ build.properties file too.
     <property name="java.src" value="src" />
     <property name="build.targetpath" value="target" />
     <property name="build.classes" value="${build.targetpath}/classes" />
-    <property name="jar.filename" value="${build.targetpath}/SkyPrinterPlugIn.jar" />
+    <property name="jar.filename" value="${build.targetpath}/SkyPrinterPlugIn-${version.number}.jar" />
 
     <path id="classpath">
         <fileset dir="${openjump.svn}/lib" includes="**/*.jar" />

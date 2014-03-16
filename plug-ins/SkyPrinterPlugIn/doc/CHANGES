@@ -1,5 +1,11 @@
 # for display continuity sake please use 2 spaces instead of tabs
 
+2014.03.16 Matthias Scholz <ms@jammerhund.de>
+  * PrintPlugin:
+    - bugfix in the printdialog: the PDF property fields was not corretly
+      in enabled/disabled state
+  * Introduce a version.numer property in the build stuff
+
 2014.03.02 Matthias Scholz <ms@jammerhund.de>
   * PrintPlugin:
     - new scale modes for printing the maximum of the screen view and the full

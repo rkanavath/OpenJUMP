@@ -317,10 +317,10 @@ public class PrintPlugIn extends AbstractPlugIn {
         pdfAuthorTextField = dialog.addTextField("     " + PDF_META_AUTHOR, System.getProperty("user.name"), 20, null, PDF_META_AUTHOR_TOOLTIP);
         pdfKeywordsTextField = dialog.addTextField("     " + PDF_META_KEYWORDS, "OpenJUMP", 20, null, PDF_META_KEYWORDS_TOOLTIP);
         // disable the PDF metadata fields
-        pdfTitleTextField.setEnabled(false);
-        pdfSubjectTextField.setEnabled(false);
-        pdfAuthorTextField.setEnabled(false);
-        pdfKeywordsTextField.setEnabled(false);
+        pdfTitleTextField.setEnabled(printToPDF);
+        pdfSubjectTextField.setEnabled(printToPDF);
+        pdfAuthorTextField.setEnabled(printToPDF);
+        pdfKeywordsTextField.setEnabled(printToPDF);
 		// ComboBox for papersize selection
         dialog.addComboBox(PAPER_SIZE, MediaSizeName.ISO_A4, 
 				Arrays.asList(MediaSizeName.ISO_A0, MediaSizeName.ISO_A1, MediaSizeName.ISO_A2, MediaSizeName.ISO_A3, MediaSizeName.ISO_A4, MediaSizeName.ISO_A5, 
