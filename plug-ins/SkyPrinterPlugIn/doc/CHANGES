@@ -1,5 +1,14 @@
 # for display continuity sake please use 2 spaces instead of tabs
 
+2014.03.31 Matthias Scholz <ms@jammerhund.de>
+  * PrintPlugin:
+    - attributeSet from printDialog() removed, to get a system print dialog
+      in Windows and not the Java one. The Java one may be confused for the user
+      because it shows the page size and color settings too. But in some
+      environments this setting do not run. Now the user can only change the
+      printer setting via the properties button in the native printer driver
+      setup.
+
 2014.03.16 Matthias Scholz <ms@jammerhund.de>
   * PrintPlugin:
     - bugfix in the printdialog: the PDF property fields was not corretly

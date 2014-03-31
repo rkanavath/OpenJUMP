@@ -721,7 +721,8 @@ public class PrintPlugIn extends AbstractPlugIn {
 			// do not get the printservices if a JobName is set during PrintServiceLookup
     		attributeSet.add(new JobName(context.getTask().getName(), null));
     		printerJob.setPrintService(printService);
-    		if (printerJob.printDialog(attributeSet)) { //OK pressed		
+                // 2014.03.31 <ms> attributeSet from printDialog() removed, to get a system print dialog in Windows and not the Java one
+    		if (printerJob.printDialog()) { //OK pressed		
     			PageFormat pageFormat = PrinterDriver
     				.getPageFormat(attributeSet,printerJob);
     			printerJob.setPrintable(printerDriver, pageFormat);
