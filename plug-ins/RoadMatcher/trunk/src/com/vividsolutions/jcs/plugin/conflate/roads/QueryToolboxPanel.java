@@ -351,7 +351,7 @@ public class QueryToolboxPanel extends JPanel {
               .protectedGetLayerToTableModelMap(this).get(layer);
         }
         }, context, (TaskFrame) context.getWorkbench().getFrame()
-            .getActiveInternalFrame(), context);
+            .getActiveTaskFrame(), context);
     }
   };
 }

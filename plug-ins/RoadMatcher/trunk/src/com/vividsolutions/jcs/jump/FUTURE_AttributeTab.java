@@ -82,7 +82,7 @@ public class FUTURE_AttributeTab extends AttributeTab {
         }, new MultiEnableCheck().add(taskFrameEnableCheck).add(
                 layersEnableCheck).add(rowsSelectedEnableCheck));
         toolBar.add(new JButton(), "Zoom To Full Extent", IconLoader
-                .icon("SmallWorld.gif"), new ActionListener() {
+                .icon("globe3_16.png"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     taskFrame.getLayerViewPanel().getViewport()
