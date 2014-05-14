@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <root>
   <element xml-name="file-path" java-name="filePath"/>
+  <element xml-name="entry-name" java-name="entryName"/>
 </root>

@@ -22,6 +22,7 @@ package fr.michaelm.jump.drivers.csv;
 
 import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.FeatureSchema;
+import com.vividsolutions.jump.io.CompressedFile;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -39,9 +40,7 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
  * An extension of CSVFile with methods to guess the internal structure of the
  * file to parse.
  * @author Micha&euml;l MICHAUD
- * @version 0.6.5 (2012-08-11) add empty GeometryCollections if geometry column 
- * is missing
- * @since 0.6
+ * @version 0.9.0 (2014-05-14)
  */
 public class AutoCSVFile extends CSVFile {
 
@@ -72,9 +71,19 @@ public class AutoCSVFile extends CSVFile {
     }
 
 
+    /**
+     * Create a AutoCSVFile from the file species by this filePath and,
+     * if filePath specifies a compressed file, by this entryName.
+     */
+    public AutoCSVFile(String filePath, String entryName) throws IOException, CSVFileException {
+        super(filePath, entryName);
+    }
+
+
     protected void init() throws IOException, CSVFileException {
         setEncoding(guessEncoding());
         readHeaderLines();
+        initialized = true;
     }
 
 
@@ -86,7 +95,8 @@ public class AutoCSVFile extends CSVFile {
         // Main multi-bytes encodings
         String local_charset = Charset.defaultCharset().name();
         String[] encodings = {"UTF-8", local_charset, "Shift_JIS", "UTF-16"};
-        FileInputStream in = new FileInputStream(getFilePath());
+        System.out.println("guessEncoding");
+        InputStream in = CompressedFile.openFile(getFilePath(), getEntryName());
         final int defsize = 4096*2;
         int len = Math.min(defsize, (int)new File(getFilePath()).length());
         try {
@@ -112,8 +122,9 @@ public class AutoCSVFile extends CSVFile {
     
     
     private void readHeaderLines() throws IOException, CSVFileException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-            new FileInputStream(getFilePath()), getCharset()));
+        System.out.println("readHeader");
+        InputStream is = CompressedFile.openFile(getFilePath(), getEntryName());
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, getCharset()));
         // line1 will try to get the header line containing column names (if any)
         String line1 = null;
         // line2 will try to get the data type line (if any)
@@ -252,7 +263,7 @@ public class AutoCSVFile extends CSVFile {
      * Try to guess geometry columns from the column names and create the 
      * FeatureSchema
      */ 
-    protected void guessGeometryColumns(String line) {
+    protected void guessGeometryColumns(String line) throws CSVFileException, IOException {
         String[] columns = getColumns();
         if (columns != null && columns.length>0) {
             int wkt = -1; 

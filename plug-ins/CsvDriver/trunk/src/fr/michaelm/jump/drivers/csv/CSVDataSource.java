@@ -49,16 +49,17 @@ import com.vividsolutions.jump.task.TaskMonitor;
  * (csv like).</p>
  * Replace the previous XYZDataSource
  * @author Micha&euml;l MICHAUD
- * @version 0.6 (2012-03-25)
+ * @version 0.9.0 (2014-05-14)
  */
- // 0.8 (2013-11-07) resolve a problem of persistence in Project file
- //     + several bugs
- // a layer save as csv will be persisted as an AutoCSVFile
- // 0.6 complete rewrite of the txt driver, becoming the csv driver
- // XYZDatSource driver (replaced by CSVDataSource) 
- // 0.5 (2012-03-04)
- // 0.2 (2009-10-07) use split(String,-1) instead of split(String)
- // 0.1 (2009-09-06) 
+ // 0.9.0 (2014-05-14) handle csv resources included in a compressed file
+ // 0.8.0 (2013-11-07) resolve a problem of persistence in Project file
+ //       + several bugs
+ //       a layer save as csv will be persisted as an AutoCSVFile
+ // 0.6   complete rewrite of the txt driver, becoming the csv driver
+ //       XYZDatSource driver (replaced by CSVDataSource)
+ // 0.5   (2012-03-04)
+ // 0.2   (2009-10-07) use split(String,-1) instead of split(String)
+ // 0.1   (2009-09-06)
 public class CSVDataSource extends DataSource {
 
     private static final Logger LOG = Logger.getLogger("fr.michaelm.jump.drivers.csv.CSVDataSource");
@@ -85,7 +86,7 @@ public class CSVDataSource extends DataSource {
             
             if (csv == null) {
                 
-                csv = new CSVFile((String)getProperties().get(FILE_KEY));
+                csv = new CSVFile((String)getProperties().get(FILE_KEY), (String)getProperties().get("CompressedFile"));
                 
                 Charset encoding = (Charset)getProperties().get(CHARSET);
                 if (encoding != null) csv.setEncoding(encoding.name());
@@ -222,7 +223,7 @@ public class CSVDataSource extends DataSource {
 
                     // [mmichaud 2013-11-06] resolve a problem of persistence in the project file
                     if (getProperties().get(SAVED_AS) != null && ((Boolean)getProperties().get(SAVED_AS)).booleanValue()) {
-                        AutoCSVFile csvFile = new AutoCSVFile(csv.getFilePath());
+                        AutoCSVFile csvFile = new AutoCSVFile(csv.getFilePath(), csv.getEntryName());
                         csv.setEncoding(csv.getCharset().name());
                         csv.setFieldSeparator(csv.getFieldSeparator());
                         csvFile.setDataTypeLine(csv.hasDataTypeLine());

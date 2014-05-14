@@ -20,6 +20,7 @@
 
 package fr.michaelm.jump.drivers.csv;
 
+import com.vividsolutions.jump.io.datasource.DataSource;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.datasource.DataSourceQueryChooserManager;
 import com.vividsolutions.jump.workbench.plugin.Extension;
@@ -42,8 +43,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 0.8.0 (2013-11-07)
+ * @version 0.9.0 (2014-05-14)
  */
+// 0.9.0 (2014-05-14) handle csv resources included in a compressed file
 // 0.8.0 (2013-11-07) make csv-driver persistable in an OpenJUMP project (fix a number of problems)
 //                    use fixed english keys for persistence instead of I18N
 //                    (this change breaks the format of previously saved projects containing csv files)
@@ -68,7 +70,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "0.8.0 (2013-11-07)";
+        return "0.9.0 (2014-05-14)";
     }
 
     public void configure(PlugInContext context) throws Exception {
@@ -244,7 +246,7 @@ public class CSVDriverConfiguration extends Extension {
 
                 Map<String,Object> properties = super.toProperties(uri, /*toProperties(options)*/ new HashMap<String, Object>());
                 try {
-                    final CSVFile csvFile = new AutoCSVFile(uri.getPath());
+                    final CSVFile csvFile = new AutoCSVFile((String)properties.get(DataSource.FILE_KEY), (String)properties.get("CompressedFile"));
                     properties.put("CSV_FILE", csvFile);
                 } catch(IOException e) {
                     e.printStackTrace();

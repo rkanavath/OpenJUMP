@@ -30,9 +30,11 @@ import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.BasicFeature;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.feature.FeatureSchema;
+import com.vividsolutions.jump.io.CompressedFile;
 import com.vividsolutions.jump.util.FlexibleDateParser;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
@@ -49,9 +51,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.COMMA;
  * This class can be extended by specialized classes dedicated to specific
  * formats.
  * @author Micha&euml;l MICHAUD
- * @version 0.6 (2012-03-25)
- * @since 0.6
+ * @version 0.9 (2014-05-14)
  */
+// 0.9 updates to manage compressed files
 // 0.6 is a complete re-write of the text driver for OpenJUMP
 //     it includes reading of Pirol csv formatted files, and 
 //     could read the csvt (vrt ?) files used by OGR tools in
@@ -68,6 +70,7 @@ public class CSVFile {
     
     // Main file properties
     private String filePath;
+    private String entryName; // if the filePath specifies a compressed file
     private Charset charset = Charset.defaultCharset();
     private Pattern commentLinePattern = Pattern.compile("^#");
     private FieldSeparator fieldSeparator = COMMA;
@@ -80,7 +83,9 @@ public class CSVFile {
     private int[] geometryColumns = new int[0];
     //private HashMap columnMapping;
     private FeatureSchema schema;
-    
+
+    boolean initialized = false;
+
     private final List<Exception> exceptions = new ArrayList<Exception>();
     
     
@@ -98,7 +103,16 @@ public class CSVFile {
      */
     public CSVFile(String filePath) throws IOException, CSVFileException {
         setFilePath(filePath);
-        //init();
+        init();
+    }
+
+    /**
+     * @param filePath the path of the CSV file to read
+     */
+    public CSVFile(String filePath, String entryName) throws IOException, CSVFileException {
+        setFilePath(filePath);
+        setEntryName(entryName);
+        init();
     }
     
     
@@ -107,8 +121,9 @@ public class CSVFile {
      * parameters from a configuration file or from the file header.
      */
     protected void init() throws IOException, CSVFileException {
+        initialized = true;
     }
-    
+
     
     /**
      * Get the file path of this CSV file to read.
@@ -116,15 +131,31 @@ public class CSVFile {
     public String getFilePath() {
         return filePath;
     }
-    
+
+
+    /**
+     * Returns the entryName of this CSV resource if the filePath specifies
+     * a compressed file. Return null otherwise.
+     */
+    public String getEntryName() { return entryName; }
+
     
     /**
      * Set this CSV file path.
      */
     public void setFilePath(String filePath) throws IOException, CSVFileException {
         this.filePath = filePath;
-        init();
     }
+
+
+    /**
+     * Set the entryName of this CSV resource in a compressed file.
+     * @param entryName
+     */
+    public void setEntryName(String entryName) {
+        this.entryName = entryName;
+    }
+
 
     /**
      * Get this CSV driver charset.
@@ -243,9 +274,9 @@ public class CSVFile {
 
 
     /**
-     * Tokenize the line using thi CSVFile fieldSeparator.
+     * Tokenize the line using this CSVFile fieldSeparator.
      */
-    public String[] tokenize(String line) {
+    public String[] tokenize(String line) throws CSVFileException, IOException {
         List<String> tokens = new ArrayList<String>();
         Matcher matcher = fieldSeparator.getFieldPattern().matcher(line);
         while (!matcher.hitEnd() && matcher.find()) {
@@ -298,10 +329,13 @@ public class CSVFile {
      */
     public void setFeatureSchema() throws IOException, CSVFileException {
         if (schema != null) return;
+        if (!initialized) init();
+        InputStream in = null;
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(getFilePath()), getCharset()));
+            System.out.println("setFeatureSchema");
+            in = CompressedFile.openFile(getFilePath(), getEntryName());
+            br = new BufferedReader(new InputStreamReader(in, getCharset()));
             String line;
             String line1 = null;
             String line2 = null;
@@ -346,6 +380,7 @@ public class CSVFile {
         }
         finally {
             if (br != null) br.close();
+            if (in != null) in.close();
         }
     }
     
@@ -366,7 +401,7 @@ public class CSVFile {
     }
     
     
-    protected void setAttributeTypes(String line) {
+    protected void setAttributeTypes(String line) throws CSVFileException, IOException {
         if (line != null && schema == null) {
             List<AttributeType> typeList = new ArrayList<AttributeType>();
             Matcher matcher = getFieldSeparator().getFieldPattern().matcher(line);
@@ -415,7 +450,7 @@ public class CSVFile {
      * Exceptions are not thrown but added to the CSVFile exception list.
      */
     public Iterator<Feature> iterator() throws IOException, CSVFileException {
-        
+        if (!initialized) init();
         if (schema == null) {
             throw new CSVFileException(CSVFileException.DRIVER_NOT_CONFIGURED, this);
         }
@@ -423,14 +458,15 @@ public class CSVFile {
         
         return new Iterator<Feature>() {
             String line;
-            
+            InputStream in;
             BufferedReader br;
             {
                 // Skip comment and header lines
                 int headerSize = headerLine ? 1 : 0;
                 headerSize = dataTypeLine ? 2 : headerSize;
-                br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(getFilePath()), getCharset()));
+                System.out.println("iterator");
+                in = CompressedFile.openFile(getFilePath(), getEntryName());
+                br = new BufferedReader(new InputStreamReader(in, getCharset()));
                 int count = 0;
                 while (null != (line=br.readLine())) {
                     if (line.trim().length() == 0) continue;
@@ -442,6 +478,10 @@ public class CSVFile {
             public boolean hasNext() {
                 if (br!=null && line==null) {
                     try {br.close();}
+                    catch(IOException e) {}
+                }
+                if (in!=null && line==null) {
+                    try {in.close();}
                     catch(IOException e) {}
                 }
                 return line != null;
@@ -478,7 +518,7 @@ public class CSVFile {
     
 
     /** @return a Feature from a record line.*/
-    public Feature getFeature(String line) throws com.vividsolutions.jts.io.ParseException {
+    public Feature getFeature(String line) throws com.vividsolutions.jts.io.ParseException, CSVFileException, IOException {
         String[] fields = tokenize(line);
         Feature feature = new BasicFeature(schema);
         feature.setGeometry(getGeometry(fields));
@@ -513,7 +553,7 @@ public class CSVFile {
     
 
     /** Get the Geometry from an array of String, using the geometryColumn attribute of this CSVFile.*/
-    public Geometry getGeometry(String[] fields) throws com.vividsolutions.jts.io.ParseException, NumberFormatException, ArrayIndexOutOfBoundsException {
+    private Geometry getGeometry(String[] fields) throws com.vividsolutions.jts.io.ParseException, NumberFormatException, ArrayIndexOutOfBoundsException {
         if (geometryColumns.length == 1) {
             if (fields.length <= geometryColumns[0])
                 throw new IndexOutOfBoundsException("Field " + geometryColumns[0] + " is needed for geometry but "
