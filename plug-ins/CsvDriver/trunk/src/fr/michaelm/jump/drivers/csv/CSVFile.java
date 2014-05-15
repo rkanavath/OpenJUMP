@@ -333,7 +333,6 @@ public class CSVFile {
         InputStream in = null;
         BufferedReader br = null;
         try {
-            System.out.println("setFeatureSchema");
             in = CompressedFile.openFile(getFilePath(), getEntryName());
             br = new BufferedReader(new InputStreamReader(in, getCharset()));
             String line;
@@ -464,7 +463,6 @@ public class CSVFile {
                 // Skip comment and header lines
                 int headerSize = headerLine ? 1 : 0;
                 headerSize = dataTypeLine ? 2 : headerSize;
-                System.out.println("iterator");
                 in = CompressedFile.openFile(getFilePath(), getEntryName());
                 br = new BufferedReader(new InputStreamReader(in, getCharset()));
                 int count = 0;

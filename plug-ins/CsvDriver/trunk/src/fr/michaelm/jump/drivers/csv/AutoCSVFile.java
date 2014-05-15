@@ -95,7 +95,6 @@ public class AutoCSVFile extends CSVFile {
         // Main multi-bytes encodings
         String local_charset = Charset.defaultCharset().name();
         String[] encodings = {"UTF-8", local_charset, "Shift_JIS", "UTF-16"};
-        System.out.println("guessEncoding");
         InputStream in = CompressedFile.openFile(getFilePath(), getEntryName());
         final int defsize = 4096*2;
         int len = Math.min(defsize, (int)new File(getFilePath()).length());
@@ -122,7 +121,6 @@ public class AutoCSVFile extends CSVFile {
     
     
     private void readHeaderLines() throws IOException, CSVFileException {
-        System.out.println("readHeader");
         InputStream is = CompressedFile.openFile(getFilePath(), getEntryName());
         BufferedReader br = new BufferedReader(new InputStreamReader(is, getCharset()));
         // line1 will try to get the header line containing column names (if any)
