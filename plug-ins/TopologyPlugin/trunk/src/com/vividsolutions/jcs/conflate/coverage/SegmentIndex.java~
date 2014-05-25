@@ -1,0 +1,85 @@
+package com.vividsolutions.jcs.conflate.coverage;
+
+import java.util.*;
+import com.vividsolutions.jts.geom.*;
+
+import com.vividsolutions.jcs.qa.FeatureSegment;
+
+/**
+ * An index of line segments.
+ *
+ * @author unascribed
+ * @version 1.0
+ */
+public class SegmentIndex {
+
+    // mmichaud is this structure performant ?
+    // what about a rtree index
+    // otherwise, HashSet should be about 2 x faster than TreeSet
+    // but it would need a hashCode implementation in LineSegment [mmichaud 2010-01-19]
+    //private Set<LineSegment> segments = new TreeSet<LineSegment>();
+    private Set<FeatureSegment> segments = new HashSet<FeatureSegment>();
+    //private Map<Integer,LineSegment> segments = new HashMap<Integer,LineSegment>();
+    private LineSegment querySegment = new LineSegment();
+
+    public SegmentIndex() {}
+
+    public void add(FeatureSegment segment) {
+        //NormalizedSegment segmentToAdd = new NormalizedSegment(segment);
+        //segmentToAdd.normalize();
+        //segments.put(getHashCode(segment), segmentToAdd);
+        segments.add(segment);
+    }
+    
+    //public boolean contains(Coordinate p0, Coordinate p1) {
+    //    //querySegment.p0 = p0;
+    //    //querySegment.p1 = p1;
+    //    //return segments.containsKey(getHashCode(querySegment));
+    //    //querySegment.normalize();
+    //    //if (segments.contains(querySegment)) return true;
+    //    //querySegment.p0 = p1;
+    //    //querySegment.p1 = p0;
+    //    return segments.contains(new NormalizedSegment(p0, p1));
+    //}
+
+    public boolean contains(FeatureSegment testSegment) {
+        //return segments.containsKey(getHashCode(testSegment));
+        //if (segments.contains(testSeg)) return true;
+        //querySegment.p0 = testSegment.p1;
+        //querySegment.p1 = testSegment.p0;
+        //return segments.contains(querySegment);
+        
+        //return segs.contains(querySeg);
+        //return contains(testSegment.p0, testSegment.p1);
+        return segments.contains(testSegment);
+    }
+    
+    public int size() {return segments.size();}
+    
+    //public static class NormalizedSegment extends LineSegment {
+    //    public NormalizedSegment(Coordinate p0, Coordinate p1) {
+    //        super(p0, p1);
+    //        normalize();
+    //    }
+    //    public NormalizedSegment(LineSegment lineSegment) {
+    //        super(lineSegment);
+    //        normalize();
+    //    }
+    //    public boolean equals(Object o) {
+    //        if (o instanceof LineSegment) {
+    //            LineSegment segment = (LineSegment)o;
+    //            if (segment instanceof NormalizedSegment) {
+    //                return p0.equals(segment.p0) && p1.equals(segment.p1);
+    //            }
+    //            else {
+    //                segment.normalize();
+    //                return p0.equals(segment.p0) && p1.equals(segment.p1);
+    //            }
+    //        }
+    //        return false;
+    //    }
+    //    public int hashCode() {
+    //        return midPoint().hashCode();
+    //    }
+    //}
+}

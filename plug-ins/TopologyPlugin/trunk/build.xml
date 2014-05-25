@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="topology" default="compile" basedir=".">
+   
+    <!--************************************************************************
+    ****************************************************************************
+    **                                 PROPERTIES                             **
+    ****************************************************************************
+    *************************************************************************-->
+
+    <property name="topology" value="topology"/>
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"     value="src" />
+    <property name="bin"     value="bin" />
+    <property name="lib"     value="lib" />
+    <property name="build"   value="build" />
+    <property name="dist"    value="dist" />
+    <property name="javadoc" value="javadoc" />
+
+    <property name="version" value="0.8.0" />
+    <property name="current-oj" value="C:\Users\Michaël\DEVELOPPEMENTS\OpenJUMP-2012\dist\openjump-1.6.0alpha\lib\ext" />
+    
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- compile topology-toolbox                                               -->
+    <!-- =================================================================== -->
+    <target name="compile" id="compile" depends="clean">
+        <mkdir dir="${build}"/>
+        <javac destdir="${build}" debug="true" deprecation="false" nowarn="true" encoding="utf-8" source="1.5" target="1.5">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+            <src path="${src}"/>
+            <classpath refid="classpath"/>
+            <include name="com/vividsolutions/jcs/**/*.java"/>
+            <include name="fr/michaelm/jump/plugin/topology/*.java"/>
+            <include name="fr/michaelm/jump/plugin/topology/**/*.java"/>
+            <exclude name="**/clean/CoverageCleanerPlugIn.java"/>
+        </javac>
+        <copy todir="${build}">
+            <fileset dir="${src}">
+                <include name="com/**/*.png"/>
+                <include name="fr/**/*.png"/>
+                <include name="com/**/*.properties"/>
+                <include name="fr/**/*.properties"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- jar topology-toolbox                                                   -->
+    <!-- =================================================================== -->
+    <target name="jar" id="jar" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar basedir="${build}" jarfile="${dist}/topology-${version}.jar">
+            <include name="**"/>
+        </jar>
+        <copy file="${dist}/topology-${version}.jar" todir="${current-oj}"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- javadoc topology-toolbox                                               -->
+    <!-- =================================================================== -->
+    <target name="javadoc" depends="compile">
+        <mkdir dir="${javadoc}"/>
+        <javadoc destdir="${javadoc}" use="true">
+            <classpath refid="classpath"/>
+            <packageset dir="${src}">
+                <include name="com/**"/>
+                <include name="fr/**"/>
+            </packageset>
+        </javadoc>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- dist graph-toolbox                                                  -->
+    <!-- =================================================================== -->
+    <target name="zip-topology" id="zip-topology" depends="jar, javadoc">
+        <zip basedir="." zipfile="${dist}/topology-${version}.zip">
+             <include name="src/**"/>
+             <include name="javadoc/**"/>
+             <include name="${dist}/topology-${version}.jar"/>
+             <include name="build.xml"/>
+        </zip>
+    </target>
+
+</project>

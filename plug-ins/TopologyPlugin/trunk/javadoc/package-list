@@ -1,0 +1,6 @@
+com.vividsolutions.jcs.conflate.boundarymatch
+com.vividsolutions.jcs.conflate.coverage
+com.vividsolutions.jcs.plugin.clean
+com.vividsolutions.jcs.plugin.qa
+com.vividsolutions.jcs.qa
+fr.michaelm.jump.plugin.topology

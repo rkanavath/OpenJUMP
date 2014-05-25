@@ -1,0 +1,1319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" readonly="true" id="585cd912-5486-4b97-bbff-7f4381de6761" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/conflate/BoundaryMatch.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/CloseVertexFinder.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/CloseVertexFinderPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/Coverage.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/CoverageCleaner$Parameters.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/CoverageCleaner.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/clean/CoverageCleanerPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/CoverageFeature.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/CoverageGap.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/CoverageGap.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/CoverageGapPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/CoverageOverlap.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/CoverageOverlap.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/CoverageOverlapFinderPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/DiffSegments.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/DiffSegments.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/FeatureCoordinateMap.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/FeatureSegment.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/FeatureSegmentCounter.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/GeometryComponent.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryElement.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$1.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$WGeometryCollection.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$WLineString.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$WMultiLineString.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$WMultiPoint.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$WMultiPolygon.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$WPoint.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper$WPolygon.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/GeometryWrapper.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/I18NPlug.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/InternalMatchedSegmentFinder$Parameters.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/InternalMatchedSegmentFinder.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/InternalOverlapFinder.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/MatchSegments.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/MatchSegments.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/MatchedSegmentFinder$Parameters.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/MatchedSegmentFinder.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/MatchedSegmentsPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/MatchedVertex.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/MaxDistanceVertexSnapper.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapper.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/MicroSegmentRemover.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/NearFeatureFinder.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn$1.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn$2.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn$3.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn$Node.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/OffsetBoundaryCorner.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/OffsetBoundaryCorner.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/OpenJUMP-1.7.0-r3977-nosrc.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/OverlapBoundaryIndicators.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/OverlapFinder$OverlappingFeatures.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/OverlapFinder.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa/OverlapFinderPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa/OverlapSegmentIndicators.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/PointElement.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/tools/Polygonize.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/tools/Polygonize.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/tools/PrecisionReducer.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/tools/PrecisionReducer.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/ProjectPointsOnLinesPlugIn$1.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/ProjectPointsOnLinesPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/Projection.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/clean/RemoveMicroSegmentsPlugIn.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/Segment.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/SegmentElement.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/SegmentIndex.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/boundarymatch/SegmentMatcher.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/Shell.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/TargetGeometry.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/TopologyExtension.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/TopologyExtension4OJ-0.5.pdf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/TopologyExtension4OJ-0.5_fr.pdf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/TopologyExtension4OJ-0.7.pdf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/TopologyExtension4OJ-0.7_fr.pdf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/TopologyExtension4OJ.odt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/v0.4/TopologyExtension4OJ.odt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/v0.4/TopologyExtension4OJ.pdf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/TopologyExtension4OJ_fr.odt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/v0.4/TopologyExtension4OJ_fr.odt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/v0.4/TopologyExtension4OJ_fr.pdf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/tools/UniqueSegments.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/tools/UniqueSegments.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/Vertex.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage/VertexMap.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/VertexSnapper.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/boundarymatch" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/boundarymatch" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch/class-use" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/class-use" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/class-use" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/class-use" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/clean" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/clean" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/conflate" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/conflate/coverage" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/hamcrest-core-1.3.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/resources/inherit.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/jts-1.14-20140423.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm/jump" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/junit-4.11.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/log4j-1.2.16.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm/jump/plugin" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/qa" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/qa" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/resources" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions/jcs/plugin/tools" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/tools" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.1.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.1.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.2.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.2.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.3.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.4.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.5.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.3.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.4.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.4.0.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.5.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.5.0.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.5.1.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.6.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.6.0.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.6.1.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.7.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.7.0.zip" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.7.0beta.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.7.0beta2.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.7.0beta3.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.7.1.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/topology-0.8.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/v0.4" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/com/vividsolutions" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.name" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/CloseVertexFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/CloseVertexFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/CloseVertexFinder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/CloseVertexFinderPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/class-use/CloseVertexFinderPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/CloseVertexFinderPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/Coverage.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/Coverage.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/Coverage.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/CoverageCleaner.Parameters.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/CoverageCleaner.Parameters.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/CoverageCleaner.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/CoverageCleaner.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/CoverageCleaner.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/CoverageCleanerPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/class-use/CoverageCleanerPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/clean/CoverageCleanerPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/CoverageFeature.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/CoverageFeature.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/CoverageFeature.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/CoverageGapPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/class-use/CoverageGapPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/CoverageGapPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/CoverageOverlapFinderPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/class-use/CoverageOverlapFinderPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/CoverageOverlapFinderPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/FeatureCoordinateMap.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/FeatureCoordinateMap.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/FeatureCoordinateMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/FeatureSegment.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/FeatureSegment.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/FeatureSegment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/FeatureSegmentCounter.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/FeatureSegmentCounter.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/FeatureSegmentCounter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/GeometryComponent.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/GeometryComponent.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/GeometryComponent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryElement.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/GeometryElementTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryWrapper.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/I18NPlug.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use/I18NPlug.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/I18NPlug.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/InternalMatchedSegmentFinder.Parameters.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/InternalMatchedSegmentFinder.Parameters.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/InternalMatchedSegmentFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/InternalMatchedSegmentFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/InternalMatchedSegmentFinder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/InternalOverlapFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/InternalOverlapFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/InternalOverlapFinder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/LinearComponent.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use/LinearComponent.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/LinearComponentUtil.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use/LinearComponentUtil.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/MatchedSegmentFinder.Parameters.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/MatchedSegmentFinder.Parameters.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/MatchedSegmentFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/MatchedSegmentFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/MatchedSegmentFinder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/MatchedSegmentsPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/class-use/MatchedSegmentsPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/MatchedSegmentsPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/MatchedVertex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/MatchedVertex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/MatchedVertex.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxDistanceVertexSnapper.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/MaxDistanceVertexSnapperTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapper.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapperTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/MicroSegmentRemover.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/MicroSegmentRemover.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/MicroSegmentRemover.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/NearFeatureFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/NearFeatureFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/NearFeatureFinder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use/NetworkTopologyCleaningPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/Node.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use/Node.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/OpenJUMP_1_7_0_r3977_nosrc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/OverlapBoundaryIndicators.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/OverlapBoundaryIndicators.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/OverlapBoundaryIndicators.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/OverlapFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/OverlapFinder.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/OverlapFinder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/OverlapFinderPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/class-use/OverlapFinderPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/qa/OverlapFinderPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/OverlapSegmentIndicators.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/class-use/OverlapSegmentIndicators.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/qa/OverlapSegmentIndicators.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/PointElement.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/ProjectPointsOnLinesPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use/ProjectPointsOnLinesPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/ProjectPointsOnLinesPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/Projection.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/QAExtension.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/class-use/QAExtension.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/QAExtension" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/RemoveMicroSegmentsPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/class-use/RemoveMicroSegmentsPlugIn.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/clean/RemoveMicroSegmentsPlugIn.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/Segment.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/Segment.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/Segment.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/SegmentElement.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/SegmentElementTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/SegmentIndex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/SegmentIndex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/SegmentIndex.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch/SegmentMatcher.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch/class-use/SegmentMatcher.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/boundarymatch/SegmentMatcher.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/Shell.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/Shell.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/Shell.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/TargetGeometry.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/TopologyExtension.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/class-use/TopologyExtension.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/TopologyExtension.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/TopologyPlugin.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/Vertex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/Vertex.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/Vertex.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/VertexMap.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/class-use/VertexMap.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vividsolutions/jcs/conflate/coverage/VertexMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/VertexSnapper.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/allclasses-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/allclasses-noframe.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/constant-values.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/deprecated-list.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/hamcrest_core_1_3.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/help-doc.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/index-all.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/jts_1_14_20140423.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/junit_4_11.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/log4j_1_2_16.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/overview-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/overview-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/overview-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch/package-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/package-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/package-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/package-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/package-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/package-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/package-frame.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/package-list" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch/package-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/package-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/package-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/package-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/package-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/package-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/package-summary.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch/package-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/package-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/package-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/package-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/package-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/package-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/package-tree.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/boundarymatch/package-use.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/conflate/coverage/package-use.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/package-use.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/clean/package-use.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/plugin/qa/package-use.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/com/vividsolutions/jcs/qa/package-use.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/package-use.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dist/readme.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/serialized-form.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/javadoc/stylesheet.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/topology.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/topology_es.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology_es.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/topology_fi.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology_fi.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/topology_fr.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology_fr.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/fr/michaelm/jump/plugin/topology/topology_it.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology_it.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
+    <ignored path="TopologyPlugin.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="TopologyPlugin" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="GeometryWrapper.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryWrapper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="120.82143" vertical-offset="3672" max-vertical-offset="4403">
+              <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#5963#5975#0" expanded="true" />
+                <element signature="e#9301#9317#0" expanded="true" />
+                <element signature="e#9743#9759#0" expanded="true" />
+                <element signature="e#10261#10277#0" expanded="true" />
+                <element signature="e#10427#10439#0" expanded="true" />
+                <element signature="e#10935#10958#0" expanded="true" />
+                <element signature="e#11457#11474#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SegmentElement.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/SegmentElement.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="398" max-vertical-offset="1122">
+              <caret line="55" column="18" selection-start-line="55" selection-start-column="18" selection-end-line="55" selection-end-column="18" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="topology.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology.properties">
+          <provider editor-type-id="ResourceBundle">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-10.925926" vertical-offset="2867" max-vertical-offset="3689">
+              <caret line="186" column="106" selection-start-line="186" selection-start-column="106" selection-end-line="186" selection-end-column="106" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="topology" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://topology">
+          <provider selected="true" editor-type-id="ResourceBundle">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProjectPointsOnLinesPlugIn.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/ProjectPointsOnLinesPlugIn.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2244" max-vertical-offset="8194">
+              <caret line="200" column="90" selection-start-line="200" selection-start-column="90" selection-end-line="200" selection-end-column="90" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Projection.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/Projection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1547">
+              <caret line="95" column="0" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GeometryElement.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryElement.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="735" max-vertical-offset="2397">
+              <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#668#669#0" expanded="true" />
+                <element signature="e#710#711#0" expanded="true" />
+                <element signature="e#1288#1289#0" expanded="true" />
+                <element signature="e#1336#1337#0" expanded="true" />
+                <element signature="e#3766#3786#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PointElement.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/PointElement.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+              <caret line="27" column="51" selection-start-line="27" selection-start-column="51" selection-end-line="27" selection-end-column="51" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#700#701#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GeometryElementTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/GeometryElementTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2720">
+              <caret line="31" column="18" selection-start-line="29" selection-start-column="4" selection-end-line="31" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SegmentElementTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/SegmentElementTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1424" max-vertical-offset="2278">
+              <caret line="116" column="49" selection-start-line="116" selection-start-column="49" selection-end-line="116" selection-end-column="49" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="true" />
+    </FindUsagesManager>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology_fr.properties" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/ProjectionPolicy.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/InsertionPolicy.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/RelativeSnapVertex.java" />
+        <option value="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/LinearComponentSnapperTest.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/Projection.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/PointElement.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/TargetGeometry.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/AbsoluteVertexSnapper.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/RelativeVertexSnapper.java" />
+        <option value="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/AbsoluteVertexSnapperTest.java" />
+        <option value="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/ElementTest.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/EditableGeometryException.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/EditableGeometry.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/LinearComponent.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/LinearComponentUtil.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/Node.java" />
+        <option value="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/EditableGeometryTest.java" />
+        <option value="$PROJECT_DIR$/build.xml" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/LinearComponentSnapper.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxDistanceVertexSnapper.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/Element.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/VertexSnapper.java" />
+        <option value="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/GeometryElementTest.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapper.java" />
+        <option value="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapperTest.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryWrapper.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryElement.java" />
+        <option value="$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/SegmentElementTest.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/SegmentElement.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/ProjectPointsOnLinesPlugIn.java" />
+        <option value="$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology.properties" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-4" />
+    <option name="y" value="-4" />
+    <option name="width" value="1928" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers ProjectPane="true" />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TopologyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TopologyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TopologyPlugin" />
+              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="recentsLimit" value="5" />
+    <property name="dynamic.classpath" value="false" />
+  </component>
+  <component name="Regex">
+    <option name="pos1" value="218" />
+    <option name="pos2" value="218" />
+    <option name="pos3" value="162" />
+    <option name="pos4" value="444" />
+    <option name="pos5" value="162" />
+    <option name="autoUpdate" value="true" />
+    <option name="referenceOn" value="false" />
+    <option name="referencePos" value="0" />
+    <option name="showLabels" value="true" />
+  </component>
+  <component name="RunManager" selected="JUnit.SegmentElementTest">
+    <configuration default="false" name="MaxDistanceVertexSnapperTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TopologyPlugin" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.michaelm.jump.plugin.topology" />
+      <option name="MAIN_CLASS_NAME" value="fr.michaelm.jump.plugin.topology.MaxDistanceVertexSnapperTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="GeometryElementTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TopologyPlugin" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.michaelm.jump.plugin.topology" />
+      <option name="MAIN_CLASS_NAME" value="fr.michaelm.jump.plugin.topology.GeometryElementTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="fr.michaelm.jump.plugin.topology in TopologyPlugin" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TopologyPlugin" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.michaelm.jump.plugin.topology" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="package" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="All in TopologyPlugin" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TopologyPlugin" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="package" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="SegmentElementTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="TopologyPlugin" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.michaelm.jump.plugin.topology" />
+      <option name="MAIN_CLASS_NAME" value="fr.michaelm.jump.plugin.topology.SegmentElementTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="JUnit.MaxDistanceVertexSnapperTest" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.GeometryElementTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.fr.michaelm.jump.plugin.topology in TopologyPlugin" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.All in TopologyPlugin" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.SegmentElementTest" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.SegmentElementTest" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.fr.michaelm.jump.plugin.topology in TopologyPlugin" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.All in TopologyPlugin" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.GeometryElementTest" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.MaxDistanceVertexSnapperTest" />
+      </list>
+    </recent_temporary>
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+      <Host>localhost</Host>
+      <Port>5050</Port>
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>C:\Users\Michaël\AppData\Roaming\Subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="585cd912-5486-4b97-bbff-7f4381de6761" name="Default" comment="" />
+      <created>1400325729548</created>
+      <updated>1400325729548</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-4" y="-4" width="1928" height="1056" extended-state="1" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23425414" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928178" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20682302" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2685083" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Regex" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+    <MESSAGE value="push topology plugin into the svn" />
+    <option name="LAST_COMMIT_MESSAGE" value="push topology plugin into the svn" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+    <buildFile url="file://$PROJECT_DIR$/build.xml">
+      <targetFilters>
+        <filter targetName="clean" isVisible="false" />
+        <filter targetName="compile" isVisible="false" />
+        <filter targetName="jar" isVisible="false" />
+        <filter targetName="javadoc" isVisible="false" />
+        <filter targetName="zip-topology" isVisible="false" />
+      </targetFilters>
+      <expanded value="true" />
+    </buildFile>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/VertexSnapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="289" max-vertical-offset="476">
+          <caret line="17" column="19" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxDistanceVertexSnapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="765">
+          <caret line="30" column="28" selection-start-line="30" selection-start-column="28" selection-end-line="30" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="731">
+          <caret line="32" column="9" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology_fr.properties">
+      <provider editor-type-id="ResourceBundle">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-16.518518" vertical-offset="2767" max-vertical-offset="3604">
+          <caret line="189" column="40" selection-start-line="189" selection-start-column="40" selection-end-line="189" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/TargetGeometry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5351" max-vertical-offset="6205">
+          <caret line="356" column="6" selection-start-line="356" selection-start-column="6" selection-end-line="356" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1734">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/javadoc/fr/michaelm/jump/plugin/topology/LinearComponent.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-36.384617" vertical-offset="1655" max-vertical-offset="9316">
+          <caret line="153" column="99" selection-start-line="153" selection-start-column="99" selection-end-line="153" selection-end-column="99" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vividsolutions/jcs/plugin/clean/RemoveMicroSegmentsPlugIn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="325" max-vertical-offset="3383">
+          <caret line="83" column="37" selection-start-line="83" selection-start-column="37" selection-end-line="83" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/NetworkTopologyCleaningPlugIn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="8970" max-vertical-offset="11067">
+          <caret line="608" column="18" selection-start-line="608" selection-start-column="18" selection-end-line="608" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/MaxDistanceVertexSnapperTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="612" max-vertical-offset="4318">
+          <caret line="84" column="5" selection-start-line="75" selection-start-column="4" selection-end-line="84" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxDistanceVertexSnapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1564">
+          <caret line="10" column="64" selection-start-line="10" selection-start-column="64" selection-end-line="10" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/VertexSnapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="459">
+          <caret line="7" column="3" selection-start-line="7" selection-start-column="3" selection-end-line="7" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="1139">
+          <caret line="34" column="14" selection-start-line="34" selection-start-column="14" selection-end-line="34" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/MaxLateralDistanceVertexSnapperTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1606" max-vertical-offset="3383">
+          <caret line="104" column="40" selection-start-line="104" selection-start-column="40" selection-end-line="104" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/GeometryElementTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2720">
+          <caret line="31" column="18" selection-start-line="29" selection-start-column="4" selection-end-line="31" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/PointElement.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+          <caret line="27" column="51" selection-start-line="27" selection-start-column="51" selection-end-line="27" selection-end-column="51" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#700#701#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/Projection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1547">
+          <caret line="95" column="0" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryElement.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="735" max-vertical-offset="2397">
+          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#668#669#0" expanded="true" />
+            <element signature="e#710#711#0" expanded="true" />
+            <element signature="e#1288#1289#0" expanded="true" />
+            <element signature="e#1336#1337#0" expanded="true" />
+            <element signature="e#3766#3786#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/GeometryWrapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="120.82143" vertical-offset="3672" max-vertical-offset="4403">
+          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5963#5975#0" expanded="true" />
+            <element signature="e#9301#9317#0" expanded="true" />
+            <element signature="e#9743#9759#0" expanded="true" />
+            <element signature="e#10261#10277#0" expanded="true" />
+            <element signature="e#10427#10439#0" expanded="true" />
+            <element signature="e#10935#10958#0" expanded="true" />
+            <element signature="e#11457#11474#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/fr/michaelm/jump/plugin/topology/SegmentElementTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1424" max-vertical-offset="2278">
+          <caret line="116" column="49" selection-start-line="116" selection-start-column="49" selection-end-line="116" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/SegmentElement.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="398" max-vertical-offset="1122">
+          <caret line="55" column="18" selection-start-line="55" selection-start-column="18" selection-end-line="55" selection-end-column="18" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/ProjectPointsOnLinesPlugIn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2244" max-vertical-offset="8194">
+          <caret line="200" column="90" selection-start-line="200" selection-start-column="90" selection-end-line="200" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fr/michaelm/jump/plugin/topology/topology.properties">
+      <provider editor-type-id="ResourceBundle">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.925926" vertical-offset="2867" max-vertical-offset="3689">
+          <caret line="186" column="106" selection-start-line="186" selection-start-column="106" selection-end-line="186" selection-end-column="106" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>TopologyPlugin</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>log4j-1.2.16</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
+

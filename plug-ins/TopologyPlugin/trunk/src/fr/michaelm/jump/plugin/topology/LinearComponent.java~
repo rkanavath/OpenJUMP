@@ -1,0 +1,311 @@
+/*
+ * Library name : fr.michaelm.jump.plugin.topology
+ * (C) 2012 Michaël Michaud
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ * For more information, contact:
+ *
+ * michael.michaud@free.fr
+ *
+ */
+package fr.michaelm.jump.plugin.topology;
+
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jump.feature.Feature;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Linear component of a Feature Geometry. A LinearComponent holds a reference 
+ * to the Feature it comes from, the index of the component in the Geometry
+ * and the index of the LineString in the Component.
+ * <ul>
+ * <li>Simple geometries always have their compIndex = 0</li>
+ * <li>Non polygonal geometries always have their lineIndex = 0</li>
+ * </ul>
+ * A linearComponent also contains a list of {@link Node}s and useful methods to 
+ * insert these {@link Node}s in the geometry or to split the geometry on these 
+ * {@link Node}s. 
+ */
+public class LinearComponent implements Comparable {
+    
+    private Feature feature;
+    private int compIndex;
+    private int lineIndex;
+    private List<Node> nodes;
+    
+    
+    /**
+     * Creates a new LinearComponent from a Feature, and two indexes locating 
+     * the component in the Geometry.
+     * @param feature the feature this component belongs to
+     * @param compIndex index of the component in the Geometry for 
+     *        GeometryCollection (0 for simple geometries)
+     * @param lineIndex index of the LineString or LinearRing in the component
+     *        (0 for the exterior ring of a Polygon, a LineString or a Point)
+     */
+    public LinearComponent(Feature feature, int compIndex, int lineIndex) {
+        this.feature = feature;
+        
+        assert feature.getGeometry().getNumGeometries() > compIndex;
+        this.compIndex = compIndex;
+        
+        Geometry comp = feature.getGeometry().getGeometryN(compIndex);
+        assert lineIndex == 0 || 
+            (comp.getDimension() == 2 && 
+             ((Polygon)comp).getNumInteriorRing() >= lineIndex);
+    }
+    
+    
+    /**
+     * Return this LinearComponent as a Geometry (a LineString or a LinearRing)
+     */
+    public Geometry getGeometry() {
+        Geometry comp = feature.getGeometry().getGeometryN(compIndex);
+        int dim = comp.getDimension();
+        switch (dim) {
+            case 0 : return comp;
+            case 1 : return comp;
+            case 2 : return lineIndex == 0 ? ((Polygon)comp).getExteriorRing() :
+                ((Polygon)comp).getInteriorRingN(lineIndex);
+            default : return comp;
+        }
+    }
+    
+    
+    /**
+     * Return the Envelope of this LinearComponent.
+     */
+    public Envelope getEnvelope() {
+        return getGeometry().getEnvelopeInternal();
+    }
+    
+    
+    /**
+     * Return the Feature this LinearComponent belongs to.
+     */
+    public Feature getFeature() {
+        return feature;
+    }
+    
+    
+    /**
+     * Returns true if o is a LinearComponent refering to the same Feature
+     * (Feature with same ID) and has the same indexes as this.
+     */
+    public boolean equals(Object o) {
+        if (o instanceof LinearComponent) {
+            LinearComponent linearComponent = (LinearComponent)o;
+            return feature.getID() == linearComponent.feature.getID() &&
+                    compIndex == linearComponent.compIndex &&
+                    lineIndex == linearComponent.lineIndex;
+        } else return false;
+    }
+    
+    
+    /**
+     * Compute a hashcode for this LinearComponent
+     */
+    public int hashCode() {
+        return feature.getID()<<16 + compIndex<<8 + lineIndex;
+    }
+    
+    
+    /**
+     * Add a {@link Node} to this LinearComponent.
+     */
+    public void addNode(Node node) {
+        if (nodes == null) nodes = new ArrayList<Node>();
+        nodes.add(node);
+    }
+    
+    
+    /**
+     * Insert {@link Node}s contained in this LinearComponent nodes list in this
+     * LinearComponent feature Geometry.
+     * The nodes list is cleared after this operation, because indexes of the 
+     * Nodes are no more valid.
+     */
+    public void insertNodes() {
+        if (nodes != null) {
+            CoordinateList coords = new CoordinateList(getGeometry().getCoordinates());
+            Collections.sort(nodes);
+            Collections.reverse(nodes);
+            for (Node node : nodes) {
+                coords.add(node.getSegmentIndex()+1, node.getProjection(), false);
+            }
+            nodes.clear();
+            feature.setGeometry(updateGeometry(feature.getGeometry(), coords.toCoordinateArray()));
+        }
+    }
+    
+    
+    /**
+     * Return an Iterator iterating through the LineSegment of this 
+     * LinearComponent.
+     */
+    public Iterator<LineSegment> getSegmentIterator() {
+        
+        return new Iterator<LineSegment>() {
+            Coordinate[] cc = getGeometry().getCoordinates();
+            int index = 0;
+            public boolean hasNext() {return index < cc.length-1;}
+            public LineSegment next() {return new LineSegment(cc[index], cc[++index]);}
+            public void remove() {throw new UnsupportedOperationException();} 
+        };
+    }
+    
+    // private method used by insertNodes to update the Geometry
+    private Geometry updateGeometry(Geometry g, Coordinate[] coords) {
+        if (g instanceof GeometryCollection) return updateGeometry((GeometryCollection)g, coords);
+        if (g instanceof Polygon) return updateGeometry((Polygon)g, coords);
+        if (g instanceof LineString) return updateGeometry((LineString)g, coords);
+        if (g instanceof Point) return updateGeometry((Point)g, coords);
+        else return g;
+    }
+    
+    // private method used by insertNodes to update the Geometry
+    private Geometry updateGeometry(GeometryCollection gc, Coordinate[] coords) {
+        Geometry[] geometries = new Geometry[gc.getNumGeometries()];
+        for (int i = 0 ; i < geometries.length ; i++) {
+            if (compIndex == i) geometries[i] = updateGeometry(gc.getGeometryN(i), coords);
+            else geometries[i] = gc.getGeometryN(i);
+        }
+        return gc.getFactory().buildGeometry(Arrays.asList(geometries));
+    }
+    
+    // private method used by insertNodes to update the Geometry
+    private Polygon updateGeometry(Polygon polygon, Coordinate[] coords) {
+        GeometryFactory gf = polygon.getFactory();
+        LinearRing shell = (LinearRing)polygon.getExteriorRing();
+        LinearRing[] holes = new LinearRing[polygon.getNumInteriorRing()];
+        if (lineIndex == 0) shell = gf.createLinearRing(coords);
+        for (int i = 0 ; i < holes.length ; i++) {
+            if (lineIndex == i+1) holes[i] = gf.createLinearRing(coords);
+            else holes[i] = (LinearRing)polygon.getInteriorRingN(i);
+        }
+        return gf.createPolygon(shell, holes);
+    }
+    
+    // private method used by insertNodes to update the Geometry
+    private LineString updateGeometry(LineString lineString, Coordinate[] coords) {
+        return lineString.getFactory().createLineString(coords);
+    }
+    
+    // private method used by insertNodes to update the Geometry
+    private Point updateGeometry(Point point, Coordinate[] coords) {
+        return point;
+    }
+    
+    
+    /**
+     * Split this LinearComponent at each {@link Node} and update its Feature 
+     * Geometry.
+     * The Nodes are removed from the list fter they have been used. 
+     */
+    public void splitAtNodes() {
+        if (nodes != null && feature.getGeometry().getDimension() == 1) {
+            CoordinateList coords = new CoordinateList(getGeometry().getCoordinates());
+            Collections.sort(nodes);
+            Collections.reverse(nodes);
+            // insert nodes coordinate into the CoordinateList (last Node first)
+            for (Node node : nodes) {
+                coords.add(node.getSegmentIndex()+1, node.getProjection(), false);
+            }
+            List<Geometry> geometries = new ArrayList<Geometry>();
+            GeometryFactory factory = getGeometry().getFactory();
+            int start = 0;
+            // TODO : avoid reverting node list two times
+            Collections.reverse(nodes);
+            while (!nodes.isEmpty() && start < coords.size()-1) {
+                for (int i = start ; i < coords.size() ; i++) {
+                    boolean split = false;
+                    // In case there are several Nodes with the same coordinate
+                    while (!nodes.isEmpty() && coords.getCoordinate(i).equals(nodes.get(0).getProjection())) {
+                        nodes.remove(0);
+                        split = true;
+                    }
+                    if (split && i > start) {
+                        geometries.add(factory.createLineString(
+                            (Coordinate[])coords.subList(start, i+1).toArray(new Coordinate[0]))
+                        );
+                        start = i;
+                        break;
+                    }
+                }
+            }
+            if (start < coords.size()-1) {
+                geometries.add(factory.createLineString(
+                        (Coordinate[])coords.subList(start, coords.size()).toArray(new Coordinate[0]))
+                );
+            }
+            updateGeometry(geometries);
+        }
+    }
+    
+    // update Geometry after a call to splitAtNodes method
+    private void updateGeometry(List<Geometry> geometries) {
+        Geometry oldGeometry = feature.getGeometry();
+        List<Geometry> components = new ArrayList<Geometry>();
+        for (int i = 0 ; i < oldGeometry.getNumGeometries() ; i++) {
+            if (i != compIndex) components.add(oldGeometry.getGeometryN(i));
+        }
+        if (geometries.size() >= 1) components.add(compIndex, geometries.get(0));
+        for (int i = 1 ; i < geometries.size() ; i++) {
+            components.add(geometries.get(i));
+        }
+        feature.setGeometry(feature.getGeometry().getFactory().buildGeometry(components));
+    }
+    
+    
+    /**
+     * LinearComponent can be compared to another LinearComponent for sorting.
+     * The comparatot compares successively :
+     * <ul>
+     * <li>the Feature ID</li>
+     * <li>the component Index in the Geometry</li>
+     * <li>the LineString index in the component</li>
+     * </ul>
+     */
+    public int compareTo(Object o) {
+        if (o instanceof LinearComponent) {
+            LinearComponent linearComponent = (LinearComponent)o;
+            if (feature.getID() < linearComponent.feature.getID()) return -1;
+            else if (feature.getID() > linearComponent.feature.getID()) return 1;
+            else {
+                if (compIndex < linearComponent.compIndex) return -1;
+                else if (compIndex > linearComponent.compIndex) return 1;
+                else {
+                    if (lineIndex < linearComponent.lineIndex) return -1;
+                    else if (lineIndex > linearComponent.lineIndex) return 1;
+                    else return 0;
+                }
+            }
+        } else return 0;
+    }
+    
+    
+    /**
+     * Return a String representing this LinearComponent.
+     */
+    public String toString() {
+        return "" + feature.getID() + " (" + compIndex + " - " + lineIndex + ")";
+    }
+    
+}

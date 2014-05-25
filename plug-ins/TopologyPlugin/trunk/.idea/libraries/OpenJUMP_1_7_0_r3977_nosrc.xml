@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="OpenJUMP-1.7.0-r3977-nosrc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/OpenJUMP-1.7.0-r3977-nosrc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
