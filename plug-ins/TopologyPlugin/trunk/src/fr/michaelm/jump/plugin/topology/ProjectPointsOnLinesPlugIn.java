@@ -61,6 +61,7 @@ import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
  * @version 0.8.0 (2014-06-25)
  */
 // History
+// 0.8.1 (2014-05-27) Fix a bug affecting multiple target option
 // 0.8.0 (2014-05-24) Plugin has been completely re-coded from scratch
 // 0.7.1 (2014-05-17) Fix a bug by inserting new points inside the main loop
 // 0.6   (2012-09-17) complete rewrite to be able to do multi-projections
@@ -279,17 +280,6 @@ public class ProjectPointsOnLinesPlugIn extends ThreadedBasePlugIn {
             if (count++%100==0 || count>=tot) {
                 monitor.report(count, tot, POINTS_PROCESSED);
             }
-            // adds target linearComponents after processing each point
-            //modifiedComponents.addAll(projectOnePoint(f, linearComponentIndex, 
-            //        projected_points, projection_links));
-            //Set<LinearComponent> modifiedComponents =
-            //    new HashSet<LinearComponent>(projectOnePoint(
-            //        f, linearComponentIndex, projected_points, projection_links
-            //    ));
-            //for (LinearComponent component : modifiedComponents) {
-            //    if (insert) component.insertNodes();
-            //    else if (split) component.splitAtNodes();
-            //}
             Envelope env = f.getGeometry().getEnvelopeInternal();
             env.expandBy(tolerance);
             List<GeometryElement> candidates = index.query(env);
@@ -298,14 +288,14 @@ public class ProjectPointsOnLinesPlugIn extends ThreadedBasePlugIn {
                 if (proj != null) {
                     if (project) addProjectedFeature(proj, fs, projected_points);
                     if (create_link_layer) addLink(proj, fs, projection_links);
-                    targets.put(proj.getSourceFeature().getID(), proj.getTargetElement().getGeometryWrapper());
+                    targets.put(proj.getTargetFeature().getID(), proj.getTargetElement().getGeometryWrapper());
                 }
             } else {
                 Map<Feature,Projection> map = GeometryElement.projectMultiple(f, snapper, candidates, true);
                 for (Projection proj : map.values()) {
                     if (project) addProjectedFeature(proj, fs, projected_points);
                     if (create_link_layer) addLink(proj, fs, projection_links);
-                    targets.put(proj.getSourceFeature().getID(), proj.getTargetElement().getGeometryWrapper());
+                    targets.put(proj.getTargetFeature().getID(), proj.getTargetElement().getGeometryWrapper());
                 }
             }
         }
@@ -318,16 +308,7 @@ public class ProjectPointsOnLinesPlugIn extends ThreadedBasePlugIn {
                 gw.split();
             }
         }
-        //if (insert && modifiedComponents != null) {
-        //    for (LinearComponent component : modifiedComponents) {
-        //        component.insertNodes();
-        //    }
-        //}
-        //if (split && modifiedComponents != null) {
-        //    for (LinearComponent component : modifiedComponents) {
-        //        component.splitAtNodes();
-        //    }
-        //}
+
         if (project) {
             context.getLayerManager().addLayer(StandardCategoryNames.RESULT, 
                 point_layer.getName() + " - " + PROJECTED, projected_points);
@@ -367,146 +348,6 @@ public class ProjectPointsOnLinesPlugIn extends ThreadedBasePlugIn {
         }
         return feature;
     }
-    
-    ///**
-    // * Main method to process one point.
-    // * @param p the point to process
-    // * @param index spatial index of LinearComponents
-    // * @param projectedPoints FeatureCollection containing projected points
-    // * @param projectionLinks FeatureCollection containing links from source
-    // *        points to projected points
-    // */
-    //private List<LinearComponent> projectOnePoint(Feature p, STRtree index,
-    //            FeatureCollection projectedPoints,
-    //            FeatureCollection projectionLinks) throws Exception {
-    //
-    //    Geometry point = p.getGeometry();
-    //    Envelope env = new Envelope(point.getCoordinate());
-    //    env.expandBy(tolerance);
-    //    List<LinearComponent> lineCandidates = index.query(env);
-    //
-    //    List<Node> projections = nearest_proj_only ?
-    //        getNearestNode(point, lineCandidates) :
-    //        getNodesWithinTolerance(point, lineCandidates);
-    //
-    //    //System.out.println(projections);
-    //
-    //    return projectNodes(p, projections, projectedPoints, projectionLinks);
-    //}
-    
-    // Projette le point sur la ligne la plus proche
-    //private List<Node> getNearestNode(Geometry point, List<LinearComponent> candidates) {
-    //    List<Node> projections = new ArrayList<Node>();
-    //    double minDist = Double.POSITIVE_INFINITY;
-    //    LinearComponent targetComponent = null;
-    //    DistanceOp targetOp = null;
-    //    for (LinearComponent component : candidates) {
-    //        DistanceOp op = new DistanceOp(point, component.getGeometry(), 0.0);
-    //        double dist = op.distance();
-    //        if (dist <= tolerance && dist < minDist) {
-    //            // TODO : on ne devrait initialiser le Node que quand on est sur
-    //            // que c'est le plus proche (apr�s la boucle)
-    //            //Node node = snap ?
-    //            //    new Node(component, op.nearestLocations(), tolerance) :
-    //            //    new Node(component, op.nearestLocations());
-    //            //node.setUserData(dist);
-    //            minDist = dist;
-    //            targetOp = op;
-    //            //if (projections.isEmpty()) projections.add(node);
-    //            //else projections.set(0, node);
-    //            targetComponent = component;
-    //        }
-    //    }
-    //    if (targetComponent != null) {
-    //        Node node = snap ?
-    //            new Node(targetComponent, targetOp.nearestLocations(), tolerance) :
-    //            new Node(targetComponent, targetOp.nearestLocations());
-    //        node.setUserData(minDist);
-    //        projections.add(node);
-    //        if (insert || split) {
-    //            targetComponent.addNode(node);
-    //        }
-    //    }
-    //    //if ((insert || split) && targetComponent != null) {
-    //    //    targetComponent.addNode(projections.get(0));
-    //    //}
-    //    return projections;
-    //}
-    
-    
-    // Projette le points sur tous les composants lin�aires 
-    // situ�s � une distance < � la tol�rance
-    // Cette m�thode projette m�me plusieurs points sur un m�me composant
-    // lin�aire dans le cas o� la ligne passe pr�s du point � projeter
-    // (< tol) puis s'en �loigne (> tol) puis s'en rapproche � nouveau.
-    //private List<Node> getNodesWithinTolerance(Geometry point, List<LinearComponent> candidates) {
-    //    List<Node> projections = new ArrayList<Node>();
-    //    Coordinate c = point.getCoordinate();
-    //    for (LinearComponent component : candidates) {
-    //        Iterator<LineSegment> it = component.getSegmentIterator();
-    //        double minDist = Double.POSITIVE_INFINITY;
-    //        Node node = null;
-    //        int i = 0;
-    //        // On parcours les segments du composant lin�aire en r�initialisant
-    //        // les variables (minDist et node) � chaque fois que la ligne
-    //        // s'�loigne suffisamment du point (> tol) de mani�re � pouvoir
-    //        // projeter un point sur chaque "partie" de la ligne passant au
-    //        // "voisinage" du point � projeter.
-    //        while (it.hasNext()) {
-    //            LineSegment lineSegment = it.next();
-    //            double d = lineSegment.distance(c);
-    //            if (d < minDist && d <= tolerance) {
-    //                node = snap ?
-    //                    new Node(component, i, c, tolerance) :
-    //                    new Node(component, i, c);
-    //                node.setUserData(d);
-    //                minDist = d;
-    //            }
-    //            // Si p1.distance(c) > tolerance, c'est que la fin du segment
-    //            // pr�c�dent �tait plus loin que la tolerance
-    //            // Dans ce cas, on r�initialise
-    //            if (node != null && lineSegment.p1.distance(c) > tolerance) {
-    //                projections.add(node);
-    //                if (insert || split) component.addNode(node);
-    //                minDist = Double.POSITIVE_INFINITY;
-    //                node = null;
-    //            }
-    //            i++;
-    //        }
-    //        // Project to a single point as for getNearestNode
-    //        if (component.getGeometry().getNumPoints() == 1 &&
-    //            component.getGeometry().getCoordinate().distance(c) <= tolerance) {
-    //            node = new Node(component, 0, c);
-    //        }
-    //        if (node != null) {
-    //            projections.add(node);
-    //            if (insert || split) component.addNode(node);
-    //        }
-    //    }
-    //    return projections;
-    //}
-    
-    //private List<LinearComponent> projectNodes(Feature p, List<Node> projections,
-    //    FeatureCollection projectedPoints, FeatureCollection projectionLinks) {
-    //    List<LinearComponent> modifiedComponents = new ArrayList<LinearComponent>();
-    //    Geometry point = p.getGeometry();
-    //    for (Node node : projections) {
-    //        Feature proj = copyFeature(p, projectedPoints.getFeatureSchema(), false);
-    //        proj.setGeometry(point.getFactory().createPoint(node.getProjection()));
-    //        proj.setAttribute(PROJECTED_DISTANCE, node.getUserData());
-    //        projectedPoints.add(proj);
-    //        if (create_link_layer) {
-    //            Feature link = proj.clone(false);
-    //            link.setGeometry(point.getFactory().createLineString(
-    //                new Coordinate[]{node.getCoordinate(), node.getProjection()}
-    //            ));
-    //            link.setAttribute(PROJECTED_DISTANCE, node.getUserData());
-    //            projectionLinks.add(link);
-    //        }
-    //        if (insert || split) modifiedComponents.add(node.getLinearComponent());
-    //    }
-    //    return modifiedComponents;
-    //}
     
     private boolean validPointFC(Component comp, FeatureCollection points) {
         boolean valid = false;
