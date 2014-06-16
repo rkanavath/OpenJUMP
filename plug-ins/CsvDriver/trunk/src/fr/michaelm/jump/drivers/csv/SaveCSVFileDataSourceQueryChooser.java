@@ -22,7 +22,6 @@ package fr.michaelm.jump.drivers.csv;
 
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
@@ -32,22 +31,19 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.HashMap;
 
-import com.vividsolutions.jump.io.datasource.DataSourceQuery;
 import com.vividsolutions.jump.workbench.datasource.SaveFileDataSourceQueryChooser;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
-import com.vividsolutions.jump.workbench.ui.GUIUtil;
 
 import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 
 /**
  * SaveFileDataSourceQueryChooser for text formats
  * @author Micha&euml;l Michaud
- * @version 0.6 (2012-03-25)
+ * @version 1.0 (2014-06-16)
  */
 
 public class SaveCSVFileDataSourceQueryChooser extends SaveFileDataSourceQueryChooser {
@@ -60,12 +56,12 @@ public class SaveCSVFileDataSourceQueryChooser extends SaveFileDataSourceQueryCh
     }
     
 
-    private JComboBox fieldSeparator = new JComboBox(
+    private final JComboBox fieldSeparator = new JComboBox(
         new Object[]{TABULATION,COMMA,SEMI_COLUMN,PIPE,WHITESPACE});
 
-    private JCheckBox dataTypes = new JCheckBox("", false);
+    private final JCheckBox dataTypes = new JCheckBox("", false);
     
-    private JCheckBox selectAttributes = new JCheckBox("", false);
+    private final JCheckBox selectAttributes = new JCheckBox("", false);
     
     protected Component getSouthComponent1() {
             JPanel south = new JPanel();

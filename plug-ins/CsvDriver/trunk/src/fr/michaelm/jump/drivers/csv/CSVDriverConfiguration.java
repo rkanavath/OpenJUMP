@@ -43,8 +43,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 0.9.0 (2014-05-14)
+ * @version 0.9.1 (2014-06-16)
  */
+// 0.9.1 (2014-06-16) fix a bug preventing to choose charset and field separator n save as csv
 // 0.9.0 (2014-05-14) handle csv resources included in a compressed file
 // 0.8.0 (2013-11-07) make csv-driver persistable in an OpenJUMP project (fix a number of problems)
 //                    use fixed english keys for persistence instead of I18N
@@ -70,7 +71,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "0.9.0 (2014-05-14)";
+        return "0.9.1 (2014-06-16)";
     }
 
     public void configure(PlugInContext context) throws Exception {
@@ -147,13 +148,12 @@ public class CSVDriverConfiguration extends Extension {
             wcontext, CSVDataSource.class, "csv (set options)", csvExtensions){
 
             protected Map<String,Object> toProperties(URI uri, Map<String,Object> options) {
-                Map<String,Object> properties = super.toProperties(uri, toProperties(options));
-                return properties;
+                return super.toProperties(uri, toProperties(options));
             }
 
             // [mmichaud 2013-11-07] change internationalized options to fixed keys properties
             // This is necessary to use persist CSVDataSource in the project file
-            private final Map<String,Object> toProperties(Map <String,Object> options) {
+            private Map<String,Object> toProperties(Map <String,Object> options) {
                 Map<String,Object> properties = new HashMap<String,Object>();
                 properties.put(CSVDataSource.CHARSET, options.get(I18NPlug.getI18N("drivers.csv.encoding")));
                 properties.put(CSVDataSource.COMMENT_LINE_PATTERN, options.get(I18NPlug.getI18N("drivers.csv.comment-line-pattern")));
@@ -197,13 +197,12 @@ public class CSVDriverConfiguration extends Extension {
             wcontext, CSVDataSource.class, "wkt (set options)", wktExtensions) {
 
             protected Map<String,Object> toProperties(URI uri, Map<String,Object> options) {
-                Map<String,Object> properties = super.toProperties(uri, toProperties(options));
-                return properties;
+                return super.toProperties(uri, toProperties(options));
             }
 
             // [mmichaud 2013-11-07] change internationalized options to fixed keys properties
             // This is necessary to use persist CSVDataSource in the project file
-            private final Map<String,Object> toProperties(Map <String,Object> options) {
+            private Map<String,Object> toProperties(Map <String,Object> options) {
                 Map<String,Object> properties = new HashMap<String,Object>();
                 properties.put(CSVDataSource.CHARSET, options.get(I18NPlug.getI18N("drivers.csv.encoding")));
                 properties.put(CSVDataSource.COMMENT_LINE_PATTERN, options.get(I18NPlug.getI18N("drivers.csv.comment-line-pattern")));

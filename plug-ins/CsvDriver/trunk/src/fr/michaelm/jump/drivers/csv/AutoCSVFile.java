@@ -60,7 +60,7 @@ public class AutoCSVFile extends CSVFile {
 
 
     /** No parameter constructor for persitence in a project file.*/
-    public AutoCSVFile() throws IOException, CSVFileException {
+    public AutoCSVFile() {
         super();
     }
 
@@ -195,9 +195,9 @@ public class AutoCSVFile extends CSVFile {
      * constant length arrays of tokens. If several separators produce
      * constant length arrays, the one producing the greatest number of 
      * tokens is returned.
-     * @throws CSVFileException if the fieldSeparator could not been determined 
+     * @throws CSVFileException if the fieldSeparator could not be determined
      */
-    protected boolean guessFieldSeparator(String[] lines) throws CSVFileException {
+    protected boolean guessFieldSeparator(String[] lines) {
         // if no lines are provided, return the current fieldSeparator 
         if (lines.length == 0) return false;
         FieldSeparator[] separators = new FieldSeparator[]{TABULATION, COMMA, SEMI_COLUMN, PIPE, WHITESPACE};
@@ -215,11 +215,9 @@ public class AutoCSVFile extends CSVFile {
         int fieldNumber = 0;
         for (int i = 0 ; i < counts.size() ; i++) {
             Set<Integer> tokenNumbers = counts.get(i);
-            if (tokenNumbers.size() != 1) continue;
-            else {
+            if (tokenNumbers.size() == 1) {
                 int number = tokenNumbers.iterator().next();
-                if (number <= fieldNumber) continue;
-                else {
+                if (number > fieldNumber) {
                     index = i;
                     fieldNumber = number;
                 }

@@ -73,7 +73,7 @@ public class CSVFileTest {
                 }
             }
             if (csv.hasExceptions()) {
-                for (Exception e : csv.getExceptions()) System.out.println(e);
+                for (Exception e : csv.getExceptions()) e.printStackTrace();
             }
             System.out.println("");
         } catch (CSVFileException e) {

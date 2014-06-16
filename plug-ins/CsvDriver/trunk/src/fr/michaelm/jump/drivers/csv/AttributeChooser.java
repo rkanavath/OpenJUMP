@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Michaël MICHAUD
+ * Copyright (C) 2012 Michaï¿½l MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ import javax.swing.JScrollPane;
  */
 public class AttributeChooser {
 
-    private FeatureSchema schema;
+    private final FeatureSchema schema;
     
     public AttributeChooser(FeatureSchema schema) {
         this.schema = schema;

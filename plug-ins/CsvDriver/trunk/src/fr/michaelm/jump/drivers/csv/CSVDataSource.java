@@ -31,8 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-//
-import com.vividsolutions.jts.geom.Coordinate;
+
 import com.vividsolutions.jump.coordsys.CoordinateSystem;
 import com.vividsolutions.jump.coordsys.CoordinateSystemRegistry;
 import com.vividsolutions.jump.feature.AttributeType;
@@ -88,7 +87,7 @@ public class CSVDataSource extends DataSource {
                 
                 csv = new CSVFile((String)getProperties().get(FILE_KEY), (String)getProperties().get("CompressedFile"));
                 
-                Charset encoding = (Charset)getProperties().get(CHARSET);
+                Charset encoding = Charset.forName(getProperties().get(CHARSET).toString());
                 if (encoding != null) csv.setEncoding(encoding.name());
                 
                 Pattern commentLinePattern = (Pattern)getProperties().get(COMMENT_LINE_PATTERN);
@@ -96,6 +95,7 @@ public class CSVDataSource extends DataSource {
                 
                 FieldSeparator separator = (FieldSeparator)getProperties().get(FIELD_SEPARATOR);
                 if (separator != null) csv.setFieldSeparator(separator);
+                System.out.println("sep=" + separator);
                 
                 Boolean headerLine = (Boolean)getProperties().get(HEADER_LINE);
                 if (headerLine != null) csv.setHeaderLine(headerLine);
@@ -115,7 +115,7 @@ public class CSVDataSource extends DataSource {
                 try {
                     wkt_index = Integer.parseInt((String)getProperties().get(WKT_COLUMN)) - 1;
                 } catch(Exception e) {}
-                int[] geomColumns = null;
+                int[] geomColumns;
                 if (wkt_index > -1) geomColumns = new int[]{wkt_index};
                 else if (x_index > -1 && y_index > -1 && z_index > -1) geomColumns = new int[]{x_index, y_index, z_index};
                 else if (x_index > -1 && y_index > -1) geomColumns = new int[]{x_index, y_index};
@@ -255,8 +255,8 @@ public class CSVDataSource extends DataSource {
     
     public FeatureCollection installCoordinateSystem(FeatureCollection queryResult, 
                                                      CoordinateSystemRegistry registry) {
-        if (queryResult == null) { return queryResult; }
-        String coordinateSystemName = null;
+        if (queryResult == null) { return null; }
+        String coordinateSystemName;
         try {
             coordinateSystemName = (String) getProperties().get(COORDINATE_SYSTEM_KEY);
         } catch (NullPointerException e){

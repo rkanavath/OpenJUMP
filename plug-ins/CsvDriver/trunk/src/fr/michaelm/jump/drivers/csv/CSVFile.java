@@ -34,7 +34,6 @@ import com.vividsolutions.jump.io.CompressedFile;
 import com.vividsolutions.jump.util.FlexibleDateParser;
 
 import java.io.*;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
@@ -143,14 +142,13 @@ public class CSVFile {
     /**
      * Set this CSV file path.
      */
-    public void setFilePath(String filePath) throws IOException, CSVFileException {
+    public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
 
 
     /**
      * Set the entryName of this CSV resource in a compressed file.
-     * @param entryName
      */
     public void setEntryName(String entryName) {
         this.entryName = entryName;
@@ -276,7 +274,7 @@ public class CSVFile {
     /**
      * Tokenize the line using this CSVFile fieldSeparator.
      */
-    public String[] tokenize(String line) throws CSVFileException, IOException {
+    public String[] tokenize(String line) {
         List<String> tokens = new ArrayList<String>();
         Matcher matcher = fieldSeparator.getFieldPattern().matcher(line);
         while (!matcher.hitEnd() && matcher.find()) {
@@ -400,7 +398,7 @@ public class CSVFile {
     }
     
     
-    protected void setAttributeTypes(String line) throws CSVFileException, IOException {
+    protected void setAttributeTypes(String line) {
         if (line != null && schema == null) {
             List<AttributeType> typeList = new ArrayList<AttributeType>();
             Matcher matcher = getFieldSeparator().getFieldPattern().matcher(line);
@@ -590,8 +588,10 @@ public class CSVFile {
         if (writer != null && headerLine) {
             for (int i = 0 ; i < columns.length ; i++) {
                 String name = columns[i];
+                // if the field name contains a quote or a fieldSeparator
                 boolean quote = name.contains("\"") ||
                         name.indexOf(fieldSeparator.getSeparator()) > -1;
+                // -> field name is written between double quotes
                 if (quote) name = "\"" + name.replaceAll("\"","\"\"") + "\"";
                 writer.write(name);
                 if (i < columns.length-1) writer.write(fieldSeparator.getSeparator());
@@ -643,8 +643,10 @@ public class CSVFile {
                 }
                 else {
                     String value = feature.getString(columns[i]);
+                    // if the field name contains a quote or a fieldSeparator
                     boolean quote = value.contains("\"") ||
                         value.indexOf(fieldSeparator.getSeparator()) > -1;
+                    // -> field name is written between double quotes
                     if (quote) value = "\"" + value.replaceAll("\"","\"\"") + "\"";
                     writer.write(value);
                 }
@@ -667,7 +669,7 @@ public class CSVFile {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer("CSVFile Properties={\n");
+        StringBuilder sb = new StringBuilder("CSVFile Properties={\n");
         sb.append("    filePath        =" + filePath + "\n");
         sb.append("    encoding        =" + charset.displayName() + "\n");
         sb.append("    comment_pattern ='" + commentLinePattern + "'\n");
