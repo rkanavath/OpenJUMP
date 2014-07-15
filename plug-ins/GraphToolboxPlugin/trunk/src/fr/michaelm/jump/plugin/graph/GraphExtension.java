@@ -39,8 +39,9 @@ import java.util.ResourceBundle;
  * <li>CycleFinderPlugIn : computes a graph from a linear network and find base cycles</li>
  * </ul>
  * @author Micha&euml;l Michaud
- * @version 0.1.2 (2011-07-16)
+ * @version 0.2.0 (2014-07-15)
  */
+//version 0.2.0 (2014-07-15) add Strahler number computation on hydrographic networks
 //version 0.1.4 (2013-01-15) fix CycleFinding (did not always find cycle with duplicate lines) 
 //version 0.1.3 (2013-01-14) recompiled for java 1.5 compatibility 
 //version 0.1.2 (2011-07-16) typos and comments
@@ -78,6 +79,7 @@ public class GraphExtension extends Extension {
         new GraphNodesPlugIn().initialize(context);
         new GraphComponentsPlugIn().initialize(context);
         new CycleFinderPlugIn().initialize(context);
+        new StrahlerNumberPlugIn().initialize(context);
     }
 
 }

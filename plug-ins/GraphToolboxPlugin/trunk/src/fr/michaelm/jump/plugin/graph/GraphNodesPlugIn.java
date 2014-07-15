@@ -113,8 +113,8 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
         GRAPH                 = I18NPlug.getI18N("Graph");
         NODES                 = I18NPlug.getI18N("Nodes");
         DEGREE                = I18NPlug.getI18N("Degree");
+        GRAPH_COMPUTATION     = I18NPlug.getI18N("Graph-computation");
         GRAPH_NODES           = I18NPlug.getI18N("GraphNodesPlugIn.graph-nodes");
-        GRAPH_COMPUTATION     = I18NPlug.getI18N("GraphNodesPlugIn.graph-computation");
         USE_ATTRIBUTE         = I18NPlug.getI18N("use-attribute");
         USE_ATTRIBUTE_TOOLTIP = I18NPlug.getI18N("use-attribute-tooltip");
         ATTRIBUTE             = I18NPlug.getI18N("Attribute");
