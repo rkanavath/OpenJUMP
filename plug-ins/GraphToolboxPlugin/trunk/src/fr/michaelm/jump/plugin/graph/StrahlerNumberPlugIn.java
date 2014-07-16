@@ -4,17 +4,19 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jump.feature.*;
 import com.vividsolutions.jump.task.TaskMonitor;
+import com.vividsolutions.jump.util.CollectionUtil;
 import com.vividsolutions.jump.workbench.model.Category;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
-import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
-import com.vividsolutions.jump.workbench.plugin.PlugIn;
-import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
+import com.vividsolutions.jump.workbench.model.UndoableCommand;
+import com.vividsolutions.jump.workbench.plugin.*;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.HTMLFrame;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
+import com.vividsolutions.jump.workbench.ui.renderer.style.*;
+import com.vividsolutions.jump.workbench.ui.style.StylePanel;
+import de.latlon.deejump.plugin.style.DeeChangeStylesPlugIn;
 import fr.michaelm.jump.feature.jgrapht.FeatureAsEdge;
 import fr.michaelm.jump.feature.jgrapht.GraphFactory;
 import fr.michaelm.jump.feature.jgrapht.INode;
@@ -45,10 +47,10 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
     private static String STRAHLER_NUMBERS;
     private static String GRAPH_COMPUTATION;
 
-    private static final String STRAHLER_NUMBER   = "StrahlerNb";
+    private static final String STREAM_ORDER    = "StreamOrder";
+    //private static final String STRAHLER_NUMBER = "StrahlerNb";
 
     Layer layer;
-    boolean orientedGraph;
 
     public String getName() {return "Graph nodes PlugIn";}
 
@@ -75,15 +77,11 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
         final JComboBox jcb_layer = dialog.addLayerComboBox(
                 LAYER, context.getCandidateLayer(0), null, context.getLayerManager());
 
-        //final JCheckBox jcb_oriented_graph = dialog.addCheckBox(ORIENTED_GRAPH, false, ORIENTED_GRAPH_TOOLTIP);
-        //final JCheckBox jcb_use_attribute  = dialog.addCheckBox(USE_ATTRIBUTE, false, USE_ATTRIBUTE_TOOLTIP);
-
         GUIUtil.centreOnWindow(dialog);
         dialog.setPreferredSize(new Dimension(400,480));
         dialog.setVisible(true);
         if (dialog.wasOKPressed()) {
             layer = dialog.getLayer(LAYER);
-            //orientedGraph = dialog.getBoolean(ORIENTED_GRAPH);
             return true;
         }
         else return false;
@@ -96,8 +94,9 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
         FeatureCollection sourceFC = layer.getFeatureCollectionWrapper();
 
         // Creates the schema for the output dataset (nodes)
-        FeatureSchema newSchema = (FeatureSchema)sourceFC.getFeatureSchema().clone();
-        newSchema.addAttribute(STRAHLER_NUMBER, AttributeType.INTEGER);
+        final FeatureSchema newSchema = (FeatureSchema)sourceFC.getFeatureSchema().clone();
+        newSchema.addAttribute(STREAM_ORDER, AttributeType.INTEGER);
+        //newSchema.addAttribute(STRAHLER_NUMBER, AttributeType.INTEGER);
         FeatureCollection resultFC = new FeatureDataset(newSchema);
         for (Object o : sourceFC.getFeatures()) {
             Feature f = (Feature)o;
@@ -110,14 +109,22 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
         }
         DirectedWeightedMultigraph<INode,FeatureAsEdge> graph = (DirectedWeightedMultigraph)GraphFactory
                 .createDirectedGraph(resultFC.getFeatures(), false);
-        HTMLFrame htmlFrame = context.getOutputFrame();
-        htmlFrame.createNewDocument();
+        //HTMLFrame htmlFrame = context.getOutputFrame();
+        //htmlFrame.createNewDocument();
         Map<Integer,Set<Integer>> ancestorMap = new HashMap<Integer,Set<Integer>>();
         for (FeatureAsEdge arc : graph.edgeSet()) {
-            if (arc.getAttribute(STRAHLER_NUMBER) != null) continue;
+            if (arc.getAttribute(STREAM_ORDER) != null) continue;
             computeStreamOrder(graph, arc, ancestorMap);
         }
+        //for (FeatureAsEdge arc : graph.edgeSet()) {
+        //    computeStrahlerNumber(graph, arc, null);
+        //}
         context.getLayerManager().addLayer(StandardCategoryNames.RESULT, layer.getName()+"-strahler",resultFC);
+        Layer resultLayer = context.getLayerManager().getLayer(layer.getName() + "-strahler");
+        // Styling
+        layer.setVisible(false);
+        resultLayer.getBasicStyle().setEnabled(false);
+        resultLayer.addStyle(getColorThemingStyle());
     }
 
     private void computeStreamOrder(DirectedWeightedMultigraph<INode,FeatureAsEdge> graph,
@@ -130,7 +137,7 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
         int maxOrder = 0;
         int occ = 0;
         for (FeatureAsEdge upstream : graph.incomingEdgesOf(graph.getEdgeSource(arc))) {
-            Object att = upstream.getAttribute(STRAHLER_NUMBER);
+            Object att = upstream.getAttribute(STREAM_ORDER);
             if (att == null) return;
             int upstreamOrder = (Integer)att;
             if (upstreamOrder > maxOrder) {
@@ -149,24 +156,50 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
             }
             else;
         }
-        if (maxOrder == 0) arc.setAttribute(STRAHLER_NUMBER, 1);
+        if (maxOrder == 0) arc.setAttribute(STREAM_ORDER, 1);
         else {
-            arc.setAttribute(STRAHLER_NUMBER, occ>1?maxOrder+1:maxOrder);
+            arc.setAttribute(STREAM_ORDER, occ>1?maxOrder+1:maxOrder);
         }
         Set<FeatureAsEdge> downStreams = graph.outgoingEdgesOf(graph.getEdgeTarget(arc));
-        // Before downstream recursion, mark stream origins in case of anastomosis
-        //for (FeatureAsEdge downStream : downStreams) {
-        //    if (downStreams.size() > 1 || arc.getAttribute(STREAM_ORIGIN) != null) {
-        //        Object previousOrigin = arc.getAttribute(STREAM_ORIGIN);
-        //        downStream.setAttribute(STREAM_ORIGIN, previousOrigin==null?arc.getID() : previousOrigin);
-        //    }
-        //}
+
         for (FeatureAsEdge downStream : downStreams) {
             // In case of anastomosis, compute the downstream edge only once
-            if (downStream.getAttribute(STRAHLER_NUMBER) == null) {
+            if (downStream.getAttribute(STREAM_ORDER) == null) {
                 computeStreamOrder(graph, downStream, ancestorMap);
             }
         }
+    }
+
+    ColorThemingStyle getColorThemingStyle() {
+        BasicStyle dbs = new BasicStyle();   dbs.setLineColor(new Color(255,0,0));      dbs.setLineWidth(2);
+        BasicStyle bs1  = new BasicStyle();  bs1.setLineColor(new Color(120,240,255));  bs1.setLineWidth(1);
+        BasicStyle bs2  = new BasicStyle();  bs2.setLineColor(new Color( 90,180,255));  bs2.setLineWidth(1);
+        BasicStyle bs3  = new BasicStyle();  bs3.setLineColor(new Color( 60,120,255));  bs3.setLineWidth(2);
+        BasicStyle bs4  = new BasicStyle();  bs4.setLineColor(new Color( 30, 60,255));  bs4.setLineWidth(3);
+        BasicStyle bs5  = new BasicStyle();  bs5.setLineColor(new Color(  0,  0,255));  bs5.setLineWidth(4);
+        BasicStyle bs6  = new BasicStyle();  bs6.setLineColor(new Color( 60,  0,255));  bs6.setLineWidth(5);
+        BasicStyle bs7  = new BasicStyle();  bs7.setLineColor(new Color( 90,  0,255));  bs7.setLineWidth(7);
+        BasicStyle bs8  = new BasicStyle();  bs8.setLineColor(new Color(120,  0,255));  bs8.setLineWidth(9);
+        BasicStyle bs9  = new BasicStyle();  bs9.setLineColor(new Color(150,  0,255));  bs9.setLineWidth(11);
+        BasicStyle bs10 = new BasicStyle(); bs10.setLineColor(new Color(180,  0,255)); bs10.setLineWidth(13);
+        BasicStyle bs11 = new BasicStyle(); bs11.setLineColor(new Color(210,  0,255)); bs11.setLineWidth(15);
+        BasicStyle bs12 = new BasicStyle(); bs12.setLineColor(new Color(240,  0,255)); bs12.setLineWidth(18);
+        ColorThemingStyle cts =  new ColorThemingStyle(STREAM_ORDER,
+                CollectionUtil.createMap(new Object[]{
+                    1, bs1,
+                    2, bs2,
+                    3, bs3,
+                    4, bs4,
+                    5, bs5,
+                    6, bs6,
+                    7, bs7,
+                    8, bs8,
+                    9, bs9,
+                    10, bs10,
+                    11, bs11,
+                    12, bs12}), dbs);
+        cts.setEnabled(true);
+        return cts;
     }
 
 }
