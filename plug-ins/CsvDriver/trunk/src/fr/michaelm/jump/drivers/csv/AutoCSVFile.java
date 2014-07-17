@@ -40,7 +40,7 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
  * An extension of CSVFile with methods to guess the internal structure of the
  * file to parse.
  * @author Micha&euml;l MICHAUD
- * @version 0.9.0 (2014-05-14)
+ * @version 0.9.2 (2014-07-17)
  */
 public class AutoCSVFile extends CSVFile {
 
@@ -81,7 +81,9 @@ public class AutoCSVFile extends CSVFile {
 
 
     protected void init() throws IOException, CSVFileException {
-        setEncoding(guessEncoding());
+        // abandon guessEncoding, it is a dangerous guess...
+        // setEncoding(guessEncoding());
+        setEncoding(Charset.defaultCharset().name());
         readHeaderLines();
         initialized = true;
     }
@@ -90,6 +92,8 @@ public class AutoCSVFile extends CSVFile {
     /**
      * Test to guess the encoding of a file (taken from
      * neoedmund'editor at http://code.google.com/p/neoeedit/)
+     * @Deprecated too dangerous, just use the system default, it can be forced
+     * in the command line
      */
     private String guessEncoding() throws IOException {
         // Main multi-bytes encodings

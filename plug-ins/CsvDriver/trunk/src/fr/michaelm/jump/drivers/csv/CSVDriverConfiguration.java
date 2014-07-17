@@ -43,8 +43,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 0.9.1 (2014-06-16)
+ * @version 0.9.2 (2014-07-17)
  */
+// 0.9.2 (2014-07-17) abandon the guess encoding method of CSV (auto)
 // 0.9.1 (2014-06-16) fix a bug preventing to choose charset and field separator n save as csv
 // 0.9.0 (2014-05-14) handle csv resources included in a compressed file
 // 0.8.0 (2013-11-07) make csv-driver persistable in an OpenJUMP project (fix a number of problems)

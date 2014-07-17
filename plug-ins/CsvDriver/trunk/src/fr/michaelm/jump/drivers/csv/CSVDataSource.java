@@ -48,8 +48,9 @@ import com.vividsolutions.jump.task.TaskMonitor;
  * (csv like).</p>
  * Replace the previous XYZDataSource
  * @author Micha&euml;l MICHAUD
- * @version 0.9.0 (2014-05-14)
+ * @version 0.9.2 (2014-07-17)
  */
+ // 0.9.2 (2014-07-17) abandon the guess encoding method of CSV (auto)
  // 0.9.0 (2014-05-14) handle csv resources included in a compressed file
  // 0.8.0 (2013-11-07) resolve a problem of persistence in Project file
  //       + several bugs
