@@ -66,7 +66,8 @@ public class KMLDataSourceQueryChooserInstallerPlugIn extends AbstractPlugIn {
 	private static final String FIRST_CHOICE          = _I18N.getText("lat-long");
 	private static final String MISSING_RESOURCE      = _I18N.getText("missing-projection-file");
 	
-	public static String KMLDESCRIPTION = "KML 2.0";
+	public static String KMLDESCRIPTION_WGS84 = "KML 2.0";
+    public static String KMLDESCRIPTION_UTM   = "KML 2.0 (project to UTM)";
 	public static String COMPRESSED = "Compressed ";
 	
 	private PlugInContext context;
@@ -99,16 +100,30 @@ public class KMLDataSourceQueryChooserInstallerPlugIn extends AbstractPlugIn {
 				});
 
     	DataSourceQueryChooserManager.get(context.getWorkbenchContext()
-    			.getBlackboard()).addLoadDataSourceQueryChooser( 
-    					new LoadFileDataSourceQueryChooser(KMLReader.KML.class, KMLDESCRIPTION, 
+    			.getBlackboard())
+                .addLoadDataSourceQueryChooser(
+    					new LoadFileDataSourceQueryChooser(KMLReader.KML_WGS84.class, KMLDESCRIPTION_WGS84,
     							InstallStandardDataSourceQueryChoosersPlugIn.extensions(
-    									KMLReader.KML.class), context.getWorkbenchContext()){
+    									KMLReader.KML_WGS84.class), context.getWorkbenchContext()){
     						protected void addFileFilters(JFileChooser chooser) {
     							super.addFileFilters(chooser);
     							chooser.addChoosableFileFilter(GUIUtil.createFileFilter(
-    								COMPRESSED + KMLDESCRIPTION, new String[] { "kmz", "gz" }));
+    								COMPRESSED + KMLDESCRIPTION_WGS84, new String[] { "kmz", "gz" }));
      						}
     					});
+
+        DataSourceQueryChooserManager.get(context.getWorkbenchContext()
+                .getBlackboard())
+                .addLoadDataSourceQueryChooser(
+                        new LoadFileDataSourceQueryChooser(KMLReader.KML_UTM.class, KMLDESCRIPTION_UTM,
+                                InstallStandardDataSourceQueryChoosersPlugIn.extensions(
+                                        KMLReader.KML_UTM.class), context.getWorkbenchContext()){
+                            protected void addFileFilters(JFileChooser chooser) {
+                                super.addFileFilters(chooser);
+                                chooser.addChoosableFileFilter(GUIUtil.createFileFilter(
+                                        COMPRESSED + KMLDESCRIPTION_UTM, new String[] { "kmz", "gz" }));
+                            }
+                        });
         
         projectionPath = context.getWorkbenchContext().getWorkbench().getPlugInManager().getPlugInDirectory().getPath();
         projectionPath = projectionPath + File.separator + "kml" + File.separator + "ProjectStringsList.pjl";
@@ -125,7 +140,8 @@ public class KMLDataSourceQueryChooserInstallerPlugIn extends AbstractPlugIn {
     	//null UTM parameters mean 'do not write KML'
     	//empty UTM parameters mean 'write KML with no projection transformation'
     	//presumably, source already in lat/long
-    	
+
+        /*
     	Layer[] layers = context.getWorkbenchContext().getLayerNamePanel().getSelectedLayers();
     	Layer outputLayer = layers[0];
     	DataSourceQuery dsqOut = outputLayer.getDataSourceQuery();
@@ -183,6 +199,7 @@ public class KMLDataSourceQueryChooserInstallerPlugIn extends AbstractPlugIn {
     		    }
     		}
     	}
+    	*/
     	
     	//if here then no projection file found; ask user for projection data
     	//setDialogValues(projectionDialog, context);

@@ -153,7 +153,7 @@ public class KMLReader2 extends DefaultHandler implements JUMPReader {
 	{
 		public KML() 
 		{
-			super(new KMLReader(), new KMLWriter(), new String[] {"kml"});
+			super(new KMLReader(false), new KMLWriter(), new String[] {"kml"});
 		}
 	}
 

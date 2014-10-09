@@ -76,7 +76,7 @@ public class KMLWriter implements JUMPWriter {
     {
         public KML() 
         {
-            super(new KMLReader(), new KMLWriter(), new String[] {"kml"});
+            super(new KMLReader(false), new KMLWriter(), new String[] {"kml"});
         }
     }
     /**

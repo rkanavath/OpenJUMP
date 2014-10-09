@@ -33,11 +33,12 @@
 package com.isa.jump.plugin;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.xml.sax.Attributes;
@@ -88,13 +89,18 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 	private int zoneInt = 0;
 	private boolean zoneSouth = false;
 	private String zoneStr = "";
+    // projectToUTM to project geographic coordinates to UTM while reading kml
+    private boolean projectToUTM = false;
+
+    List<Exception> exceptions = new ArrayList<Exception>();
 
 
-	public KMLReader() {
+	public KMLReader(boolean projectToUTM) {
 		super();
 		xr = new org.apache.xerces.parsers.SAXParser();
 		xr.setContentHandler(this);
 		xr.setErrorHandler(this);
+        setProjectToUTM(projectToUTM);
 	}
 
 	private static class ClassicReaderWriterFileDataSource extends StandardReaderWriterFileDataSource 
@@ -109,13 +115,21 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 		}
 	}
 
-	public static class KML extends ClassicReaderWriterFileDataSource 
+	public static class KML_WGS84 extends ClassicReaderWriterFileDataSource
 	{
-		public KML() 
+		public KML_WGS84()
 		{
-			super(new KMLReader(), new KMLWriter(), new String[] {"kml"});
+			super(new KMLReader(false), new KMLWriter(), new String[] {"kml"});
 		}
 	}
+
+    public static class KML_UTM extends ClassicReaderWriterFileDataSource
+    {
+        public KML_UTM()
+        {
+            super(new KMLReader(true), new KMLWriter(), new String[] {"kml"});
+        }
+    }
 
 	private GMLInputTemplate makeTemplate() {
 		String geometryElement = "***";
@@ -161,8 +175,7 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 	 *@exception  IllegalParametersException  Description of the Exception
 	 *@exception  Exception                   Description of the Exception
 	 */
-	public FeatureCollection read(DriverProperties dp)
-	throws IllegalParametersException, Exception {
+	public FeatureCollection read(DriverProperties dp) throws Exception {
 		
   		source = PredefinedCoordinateSystems.GEOGRAPHICS_WGS_84;
   		destination = null;
@@ -251,20 +264,20 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 	XMLReader xr; //see above
 
 	int SRID =0; // srid to give the created geometries
-	public boolean parseSRID = false ; //true = put SRID for srsName="EPSG:42102"
+	//public boolean parseSRID = false ; //true = put SRID for srsName="EPSG:42102"
 	/**
 	 * true => for 'OBJECT' types, if you find more than 1 item, make a list and store all the results
 	 */
 	public boolean multiItemsAsLists = false;
 
-	/**
-	 * parse SRID information in geometry tags
-	 * @param parseTheSRID true = parse
-	 */
-	public void acceptSRID(boolean parseTheSRID)
-	{
-		parseSRID =parseTheSRID;
-	}
+	///**
+	// * parse SRID information in geometry tags
+	// * @param parseTheSRID true = parse
+	// */
+	//public void acceptSRID(boolean parseTheSRID)
+	//{
+	//	parseSRID =parseTheSRID;
+	//}
 
 	public void processMultiItems(boolean accept)
 	{
@@ -310,8 +323,7 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 	 *  elements Most of the work of the parser is done here.
 	 *@exception  SAXException  Description of the Exception
 	 */
-	public void endElement(String uri, String name, String qName)
-	throws SAXException {
+	public void endElement(String uri, String name, String qName) throws SAXException {
 		try {
 			int index;
 
@@ -442,8 +454,10 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 				STATE = STATE_FOUND_FEATURE_TAG;
 
 				finalGeometry = geometryFactory.buildGeometry(geometry);
-				
-				reprojectGeometry(finalGeometry);
+
+                if (projectToUTM) {
+                    reprojectGeometry(finalGeometry);
+                }
 				
 				//System.out.println("end geom: "+finalGeometry.toString() );
 				currentFeature.setGeometry(finalGeometry);
@@ -478,8 +492,10 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 	 *@exception  Exception  Description of the Exception
 	 */
 	public FeatureCollection read(java.io.Reader r, String readerName)
-	throws Exception {
-		LineNumberReader myReader = new LineNumberReader(r);
+            throws Exception {
+
+        LineNumberReader myReader = new LineNumberReader(r);
+        exceptions.clear();
 
 		if (GMLinput == null) {
 			throw new ParseException(
@@ -494,14 +510,15 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 		try {
 			xr.parse(new InputSource(myReader));
 		} catch (SAXParseException e) {
-			throw new ParseException(e.getMessage() + "  Last Opened Tag: " +
-					lastStartTag_qName + ".  Reader reports last line read as " +
+            exceptions.add(new ParseException(e.getMessage() +
+                    "  Last Opened Tag: " + lastStartTag_qName +
+                    ".  Reader reports last line read as " +
 					myReader.getLineNumber(),
 					streamName + " - " + e.getPublicId() + " (" + e.getSystemId() +
-					") ", e.getLineNumber(), e.getColumnNumber());
+					") ", e.getLineNumber(), e.getColumnNumber()));
 		} catch (SAXException e) {
-			throw new ParseException(e.getMessage() + "  Last Opened Tag: " +
-					lastStartTag_qName, streamName, myReader.getLineNumber(), 0);
+			exceptions.add(new ParseException(e.getMessage() + "  Last Opened Tag: " +
+					lastStartTag_qName, streamName, myReader.getLineNumber(), 0));
 		}
 
 		return fc;
@@ -566,8 +583,9 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 				return;
 			}
 
-			if (parseSRID && (STATE >= STATE_PARSE_GEOM_SIMPLE) && isGeometryTag(qName) )
-			{
+            // [mmichaud 2014-10-09] as far as I know, KML has no srsName attribute
+            /*
+			if (parseSRID && (STATE >= STATE_PARSE_GEOM_SIMPLE) && isGeometryTag(qName) ) {
 				//System.out.println("src="+atts.getValue("srsName"));
 				//System.out.println("srid="+ parseSRID(atts.getValue("srsName")));
 
@@ -575,13 +593,13 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 				//NOTE: if parseSRID it usually means that there was an error parsing
 				//      but, it could actually be specified as 'EPGS:0'.  Thats not
 				//      a problem because we've already defaulted to srid 0.
-				if (newSRID != 0)
-				{
+				if (newSRID != 0) {
 					SRID = newSRID;
 					if (geometryFactory.getSRID() != SRID)
 						geometryFactory = new GeometryFactory(new PrecisionModel(), SRID);
 				}
 			}
+			*/
 
 
 			if ((STATE >= STATE_PARSE_GEOM_SIMPLE) &&
@@ -620,6 +638,10 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 			throw new SAXException(e.getMessage());
 		}
 	}
+
+    private void setProjectToUTM(boolean toUTM) {
+        this.projectToUTM = toUTM;
+    }
 
 	////////////////////////////////////////////////////////////////////
 	// Error handlers.
@@ -741,25 +763,24 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 		}
 	}
 
-	/**
-	 *  parses the given srs text and returns the SRID
-	 * @param srsName srsName of the type "EPSG:<number>"
-	 * @return srid or 0 if there is a problem
-	 */
-	private int parseSRID(String srsName)
-	{
-		try{
-			int semicolonLoc = srsName.lastIndexOf(':');
-			if (semicolonLoc == -1)
-				return 0;
-			srsName = srsName.substring(semicolonLoc+1).trim();
-			return Integer.parseInt(srsName);
-		}
-		catch (Exception e)
-		{
-			return 0;
-		}
-	}
+	///**
+	// *  parses the given srs text and returns the SRID
+	// * @param srsName srsName of the type "EPSG:<number>"
+	// * @return srid or 0 if there is a problem
+	// */
+	//private int parseSRID(String srsName) {
+	//	try{
+	//		int semicolonLoc = srsName.lastIndexOf(':');
+	//		if (semicolonLoc == -1)
+	//			return 0;
+	//		srsName = srsName.substring(semicolonLoc+1).trim();
+	//		return Integer.parseInt(srsName);
+	//	}
+	//	catch (Exception e)
+	//	{
+	//		return 0;
+	//	}
+	//}
 	
 	private void setDestinationProjection(final int zoneInt, final boolean zoneSouth, 
 			final double centralMeridian) {
@@ -778,8 +799,7 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 		setDestinationProjection(zoneInt, zoneSouth, centralMeridian);
 	}
 
-	public String getZone(double latitude, double longitude)
-	{   
+	public String getZone(double latitude, double longitude) {
 		//there are two exceptions to the equations below: Norway and Svalbard
 		//per LDB/RFL (8/10/05) we will ignore them as we do not expect to have
 		//to handle any maps from those areas.
@@ -804,6 +824,7 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 		return zoneStr;
 	}
 
+    // Reproject geometry from source to destination
 	private void reprojectGeometry(Geometry geometry) {
         geometry.apply(new CoordinateFilter() {
             public void filter(Coordinate coord) {
@@ -815,6 +836,10 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
         });
         geometry.geometryChanged();
 	}
+
+    public Collection<Exception> getExceptions() {
+        return exceptions;
+    }
 
 }
 

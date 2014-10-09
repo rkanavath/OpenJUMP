@@ -24,6 +24,10 @@ package com.isa.jump.plugin;
 
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import org.openjump.core.ui.io.file.DataSourceFileLayerLoader;
+
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * This is the entry class to declare the kml driver to JUMP.
@@ -34,9 +38,10 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 // History
 // 0.1 (2011-09-17)   : first version taken from SkyJUMP source
 public class KMLDriverConfiguration extends Extension {
+
     public void configure(PlugInContext context) throws Exception {
         new KMLDataSourceQueryChooserInstallerPlugIn().initialize(context);
     }
     public String getName() {return "KML driver";}
-    public String getVersion() {return "0.1";}
+    public String getVersion() {return "0.1.1";}
 }
