@@ -34,18 +34,11 @@
 
 package com.vividsolutions.jcs.plugin.qa;
 
-import java.awt.Color;
-import javax.swing.*;
 import com.vividsolutions.jump.feature.*;
-import com.vividsolutions.jump.util.feature.*;
 import com.vividsolutions.jcs.qa.*;
 import com.vividsolutions.jump.task.*;
-import com.vividsolutions.jump.workbench.*;
 import com.vividsolutions.jump.workbench.model.*;
 import com.vividsolutions.jump.workbench.plugin.*;
-import com.vividsolutions.jump.workbench.ui.*;
-import com.vividsolutions.jump.workbench.ui.plugin.*;
-import com.vividsolutions.jump.workbench.ui.renderer.style.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -79,11 +72,11 @@ public class UpdateCoverageGapInFencePlugIn
   public UpdateCoverageGapInFencePlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(
-          this, "Clean", "Update Gap in Fence", null, new MultiEnableCheck()
-          .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
-          .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1))
-          .add(context.getCheckFactory().createFenceMustBeDrawnCheck()));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Update Gap in Fence", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1))
+                      .add(context.getCheckFactory().createFenceMustBeDrawnCheck()));
   }
 
   public boolean execute(PlugInContext context)
@@ -114,11 +107,11 @@ public class UpdateCoverageGapInFencePlugIn
     FeatureCollection segs = msf.getMatchedSegments();
     FeatureCollection sizeInd = msf.getSizeIndicators();
 
-    removeFromLayer(context, CoverageGapPlugIn.GAP_SEGMENT_LAYER_NAME, fence);
-    removeFromLayer(context, CoverageGapPlugIn.GAP_SIZE_LAYER_NAME, fence);
+    removeFromLayer(context, OLD_CoverageGapPlugIn.GAP_SEGMENT_LAYER_NAME, fence);
+    removeFromLayer(context, OLD_CoverageGapPlugIn.GAP_SIZE_LAYER_NAME, fence);
 
-    addToLayer(context, CoverageGapPlugIn.GAP_SEGMENT_LAYER_NAME, segs);
-    addToLayer(context, CoverageGapPlugIn.GAP_SIZE_LAYER_NAME, sizeInd);
+    addToLayer(context, OLD_CoverageGapPlugIn.GAP_SEGMENT_LAYER_NAME, segs);
+    addToLayer(context, OLD_CoverageGapPlugIn.GAP_SIZE_LAYER_NAME, sizeInd);
 
   }
 

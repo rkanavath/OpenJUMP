@@ -46,7 +46,8 @@ import com.vividsolutions.jump.workbench.ui.*;
 import com.vividsolutions.jump.workbench.ui.plugin.*;
 import com.vividsolutions.jump.task.*;
 
-public class DiffSegmentsPlugIn extends ThreadedBasePlugIn {
+@Deprecated
+public class OLD_DiffSegmentsPlugIn extends ThreadedBasePlugIn {
 
   private final static String LAYER1 = "Layer 1";
   private final static String LAYER2 = "Layer 2";
@@ -57,13 +58,13 @@ public class DiffSegmentsPlugIn extends ThreadedBasePlugIn {
   private boolean useTolerance = false;
   private double distanceTolerance = 0.0;
 
-  public DiffSegmentsPlugIn() { }
+  public OLD_DiffSegmentsPlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(this, new String[] {"QA"},
-        getName() + "...", false, null, new MultiEnableCheck()
-        .add(context.getCheckFactory().createWindowWithLayerViewPanelMustBeActiveCheck())
-        .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Segment Difference...", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createWindowWithLayerViewPanelMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
   }
 
   public boolean execute(PlugInContext context) throws Exception {

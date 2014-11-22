@@ -67,10 +67,10 @@ public class OffsetBoundaryCornerFinderPlugIn
   public void initialize(PlugInContext context)
       throws Exception
   {
-    context.getFeatureInstaller().addMainMenuItem(
-          this, "QA", "Find Offset Boundary Corners...", null, new MultiEnableCheck()
-          .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
-          .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Find Offset Boundary Corners...", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
   }
 
   public boolean execute(PlugInContext context)

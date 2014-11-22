@@ -56,21 +56,23 @@ import com.vividsolutions.jts.geom.Envelope;
  * The size of the fence is used to determine the distance tolerance
  * (This will produce bad results for very large fences - the user must
  * be aware of this).
+ * <p>See topology plugin.</p>
  */
-public class CoverageGapInFencePlugIn
+@Deprecated
+public class OLD_CoverageGapInFencePlugIn
     extends AbstractPlugIn
 {
   private InternalMatchedSegmentFinder.Parameters param
       = new InternalMatchedSegmentFinder.Parameters();
 
-  public CoverageGapInFencePlugIn() { }
+  public OLD_CoverageGapInFencePlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(
-          this, "Clean", "Show Gap in Fence", null, new MultiEnableCheck()
-          .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
-          .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1))
-          .add(context.getCheckFactory().createFenceMustBeDrawnCheck()));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Show Gap in Fence...", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1))
+                      .add(context.getCheckFactory().createFenceMustBeDrawnCheck()));
   }
 
   public boolean execute(PlugInContext context)

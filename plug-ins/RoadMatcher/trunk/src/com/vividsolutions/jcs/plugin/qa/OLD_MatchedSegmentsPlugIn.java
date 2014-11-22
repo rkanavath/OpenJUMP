@@ -49,7 +49,8 @@ import com.vividsolutions.jump.workbench.plugin.*;
 import com.vividsolutions.jump.workbench.ui.*;
 import com.vividsolutions.jump.workbench.ui.plugin.*;
 
-public class MatchedSegmentsPlugIn extends ThreadedBasePlugIn {
+@Deprecated
+public class OLD_MatchedSegmentsPlugIn extends ThreadedBasePlugIn {
   public static final String GAP_SIZE_LAYER_NAME = "Gap Size";
 
   private final static String LAYER0 = "Layer 1";
@@ -61,13 +62,13 @@ public class MatchedSegmentsPlugIn extends ThreadedBasePlugIn {
   private Layer layer0, layer1;
   private MatchedSegmentFinder.Parameters param = new MatchedSegmentFinder.Parameters();
 
-  public MatchedSegmentsPlugIn() { }
+  public OLD_MatchedSegmentsPlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(
-        this, "QA", "Find Misaligned Segments...", null, new MultiEnableCheck()
-      .add(context.getCheckFactory().createWindowWithLayerNamePanelMustBeActiveCheck())
-        .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
+    context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Find Misaligned Segments...", false, null,
+            new MultiEnableCheck()
+                    .add(context.getCheckFactory().createWindowWithLayerNamePanelMustBeActiveCheck())
+                    .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
   }
 
   public boolean execute(PlugInContext context) throws Exception {

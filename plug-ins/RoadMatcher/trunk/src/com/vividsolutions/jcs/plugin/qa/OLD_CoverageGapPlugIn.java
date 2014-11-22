@@ -49,7 +49,8 @@ import com.vividsolutions.jump.workbench.ui.*;
 import com.vividsolutions.jump.workbench.ui.plugin.*;
 import com.vividsolutions.jump.workbench.ui.renderer.style.*;
 
-public class CoverageGapPlugIn
+@Deprecated
+public class OLD_CoverageGapPlugIn
     extends ThreadedBasePlugIn
 {
 
@@ -68,13 +69,13 @@ public class CoverageGapPlugIn
   private boolean createNewLayers;
   private boolean useFence;
 
-  public CoverageGapPlugIn() { }
+  public OLD_CoverageGapPlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(
-          this, "QA", "Find Coverage Gaps...", null, new MultiEnableCheck()
-          .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
-          .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1)));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Find Coverage Gaps...", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1)));
   }
 
   public boolean execute(PlugInContext context) throws Exception {

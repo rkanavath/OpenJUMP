@@ -46,7 +46,8 @@ import com.vividsolutions.jump.workbench.model.*;
 import com.vividsolutions.jump.workbench.plugin.*;
 import com.vividsolutions.jump.workbench.ui.*;
 
-public class DiffGeometryPlugIn extends ThreadedBasePlugIn {
+@Deprecated
+public class OLD_DiffGeometryPlugIn extends ThreadedBasePlugIn {
 
   private final static String LAYER1 = "Layer 1";
   private final static String LAYER2 = "Layer 2";
@@ -61,13 +62,13 @@ public class DiffGeometryPlugIn extends ThreadedBasePlugIn {
   private boolean testExactCoordinateOrder = false;
   private boolean splitIntoComponents = false;
 
-  public DiffGeometryPlugIn() { }
+  public OLD_DiffGeometryPlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(this, new String[] {"QA"},
-        getName() + "...", false, null, new MultiEnableCheck()
-        .add(context.getCheckFactory().createWindowWithLayerViewPanelMustBeActiveCheck())
-        .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Geometry Difference...", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createWindowWithLayerViewPanelMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
   }
 
   public boolean execute(PlugInContext context) throws Exception {

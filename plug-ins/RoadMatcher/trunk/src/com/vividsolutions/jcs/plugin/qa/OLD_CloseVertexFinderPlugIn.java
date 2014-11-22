@@ -47,7 +47,8 @@ import com.vividsolutions.jump.workbench.ui.*;
 import com.vividsolutions.jump.workbench.ui.plugin.*;
 import com.vividsolutions.jump.workbench.ui.renderer.style.*;
 
-public class CloseVertexFinderPlugIn
+@Deprecated
+public class OLD_CloseVertexFinderPlugIn
     extends ThreadedBasePlugIn
 {
   private final static String LAYER1 = "Layer 1";
@@ -59,13 +60,13 @@ public class CloseVertexFinderPlugIn
   private double distanceTolerance = 1.0;
   private boolean createNewLayers;
 
-  public CloseVertexFinderPlugIn() { }
+  public OLD_CloseVertexFinderPlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(
-          this, "QA", "Find Close Vertices...", null, new MultiEnableCheck()
-          .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
-          .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Find Close Vertices...", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(2)));
   }
 
   public boolean execute(PlugInContext context) throws Exception {

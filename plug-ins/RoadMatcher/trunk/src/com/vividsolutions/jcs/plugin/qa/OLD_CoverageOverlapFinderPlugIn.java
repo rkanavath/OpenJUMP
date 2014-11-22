@@ -49,7 +49,8 @@ import com.vividsolutions.jump.workbench.ui.*;
 import com.vividsolutions.jump.workbench.ui.plugin.*;
 import com.vividsolutions.jump.workbench.ui.renderer.style.*;
 
-public class CoverageOverlapFinderPlugIn
+@Deprecated
+public class OLD_CoverageOverlapFinderPlugIn
     extends ThreadedBasePlugIn
 {
   private final static String LAYER = "Layer";
@@ -58,13 +59,13 @@ public class CoverageOverlapFinderPlugIn
   private Layer layer;
   private boolean createNewLayers;
 
-  public CoverageOverlapFinderPlugIn() { }
+  public OLD_CoverageOverlapFinderPlugIn() { }
 
   public void initialize(PlugInContext context) throws Exception {
-    context.getFeatureInstaller().addMainMenuItem(
-          this, "QA", "Find Coverage Overlaps...", null, new MultiEnableCheck()
-          .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
-          .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1)));
+      context.getFeatureInstaller().addMainMenuPlugin(this, new String[]{"JCS"}, "Find Coverage Overlaps...", false, null,
+              new MultiEnableCheck()
+                      .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
+                      .add(context.getCheckFactory().createAtLeastNLayersMustExistCheck(1)));
   }
 
   public boolean execute(PlugInContext context) throws Exception {
