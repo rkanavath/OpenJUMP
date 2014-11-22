@@ -211,7 +211,7 @@ public class ToolboxModel {
 	private Style createAdjustedStyle() {
 		BasicStyle adjustedStyle = new BasicStyle() {
 			public void paint(Feature f, Graphics2D g, Viewport viewport)
-					throws NoninvertibleTransformException {
+					throws NoninvertibleTransformException, Exception {
 				if (!((SourceFeature) f).getRoadSegment().isAdjusted()) {
 					return;
 				}
