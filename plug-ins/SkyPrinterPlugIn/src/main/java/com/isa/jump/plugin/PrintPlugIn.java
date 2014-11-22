@@ -780,7 +780,8 @@ public class PrintPlugIn extends AbstractPlugIn {
     	EnableCheckFactory checkFactory = new EnableCheckFactory(workbenchContext);
     	return new MultiEnableCheck()
     	.add(checkFactory.createTaskWindowMustBeActiveCheck())
-    	.add(checkFactory.createAtLeastNLayersMustExistCheck(1));        
+    	//.add(checkFactory.createAtLeastNLayersMustExistCheck(1));
+        .add(checkFactory.createAtLeastNLayerablesMustExistCheck(1));
     }
     
     /**
