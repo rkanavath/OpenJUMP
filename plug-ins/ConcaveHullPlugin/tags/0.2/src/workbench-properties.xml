@@ -1,0 +1,5 @@
+<workbench>
+  <extension>
+  org.opensphere.openjump.ConcaveHullExtension
+  </extension>
+</workbench>
