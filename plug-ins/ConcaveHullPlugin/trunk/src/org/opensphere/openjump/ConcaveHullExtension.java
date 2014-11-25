@@ -35,16 +35,16 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
  * @author Eric Grosso
  * 
  */
-public class OpenSphereExtension extends Extension {
+public class ConcaveHullExtension extends Extension {
 	
 	@Override
 	public String getName() {
-		return "OpenSphere Extension";
+		return "Concave Hull Extension";
 	}
 	
 	@Override
 	public String getVersion() {
-		return "0.1 (2012-05-22)";
+		return "0.2 (2014-11-25)";
 	}
 
 	/**
