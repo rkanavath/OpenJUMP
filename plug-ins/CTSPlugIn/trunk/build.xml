@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Ant build file for the SkyPrinterPlugin.
+The configuration should take place in the the build.properties file! Please do
+not change the property's here. New property's should defined in the
+build.properties file too.
+-->
+<project name="CTSPlugIn" default="default" basedir=".">
+    <property file="build.properties" />
+    <property name="java.src" value="src" />
+    <property name="java.lib" value="lib" />
+    <property name="build.targetpath" value="target" />
+    <property name="build.classes" value="${build.targetpath}/classes" />
+    <property name="jar.filename" value="${build.targetpath}/CTSPlugIn-${version.number}.jar" />
+
+    <path id="classpath">
+        <fileset dir="${openjump.svn}/lib" includes="**/*.jar" />
+        <path path="${openjump.svn}/target/classes" />
+        <!--fileset dir="${cts.svn}/lib" includes="**/*.jar" /-->
+        <path path="${cts.svn}/target/classes" />
+        <fileset dir="${java.lib}" includes="**/*.jar"/>
+        <pathelement location="${build.classes}" />
+    </path>
+    
+    <target name="default" depends="jar" description="Build and JAR the hole SkyPrinterPlugIn">
+    </target>
+    
+    <target name="build" depends="clean" description="Compile the classes">
+        <mkdir dir="${build.classes}" />
+        <javac
+            srcdir="${java.src}"
+            destdir="${build.classes}"
+            classpathref="classpath"
+            includeantruntime="false"
+            debug="true"
+            source="${java.targetversion}"
+            target="${java.targetversion}"
+        />
+        <copy todir="${build.classes}" description="we need the i18n files too">
+            <fileset dir="resources" />
+        </copy>
+    </target>
+
+    <target name="clean" description="cleanup">
+        <delete dir="${build.targetpath}" />
+    </target>
+    
+    <target name="jar" depends="build" description="Creates the JAR file">
+        <jar  jarfile="${jar.filename}">
+            <fileset dir="${build.classes}"/>
+        </jar>
+    </target>
+    
+    <target name="run" depends="build" description="Runs the CTSPlugIn">
+        <java classname="${run.mainclass}" classpathref="classpath" fork="true">
+            <arg line="${run.arguments}"/>
+            <jvmarg line="${run.arguments.jvm}" />
+        </java>
+    </target>
+    
+</project>
