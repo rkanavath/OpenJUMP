@@ -8,7 +8,11 @@ import java.awt.event.KeyEvent;
 import java.util.*;
 
 /**
- * Created by Micha�l on 23/11/14.
+ * SuggestTreeComboBox presents a selection of items starting with the
+ * same letters as the one in the editor using a SuggestTree (Trie).
+ * To be more flexible, suggestions are not limited to words starting
+ * with the token typed in the editor but also includes items containing
+ * such tokens.
  */
 public class SuggestTreeComboBox extends JComboBox {
 
@@ -26,8 +30,6 @@ public class SuggestTreeComboBox extends JComboBox {
     public void changeModel(String[] array) {
         map = new HashMap<String, String>(array.length);
         this.trie = initTrie(array, trie.size());
-        this.setEditable(true);
-        this.getEditor().getEditorComponent().addKeyListener(new MyKeyAdapter(this));
     }
 
     private SuggestTree initTrie(String[] array, int size) {
@@ -63,7 +65,7 @@ public class SuggestTreeComboBox extends JComboBox {
         }
         @Override
         public void keyReleased(KeyEvent e) {
-            //super.keyReleased(e);
+            super.keyReleased(e);
             if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_UP) {
                 cb.getEditor().setItem(
                         cb.getSelectedItem()
@@ -86,6 +88,10 @@ public class SuggestTreeComboBox extends JComboBox {
                 cb.setModel(new DefaultComboBoxModel(set.toArray(new String[set.size()])));
                 cb.showPopup();
                 cb.getEditor().setItem(newValue);
+                // Very strange : if I start OpenJUMP from my IDE with ant, I don't need to do that,
+                // but in production, if I don't unselect editor's content, next key will replace
+                // previous content, and I can't simply add a letter to the prvious one !
+                ((JTextField)cb.editor.getEditorComponent()).select(newValue.length(),newValue.length());
             }
         }
     }

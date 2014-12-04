@@ -14,7 +14,7 @@ import org.cts.op.UnitConversion;
 import org.cts.units.Unit;
 
 /**
- * A wrapper to wra a {@link org.cts.crs.CoordinateReferenceSystem} into a
+ * A wrapper to wrap a {@link org.cts.crs.CoordinateReferenceSystem} into a
  * {@link com.vividsolutions.jump.coordsys.CoordinateSystem}.
  */
 public class CoordinateSystemWrapper extends CoordinateSystem {

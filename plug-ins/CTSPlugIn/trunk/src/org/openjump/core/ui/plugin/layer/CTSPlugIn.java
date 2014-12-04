@@ -11,6 +11,7 @@ import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.UndoableCommand;
 import com.vividsolutions.jump.workbench.plugin.*;
+import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.HTMLFrame;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
@@ -33,7 +34,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * PlugIn to transform coordinates with Coordinate Transformation Suite (CTS)
+ * PlugIn to transform coordinates using Coordinate Transformation Suite (CTS)
  */
 public class CTSPlugIn extends ThreadedBasePlugIn {
 
@@ -75,12 +76,13 @@ public class CTSPlugIn extends ThreadedBasePlugIn {
                 .getFrame()
                 .getLayerNamePopupMenu();
 
-        featureInstaller.addPopupMenuPlugin(layerNamePopupMenu, this,
+        JMenuItem popupMenu = featureInstaller.addPopupMenuPlugin(layerNamePopupMenu, this,
                 new String[0],
                 getName(),
                 false,
                 null, //getIcon(),
                 createEnableCheck(workbenchContext));
+        layerNamePopupMenu.insert(popupMenu, 5);
     }
 
     public String getName() {
@@ -133,6 +135,7 @@ public class CTSPlugIn extends ThreadedBasePlugIn {
             }
         });
 
+        GUIUtil.centreOnWindow(dialog);
         dialog.setVisible(true);
         if (dialog.wasOKPressed()) {
             registry = dialog.getText(REGISTRY);

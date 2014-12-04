@@ -5,7 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by Michaël on 01/12/14.
+ * This class parses quickly a register to associate CRS codes with names.
+ * Name of CRSs may be written in a comment just before the CRS definition
  */
 public class RegistryReader {
 

@@ -1,4 +1,4 @@
-package test.org.openjump;
+package org.openjump;
 
 import org.openjump.swing.SuggestTreeComboBox;
 import org.openjump.util.SuggestTree;
@@ -23,7 +23,17 @@ public class SuggestTreeComboBoxTestCase {
                 "Lambert zone 3 NTF",
                 "Lambert zone 4",
                 "Lambert93 RGF 93",
+                "2150",
+                "2151",
+                "2152",
+                "2153",
                 "2154",
+                "2155",
+                "2156",
+                "2157",
+                "2158",
+                "2159",
+                "2160",
                 "RGF93",
                 "Web Mercator",
                 "RGF93 UTM 30N",

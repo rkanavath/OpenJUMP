@@ -15,6 +15,11 @@ build.properties file too.
 
     <path id="classpath">
         <fileset dir="${openjump.svn}/lib" includes="**/*.jar" />
+        <!--fileset dir="${openjump.svn}/lib/ext" includes="*.jar" />
+        <fileset dir="${openjump.svn}/lib/plus" includes="*.jar" />
+        <fileset dir="${openjump.svn}/lib/native" includes="*.jar" />
+        <fileset dir="${openjump.svn}/lib/imageio-ext" includes="*.jar" />
+        <fileset dir="${openjump.svn}/lib/imageio-ext.plus" includes="*.jar" /-->
         <path path="${openjump.svn}/target/classes" />
         <!--fileset dir="${cts.svn}/lib" includes="**/*.jar" /-->
         <path path="${cts.svn}/target/classes" />
@@ -37,7 +42,7 @@ build.properties file too.
             target="${java.targetversion}"
         />
         <copy todir="${build.classes}" description="we need the i18n files too">
-            <fileset dir="resources" />
+            <fileset dir="resources" includes="cts_plugin/**/*.properties"/>
         </copy>
     </target>
 
@@ -52,7 +57,7 @@ build.properties file too.
     </target>
     
     <target name="run" depends="build" description="Runs the CTSPlugIn">
-        <java classname="${run.mainclass}" classpathref="classpath" fork="true">
+        <java classname="${run.mainclass}" classpathref="classpath" fork="false">
             <arg line="${run.arguments}"/>
             <jvmarg line="${run.arguments.jvm}" />
         </java>
