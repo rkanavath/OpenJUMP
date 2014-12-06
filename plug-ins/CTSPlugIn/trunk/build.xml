@@ -43,6 +43,7 @@ build.properties file too.
         />
         <copy todir="${build.classes}" description="we need the i18n files too">
             <fileset dir="resources" includes="cts_plugin/**/*.properties"/>
+            <fileset dir="src" includes="**/*.png"/>
         </copy>
     </target>
 
@@ -57,7 +58,7 @@ build.properties file too.
     </target>
     
     <target name="run" depends="build" description="Runs the CTSPlugIn">
-        <java classname="${run.mainclass}" classpathref="classpath" fork="false">
+        <java classname="${run.mainclass}" classpathref="classpath" fork="true">
             <arg line="${run.arguments}"/>
             <jvmarg line="${run.arguments.jvm}" />
         </java>

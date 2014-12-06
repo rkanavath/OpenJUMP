@@ -13,7 +13,9 @@ import com.vividsolutions.jump.workbench.model.UndoableCommand;
 import com.vividsolutions.jump.workbench.plugin.*;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.HTMLFrame;
+import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
+import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 import org.cts.CRSFactory;
 import org.cts.Identifier;
@@ -27,16 +29,18 @@ import org.openjump.core.ccordsys.srid.SRIDStyle;
 import org.openjump.swing.SuggestTreeComboBox;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /**
  * PlugIn to transform coordinates using Coordinate Transformation Suite (CTS)
  */
-public class CTSPlugIn extends ThreadedBasePlugIn {
+public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableChecked {
 
     I18N I18N_ = I18N.getInstance("cts_plugin");
 
@@ -70,33 +74,47 @@ public class CTSPlugIn extends ThreadedBasePlugIn {
         WorkbenchContext workbenchContext = context.getWorkbenchContext();
         FeatureInstaller featureInstaller = new FeatureInstaller(workbenchContext);
 
+        featureInstaller.addMainMenuPlugin(this, new String[]{MenuNames.PLUGINS});
+
         JPopupMenu layerNamePopupMenu = context
                 .getWorkbenchContext()
                 .getWorkbench()
                 .getFrame()
                 .getLayerNamePopupMenu();
-
-        JMenuItem popupMenu = featureInstaller.addPopupMenuPlugin(layerNamePopupMenu, this,
-                new String[0],
-                getName(),
-                false,
-                null, //getIcon(),
-                createEnableCheck(workbenchContext));
-        layerNamePopupMenu.insert(popupMenu, 5);
+        JMenuItem popupMenu = featureInstaller.addPopupMenuPlugin(layerNamePopupMenu, this);
+        // insert popup menu after "Zoom to Layer"
+        Component[] components = layerNamePopupMenu.getComponents();
+        layerNamePopupMenu.removeAll();
+        for (int i = 0 ; i < components.length-1 ; i++) {
+            if (i <= 12) layerNamePopupMenu.add(components[i]);
+            if (i == 12) layerNamePopupMenu.add(popupMenu);
+            if (i > 12) layerNamePopupMenu.add(components[i]);
+        }
     }
 
     public String getName() {
         return I18N_.getText("cts_plugin","CTSPlugIn");
     }
 
+    public ImageIcon getIcon(){
+        return new ImageIcon(this.getClass().getResource("world.png"));
+    }
+
     public boolean execute(final PlugInContext context) throws Exception {
 
         MultiInputDialog dialog = new MultiInputDialog(context.getWorkbenchFrame(), "CoordinateTransformation", true);
+
+        // Try to get the srid (epsg) of selected layers
+        // 1) from the CoordinateSystem associated to the first selected layer
+        // 2) from the SRIDStyle associated to the first selected layer
         CoordinateSystem coordSystem = null;
         if (context.getSelectedLayers().length > 0 &&
                 null != (coordSystem = context.getSelectedLayer(0).getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem())) {
             srcCode = coordSystem == CoordinateSystem.UNSPECIFIED ?
                     "0" : Integer.toString(coordSystem.getEPSGCode());
+            if (srcCode.equals("0") && context.getSelectedLayer(0).getStyle(SRIDStyle.class) != null) {
+                srcCode = Integer.toString(((SRIDStyle)context.getSelectedLayer(0).getStyle(SRIDStyle.class)).getSRID());
+            }
         }
 
         final JComboBox registry_cb = dialog.addComboBox(REGISTRY, registry, Arrays.asList("EPSG", "IGNF"),"");
@@ -163,25 +181,11 @@ public class CTSPlugIn extends ThreadedBasePlugIn {
                     .getCoordinateReferenceSystem(new Identifier(registry, tgtCode, null));
 
             commitChanges(monitor, context, srcCRS, tgtCRS);
-            HTMLFrame html = context.getOutputFrame();
-            html.createNewDocument();
-            html.setTitle(getName());
-            html.append("<h2>" + TRANSFORMED_LAYERS + "</h2>");
-            html.append(Arrays.toString(context.getSelectedLayers()));
-            html.append("<h2>" + SOURCE_LABEL + "</h2>");
-            html.addField(SOURCE_LABEL, srcCRS.toString());
-            html.addField(SOURCE_DATUM, srcCRS.getDatum().toString());
-            html.addField(SOURCE_TOWGS84, srcCRS.getDatum().getToWGS84().toString());
-            html.addField(SOURCE_SPHEROID, ((GeodeticDatum)srcCRS.getDatum()).getEllipsoid().toString());
-            html.append("<h2>" + TARGET_LABEL + "</h2>");
-            html.addField(TARGET_LABEL, tgtCRS.toString());
-            html.addField(TARGET_DATUM, tgtCRS.getDatum().toString());
-            html.addField(TARGET_TOWGS84, tgtCRS.getDatum().getToWGS84().toString());
-            html.addField(TARGET_SPHEROID, ((GeodeticDatum)srcCRS.getDatum()).getEllipsoid().toString());
-            html.append("<h2>" + getName() + "</h2>");
-            html.addField("", getOperation(srcCRS, tgtCRS).toString().replaceAll("\n","<br>"));
+            report(context, srcCRS, tgtCRS);
         }
     }
+
+
 
     // Commit reprojection as an undoable transaction
     private void commitChanges(final TaskMonitor monitor,
@@ -304,6 +308,27 @@ public class CTSPlugIn extends ThreadedBasePlugIn {
         context.getLayerManager().getUndoableEditReceiver().receive(cmd.toUndoableEdit());
     }
 
+    private void report(PlugInContext context, CoordinateReferenceSystem srcCRS, CoordinateReferenceSystem tgtCRS)
+            throws CoordinateOperationException{
+        HTMLFrame html = context.getOutputFrame();
+        html.createNewDocument();
+        html.setTitle(getName());
+        html.append("<h2>" + TRANSFORMED_LAYERS + "</h2>");
+        html.append(Arrays.toString(context.getSelectedLayers()));
+        html.append("<h2>" + SOURCE_LABEL + "</h2>");
+        html.addField(SOURCE_LABEL, srcCRS.toString());
+        html.addField(SOURCE_DATUM, srcCRS.getDatum().toString());
+        html.addField(SOURCE_TOWGS84, srcCRS.getDatum().getToWGS84().toString());
+        html.addField(SOURCE_SPHEROID, ((GeodeticDatum)srcCRS.getDatum()).getEllipsoid().toString());
+        html.append("<h2>" + TARGET_LABEL + "</h2>");
+        html.addField(TARGET_LABEL, tgtCRS.toString());
+        html.addField(TARGET_DATUM, tgtCRS.getDatum().toString());
+        html.addField(TARGET_TOWGS84, tgtCRS.getDatum().getToWGS84().toString());
+        html.addField(TARGET_SPHEROID, ((GeodeticDatum)srcCRS.getDatum()).getEllipsoid().toString());
+        html.append("<h2>" + getName() + "</h2>");
+        html.addField("", getOperation(srcCRS, tgtCRS).toString().replaceAll("\n","<br>"));
+    }
+
     private CoordinateOperation getOperation(final CoordinateReferenceSystem srcCRS,
                                              final CoordinateReferenceSystem tgtCRS)
             throws CoordinateOperationException{
@@ -334,7 +359,7 @@ public class CTSPlugIn extends ThreadedBasePlugIn {
         return RegistryReader.read(registry);
     }
 
-    private EnableCheck createEnableCheck(final WorkbenchContext context) {
+    EnableCheck createEnableCheck(final WorkbenchContext context) {
         return new MultiEnableCheck()
                 .add(EnableCheckFactory.getInstance().createTaskWindowMustBeActiveCheck())
                 .add(EnableCheckFactory.getInstance().createAtLeastNLayersMustBeSelectedCheck(1))
@@ -345,15 +370,21 @@ public class CTSPlugIn extends ThreadedBasePlugIn {
                         if (layers.length > 0) {
                             if (!layers[0].isEditable()) return "Selected layers must be editable";
                             CoordinateSystem cs = layers[0].getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
+                            SRIDStyle srid = (SRIDStyle)layers[0].getStyle(SRIDStyle.class);
                             for (int i = 1 ; i < layers.length ; i++) {
                                 if (!layers[i].isEditable()) return "Selected layers must be editable";
                                 CoordinateSystem csi = layers[i].getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
-                                if (cs == csi) continue;
+                                SRIDStyle sridi = (SRIDStyle)layers[i].getStyle(SRIDStyle.class);
+                                if (cs == csi && srid == sridi) continue;
                                 if (cs == null && csi != null) return HETEROGEN_SRC;
                                 if (cs != null && csi == null) return HETEROGEN_SRC;
                                 if (cs == CoordinateSystem.UNSPECIFIED && csi != CoordinateSystem.UNSPECIFIED) return HETEROGEN_SRC;
                                 if (cs != CoordinateSystem.UNSPECIFIED && csi == CoordinateSystem.UNSPECIFIED) return HETEROGEN_SRC;
-                                if (cs != null && csi!= null && cs.getEPSGCode() != csi.getEPSGCode()) return HETEROGEN_SRC;
+                                try {
+                                    if (cs != null && csi != null && cs.getEPSGCode() != csi.getEPSGCode())
+                                        return HETEROGEN_SRC;
+                                } catch (UnsupportedOperationException e) {}
+                                if (srid != null && sridi != null && srid.getSRID() != sridi.getSRID()) return HETEROGEN_SRC;
                             }
                             return null;
                         }
