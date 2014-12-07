@@ -77,19 +77,19 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
         featureInstaller.addMainMenuPlugin(this, new String[]{MenuNames.PLUGINS});
 
         JPopupMenu layerNamePopupMenu = context
-                .getWorkbenchContext()
-                .getWorkbench()
-                .getFrame()
-                .getLayerNamePopupMenu();
+                 .getWorkbenchContext()
+                 .getWorkbench()
+                 .getFrame()
+                 .getLayerNamePopupMenu();
         JMenuItem popupMenu = featureInstaller.addPopupMenuPlugin(layerNamePopupMenu, this);
         // insert popup menu after "Zoom to Layer"
-        Component[] components = layerNamePopupMenu.getComponents();
-        layerNamePopupMenu.removeAll();
-        for (int i = 0 ; i < components.length-1 ; i++) {
-            if (i <= 12) layerNamePopupMenu.add(components[i]);
-            if (i == 12) layerNamePopupMenu.add(popupMenu);
-            if (i > 12) layerNamePopupMenu.add(components[i]);
-        }
+        // Component[] components = layerNamePopupMenu.getComponents();
+        // layerNamePopupMenu.removeAll();
+        // for (int i = 0 ; i < components.length-1 ; i++) {
+        //     if (i <= 12) layerNamePopupMenu.add(components[i]);
+        //     if (i == 12) layerNamePopupMenu.add(popupMenu);
+        //     if (i > 12) layerNamePopupMenu.add(components[i]);
+        // }
     }
 
     public String getName() {
