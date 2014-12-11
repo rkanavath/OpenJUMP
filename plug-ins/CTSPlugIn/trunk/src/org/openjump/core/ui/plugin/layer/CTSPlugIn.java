@@ -8,8 +8,11 @@ import com.vividsolutions.jump.coordsys.CoordinateSystem;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
+import com.vividsolutions.jump.workbench.imagery.ReferencedImageStyle;
 import com.vividsolutions.jump.workbench.model.Layer;
+import com.vividsolutions.jump.workbench.model.Layerable;
 import com.vividsolutions.jump.workbench.model.UndoableCommand;
+import com.vividsolutions.jump.workbench.model.WMSLayer;
 import com.vividsolutions.jump.workbench.plugin.*;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.HTMLFrame;
@@ -26,6 +29,7 @@ import org.cts.datum.GeodeticDatum;
 import org.cts.op.*;
 import org.cts.registry.*;
 import org.openjump.core.ccordsys.srid.SRIDStyle;
+import org.openjump.core.rasterimage.RasterImageLayer;
 import org.openjump.swing.SuggestTreeComboBox;
 
 import javax.swing.*;
@@ -60,6 +64,7 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
     private final String SOURCE_TOWGS84     = I18N_.getText("cts_plugin","CTSPlugIn.srcToWgs84");
     private final String TARGET_TOWGS84     = I18N_.getText("cts_plugin","CTSPlugIn.tgtToWgs84");
     private final String TRANSFORMED_LAYERS = I18N_.getText("cts_plugin","CTSPlugIn.transformed-layers");
+    private final String MUST_BE_VECTOR     = I18N_.getText("cts_plugin","CTSPlugIn.selected-layers-must-be-vector-layers");
 
     private static final String EPSG = "EPSG";
     private static final String IGNF = "IGNF";
@@ -363,35 +368,52 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
         return new MultiEnableCheck()
                 .add(EnableCheckFactory.getInstance().createTaskWindowMustBeActiveCheck())
                 .add(EnableCheckFactory.getInstance().createAtLeastNLayersMustBeSelectedCheck(1))
+                .add(EnableCheckFactory.getInstance().createSelectedLayersMustBeEditableCheck())
                 .add(new EnableCheck() {
                     @Override
                     public String check(JComponent component) {
-                        Layer[] layers = context.getLayerNamePanel().getSelectedLayers();
-                        if (layers.length > 0) {
-                            if (!layers[0].isEditable()) return "Selected layers must be editable";
-                            CoordinateSystem cs = layers[0].getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
-                            SRIDStyle srid = (SRIDStyle)layers[0].getStyle(SRIDStyle.class);
-                            for (int i = 1 ; i < layers.length ; i++) {
-                                if (!layers[i].isEditable()) return "Selected layers must be editable";
-                                CoordinateSystem csi = layers[i].getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
-                                SRIDStyle sridi = (SRIDStyle)layers[i].getStyle(SRIDStyle.class);
+                        Layerable[] layerables = (Layerable[])context.getLayerNamePanel()
+                                .selectedNodes(Layerable.class).toArray(new Layerable[0]);
+                        if (layerables.length > 0) {
+                            if (!isVectorLayer(layerables[0])) return MUST_BE_VECTOR;
+                            if (!(layerables[0] instanceof Layer)) return MUST_BE_VECTOR;
+                            Layer layer = (Layer)layerables[0];
+                            CoordinateSystem cs = layer.getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
+                            SRIDStyle srid = (SRIDStyle) layer.getStyle(SRIDStyle.class);
+                            for (int i = 1; i < layerables.length; i++) {
+                                if (!isVectorLayer(layerables[1])) return MUST_BE_VECTOR;
+                                if (!(layerables[0] instanceof Layer)) return MUST_BE_VECTOR;
+                                layer = (Layer)layerables[i];
+                                CoordinateSystem csi = layer.getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
+                                SRIDStyle sridi = (SRIDStyle) layer.getStyle(SRIDStyle.class);
                                 if (cs == csi && srid == sridi) continue;
                                 if (cs == null && csi != null) return HETEROGEN_SRC;
                                 if (cs != null && csi == null) return HETEROGEN_SRC;
-                                if (cs == CoordinateSystem.UNSPECIFIED && csi != CoordinateSystem.UNSPECIFIED) return HETEROGEN_SRC;
-                                if (cs != CoordinateSystem.UNSPECIFIED && csi == CoordinateSystem.UNSPECIFIED) return HETEROGEN_SRC;
+                                if (cs == CoordinateSystem.UNSPECIFIED && csi != CoordinateSystem.UNSPECIFIED)
+                                    return HETEROGEN_SRC;
+                                if (cs != CoordinateSystem.UNSPECIFIED && csi == CoordinateSystem.UNSPECIFIED)
+                                    return HETEROGEN_SRC;
                                 try {
                                     if (cs != null && csi != null && cs.getEPSGCode() != csi.getEPSGCode())
                                         return HETEROGEN_SRC;
-                                } catch (UnsupportedOperationException e) {}
-                                if (srid != null && sridi != null && srid.getSRID() != sridi.getSRID()) return HETEROGEN_SRC;
+                                } catch (UnsupportedOperationException e) {
+                                }
+                                if (srid != null && sridi != null && srid.getSRID() != sridi.getSRID())
+                                    return HETEROGEN_SRC;
                             }
                             return null;
                         }
                         // should never reach here
-                        return layers.length > 0 ? null : "At least 1 layer must be selected";
+                        return layerables.length > 0 ? null : "At least 1 layer must be selected";
                     }
                 });
+    }
+
+    private boolean isVectorLayer(Layerable layerable) {
+        if (layerable instanceof RasterImageLayer) return false;
+        if (layerable instanceof WMSLayer) return false;
+        if (layerable instanceof Layer && ((Layer)layerable).getStyle(ReferencedImageStyle.class) != null) return false;
+        return true;
     }
 
 }
