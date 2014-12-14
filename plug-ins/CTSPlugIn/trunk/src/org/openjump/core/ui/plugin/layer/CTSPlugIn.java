@@ -64,7 +64,8 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
     private final String SOURCE_TOWGS84     = I18N_.getText("cts_plugin","CTSPlugIn.srcToWgs84");
     private final String TARGET_TOWGS84     = I18N_.getText("cts_plugin","CTSPlugIn.tgtToWgs84");
     private final String TRANSFORMED_LAYERS = I18N_.getText("cts_plugin","CTSPlugIn.transformed-layers");
-    private final String MUST_BE_VECTOR     = I18N_.getText("cts_plugin","CTSPlugIn.selected-layers-must-be-vector-layers");
+    private final String INVALID_SRC_CRS    = I18N_.getText("cts_plugin","CTSPlugIn.invalid-src-crs");
+    private final String INVALID_TGT_CRS    = I18N_.getText("cts_plugin","CTSPlugIn.invalid-tgt-crs");
 
     private static final String EPSG = "EPSG";
     private static final String IGNF = "IGNF";
@@ -81,20 +82,6 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
 
         featureInstaller.addMainMenuPlugin(this, new String[]{MenuNames.PLUGINS});
 
-        JPopupMenu layerNamePopupMenu = context
-                 .getWorkbenchContext()
-                 .getWorkbench()
-                 .getFrame()
-                 .getLayerNamePopupMenu();
-        JMenuItem popupMenu = featureInstaller.addPopupMenuPlugin(layerNamePopupMenu, this);
-        // insert popup menu after "Zoom to Layer"
-        // Component[] components = layerNamePopupMenu.getComponents();
-        // layerNamePopupMenu.removeAll();
-        // for (int i = 0 ; i < components.length-1 ; i++) {
-        //     if (i <= 12) layerNamePopupMenu.add(components[i]);
-        //     if (i == 12) layerNamePopupMenu.add(popupMenu);
-        //     if (i > 12) layerNamePopupMenu.add(components[i]);
-        // }
     }
 
     public String getName() {
@@ -172,6 +159,11 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
     public void run(TaskMonitor monitor, PlugInContext context)
             throws RegistryException, CRSException, CoordinateOperationException {
         reportNothingToUndoYet(context);
+        if (srcCode == null) {
+            throw new RegistryException(INVALID_SRC_CRS);
+        } else if (tgtCode == null) {
+            throw new RegistryException(INVALID_TGT_CRS);
+        }
         if (!tgtCode.equals(srcCode)) {
             CRSFactory crsFactory = new CRSFactory();
             RegistryManager registryManager = crsFactory.getRegistryManager();
@@ -369,21 +361,18 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
                 .add(EnableCheckFactory.getInstance().createTaskWindowMustBeActiveCheck())
                 .add(EnableCheckFactory.getInstance().createAtLeastNLayersMustBeSelectedCheck(1))
                 .add(EnableCheckFactory.getInstance().createSelectedLayersMustBeEditableCheck())
+                .add(EnableCheckFactory.getInstance().createSelectedLayerablesMustBeVectorLayers())
                 .add(new EnableCheck() {
                     @Override
                     public String check(JComponent component) {
-                        Layerable[] layerables = (Layerable[])context.getLayerNamePanel()
+                        Layerable[] layerables = (Layerable[]) context.getLayerNamePanel()
                                 .selectedNodes(Layerable.class).toArray(new Layerable[0]);
                         if (layerables.length > 0) {
-                            if (!isVectorLayer(layerables[0])) return MUST_BE_VECTOR;
-                            if (!(layerables[0] instanceof Layer)) return MUST_BE_VECTOR;
-                            Layer layer = (Layer)layerables[0];
+                            Layer layer = (Layer) layerables[0];
                             CoordinateSystem cs = layer.getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
                             SRIDStyle srid = (SRIDStyle) layer.getStyle(SRIDStyle.class);
                             for (int i = 1; i < layerables.length; i++) {
-                                if (!isVectorLayer(layerables[1])) return MUST_BE_VECTOR;
-                                if (!(layerables[0] instanceof Layer)) return MUST_BE_VECTOR;
-                                layer = (Layer)layerables[i];
+                                layer = (Layer) layerables[i];
                                 CoordinateSystem csi = layer.getFeatureCollectionWrapper().getFeatureSchema().getCoordinateSystem();
                                 SRIDStyle sridi = (SRIDStyle) layer.getStyle(SRIDStyle.class);
                                 if (cs == csi && srid == sridi) continue;
@@ -407,13 +396,6 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
                         return layerables.length > 0 ? null : "At least 1 layer must be selected";
                     }
                 });
-    }
-
-    private boolean isVectorLayer(Layerable layerable) {
-        if (layerable instanceof RasterImageLayer) return false;
-        if (layerable instanceof WMSLayer) return false;
-        if (layerable instanceof Layer && ((Layer)layerable).getStyle(ReferencedImageStyle.class) != null) return false;
-        return true;
     }
 
 }
