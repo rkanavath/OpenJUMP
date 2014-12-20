@@ -33,15 +33,17 @@ import java.net.URLClassLoader;
  * This is the entry class to declare the kml driver to JUMP.
  * Put the .jar file containing the driver in your installation ext directory.
  * @author Micha&euml;l Michaud
- * @version 0.1
+ * @version 0.2.1
  */
 // History
-// 0.1 (2011-09-17)   : first version taken from SkyJUMP source
+// 0.2.1 (2014-12-20) foix encoding problem (cf #383)
+// 0.2   (2014) version included in OpenJUMP 1.7 and 1.8 PLUS
+// 0.1   (2011-09-17)   : first version taken from SkyJUMP source
 public class KMLDriverConfiguration extends Extension {
 
     public void configure(PlugInContext context) throws Exception {
         new KMLDataSourceQueryChooserInstallerPlugIn().initialize(context);
     }
     public String getName() {return "KML driver";}
-    public String getVersion() {return "0.1.1";}
+    public String getVersion() {return "0.2.1 (2014-12-20)";}
 }

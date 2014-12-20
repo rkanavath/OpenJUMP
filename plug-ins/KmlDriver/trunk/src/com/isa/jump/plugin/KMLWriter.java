@@ -36,6 +36,8 @@ package com.isa.jump.plugin;
 import com.vividsolutions.jts.util.Assert;
 import com.vividsolutions.jump.feature.*;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -114,7 +116,8 @@ public class KMLWriter implements JUMPWriter {
         		//only way this happens is that the user stated map coords were lat/long
         	}
         	outputTemplate = KMLWriter.makeOutputTemplate(featureCollection.getFeatureSchema());
-        	java.io.Writer w = new java.io.BufferedWriter(new java.io.FileWriter(outputFname));
+        	//java.io.Writer w = new java.io.BufferedWriter(new java.io.FileWriter(outputFname));
+            java.io.Writer w = new java.io.BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFname),"UTF-8"));
         	this.write(featureCollection, w);
         	w.close();
         }
