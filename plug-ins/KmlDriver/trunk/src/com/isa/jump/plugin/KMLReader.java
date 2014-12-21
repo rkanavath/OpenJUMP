@@ -32,10 +32,7 @@
  */
 package com.isa.jump.plugin;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.LineNumberReader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -196,7 +193,8 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 					"call to GMLReader.read() has DataProperties w/o a InputFile specified");
 		}
 
-		java.io.Reader r;
+		//java.io.Reader r;
+		InputStream is;
 		GMLInputTemplate template = makeTemplate();
 		setInputTemplate(template);
 
@@ -205,11 +203,12 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 //		CompressedFile.openFile(inputFname,
 //		dp.getProperty("CompressedFile"))));
 //		} else {
-		r = new BufferedReader(new FileReader(inputFname));
+		//r = new BufferedReader(new FileReader(inputFname));
+		is = new BufferedInputStream(new FileInputStream(inputFname));
 //		}
 
-		fc = read(r, inputFname);
-		r.close();
+		fc = read(is, inputFname);
+		is.close();
 		Envelope env = fc.getEnvelope();
 		return fc;
 	}
@@ -486,15 +485,15 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 	 *  Main function to read a GML file. You should have already called
 	 *  setInputTempalate().
 	 *
-	 *@param  r              reader to read the GML File from
+	 *@param  is             inputStream to read the GML File from
 	 *@param  readerName     what to call the reader for error reporting
 	 *@return                Description of the Return Value
 	 *@exception  Exception  Description of the Exception
 	 */
-	public FeatureCollection read(java.io.Reader r, String readerName)
+	public FeatureCollection read(InputStream is, String readerName)
             throws Exception {
 
-        LineNumberReader myReader = new LineNumberReader(r);
+        //LineNumberReader myReader = new LineNumberReader(r);
         exceptions.clear();
 
 		if (GMLinput == null) {
@@ -508,17 +507,15 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 		fc = new FeatureDataset(fcmd);
 
 		try {
-			xr.parse(new InputSource(myReader));
+			xr.parse(new InputSource(is));
 		} catch (SAXParseException e) {
             exceptions.add(new ParseException(e.getMessage() +
-                    "  Last Opened Tag: " + lastStartTag_qName +
-                    ".  Reader reports last line read as " +
-					myReader.getLineNumber(),
+                    "  Last Opened Tag: " + lastStartTag_qName,
 					streamName + " - " + e.getPublicId() + " (" + e.getSystemId() +
 					") ", e.getLineNumber(), e.getColumnNumber()));
 		} catch (SAXException e) {
 			exceptions.add(new ParseException(e.getMessage() + "  Last Opened Tag: " +
-					lastStartTag_qName, streamName, myReader.getLineNumber(), 0));
+					lastStartTag_qName, streamName, -1, 0));
 		}
 
 		return fc;

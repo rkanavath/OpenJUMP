@@ -45,5 +45,5 @@ public class KMLDriverConfiguration extends Extension {
         new KMLDataSourceQueryChooserInstallerPlugIn().initialize(context);
     }
     public String getName() {return "KML driver";}
-    public String getVersion() {return "0.2.1 (2014-12-20)";}
+    public String getVersion() {return "0.2.2 (2014-12-21)";}
 }
