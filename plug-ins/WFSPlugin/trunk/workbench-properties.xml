@@ -1,0 +1,5 @@
+<workbench>
+	<extension>
+		de.latlon.deejump.wfs.WFSExtension
+	</extension>
+</workbench>
