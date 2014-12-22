@@ -527,8 +527,8 @@ class PropertyCriteriaPanel extends JPanel {
             } catch ( Exception e ) {
                 JOptionPane.showMessageDialog( this, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE ); //$NON-NLS-1$
             }
-
-            return oper.toXML();
+            
+            return wfsPanel.getWfsVersion().equals( "1.0.0" ) ? oper.to100XML() : oper.to110XML();
         }
 
         /**
@@ -560,13 +560,21 @@ class PropertyCriteriaPanel extends JPanel {
                 break;
 
             case 7: // PropertyIsNOTLikeOperation!
-                oper = new PropertyIsLikeOperation( new PropertyName( propName ), new Literal( propVal ), '*', '#', '!' ) {
-                    @Override
-                    public StringBuffer toXML() {
-                        return super.toXML().insert( 0, "<ogc:Not>" ).append( "</ogc:Not>" ); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                };
-                break;
+              oper = new PropertyIsLikeOperation(new PropertyName(propName),
+                  new Literal(propVal), '*', '#', '!') {
+      
+                @Override
+                public StringBuffer to100XML() {
+                  return super.to100XML().insert(0, "<ogc:Not>").append("</ogc:Not>");
+                }
+      
+                @Override
+                public StringBuffer to110XML() {
+                  return super.to110XML().insert(0, "<ogc:Not>").append("</ogc:Not>");
+                }
+      
+              };
+              break;
 
             default:
                 throw new Exception( "Operation not defined!" ); //$NON-NLS-1$

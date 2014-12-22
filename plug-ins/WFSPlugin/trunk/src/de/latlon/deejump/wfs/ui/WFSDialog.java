@@ -11,7 +11,7 @@ package de.latlon.deejump.wfs.ui;
 
 import static de.latlon.deejump.wfs.Version.VERSION;
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.util.Arrays;
 
 import javax.swing.JDialog;
+import javax.swing.JScrollPane;
 
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 
@@ -84,14 +85,15 @@ public class WFSDialog extends JDialog {
     /** Initialize main GUI and its children */
     private void initGUI( String[] wfsURLs ) {
 
-        getContentPane().setLayout( new FlowLayout() );
+        getContentPane().setLayout( new BorderLayout() );
 
         this.wfsPanel = new WFSPanel( context, Arrays.asList( wfsURLs ) );
 
         // remove response tab from dialog
         this.wfsPanel.getTabs().removeTabAt( 4 );
 
-        add( this.wfsPanel );
+        JScrollPane scroller = new JScrollPane(wfsPanel);
+        getContentPane().add( scroller, BorderLayout.CENTER);
 
         WFSPanelButtons buttons = new WFSPanelButtons( this, this.wfsPanel );
         this.wfsPanel.controlButtons = buttons;
@@ -99,7 +101,6 @@ public class WFSDialog extends JDialog {
             public void actionPerformed( ActionEvent e ) {
                 setVisible( false );
                 setCanSearch( true );
-
             }
         } );
         buttons.okButton.setEnabled( false );
@@ -108,13 +109,13 @@ public class WFSDialog extends JDialog {
             public void actionPerformed( ActionEvent e ) {
                 setVisible( false );
                 setCanSearch( false );
-
             }
         } );
-        add( buttons );
+        getContentPane().add( buttons, BorderLayout.SOUTH );
 
         setSize( 450, 300 );
         setResizable( true );
+        pack();
     }
 
     /**

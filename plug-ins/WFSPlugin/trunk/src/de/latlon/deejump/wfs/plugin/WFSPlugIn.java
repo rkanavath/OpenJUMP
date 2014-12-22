@@ -250,8 +250,8 @@ public class WFSPlugIn extends ThreadedBasePlugIn {
         if ( urlList == null ) {
             urlList = new String[4];
 
-            urlList[0] = "http://demo.deegree.org/deegree-wfs/services";
-            urlList[1] = "http://demo.intevation.de/geoserver/wfs";
+            urlList[0] = "http://ows.terrestris.de/geoserver/osm/wfs";
+            //urlList[1] = "http://tools.geofabrik.de/osmi/view/addresses/wxs?SERVICE=WFS&VERSION=1.0.0";
 
         }
 

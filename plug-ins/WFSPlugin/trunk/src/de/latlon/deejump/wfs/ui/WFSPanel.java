@@ -74,7 +74,6 @@ import de.latlon.deejump.wfs.i18n.I18N;
  * @author <a href="mailto:taddei@lat-lon.de">Ugo Taddei</a>
  * @author last edited by: $Author$
  * 
- * @version $Revision$, $Date$
  */
 public class WFSPanel extends JPanel {
 
@@ -146,6 +145,14 @@ public class WFSPanel extends JPanel {
     private JButton capabilitiesButton;
 
     protected String wfsVersion;
+
+    public String getWfsVersion() {
+      return wfsVersion;
+    }
+
+    public void setWfsVersion(String wfsVersion) {
+      this.wfsVersion = wfsVersion;
+    }
 
     protected WFSOptions options;
 
