@@ -39,6 +39,7 @@ import es.unex.sextante.openjump.core.OpenJUMPOutputFactory;
 import es.unex.sextante.openjump.core.OpenJUMPRasterLayer;
 import es.unex.sextante.openjump.core.OpenJUMPTable;
 import es.unex.sextante.openjump.core.OpenJUMPVectorLayer;
+import org.openjump.core.rasterimage.RasterImageIO;
 
 /**
  * An input factory to get data objects from openJUMP into SEXTANTE
@@ -73,11 +74,14 @@ public class OpenJUMPInputFactory
             obj = new OpenJUMPVectorLayer();
             ((OpenJUMPVectorLayer) obj).create((Layer) layerable);
             layers.add(obj);
-         }
-         else if (layerable instanceof RasterImageLayer) {
-            obj = new OpenJUMPRasterLayer();
-            ((OpenJUMPRasterLayer) obj).create((RasterImageLayer) layerable);
-            layers.add(obj);
+         } else if (layerable instanceof RasterImageLayer) {
+            try {
+                obj = new OpenJUMPRasterLayer();
+                ((OpenJUMPRasterLayer) obj).create((RasterImageLayer) layerable);
+                layers.add(obj);
+            } catch(IOException ex) {
+                ex.printStackTrace();
+            }
          }
       }
 
@@ -137,10 +141,10 @@ public class OpenJUMPInputFactory
       else if (sFilename.endsWith("tif")) {
          try {
             final WorkbenchContext context = ((OpenJUMPOutputFactory) SextanteGUI.getOutputFactory()).getContext();
-            final Point imageDimensions = RasterImageLayer.getImageDimensions(context, sFilename);
+            final Point imageDimensions = RasterImageIO.getImageDimensions(sFilename);
             final Envelope env = getGeoReferencing(sFilename, true, imageDimensions, context);
             final RasterImageLayer rasterLayer = new RasterImageLayer(new File(sFilename).getName(),
-                     ((OpenJUMPOutputFactory) SextanteGUI.getOutputFactory()).getContext().getLayerManager(), sFilename, null,
+                     ((OpenJUMPOutputFactory) SextanteGUI.getOutputFactory()).getContext().getLayerManager(), sFilename,
                      null, env);
             final OpenJUMPRasterLayer layer = new OpenJUMPRasterLayer();
             layer.create(rasterLayer);

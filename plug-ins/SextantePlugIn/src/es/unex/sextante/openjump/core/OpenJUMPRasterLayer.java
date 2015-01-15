@@ -24,6 +24,7 @@ import es.unex.sextante.dataObjects.AbstractRasterLayer;
 import es.unex.sextante.gui.core.SextanteGUI;
 import es.unex.sextante.outputs.FileOutputChannel;
 import es.unex.sextante.outputs.IOutputChannel;
+import java.io.IOException;
 
 public class OpenJUMPRasterLayer
          extends
@@ -39,7 +40,7 @@ public class OpenJUMPRasterLayer
    RasterImageLayer            m_Layer;
 
 
-   public void create(final RasterImageLayer layer) {
+   public void create(final RasterImageLayer layer) throws IOException {
 
       /* [sstein 26 Oct. 2010] - don't use code below because
        * the raster data should be loaded new from file.
@@ -74,17 +75,17 @@ public class OpenJUMPRasterLayer
 
 
    public void create(final RasterImageLayer layer,
-                      final boolean loadFromFile) {
+                      final boolean loadFromFile) throws IOException {
 
       if (loadFromFile == false) {
          m_Layer = layer;
          //[sstein 2 Aug 2010], changed so we work now with the raster and not the image, which may be scaled for display.
          //m_Raster = layer.getImage().getData();
-         m_Raster = layer.getRasterData();
+         m_Raster = layer.getRasterData(null);
          //-- end
          m_sName = layer.getName();
          m_sFilename = layer.getImageFileName();
-         final Envelope env = layer.getEnvelope();
+         final Envelope env = layer.getWholeImageEnvelope();
          m_LayerExtent = new AnalysisExtent();
          //[sstein 18 Mar 2013], set cell size first, and then the extent, otherwise maxX and maxY will be reset
          m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX()) / m_Raster.getWidth());
@@ -94,13 +95,13 @@ public class OpenJUMPRasterLayer
       }
       else {
          final RasterImageLayer rasterLayer = new RasterImageLayer(layer.getName(), layer.getLayerManager(),
-                  layer.getImageFileName(), null, null, layer.getEnvelope());
+                  layer.getImageFileName(), null, layer.getWholeImageEnvelope());
          m_Layer = rasterLayer;
-         m_Raster = rasterLayer.getRasterData();
+         m_Raster = rasterLayer.getRasterData(null);
          //-- end
          m_sName = rasterLayer.getName();
          m_sFilename = rasterLayer.getImageFileName();
-         final Envelope env = rasterLayer.getEnvelope();
+         final Envelope env = rasterLayer.getWholeImageEnvelope();
          m_LayerExtent = new AnalysisExtent();
          //[sstein 18 Mar 2013], set cell size first, and then the extent, otherwise maxX and maxY will be reset
          m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX()) / m_Raster.getWidth());
@@ -127,8 +128,8 @@ public class OpenJUMPRasterLayer
       envelope.init(ge.getXMin(), ge.getXMax(), ge.getYMin(), ge.getYMax());
       final ColorModel colorModel = PlanarImage.createColorModel(m_Raster.getSampleModel());
       final BufferedImage bufimg = new BufferedImage(colorModel, (WritableRaster) m_Raster, false, null);
-      final PlanarImage pimage = PlanarImage.wrapRenderedImage(bufimg);
-      m_Layer = new RasterImageLayer(name, fact.getContext().getLayerManager(), filename, pimage, m_Raster, envelope);
+//      final PlanarImage pimage = PlanarImage.wrapRenderedImage(bufimg);
+      m_Layer = new RasterImageLayer(name, fact.getContext().getLayerManager(), filename, bufimg, envelope);
       m_sName = name;
       m_sFilename = filename;
       m_LayerExtent = ge;
@@ -242,7 +243,7 @@ public class OpenJUMPRasterLayer
    public Rectangle2D getFullExtent() {
 
       if (m_Layer != null) {
-         final Envelope envelope = m_Layer.getEnvelope();
+         final Envelope envelope = m_Layer.getWholeImageEnvelope();
          return new Rectangle2D.Double(envelope.getMinX(), envelope.getMinY(), envelope.getWidth(), envelope.getHeight());
       }
       else {
@@ -275,7 +276,7 @@ public class OpenJUMPRasterLayer
          tifOut.close();
 
          /* save geodata: */
-         final Envelope envelope = m_Layer.getEnvelope();
+         final Envelope envelope = m_Layer.getWholeImageEnvelope();
 
          final WorldFileHandler worldFileHandler = new WorldFileHandler(m_sFilename, false);
          worldFileHandler.writeWorldFile(envelope, image.getWidth(), image.getHeight());
