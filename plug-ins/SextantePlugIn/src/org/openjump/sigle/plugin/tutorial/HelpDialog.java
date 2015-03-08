@@ -19,8 +19,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.vividsolutions.jump.workbench.ui.images.IconLoader;
-
 public class HelpDialog extends JPanel implements TreeSelectionListener {
     /**
      * Class adapted from HelpOJPlugIn.class from SIGLE OpenJump Viatoris
@@ -135,25 +133,25 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
     private void createNodes(DefaultMutableTreeNode top) {
 
         DefaultMutableTreeNode intro = new DefaultMutableTreeNode(new BookInfo(
-                "Introduction", "/sextante/help/en/general/intro.html"));
+                "Introduction", "/sextante_help/en/general/intro.html"));
 
         top.add(new DefaultMutableTreeNode(new BookInfo("Introduction",
-                "/sextante/help/en/general/intro.html")));
+                "/sextante_help/en/general/intro.html")));
         top.add(new DefaultMutableTreeNode(new BookInfo("Toolbox",
-                "/sextante/help/en/general/toolbox.html")));
+                "/sextante_help/en/general/toolbox.html")));
         top.add(new DefaultMutableTreeNode(new BookInfo("History",
-                "/sextante/help/en/general/history.html")));
+                "/sextante_help/en/general/history.html")));
         top.add(new DefaultMutableTreeNode(new BookInfo("Modeler",
-                "/sextante/help/en/general/modeler.html")));
+                "/sextante_help/en/general/modeler.html")));
         top.add(new DefaultMutableTreeNode(new BookInfo("Command line",
-                "/sextante/help/en/general/cmd.html")));
+                "/sextante_help/en/general/cmd.html")));
         top.add(new DefaultMutableTreeNode(new BookInfo("Batch",
-                "/sextante/help/en/general/batch.html")));
+                "/sextante_help/en/general/batch.html")));
         top.add(new DefaultMutableTreeNode(new BookInfo(
                 "Configure algorithm providers",
-                "/sextante/help/en/general/providers.html")));
+                "/sextante_help/en/general/providers.html")));
         top.add(new DefaultMutableTreeNode(new BookInfo("List of algotithms",
-                "/sextante/help/en/general/sextante_algo.html")));
+                "/sextante_help/en/general/sextante_algo.html")));
 
         /*
          * category = new DefaultMutableTreeNode("Sextante Manual");
