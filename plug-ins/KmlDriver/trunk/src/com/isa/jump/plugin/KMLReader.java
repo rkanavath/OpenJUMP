@@ -151,14 +151,17 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
 		s += "</JCSGMLInputTemplate>";
 
 		GMLInputTemplate template = new GMLInputTemplate();
-		StringReader sr = new StringReader(s);
-
+        ByteArrayInputStream is = null;
 		try {
-			template.load(sr);
+            is = new ByteArrayInputStream(s.getBytes("UTF-8"));
+            template.load(new ByteArrayInputStream(s.getBytes("UTF-8")));
 		}catch ( Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			sr.close();
+			if (is != null) {
+                try {is.close();}
+                catch(IOException ioe) {}
+            }
 		}
 
 		return template;

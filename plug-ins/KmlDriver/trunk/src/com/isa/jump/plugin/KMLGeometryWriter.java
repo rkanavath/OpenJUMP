@@ -117,7 +117,7 @@ public class KMLGeometryWriter
   /**
    * Sets the <code>gid</code> attribute to be output on the Geometry element.
    * If <code>null</code> no attribute will be output.
-   * @param srsName
+   * @param gid
    */
   public void setGID(String gid)
   {
@@ -301,7 +301,7 @@ public class KMLGeometryWriter
    * Takes a list of coordinates and converts it to KML.<br>
    * 2d and 3d aware.
    * Terminates the coordinate output with a newline.
-   *@param cs array of coordinates
+   *@param coords array of coordinates
    */
   private void write(Coordinate[] coords, int level, StringBuffer buf) {
   	CoordinateSystem destination = null;

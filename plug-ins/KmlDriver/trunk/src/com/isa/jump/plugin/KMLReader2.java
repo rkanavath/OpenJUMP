@@ -38,6 +38,8 @@ import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.xml.sax.Attributes;
@@ -89,6 +91,7 @@ public class KMLReader2 extends DefaultHandler implements JUMPReader {
 	private static final String nameElement = "Name";
 	private static final String descriptionElement = "Description";
 	//private static final String simpleField = "SimpleField";
+    List<Exception> exceptions = new ArrayList<Exception>();
 	
 	//private boolean inFolder = false;
 	private boolean inPlacemark = false;
@@ -809,6 +812,10 @@ public class KMLReader2 extends DefaultHandler implements JUMPReader {
 	public void warning(SAXParseException exception) throws SAXException {
 		throw exception;
 	}
+
+    public Collection<Exception> getExceptions() {
+        return exceptions;
+    }
 
 }
 

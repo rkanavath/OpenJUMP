@@ -36,6 +36,7 @@
 package com.isa.jump.plugin;
 
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import com.vividsolutions.jump.io.*;
 
@@ -84,8 +85,8 @@ public class KMLOutputTemplate {
     /**
      * Calls the main load() method with the stream name as "Unknown Stream"
      */
-    public void load(java.io.Reader r) throws Exception {
-        load(r, "Unknown Stream");
+    public void load(java.io.InputStream inputStream) throws Exception {
+        load(inputStream, "Unknown Stream");
     }
 
     /**
@@ -93,16 +94,15 @@ public class KMLOutputTemplate {
      */
     private String getLine(BufferedReader br) throws Exception {
         lineNumber++;
-
         return br.readLine();
     }
 
     /**
      *Main function - parse a GMLOuputTemplate.
-     *@param r actual reader to read from
+     *@param inputStream actual reader to read from
      *@param readerName name of the stream (for error reporting)
      */
-    public void load(java.io.Reader r, String readerName)
+    public void load(java.io.InputStream inputStream, String readerName)
         throws Exception {
         int index;
         int index2;
@@ -111,7 +111,9 @@ public class KMLOutputTemplate {
         String token;
         String textAccum;
         boolean justFoundTag = false;
-        BufferedReader buffRead = new BufferedReader(r);
+        //BufferedReader buffRead = new BufferedReader(r);
+        InputStreamReader isr = new InputStreamReader(inputStream);
+        BufferedReader buffRead = new BufferedReader(isr);
 
         streamName = readerName;
 

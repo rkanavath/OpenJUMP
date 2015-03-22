@@ -18,7 +18,7 @@
     
     <!-- plugins -->
     <!-- drivers -->
-    <property name="kml-driver-version"        value="0.2.2" />
+    <property name="kml-driver-version"        value="0.2.3" />
         
 
     <!-- =================================================================== -->
@@ -42,12 +42,14 @@
                debug="on"      
                deprecation="false" 
                verbose="no"
-               includeantruntime="false" 
+               includeantruntime="false"
+               source="1.5"
                target="1.5">
 	         <!--fork="true" executable="G:\Program Files\Java\jdk1.5.0_15\bin\javac.exe"-->
              <!--compilerarg value="-Xlint:unchecked"/-->
              <!--include name="fr/michaelm/jump/drivers/geoconcept/**/*"/-->
              <exclude name="**/clean/*"/>
+             <exclude name="**/KmlReader2.java"/>
              <classpath refid="classpath"/>
         </javac>
         <copy todir="${build}" >
