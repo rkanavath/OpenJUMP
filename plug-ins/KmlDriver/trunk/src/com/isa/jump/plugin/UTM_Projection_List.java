@@ -40,108 +40,92 @@ import com.vividsolutions.jump.util.FileUtil;
 import java.io.IOException;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
-public class UTM_Projection_List extends java.lang.Object
-{
-	private ArrayList UTM_Projections;
-	
-    public UTM_Projection_List(String fileName)
-    {
-    	UTM_Projections = new ArrayList();
-    	
-		if (new File(fileName).exists())
-		{
-			try
-			{
-				List projectionStrings = FileUtil.getContents(fileName);
-				for (int i = 0; i < projectionStrings.size(); i++)
-				{
-					UTM_Projections.add(new UTM_Projection((String)projectionStrings.get(i)));
-				}
-			}
-			catch (IOException ex)
-			{
-				ex.printStackTrace(); 
-				//("Could not read: " + fileName + " due to: " + ex.getMessage());
-			}
-		}
+public class UTM_Projection_List extends java.lang.Object {
+  private ArrayList UTM_Projections;
+
+  public UTM_Projection_List(String fileName) {
+    UTM_Projections = new ArrayList();
+
+    if (new File(fileName).exists()) {
+      try {
+        List projectionStrings = FileUtil.getContents(fileName);
+        for (int i = 0; i < projectionStrings.size(); i++) {
+          UTM_Projections.add(new UTM_Projection((String) projectionStrings
+              .get(i)));
+        }
+      } catch (IOException ex) {
+        ex.printStackTrace();
+        // ("Could not read: " + fileName + " due to: " + ex.getMessage());
+      }
     }
-    
-	public String getZone(double latitude, double longitude)
-	{   
-		//there are two exceptions to the equations below: Norway and Svalbard
-		//per LDB/RFL (8/10/05) we will ignore them as we do not expect to have
-		//to handle any maps from those areas.
-		
-		String zone = "";
-		double zoneDec = (longitude + 180.0) / 6.0;
-		int zoneInt = (int) zoneDec;
-		
-		if (zoneDec - zoneInt > 0) zoneInt++;
-		if (zoneInt <= 0) zoneInt = 1;
-		if (zoneInt > 60) zoneInt = 60;
-		
-		if (latitude >=0)
-			zone = zoneInt + "N";
-		else
-			zone = zoneInt + "S";
-		
-		return zone;
-	}
-	
-	public UTM_Projection getProjection(String zone)
-	{
-		for (int i = 0; i < UTM_Projections.size(); i++)
-		{
-			UTM_Projection utmProjection = (UTM_Projection) UTM_Projections.get(i);
+  }
 
-			if (zone.equals(utmProjection.getZone()))
-			{
-				return utmProjection;
-			}
-		}
-		
-		return null;
-	}
-	
-	public String getCentralMeridian(String zone)
-	{
-		for (int i = 0; i < UTM_Projections.size(); i++)
-		{
-			UTM_Projection utmProjection = (UTM_Projection) UTM_Projections.get(i);
+  public String getZone(double latitude, double longitude) {
+    // there are two exceptions to the equations below: Norway and Svalbard
+    // per LDB/RFL (8/10/05) we will ignore them as we do not expect to have
+    // to handle any maps from those areas.
 
-			if (zone.equals(utmProjection.getZone()))
-			{
-				return utmProjection.getCentralMeridian();
-			}
-		}
-		
-		return null;
-	}
-	
-	public static void createMultiStringFile(PlugInContext context, String inputFile, String outputFile)
-	{
-		if (new File(inputFile).exists())
-		{
-			try
-			{
-				List fileList = FileUtil.getContents(inputFile);
-				String fileName = (String) fileList.get(0);
-				List projStringList = FileUtil.getContents(fileName);
-				
-				for (int i = 1; i < fileList.size(); i++)
-				{
-					fileName = (String) fileList.get(i);
-					List fileContents = FileUtil.getContents(fileName);
-					projStringList.add( (String) fileContents.get(0));
-				}
-				
-				FileUtil.setContents(outputFile, projStringList);
-			}
-			catch (IOException ex)
-			{
-				context.getWorkbenchFrame().getOutputFrame().addText(ex.getMessage());
-			}
-		}
-	}
+    String zone = "";
+    double zoneDec = (longitude + 180.0) / 6.0;
+    int zoneInt = (int) zoneDec;
+
+    if (zoneDec - zoneInt > 0)
+      zoneInt++;
+    if (zoneInt <= 0)
+      zoneInt = 1;
+    if (zoneInt > 60)
+      zoneInt = 60;
+
+    if (latitude >= 0)
+      zone = zoneInt + "N";
+    else
+      zone = zoneInt + "S";
+
+    return zone;
+  }
+
+  public UTM_Projection getProjection(String zone) {
+    for (int i = 0; i < UTM_Projections.size(); i++) {
+      UTM_Projection utmProjection = (UTM_Projection) UTM_Projections.get(i);
+
+      if (zone.equals(utmProjection.getZone())) {
+        return utmProjection;
+      }
+    }
+
+    return null;
+  }
+
+  public String getCentralMeridian(String zone) {
+    for (int i = 0; i < UTM_Projections.size(); i++) {
+      UTM_Projection utmProjection = (UTM_Projection) UTM_Projections.get(i);
+
+      if (zone.equals(utmProjection.getZone())) {
+        return utmProjection.getCentralMeridian();
+      }
+    }
+
+    return null;
+  }
+
+  public static void createMultiStringFile(PlugInContext context,
+      String inputFile, String outputFile) {
+    if (new File(inputFile).exists()) {
+      try {
+        List fileList = FileUtil.getContents(inputFile);
+        String fileName = (String) fileList.get(0);
+        List projStringList = FileUtil.getContents(fileName);
+
+        for (int i = 1; i < fileList.size(); i++) {
+          fileName = (String) fileList.get(i);
+          List fileContents = FileUtil.getContents(fileName);
+          projStringList.add((String) fileContents.get(0));
+        }
+
+        FileUtil.setContents(outputFile, projStringList);
+      } catch (IOException ex) {
+        context.getWorkbenchFrame().getOutputFrame().addText(ex.getMessage());
+      }
+    }
+  }
 }
-

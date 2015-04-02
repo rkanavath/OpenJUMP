@@ -36,6 +36,7 @@ import java.net.URLClassLoader;
  * @version 0.2.3
  */
 // History
+// 0.2.4 (2015-04-02) reenable loading of kmz files, reformatting removing tabs
 // 0.2.3 (2015-03-22) fix a regression introduced in 4215 with a change in core
 //                    OpenJUMP (making xml based drivers charset aware)
 // 0.2.2 (2014-12-21) make kml parser charset aware
@@ -48,5 +49,5 @@ public class KMLDriverConfiguration extends Extension {
         new KMLDataSourceQueryChooserInstallerPlugIn().initialize(context);
     }
     public String getName() {return "KML driver";}
-    public String getVersion() {return "0.2.3 (2015-03-22)";}
+    public String getVersion() {return "0.2.4 (2015-04-02)";}
 }

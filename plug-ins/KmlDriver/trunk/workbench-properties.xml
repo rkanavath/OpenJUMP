@@ -1,0 +1,5 @@
+<workbench>
+  <extension>
+    com.isa.jump.plugin.KMLDriverConfiguration
+  </extension>
+</workbench>

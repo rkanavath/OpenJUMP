@@ -39,80 +39,72 @@ import com.vividsolutions.jump.util.FileUtil;
 import java.io.IOException;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
-public class UTM_Projection extends java.lang.Object
-{
-	private String projectionString = "";
-	
-	public UTM_Projection(String projectionString)
-	{
-		this.projectionString = projectionString;
-	}
-	
-    public UTM_Projection(PlugInContext context, String fileName)
-    {
-		if (new File(fileName).exists())
-		{
-			try
-			{
-				List fileContents = FileUtil.getContents(fileName);
-				projectionString = (String) fileContents.get(0);
-			}
-			catch (IOException ex)
-			{
-				context.getWorkbenchFrame().getOutputFrame().addText("Could not read: " + fileName + " due to: " + ex.getMessage());
-			}
-		}
-    }
-    
-	public String getProjectionString()
-	{
-		return new String(projectionString);
-	}
-	
-	public boolean isUTM()
-	{
-		if (projectionString.indexOf("WGS_1984_UTM_Zone_") > 0)
-			return true;
-		else
-			return false;
-	}
-	
-	public String getZone()
-	{
-		String zone = "";
-		int pos = projectionString.indexOf("UTM_Zone_");
-		if (pos > 0)
-		{
-			zone = projectionString.substring(pos + 9, pos + 13);
-			pos = zone.indexOf('"');
-			if (pos > 0) zone = zone.substring(0,pos); 
-		}
-		return zone;
-	}
-	
-	public String getCentralMeridian()
-	{
-		String centralMeridian = "";
-		int pos = projectionString.indexOf("Central_Meridian");
-		if (pos > 0)
-		{
-			centralMeridian = projectionString.substring(pos + 18, pos + 24);
-			pos = centralMeridian.indexOf("]");
-			if (pos > 0) centralMeridian = centralMeridian.substring(0,pos); 
-		}
-		return centralMeridian;
-	}
-	
-	public void writeProjectionFile(PlugInContext context, String fileName)
-	{
-		try
-		{
-			FileUtil.setContents(fileName, projectionString);
-		}
-		catch (IOException ex)
-		{
-			context.getWorkbenchFrame().getOutputFrame().addText("Could not write: " + fileName + " due to: " + ex.getMessage());
-		}
-	}
-}
+public class UTM_Projection extends java.lang.Object {
+  private String projectionString = "";
 
+  public UTM_Projection(String projectionString) {
+    this.projectionString = projectionString;
+  }
+
+  public UTM_Projection(PlugInContext context, String fileName) {
+    if (new File(fileName).exists()) {
+      try {
+        List fileContents = FileUtil.getContents(fileName);
+        projectionString = (String) fileContents.get(0);
+      } catch (IOException ex) {
+        context
+            .getWorkbenchFrame()
+            .getOutputFrame()
+            .addText(
+                "Could not read: " + fileName + " due to: " + ex.getMessage());
+      }
+    }
+  }
+
+  public String getProjectionString() {
+    return new String(projectionString);
+  }
+
+  public boolean isUTM() {
+    if (projectionString.indexOf("WGS_1984_UTM_Zone_") > 0)
+      return true;
+    else
+      return false;
+  }
+
+  public String getZone() {
+    String zone = "";
+    int pos = projectionString.indexOf("UTM_Zone_");
+    if (pos > 0) {
+      zone = projectionString.substring(pos + 9, pos + 13);
+      pos = zone.indexOf('"');
+      if (pos > 0)
+        zone = zone.substring(0, pos);
+    }
+    return zone;
+  }
+
+  public String getCentralMeridian() {
+    String centralMeridian = "";
+    int pos = projectionString.indexOf("Central_Meridian");
+    if (pos > 0) {
+      centralMeridian = projectionString.substring(pos + 18, pos + 24);
+      pos = centralMeridian.indexOf("]");
+      if (pos > 0)
+        centralMeridian = centralMeridian.substring(0, pos);
+    }
+    return centralMeridian;
+  }
+
+  public void writeProjectionFile(PlugInContext context, String fileName) {
+    try {
+      FileUtil.setContents(fileName, projectionString);
+    } catch (IOException ex) {
+      context
+          .getWorkbenchFrame()
+          .getOutputFrame()
+          .addText(
+              "Could not write: " + fileName + " due to: " + ex.getMessage());
+    }
+  }
+}

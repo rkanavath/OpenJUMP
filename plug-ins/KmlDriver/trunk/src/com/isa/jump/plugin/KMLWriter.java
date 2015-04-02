@@ -46,318 +46,329 @@ import com.vividsolutions.jump.io.datasource.DelegatingCompressedFileHandler;
 import com.vividsolutions.jump.io.datasource.StandardReaderWriterFileDataSource;
 
 public class KMLWriter implements JUMPWriter {
-    // Standard tags for the auto-generated outputTemplate.
-	public static String standard_doc = "Document";
-	public static String standard_schema = "Schema";
-	public static String standard_simplefield = "SimpleField";
-    public static String standard_geom = "geometry";
-    public static String standard_folder = "Folder";
-    public static String standard_name = "name";
-    public static String placemarkName = "Placemark";
-    private KMLOutputTemplate outputTemplate = null;
-    private KMLGeometryWriter geometryWriter = new KMLGeometryWriter();
+  // Standard tags for the auto-generated outputTemplate.
+  public static String standard_doc = "Document";
+  public static String standard_schema = "Schema";
+  public static String standard_simplefield = "SimpleField";
+  public static String standard_geom = "geometry";
+  public static String standard_folder = "Folder";
+  public static String standard_name = "name";
+  public static String placemarkName = "Placemark";
+  private KMLOutputTemplate outputTemplate = null;
+  private KMLGeometryWriter geometryWriter = new KMLGeometryWriter();
 
-    /** constructor**/
-    public KMLWriter() {
-        geometryWriter.setLinePrefix("                ");
+  /** constructor **/
+  public KMLWriter() {
+    geometryWriter.setLinePrefix("                ");
+  }
+
+  private static class ClassicReaderWriterFileDataSource extends
+      StandardReaderWriterFileDataSource {
+    public ClassicReaderWriterFileDataSource(JUMPReader reader,
+        JUMPWriter writer, String[] extensions) {
+      super(new DelegatingCompressedFileHandler(reader, toEndings(extensions)),
+          writer, extensions);
+      this.extensions = extensions;
+    }
+  }
+
+  public static class KML extends ClassicReaderWriterFileDataSource {
+    public KML() {
+      super(new KMLReader(false), new KMLWriter(), new String[] { "kml" });
+    }
+  }
+
+  /**
+   * Main entry function - write the KML file.
+   * 
+   * @param featureCollection
+   *          features to write
+   * @param dp
+   *          specify the 'OuputFile' and 'OuputTemplateFile'
+   */
+  public void write(FeatureCollection featureCollection, DriverProperties dp)
+      throws IllegalParametersException, Exception {
+    String outputFname;
+    double centralMeridian = 0.0;
+
+    outputFname = dp.getProperty("File");
+    String UTMZone = dp.getProperty("UTM_Zone");
+    String centralMeridianStr = dp.getProperty("Central_Meridian");
+
+    if (outputFname == null) {
+      outputFname = dp.getProperty("DefaultValue");
     }
 
-    private static class ClassicReaderWriterFileDataSource extends StandardReaderWriterFileDataSource 
-	{
-        public ClassicReaderWriterFileDataSource
-		(
-        JUMPReader reader,
-        JUMPWriter writer,
-        String[] extensions) {
-            super(new DelegatingCompressedFileHandler(reader, toEndings(extensions)), writer, extensions);
-            this.extensions = extensions;
-        }
-    }
-    
-    public static class KML extends ClassicReaderWriterFileDataSource 
-    {
-        public KML() 
-        {
-            super(new KMLReader(false), new KMLWriter(), new String[] {"kml"});
-        }
-    }
-    /**
-     * Main entry function - write the KML file.
-     * @param featureCollection features to write
-     * @param dp specify the 'OuputFile' and 'OuputTemplateFile'
-     */
-    public void write(FeatureCollection featureCollection, DriverProperties dp)
-        throws IllegalParametersException, Exception {
-        String outputFname;
-        double centralMeridian = 0.0;
-
-        outputFname = dp.getProperty("File");
-        String UTMZone = dp.getProperty("UTM_Zone");
-        String centralMeridianStr = dp.getProperty("Central_Meridian");
-
-        if (outputFname == null) 
-        {
-            outputFname = dp.getProperty("DefaultValue");
-        }
-
-        if (outputFname == null) {
-            throw new IllegalParametersException(
-                "call to KMLWRite.write() has DriverProperties w/o a OutputFile specified");
-        }
-
-        if ((UTMZone != null) && (centralMeridianStr != null))
-        {
-        	if ((UTMZone.length() > 0) && (centralMeridianStr.length() > 0))
-        	{
-        		centralMeridian = Double.parseDouble(dp.getProperty("Central_Meridian"));
-        		geometryWriter.setParameters(UTMZone, centralMeridian);        	
-            	//if either of these is empty it means that the KMLGeometryWriter
-        		//will not be projecting the coords, ie, coord in == coord out
-        		//only way this happens is that the user stated map coords were lat/long
-        	}
-        	outputTemplate = KMLWriter.makeOutputTemplate(featureCollection.getFeatureSchema());
-        	//java.io.Writer w = new java.io.BufferedWriter(new java.io.FileWriter(outputFname));
-            java.io.Writer w = new java.io.BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFname),"UTF-8"));
-        	this.write(featureCollection, w);
-        	w.close();
-        }
-     }
-
-   private void write(FeatureCollection featureCollection, java.io.Writer writer)
-        throws Exception {
-        BufferedWriter buffWriter;
-        Feature f;
-        String pre;
-        String token;
-
-        if (outputTemplate == null) {
-            throw new Exception(
-                "attempt to write KML w/o specifying the output template");
-        }
-
-        buffWriter = new BufferedWriter(writer);
-
-        buffWriter.write(outputTemplate.headerText);
-
-        for (Iterator t = featureCollection.iterator(); t.hasNext();) 
-        {
-            f = (Feature) t.next();
-
-            for (int u = 0; u < outputTemplate.featureText.size(); u++) 
-            {
-                String evaled;
-                pre = (String) outputTemplate.featureText.get(u);
-                token = (String) outputTemplate.codingText.get(u);
-                buffWriter.write(pre);
-                evaled = evaluateToken(f, token);
-
-                if (evaled == null) {
-                    evaled = "";
-                }
-
-                buffWriter.write(evaled);
-            }
-
-            buffWriter.write(outputTemplate.featureTextfooter);
-            buffWriter.write("\n");
-        }
-
-        buffWriter.write(outputTemplate.footerText);
-        buffWriter.flush();
+    if (outputFname == null) {
+      throw new IllegalParametersException(
+          "call to KMLWRite.write() has DriverProperties w/o a OutputFile specified");
     }
 
-    /**
-     *Convert an arbitary string into something that will not cause XML to gack.
-     * Ie. convert "<" to "&lt;"
-     *@param s string to safe-ify
-     */
-    private static String safeXML(String s) {
-        StringBuffer sb = new StringBuffer(s);
-        char c;
+    if ((UTMZone != null) && (centralMeridianStr != null)) {
+      if ((UTMZone.length() > 0) && (centralMeridianStr.length() > 0)) {
+        centralMeridian = Double
+            .parseDouble(dp.getProperty("Central_Meridian"));
+        geometryWriter.setParameters(UTMZone, centralMeridian);
+        // if either of these is empty it means that the KMLGeometryWriter
+        // will not be projecting the coords, ie, coord in == coord out
+        // only way this happens is that the user stated map coords were
+        // lat/long
+      }
+      outputTemplate = KMLWriter.makeOutputTemplate(featureCollection
+          .getFeatureSchema());
+      // java.io.Writer w = new java.io.BufferedWriter(new
+      // java.io.FileWriter(outputFname));
+      java.io.Writer w = new java.io.BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(outputFname), "UTF-8"));
+      this.write(featureCollection, w);
+      w.close();
+    }
+  }
 
-        for (int t = 0; t < sb.length(); t++) {
-            c = sb.charAt(t);
+  private void write(FeatureCollection featureCollection, java.io.Writer writer)
+      throws Exception {
+    BufferedWriter buffWriter;
+    Feature f;
+    String pre;
+    String token;
 
-            if (c == '<') {
-                sb.replace(t, t + 1, "&lt;");
-            }
-
-            if (c == '>') {
-                sb.replace(t, t + 1, "&gt;");
-            }
-
-            if (c == '&') {
-                sb.replace(t, t + 1, "&amp;");
-            }
-
-            if (c == '\'') {
-                sb.replace(t, t + 1, "&apos;");
-            }
-
-            if (c == '"') {
-                sb.replace(t, t + 1, "&quot;");
-            }
-        }
-
-        return sb.toString();
+    if (outputTemplate == null) {
+      throw new Exception(
+          "attempt to write KML w/o specifying the output template");
     }
 
-    /**
-     *takes a token and replaces it with its value (ie. geometry or column)
-     * @param f feature to take geometry or column value from
-     *@token token to evaluate - "column","geometry" or "geometrytype"
-     */
-    private String evaluateToken(Feature f, String token)
-        throws Exception, ParseException {
-        String column;
-        String cmd;
-        String result;
-        int index;
+    buffWriter = new BufferedWriter(writer);
 
-        //token = token.toLowerCase();
-        token = token.trim();
+    buffWriter.write(outputTemplate.headerText);
 
-        if (!(token.startsWith("=")) || (token.length() < 7)) {
-            throw new ParseException("couldn't understand token '" + token +
-                "' in the output template");
+    for (Iterator t = featureCollection.iterator(); t.hasNext();) {
+      f = (Feature) t.next();
+
+      for (int u = 0; u < outputTemplate.featureText.size(); u++) {
+        String evaled;
+        pre = (String) outputTemplate.featureText.get(u);
+        token = (String) outputTemplate.codingText.get(u);
+        buffWriter.write(pre);
+        evaled = evaluateToken(f, token);
+
+        if (evaled == null) {
+          evaled = "";
         }
 
-        token = token.substring(1);
-        token = token.trim();
-        index = token.indexOf(" ");
+        buffWriter.write(evaled);
+      }
 
-        if (index == -1) {
-            cmd = token;
-        } else {
-            cmd = token.substring(0, token.indexOf(" "));
-        }
-
-        if (cmd.equalsIgnoreCase("column")) {
-            column = token.substring(6);
-            column = column.trim();
-
-            result = toString(f, column);
-
-            //need to ensure that the output is XML okay
-            result = safeXML(result);
-
-            return result;
-        } else if (cmd.equalsIgnoreCase("geometry")) {
-            geometryWriter.setMaximumCoordinatesPerLine(1);
-
-            return geometryWriter.write(f.getGeometry());
-
-        } else if (cmd.equalsIgnoreCase("geometrytype")) {
-            return f.getGeometry().getGeometryType();
-        } else {
-            throw new ParseException("couldn't understand token '" + token +
-                "' in the output template");
-        }
+      buffWriter.write(outputTemplate.featureTextfooter);
+      buffWriter.write("\n");
     }
 
-    protected String toString(Feature f, String column) {
-        if (column.equalsIgnoreCase("FID"))
-        	return "" + f.getID();
-        
-        Assert.isTrue(f.getSchema().getAttributeType(column) != AttributeType.GEOMETRY);
-        Object attribute = f.getAttribute(column);
-        
-        if (attribute == null) { 
-            return "";
-        }
-        if (attribute instanceof Date) {
-            return format((Date)attribute);
-        }
-        return attribute.toString();
+    buffWriter.write(outputTemplate.footerText);
+    buffWriter.flush();
+  }
+
+  /**
+   * Convert an arbitary string into something that will not cause XML to gack.
+   * Ie. convert "<" to "&lt;"
+   *
+   * @param s
+   *          string to safe-ify
+   */
+  private static String safeXML(String s) {
+    StringBuffer sb = new StringBuffer(s);
+    char c;
+
+    for (int t = 0; t < sb.length(); t++) {
+      c = sb.charAt(t);
+
+      if (c == '<') {
+        sb.replace(t, t + 1, "&lt;");
+      }
+
+      if (c == '>') {
+        sb.replace(t, t + 1, "&gt;");
+      }
+
+      if (c == '&') {
+        sb.replace(t, t + 1, "&amp;");
+      }
+
+      if (c == '\'') {
+        sb.replace(t, t + 1, "&apos;");
+      }
+
+      if (c == '"') {
+        sb.replace(t, t + 1, "&quot;");
+      }
     }
 
-    protected String format(Date date) {
-        return dateFormatter.format(date);
-    }
-    
-    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    return sb.toString();
+  }
 
-    /** given a FEatureSchema, make an output template
-     *  in the JCS  format
-     * @param fcmd input featureSchema
-     */
-    private static KMLOutputTemplate makeOutputTemplate(FeatureSchema fcmd) {
-        KMLOutputTemplate result;
-        int t;
-        String colName;
-        String colText = "";
-        String colCode = "";
-        String colHeader = "";
+  /**
+   * takes a token and replaces it with its value (ie. geometry or column)
+   * 
+   * @param f
+   *          feature to take geometry or column value from
+   * @token token to evaluate - "column","geometry" or "geometrytype"
+   */
+  private String evaluateToken(Feature f, String token) throws Exception,
+      ParseException {
+    String column;
+    String cmd;
+    String result;
+    int index;
 
-        result = new KMLOutputTemplate();
+    // token = token.toLowerCase();
+    token = token.trim();
 
-        //inputTemplate = makeInputTemplate(fcmd);
-
-        result.setHeaderText(
-            "<?xml version='1.0' encoding='UTF-8'?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\" >\n" +
-            "<" + standard_doc + "> \n" + 
-            "  <" + standard_name + ">" + "Doc1" + "</" + standard_name + ">\n" +
-			getSchemaHeader(fcmd) + 
-			"    <" + standard_folder + ">\n");// + 
-			//"      <% FEATURE %>\n");
-
-        colText = "";
-        colHeader = "        <" + placemarkName + "> \n";
-        
-        colText = colHeader + "          <" + standard_name + ">\n";
-        colCode = "=COLUMN FID";
-        colHeader = "\n          </" + standard_name + ">\n";
-        result.addItem(colText, colCode);
-
-        for (t = 0; t < fcmd.getAttributeCount(); t++) 
-        {
-            colName = fcmd.getAttributeName(t);
-            colText = "";
-
-            if (t != fcmd.getGeometryIndex()) {
-                //not geometry
-                colText = colHeader + "          <" + colName + ">\n";
-                colCode = "=COLUMN " + colName;
-                colHeader = "\n          </" + colName + ">\n";
-            } else {
-                //geometry
-                colText = colHeader;
-                colCode = "=GEOMETRY";
-                colHeader = "\n";
-            }
-
-            result.addItem(colText, colCode);
-        }
-
-        result.setFeatureFooter(colHeader + "     </" + placemarkName +
-            ">\n");
-        result.setFooterText(
-        		             //"  <% ENDFEATURE %>\n" +
-        		             "    </" + standard_folder + ">\n" +
-        		             "</" + standard_doc + ">\n" +
-                             "</kml>\n");
-
-        return result;
+    if (!(token.startsWith("=")) || (token.length() < 7)) {
+      throw new ParseException("couldn't understand token '" + token
+          + "' in the output template");
     }
 
-    private static String getSchemaHeader(FeatureSchema fcmd)
-    {
-    	String schemaHeader;
-    	String fieldLine = "    <" + standard_simplefield + " type=\"wstring\" name=\"";
-    	
-    	schemaHeader = "  <" + standard_schema  + " parent=\"Placemark\" name=\"" + placemarkName + "\">\n";
+    token = token.substring(1);
+    token = token.trim();
+    index = token.indexOf(" ");
 
-        for (int t = 0; t < fcmd.getAttributeCount(); t++) 
-        {
-            String colName = fcmd.getAttributeName(t);
-            if (!colName.equalsIgnoreCase("Geometry") &&
-               (!colName.equalsIgnoreCase("FID")))
-			{
-            	schemaHeader = schemaHeader + fieldLine + colName + "\"/>\n";// +
-			}
-        }
-        
-        schemaHeader = schemaHeader + "  </" + standard_schema + ">\n";
-		return schemaHeader;
+    if (index == -1) {
+      cmd = token;
+    } else {
+      cmd = token.substring(0, token.indexOf(" "));
     }
+
+    if (cmd.equalsIgnoreCase("column")) {
+      column = token.substring(6);
+      column = column.trim();
+
+      result = toString(f, column);
+
+      // need to ensure that the output is XML okay
+      result = safeXML(result);
+
+      return result;
+    } else if (cmd.equalsIgnoreCase("geometry")) {
+      geometryWriter.setMaximumCoordinatesPerLine(1);
+
+      return geometryWriter.write(f.getGeometry());
+
+    } else if (cmd.equalsIgnoreCase("geometrytype")) {
+      return f.getGeometry().getGeometryType();
+    } else {
+      throw new ParseException("couldn't understand token '" + token
+          + "' in the output template");
+    }
+  }
+
+  protected String toString(Feature f, String column) {
+    if (column.equalsIgnoreCase("FID"))
+      return "" + f.getID();
+
+    Assert
+        .isTrue(f.getSchema().getAttributeType(column) != AttributeType.GEOMETRY);
+    Object attribute = f.getAttribute(column);
+
+    if (attribute == null) {
+      return "";
+    }
+    if (attribute instanceof Date) {
+      return format((Date) attribute);
+    }
+    return attribute.toString();
+  }
+
+  protected String format(Date date) {
+    return dateFormatter.format(date);
+  }
+
+  private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+  /**
+   * given a FEatureSchema, make an output template in the JCS format
+   * 
+   * @param fcmd
+   *          input featureSchema
+   */
+  private static KMLOutputTemplate makeOutputTemplate(FeatureSchema fcmd) {
+    KMLOutputTemplate result;
+    int t;
+    String colName;
+    String colText = "";
+    String colCode = "";
+    String colHeader = "";
+
+    result = new KMLOutputTemplate();
+
+    // inputTemplate = makeInputTemplate(fcmd);
+
+    result
+        .setHeaderText("<?xml version='1.0' encoding='UTF-8'?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\" >\n"
+            + "<"
+            + standard_doc
+            + "> \n"
+            + "  <"
+            + standard_name
+            + ">"
+            + "Doc1"
+            + "</"
+            + standard_name
+            + ">\n"
+            + getSchemaHeader(fcmd)
+            + "    <" + standard_folder + ">\n");// +
+    // "      <% FEATURE %>\n");
+
+    colText = "";
+    colHeader = "        <" + placemarkName + "> \n";
+
+    colText = colHeader + "          <" + standard_name + ">\n";
+    colCode = "=COLUMN FID";
+    colHeader = "\n          </" + standard_name + ">\n";
+    result.addItem(colText, colCode);
+
+    for (t = 0; t < fcmd.getAttributeCount(); t++) {
+      colName = fcmd.getAttributeName(t);
+      colText = "";
+
+      if (t != fcmd.getGeometryIndex()) {
+        // not geometry
+        colText = colHeader + "          <" + colName + ">\n";
+        colCode = "=COLUMN " + colName;
+        colHeader = "\n          </" + colName + ">\n";
+      } else {
+        // geometry
+        colText = colHeader;
+        colCode = "=GEOMETRY";
+        colHeader = "\n";
+      }
+
+      result.addItem(colText, colCode);
+    }
+
+    result.setFeatureFooter(colHeader + "     </" + placemarkName + ">\n");
+    result.setFooterText(
+    // "  <% ENDFEATURE %>\n" +
+        "    </" + standard_folder + ">\n" + "</" + standard_doc + ">\n"
+            + "</kml>\n");
+
+    return result;
+  }
+
+  private static String getSchemaHeader(FeatureSchema fcmd) {
+    String schemaHeader;
+    String fieldLine = "    <" + standard_simplefield
+        + " type=\"wstring\" name=\"";
+
+    schemaHeader = "  <" + standard_schema + " parent=\"Placemark\" name=\""
+        + placemarkName + "\">\n";
+
+    for (int t = 0; t < fcmd.getAttributeCount(); t++) {
+      String colName = fcmd.getAttributeName(t);
+      if (!colName.equalsIgnoreCase("Geometry")
+          && (!colName.equalsIgnoreCase("FID"))) {
+        schemaHeader = schemaHeader + fieldLine + colName + "\"/>\n";// +
+      }
+    }
+
+    schemaHeader = schemaHeader + "  </" + standard_schema + ">\n";
+    return schemaHeader;
+  }
 }
