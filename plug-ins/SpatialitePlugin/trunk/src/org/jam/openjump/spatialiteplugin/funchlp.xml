@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ROOT>
+	<GROUP caption="Tables" code="">
+		<DES>DB tables</DES>
+	</GROUP>
+	<GROUP caption="Spatialite" code="">
+		<DES>Spatialite functions</DES>
+		<GROUP caption="1- Geometry" >
+		<DES>Functions on type Geometry </DES>
+		<FUNC caption="EndPoint" code="EndPoint()">
+			<DES><![CDATA[<h4>EndPoint( c <i>Curve</i> ) : <i>Point</i></h4><br>return a Point containing the last Point of c ]]></DES>
+		</FUNC>
+		<FUNC caption="GLength" code="GLength()">
+			<DES><![CDATA[<h4>GLength( c <i>Curve</i> ) : <i>Double precision</i></h4><br>return the length of c ]]></DES>
+		</FUNC>
+		<FUNC caption="IsClosed" code="IsClosed()">
+			<DES><![CDATA[<h4>IsClosed( c <i>Curve</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL arguments;<br>---<br>return TRUE if c is closed, i.e., if StartPoint(c) = EndPoint(c) ]]></DES>
+		</FUNC>
+		<FUNC caption="IsRing" code="IsRing()">
+			<DES><![CDATA[<h4>IsRing( c <i>Curve</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL arguments.<br>---<br>return TRUE if c is a ring, i.e., if c is closed and simple. A simple Curve does not pass through the<br>same Point more than once. ]]></DES>
+		</FUNC>
+		<FUNC caption="Simplify" code="Simplify()">
+			<DES><![CDATA[<h4>Simplify( c <i>Curve</i> , tolerance <i>Double precision</i> ) : <i>Curve</i></h4><br>return a geometric object representing a simplified version of <i>c</i> applying the Douglas-Peukert<br>algorithm with given <i>tolerance</i> ]]></DES>
+		</FUNC>
+		<FUNC caption="SimplifyPreserveTopology" code="SimplifyPreserveTopology()">
+			<DES><![CDATA[<h4>SimplifyPreserveTopology( c <i>Curve</i> , tolerance <i>Double precision</i> ) : <i>Curve</i></h4><br>return a geometric object representing a simplified version of <i>c</i> applying the Douglas-Peukert<br>algorithm with given <i>tolerance</i> and respecting topology ]]></DES>
+		</FUNC>
+		<FUNC caption="StartPoint" code="StartPoint()">
+			<DES><![CDATA[<h4>StartPoint( c <i>Curve</i> ) : <i>Point</i></h4><br>return a Point containing the first Point of c ]]></DES>
+		</FUNC>
+		<FUNC caption="GeometryN" code="GeometryN()">
+			<DES><![CDATA[<h4>GeometryN( geom <i>GeomCollection</i> , n <i>Integer</i> ) : <i>Geometry</i></h4><br>return the nth geometric object in the collection.The order of the elements in the collection is not<br>geometrically significant. ]]></DES>
+		</FUNC>
+		<FUNC caption="NumGeometries" code="NumGeometries()">
+			<DES><![CDATA[<h4>NumGeometries( geom <i>GeomCollection</i> ) : <i>Integer</i></h4><br>return the number of interiorRings ]]></DES>
+		</FUNC>
+		<FUNC caption="Boundary" code="Boundary()">
+			<DES><![CDATA[<h4>Boundary( geom <i>Geometry</i> ) : <i>Geometry</i></h4><br>returns a geometric object that is the combinatorial boundary of g as defined in the Geometry Model ]]></DES>
+		</FUNC>
+		<FUNC caption="Dimension" code="Dimension()">
+			<DES><![CDATA[<h4>Dimension( geom <i>Geometry</i> ) : <i>Integer</i></h4><br>returns the dimension of the geometric object, which is less than or equal to the dimension of the coordinate<br>space ]]></DES>
+		</FUNC>
+		<FUNC caption="Envelope" code="Envelope()">
+			<DES><![CDATA[<h4>Envelope( geom <i>Geometry</i> ) : <i>Geometry</i></h4><br>returns the rectangle bounding g as a Polygon. The Polygon is defined by the corner points of the boundingbox<br>[(MINX, MINY),(MAXX, MINY), (MAXX, MAXY), (MINX, MAXY), (MINX, MINY)]. ]]></DES>
+		</FUNC>
+		<FUNC caption="GeometryType" code="GeometryType()">
+			<DES><![CDATA[<h4>GeometryType( geom <i>Geometry</i> ) : <i>String</i></h4><br>returns the name of the instantiable subtype of Geometry of which this geometric object is a member,<br>as a string ]]></DES>
+		</FUNC>
+		<FUNC caption="IsEmpty" code="IsEmpty()">
+			<DES><![CDATA[<h4>IsEmpty( geom <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL arguments.<br>---<br>TRUE if this geometric object corresponds to the empty set ]]></DES>
+		</FUNC>
+		<FUNC caption="IsSimple" code="IsSimple()">
+			<DES><![CDATA[<h4>IsSimple( geom <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL arguments.<br>---<br>TRUE if this geometric object is simple, as defined in the Geometry Model ]]></DES>
+		</FUNC>
+		<FUNC caption="IsValid" code="IsValid()">
+			<DES><![CDATA[<h4>IsValid( geom <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL arguments.<br>---<br>TRUE if this geometric object does  not contains any topological error ]]></DES>
+		</FUNC>
+		<FUNC caption="SetSRID" code="SetSRID()">
+			<DES><![CDATA[<h4>SetSRID( geom <i>Geometry</i> , SRID <i>Integer</i> ) : <i>Integer</i></h4><br>directly sets the Spatial Reference System ID for this geometric object [no reprojection is applied]<br>---<br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL arguments. ]]></DES>
+		</FUNC>
+		<FUNC caption="SRID" code="SRID()">
+			<DES><![CDATA[<h4>SRID( geom <i>Geometry</i> ) : <i>Integer</i></h4><br>returns the Spatial Reference System ID for this geometric object ]]></DES>
+		</FUNC>
+		<FUNC caption="NumPoints" code="NumPoints()">
+			<DES><![CDATA[<h4>NumPoints( line <i>LineString</i> ) : <i>Integer</i></h4><br>return the number of Points in the LineString ]]></DES>
+		</FUNC>
+		<FUNC caption="PointN" code="PointN()">
+			<DES><![CDATA[<h4>PointN( line <i>LineString</i> , n <i>Integer</i> ) : <i>Point</i></h4><br>return a Point containing Point n of line ]]></DES>
+		</FUNC>
+		<FUNC caption="X" code="X()">
+			<DES><![CDATA[<h4>X( pt <i>Point</i> ) : <i>Double precision</i></h4><br>return the x-coordinate of Point p as a double precision number ]]></DES>
+		</FUNC>
+		<FUNC caption="Y" code="Y()">
+			<DES><![CDATA[<h4>T( pt <i>Point</i> ) : <i>Double precision</i></h4><br>return the y-coordinate of Point p as a double precision number ]]></DES>
+		</FUNC>
+		<FUNC caption="ExteriorRing" code="ExteriorRing()">
+			<DES><![CDATA[<h4>ExteriorRing( polyg <i>Polygon</i> ) : <i>LineString</i></h4><br>return the exteriorRing of p ]]></DES>
+		</FUNC>
+		<FUNC caption="InteriorRingN" code="InteriorRingN()">
+			<DES><![CDATA[<h4>InteriorRingN( polyg <i>Polygon</i> , n <i>Integer</i> ) : <i>LineString</i></h4><br>return the nth interiorRing. The order of Rings is not geometrically significant. ]]></DES>
+		</FUNC>
+		<FUNC caption="NumInteriorRing" code="NumInteriorRing()">
+			<DES><![CDATA[<h4>NumInteriorRing( polyg <i>Polygon</i> ) : <i>Integer</i></h4><br>return the number of interiorRings ]]></DES>
+		</FUNC>
+		<FUNC caption="NumInteriorRings" code="NumInteriorRings()">
+			<DES><![CDATA[<h4>NumInteriorRings( polyg <i>Polygon</i> ) : <i>Integer</i></h4><br>return the number of interiorRings ]]></DES>
+		</FUNC>
+		<FUNC caption="Area" code="Area()">
+			<DES><![CDATA[<h4>Area( s <i>Surface</i> ) : <i>Double precision</i></h4><br>return the area of s ]]></DES>
+		</FUNC>
+		<FUNC caption="Centroid" code="Centroid()">
+			<DES><![CDATA[<h4>Centroid( s <i>Surface</i> ) : <i>Point</i></h4><br>return the centroid of s, which may lie outside s ]]></DES>
+		</FUNC>
+		<FUNC caption="PointOnSurface" code="PointOnSurface()">
+			<DES><![CDATA[<h4>PointOnSurface( s <i>Surface</i> ) : <i>Point</i></h4><br>return a Point guaranteed to lie on the Surface ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="2-Spatial functions" >
+		<DES>Functions that implement spatial operators</DES>
+		<FUNC caption="Buffer" code="Buffer()">
+			<DES><![CDATA[<h4>Buffer( geom <i>Geometry</i> , dist <i>Double precision</i> ) : <i>Geometry</i></h4><br>return a geometric object defined by buffering a distance d around geom, where dist is in the distance<br>units for the Spatial Reference of geom ]]></DES>
+		</FUNC>
+		<FUNC caption="ConvexHull" code="ConvexHull()">
+			<DES><![CDATA[<h4>ConvexHull( geom <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object that is the convex hull of geom ]]></DES>
+		</FUNC>
+		<FUNC caption="Difference" code="Difference()">
+			<DES><![CDATA[<h4>Difference( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object that is the closure of the set difference of geom1 and geom2 ]]></DES>
+		</FUNC>
+		<FUNC caption="GUnion" code="GUnion()">
+			<DES><![CDATA[<h4>GUnion( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object that is the set union of geom1 and geom2 ]]></DES>
+		</FUNC>
+		<FUNC caption="GUnion" code="GUnion()">
+			<DES><![CDATA[<h4>GUnion( geom <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object that is the set union of input values<u>aggregate function</u></b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Intersection" code="Intersection()">
+			<DES><![CDATA[<h4>Intersection( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object that is the intersection of geometric objects geom1 and geom2 ]]></DES>
+		</FUNC>
+		<FUNC caption="SymDifference" code="SymDifference()">
+			<DES><![CDATA[<h4>SymDifference( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object that is the closure of the set symmetric difference of geom1 and geom2 (logical<br>XOR of space) ]]></DES>
+		</FUNC>
+		<FUNC caption="Contains" code="Contains()">
+			<DES><![CDATA[<h4>Contains( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments;<br>---<br>convenience predicate: TRUE if g2 is completely contained in g1 ]]></DES>
+		</FUNC>
+		<FUNC caption="Crosses" code="Crosses()">
+			<DES><![CDATA[<h4>Crosses( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if the intersection of g1 and g2 results in a value whose dimension is less than the maximum dimension<br>of g1 and g2 and the intersection value includes Points interior to both g1 and g2, and the intersection<br>value is not equal to either g1 or g2 ]]></DES>
+		</FUNC>
+		<FUNC caption="Disjoint" code="Disjoint()">
+			<DES><![CDATA[<h4>Disjoint( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if the intersection of g1 and g2 is the empty set ]]></DES>
+		</FUNC>
+		<FUNC caption="Equals" code="Equals()">
+			<DES><![CDATA[<h4>Equals( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if g1 and g2 are equal ]]></DES>
+		</FUNC>
+		<FUNC caption="Intersects" code="Intersects()">
+			<DES><![CDATA[<h4>Intersects( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments;<br>convenience predicate: TRUE if the intersection of g1 and g2 is not empty ]]></DES>
+		</FUNC>
+		<FUNC caption="Overlaps" code="Overlaps()">
+			<DES><![CDATA[<h4>Overlaps( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if the intersection of g1 and g2 results in a value of the samedimension as g1 and g2 that is different<br>from both g1 and g2 ]]></DES>
+		</FUNC>
+		<FUNC caption="Relate" code="Relate()">
+			<DES><![CDATA[<h4>Relate( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> , patternMatrix <i>String</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments;<br>---<br>returns TRUE if the spatial relationship specified by the patternMatrix holds ]]></DES>
+		</FUNC>
+		<FUNC caption="Touches" code="Touches()">
+			<DES><![CDATA[<h4>Touches( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if the only Points in common between g1 and g2 lie in the union of the boundaries of g1 and g2 ]]></DES>
+		</FUNC>
+		<FUNC caption="Within" code="Within()">
+			<DES><![CDATA[<h4>Within( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if g1 is completely contained in g2 ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="3-WKT" >
+		<DES>Functions for constructing a geometric object given its Well-known Text Representation</DES>
+		<FUNC caption="GeomCollFromText" code="GeomCollFromText()">
+			<DES><![CDATA[<h4>GeomCollFromText( wktGeometryCollection <i>String</i> [ , SRID <i>Integer</i>] ) : <i>GeometryCollection</i></h4><br>construct a GeometryCollection ]]></DES>
+		</FUNC>
+		<FUNC caption="GeometryCollectionFromText" code="GeometryCollectionFromText()">
+			<DES><![CDATA[<h4>GeometryCollectionFromText( wktGeometryCollection <i>String</i> [ , SRID <i>Integer</i>] ) : <i>GeometryCollection</i></h4><br>construct a GeometryCollection ]]></DES>
+		</FUNC>
+		<FUNC caption="GeomFromText" code="GeomFromText()">
+			<DES><![CDATA[<h4>GeomFromText( wkt <i>String</i> [ , SRID <i>Integer</i>] ) : <i>Geometry</i></h4><br>construct a geometric object given its Well-known text Representation ]]></DES>
+		</FUNC>
+		<FUNC caption="LineFromText" code="LineFromText()">
+			<DES><![CDATA[<h4>LineFromText( wktLineString <i>String</i> [ , SRID <i>Integer</i>] ) : <i>Linestring</i></h4><br>construct a Linestring ]]></DES>
+		</FUNC>
+		<FUNC caption="LineStringFromText" code="LineStringFromText()">
+			<DES><![CDATA[<h4>LineStringFromText( wktLineString <i>String</i> [ , SRID <i>Integer</i>] ) : <i>Linestring</i></h4><br>construct a Linestring ]]></DES>
+		</FUNC>
+		<FUNC caption="MLineFromText" code="MLineFromText()">
+			<DES><![CDATA[<h4>MLineFromText( wktMultiLineString <i>String</i> [ , SRID <i>Integer</i>] ) : <i>MultiLinestring</i></h4><br>construct a MultiLinestring ]]></DES>
+		</FUNC>
+		<FUNC caption="MultiLineStringFromText" code="MultiLineStringFromText()">
+			<DES><![CDATA[<h4>MultiLineStringFromText( wktMultiLineString <i>String</i> [ , SRID <i>Integer</i>] ) : <i>MultiLinestring</i></h4><br>construct a MultiLinestring ]]></DES>
+		</FUNC>
+		<FUNC caption="MPointFromText" code="MPointFromText()">
+			<DES><![CDATA[<h4>MPointFromText( wktMultiPoint <i>String</i> [ , SRID <i>Integer</i>] ) : <i>MultiPoint</i></h4><br>construct a MultiPoint ]]></DES>
+		</FUNC>
+		<FUNC caption="MultiPointFromText" code="MultiPointFromText()">
+			<DES><![CDATA[<h4>MultiPointFromText( wktMultiPoint <i>String</i> [ , SRID <i>Integer</i>] ) : <i>MultiPoint</i></h4><br>construct a MultiPoint ]]></DES>
+		</FUNC>
+		<FUNC caption="MPolyFromText" code="MPolyFromText()">
+			<DES><![CDATA[<h4>MPolyFromText( wktMultiPolygon <i>String</i> [ , SRID <i>Integer</i>] ) : <i>MultiPolygon</i></h4><br>construct a MultiPolygon ]]></DES>
+		</FUNC>
+		<FUNC caption="MultiPolygonFromText" code="MultiPolygonFromText()">
+			<DES><![CDATA[<h4>MultiPolygonFromText( wktMultiPolygon <i>String</i> [ , SRID <i>Integer</i>] ) : <i>MultiPolygon</i></h4><br>construct a MultiPolygon ]]></DES>
+		</FUNC>
+		<FUNC caption="PointFromText" code="PointFromText()">
+			<DES><![CDATA[<h4>PointFromText( wktPoint <i>String</i> [ , SRID <i>Integer</i>] ) : <i>Point</i></h4><br>construct a Point ]]></DES>
+		</FUNC>
+		<FUNC caption="PolyFromText" code="PolyFromText()">
+			<DES><![CDATA[<h4>PolyFromText( wktPolygon <i>String</i> [ , SRID <i>Integer</i>] ) : <i>Polygon</i></h4><br>construct a Polygon ]]></DES>
+		</FUNC>
+		<FUNC caption="PolygonFromText" code="PolygonFromText()">
+			<DES><![CDATA[<h4>PolygonFromText( wktPolygon <i>String</i> [ , SRID <i>Integer</i>] ) : <i>Polygon</i></h4><br>construct a Polygon ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="4-WKB" >
+		<DES>Functions for constructing a geometric object given its Well-known Binary Representation</DES>
+		<FUNC caption="GeomCollFromWKB" code="GeomCollFromWKB()">
+			<DES><![CDATA[<h4>GeomCollFromWKB( wkbGeometryCollection <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>GeometryCollection</i></h4><br>construct a GeometryCollection ]]></DES>
+		</FUNC>
+		<FUNC caption="GeometryCollectionFromWKB" code="GeometryCollectionFromWKB()">
+			<DES><![CDATA[<h4>GeometryCollectionFromWKB( wkbGeometryCollection <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>GeometryCollection</i></h4><br>construct a GeometryCollection ]]></DES>
+		</FUNC>
+		<FUNC caption="GeomFromWKB" code="GeomFromWKB()">
+			<DES><![CDATA[<h4>GeomFromWKB( wkbGeometry <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>Geometry</i></h4><br>construct a geometric object given its Well-known binary Representation ]]></DES>
+		</FUNC>
+		<FUNC caption="LineFromWKB" code="LineFromWKB()">
+			<DES><![CDATA[<h4>LineFromWKB( wkbLineString <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>Linestring</i></h4><br>construct a Linestring ]]></DES>
+		</FUNC>
+		<FUNC caption="LineStringFromWKB" code="LineStringFromWKB()">
+			<DES><![CDATA[<h4>LineStringFromText( wkbLineString <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>Linestring</i></h4><br>construct a Linestring ]]></DES>
+		</FUNC>
+		<FUNC caption="MLineFromWKB" code="MLineFromWKB()">
+			<DES><![CDATA[<h4>MLineFromWKB( wkbMultiLineString <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>MultiLinestring</i></h4><br>construct a MultiLinestring ]]></DES>
+		</FUNC>
+		<FUNC caption="MultiLineStringFromWKB" code="MultiLineStringFromWKB()">
+			<DES><![CDATA[<h4>MultiLineStringFromWKB( wkbMultiLineString <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>MultiLinestring</i></h4><br>construct a MultiLinestring ]]></DES>
+		</FUNC>
+		<FUNC caption="MPointFromWKB" code="MPointFromWKB()">
+			<DES><![CDATA[<h4>MPointFromWKB( wkbMultiPoint <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>MultiPoint</i></h4><br>construct a MultiPoint ]]></DES>
+		</FUNC>
+		<FUNC caption="MultiPointFromWKB" code="MultiPointFromWKB()">
+			<DES><![CDATA[<h4>MultiPointFromWKB( wkbMultiPoint <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>MultiPoint</i></h4><br>construct a MultiPoint ]]></DES>
+		</FUNC>
+		<FUNC caption="MPolyFromWKB" code="MPolyFromWKB()">
+			<DES><![CDATA[<h4>MPolyFromWKB( wkbMultiPolygon <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>MultiPolygon</i></h4><br>construct a MultiPolygon ]]></DES>
+		</FUNC>
+		<FUNC caption="MultiPolygonFromWKB" code="MultiPolygonFromWKB()">
+			<DES><![CDATA[<h4>MultiPolygonFromWKB( wkbMultiPolygon <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>MultiPolygon</i></h4><br>construct a MultiPolygon ]]></DES>
+		</FUNC>
+		<FUNC caption="PointFromWKB" code="PointFromWKB()">
+			<DES><![CDATA[<h4>PointFromWKB( wkbPoint <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>Point</i></h4><br>construct a Point ]]></DES>
+		</FUNC>
+		<FUNC caption="PolyFromWKB" code="PolyFromWKB()">
+			<DES><![CDATA[<h4>PolyFromWKB( wkbPolygon <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>Polygon</i></h4><br>construct a Polygon ]]></DES>
+		</FUNC>
+		<FUNC caption="PolygonFromWKB" code="PolygonFromWKB()">
+			<DES><![CDATA[<h4>PolygonFromWKB( wkbPolygon <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>Polygon</i></h4><br>construct a Polygon ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="5-Math" >
+		<DES>Math functions</DES>
+		<FUNC caption="Abs" code="Abs()">
+			<DES><![CDATA[<h4>Abs( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the absolute value of x</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Acos" code="Acos()">
+			<DES><![CDATA[<h4>Acos( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the arc cosine of x</b>, that is, the value whose cosine is x</b><br>returns NULL if x</b> is not in the range -1 to 1 ]]></DES>
+		</FUNC>
+		<FUNC caption="Asin" code="Asin()">
+			<DES><![CDATA[<h4>Asin( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the arc sine of x</b>, that is, the value whose sine is x</b><br>returns NULL if x</b> is not in the range -1 to 1 ]]></DES>
+		</FUNC>
+		<FUNC caption="Atan" code="Atan()">
+			<DES><![CDATA[<h4>Atan( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the arc tangent of x</b>, that is, the value whose tangent is x</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Ceil" code="Ceil()">
+			<DES><![CDATA[<h4>Ceil( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the smallest integer value not less than x</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Ceiling" code="Ceiling()">
+			<DES><![CDATA[<h4>Ceiling( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the smallest integer value not less than x</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Cos" code="Cos()">
+			<DES><![CDATA[<h4>Cos( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the cosine of x</b>, where x</b> is given in <u>radians</u> ]]></DES>
+		</FUNC>
+		<FUNC caption="Cot" code="Cot()">
+			<DES><![CDATA[<h4>Cot( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the cotangent of x</b>, where x</b> is given in <u>radians</u> ]]></DES>
+		</FUNC>
+		<FUNC caption="Degrees" code="Degrees()">
+			<DES><![CDATA[<h4>Degrees( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the argument x</b>, converted from radians to degrees ]]></DES>
+		</FUNC>
+		<FUNC caption="Exp" code="Exp()">
+			<DES><![CDATA[<h4>Exp( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the value of <i>e</i></b> (the base of natural logarithms) raised to the power of x</b><br>---<br>the inverse of this function is Log()</b> (using a single argument only) or Ln()</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Floor" code="Floor()">
+			<DES><![CDATA[<h4>Floor( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the largest integer value not greater than x</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Ln" code="Ln()">
+			<DES><![CDATA[<h4>Ln( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the natural logarithm of x</b>; that is, the base-<i>e</i></b> logarithm of x</b><br>If x</b> is less than or equal to 0, then NULL is returned ]]></DES>
+		</FUNC>
+		<FUNC caption="Log" code="Log()">
+			<DES><![CDATA[<h4>Log( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the natural logarithm of x</b>; that is, the base-<i>e</i></b> logarithm of x</b><br>If x</b> is less than or equal to 0, then NULL is returned ]]></DES>
+		</FUNC>
+		<FUNC caption="Log" code="Log()">
+			<DES><![CDATA[<h4>Log( b <i>Double precision</i> , x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the logarithm of x</b> to the base b</b><br>If x</b> is less than or equal to 0, or if b</b> is less than or equal to 1, then NULL is returned<br>---<br>Log(b, x)</b>  is equivalent to Log(x)</b> / Log(b)</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Log10" code="Log10()">
+			<DES><![CDATA[<h4>Log10( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the base-10 logarithm of x</b><br>---<br>Log10(x)</b>  is equivalent to Log(x)</b> / Log(10)</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Log2" code="Log2()">
+			<DES><![CDATA[<h4>Log2( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the base-2 logarithm of x</b><br>---<br>Log2(x)</b>  is equivalent to Log(x)</b> / Log(2)</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="PI" code="PI()">
+			<DES><![CDATA[<h4>PI( void ) : <i>Double precision</i></h4><br>returns the value of PI</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Pow" code="Pow()">
+			<DES><![CDATA[<h4>Pow( x <i>Double precision</i> , y <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the value of x</b> raised to the power of y</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Power" code="Power()">
+			<DES><![CDATA[<h4>Power( x <i>Double precision</i> , y <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the value of x</b> raised to the power of y</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Radians" code="Radians()">
+			<DES><![CDATA[<h4>Radians( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the argument x</b>, converted from degrees to radians ]]></DES>
+		</FUNC>
+		<FUNC caption="Round" code="Round()">
+			<DES><![CDATA[<h4>Round( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the integer value nearest to x</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Sign" code="Sign()">
+			<DES><![CDATA[<h4>Sign( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the sign of the argument as -1, 0, or 1, depending on whether x</b> is negative, zero, or positive.<br> ]]></DES>
+		</FUNC>
+		<FUNC caption="Sin" code="Sin()">
+			<DES><![CDATA[<h4>Sin( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the sine of x</b>, where x</b> is given in <u>radians</u> ]]></DES>
+		</FUNC>
+		<FUNC caption="Sqrt" code="Sqrt()">
+			<DES><![CDATA[<h4>Sqrt( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the square root of a non-negative number x</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Stddev_pop" code="Stddev_pop()">
+			<DES><![CDATA[<h4>Stddev_pop( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the population standard deviation of the input values<br><u>aggregate function</u></b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Stddev_samp" code="Stddev_samp()">
+			<DES><![CDATA[<h4>Stddev_samp( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the sample standard deviation of the input values<br><u>aggregate function</u></b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Tan" code="Tan()">
+			<DES><![CDATA[<h4>Tan( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the tangent of x</b>, where x</b> is given in <u>radians</u> ]]></DES>
+		</FUNC>
+		<FUNC caption="Var_pop" code="Var_pop()">
+			<DES><![CDATA[<h4>Var_pop( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the population variance of the input values (<i>square of the population standard deviation</i>)<br><u>aggregate function</u></b> ]]></DES>
+		</FUNC>
+		<FUNC caption="Var_samp" code="Var_samp()">
+			<DES><![CDATA[<h4>Var_samp( x <i>Double precision</i> ) : <i>Double precision</i></h4><br>returns the sample variance of the input values (<i>square of the sample standard deviation</i>)<br><u>aggregate function</u></b> ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="6-Coord. Transformations " >
+		<DES>Functions for coordinate transformations</DES>
+		<FUNC caption="ReflectCoords" code="ReflectCoords()">
+			<DES><![CDATA[<h4>ReflectCoords( geom <i>Geometry</i> , xAxis <i>Integer</i> , yAxis <i>Integer</i> ) : <i>Geometry</i></h4><br>return a geometric object obtained by reflecting coordinates according to xAxis and yAxis switches<br>---<br>i.e. if xAxis is 0 (FALSE), then x-coordinates remains untouched; otherwise x-coordinates will be reflected<br>]]></DES>
+		</FUNC>
+		<FUNC caption="ReflectCoordinates" code="ReflectCoordinates()">
+			<DES><![CDATA[<h4>ReflectCoordinates( geom <i>Geometry</i> , xAxis <i>Integer</i> , yAxis <i>Integer</i> ) : <i>Geometry</i></h4><br>return a geometric object obtained by reflecting coordinates according to xAxis and yAxis switches<br>---<br>i.e. if xAxis is 0 (FALSE), then x-coordinates remains untouched; otherwise x-coordinates will be reflected<br>]]></DES>
+		</FUNC>
+		<FUNC caption="RotateCoords" code="RotateCoords()">
+			<DES><![CDATA[<h4>RotateCoords( geom <i>Geometry</i> , angleInDegrees <i>Double precision</i> ) : <i>Geometry</i></h4><br>return a geometric object obtained by rotating coordinates according to angleInDegrees value ]]></DES>
+		</FUNC>
+		<FUNC caption="RotateCoordinates" code="RotateCoordinates()">
+			<DES><![CDATA[<h4>RotateCoordinates( geom <i>Geometry</i> , angleInDegrees <i>Double precision</i> ) : <i>Geometry</i></h4><br>return a geometric object obtained by rotating coordinates according to angleInDegrees value ]]></DES>
+		</FUNC>
+		<FUNC caption="ScaleCoords" code="ScaleCoords()">
+			<DES><![CDATA[<h4>ScaleCoords( geom <i>Geometry</i> , scaleX <i>Double precision</i> [ , scaleY <i>Double precision</i><br>] ) : <i>Geometry</i></h4><br>return a geometric object obtained by scaling coordinates according to scaleX and scaleY values<br>---<br>if only one scale factor is specified, then an <i>isotropic</i> scaling occurs [i.e. the same scale factor<br>is applied to both axis]<br>otherwise an <i>anisotropic</i> scaling occurs [i.e. each axis is scaled according to its own scale factor]<br>]]></DES>
+		</FUNC>
+		<FUNC caption="ScaleCoordinates" code="ScaleCoordinates()">
+			<DES><![CDATA[<h4>ScaleCoordinates( geom <i>Geometry</i> , scaleX <i>Double precision</i> [ , scaleY <i>Double precision</i><br>] ) : <i>Geometry</i></h4><br>return a geometric object obtained by scaling coordinates according to scaleX and scaleY values<br>---<br>if only one scale factor is specified, then an <i>isotropic</i> scaling occurs [i.e. the same scale factor<br>is applied to both axis]<br>otherwise an <i>anisotropic</i> scaling occurs [i.e. each axis is scaled according to its own scale factor]<br>]]></DES>
+		</FUNC>
+		<FUNC caption="ShiftCoords" code="ShiftCoords()">
+			<DES><![CDATA[<h4>ShiftCoords( geom <i>Geometry</i> , shiftX <i>Double precision</i> , shiftY <i>Double precision</i><br>) : <i>Geometry</i></h4><br>return a geometric object obtained by translating coordinates according to shiftX and shiftY values ]]></DES>
+		</FUNC>
+		<FUNC caption="ShiftCoordinates" code="ShiftCoordinates()">
+			<DES><![CDATA[<h4>ShiftCoordinates( geom <i>Geometry</i> , shiftX <i>Double precision</i> , shiftY <i>Double precision</i><br>) : <i>Geometry</i></h4><br>return a geometric object obtained by translating coordinates according to shiftX and shiftY values ]]></DES>
+		</FUNC>
+		<FUNC caption="SwapCoords" code="SwapCoords()">
+			<DES><![CDATA[<h4>SwapCoords( geom <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object obtained by swapping x- and y-coordinates ]]></DES>
+		</FUNC>
+		<FUNC caption="SwapCoordinates" code="SwapCoordinates()">
+			<DES><![CDATA[<h4>SwapCoordinates( geom <i>Geometry</i> ) : <i>Geometry</i></h4><br>return a geometric object obtained by swapping x- and y-coordinates ]]></DES>
+		</FUNC>
+		<FUNC caption="Transform" code="Transform()">
+			<DES><![CDATA[<h4>Transform( geom <i>Geometry</i> , newSRID <i>Integer</i> ) : <i>Geometry</i></h4><br>return a geometric object obtained by reprojecting coordinates into the Reference System identified by<br>newSRID ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="7-MBR" >
+		<DES>Functions that test approximative spatial relationships via MBRs</DES>
+		<FUNC caption="MbrContains" code="MbrContains()">
+			<DES><![CDATA[<h4>MbrContains( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments;<br>---<br>convenience predicate: TRUE if g2 MBR is completely contained in g1 MBR ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrDisjoint" code="MbrDisjoint()">
+			<DES><![CDATA[<h4>MbrDisjoint( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if the intersection of g1 and g2 MBRs is the empty set ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrEqual" code="MbrEqual()">
+			<DES><![CDATA[<h4>MbrEqual( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if g1 and g2 have equal MBRs ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrIntersects" code="MbrIntersects()">
+			<DES><![CDATA[<h4>MbrIntersects( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments;<br>convenience predicate: TRUE if the intersection of g1 and g2 MBRs is not empty ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrOverlaps" code="MbrOverlaps()">
+			<DES><![CDATA[<h4>MbrOverlaps( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if the intersection of g1 and g2 MBRs results in a value of the samedimension as g1 and g2 that<br>is different from both g1 and g2 ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrTouches" code="MbrTouches()">
+			<DES><![CDATA[<h4>MbrTouches( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if the only Points in common between g1 and g2 MBRs lie in the union of the boundaries of g1 and<br>g2 ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrWithin" code="MbrWithin()">
+			<DES><![CDATA[<h4>MbrWithin( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWN<br>corresponding to a function invocation on NULL arguments.<br>---<br>TRUE if g1 MBR is completely contained in g2 MBR ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="8-BLOB" >
+		<DES>Utility functions for BLOB objects</DES>
+		<FUNC caption="IsExifBlob" code="IsExifBlob()">
+			<DES><![CDATA[<h4>IsExifBlob( image <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid EXIF image<br><u>Please note:</u> any valid EXIF image is a valid JPEG as well ]]></DES>
+		</FUNC>
+		<FUNC caption="IsExifGpsBlob" code="IsExifGpsBlob()">
+			<DES><![CDATA[<h4>IsExifGpsBlob( image <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid EXIF-GPS image<br><u>Please note:</u> any valid EXIF-GPS image is a valid EXIF and JPEG as well ]]></DES>
+		</FUNC>
+		<FUNC caption="IsGifBlob" code="IsGifBlob()">
+			<DES><![CDATA[<h4>IsGifBlob( image <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid GIF image ]]></DES>
+		</FUNC>
+		<FUNC caption="IsJpegBlob" code="IsJpegBlob()">
+			<DES><![CDATA[<h4>IsJpegBlob( image <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid JPEG image ]]></DES>
+		</FUNC>
+		<FUNC caption="IsPdfBlob" code="IsPdfBlob()">
+			<DES><![CDATA[<h4>IsPdfBlob( content <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid PDF document ]]></DES>
+		</FUNC>
+		<FUNC caption="IsPngBlob" code="IsPngBlob()">
+			<DES><![CDATA[<h4>IsPngBlob( image <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid PNG image ]]></DES>
+		</FUNC>
+		<FUNC caption="IsTiffBlob" code="IsTiffBlob()">
+			<DES><![CDATA[<h4>IsTiffBlob( image <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid TIFF image ]]></DES>
+		</FUNC>
+		<FUNC caption="IsWaveletBlob" code="IsWaveletBlob()">
+			<DES><![CDATA[<h4>IsWaveletBlob( image <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid WAVELET image ]]></DES>
+		</FUNC>
+		<FUNC caption="IsZipBlob" code="IsZipBlob()">
+			<DES><![CDATA[<h4>IsZipBlob( content <i>BLOB</i> ) : <i>Integer</i></h4><br>The return type is Integer, with a return value of 1 for TRUE, 0 for FALSE, and &#8211;1 for UNKNOWNcorresponding<br>to a function invocation on NULL or not-BLOB argument.<br>---<br>TRUE if this BLOB object corresponds to a valid ZIP-compressed file ]]></DES>
+		</FUNC>
+		</GROUP>
+		<GROUP caption="9-Utily" >
+		<DES>Utility functions</DES>
+		<FUNC caption="Distance" code="Distance()">
+			<DES><![CDATA[<h4>Distance( geom1 <i>Geometry</i> , geom2 <i>Geometry</i> ) : <i>Double precision</i></h4><br>return the distance between geom1 and geom2 ]]></DES>
+		</FUNC>
+		<FUNC caption="BuildMbrFilter" code="BuildMbrFilter()">
+			<DES><![CDATA[<h4>BuildMbrFilter(  x1 <i>Double precision</i> , y1 <i>Double precision</i> ,x2 <i>Double precision</i><br>, y2 <i>Double precision</i> )</h4><br>Creates an MBR identified by extreme points x1 y1</b> and x2 y2</b><br>---<br>This fuction is used internally by <u><i>triggers</i></u> related to MbrCache management,and is not intended<br>for any other usage[/tbody][/table][a href=http://www.gaia-gis.it/spatialite/docs.html]back</a>[/body][/html]<br>]]></DES>
+		</FUNC>
+		<FUNC caption="FilterMbrContains" code="FilterMbrContains()">
+			<DES><![CDATA[<h4>FilterMbrContains(  x1 <i>Double precision</i> , y1 <i>Double precision</i> ,x2 <i>Double precision</i><br>, y2 <i>Double precision</i> )</h4><br>Retrieves from an MbrCache any entity whose MBR <u><i>contains</i></u>the rectangle identified by extreme<br>points x1 y1</b> and x2 y2</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="FilterMbrIntersects" code="FilterMbrIntersects()">
+			<DES><![CDATA[<h4>FilterMbrIntersects(  x1 <i>Double precision</i> , y1 <i>Double precision</i> ,x2 <i>Double precision</i><br>, y2 <i>Double precision</i> )</h4><br>Retrieves from an MbrCache any entity whose MBR <u><i>intersects</i></u>the rectangle identified by extreme<br>points x1 y1</b> and x2 y2</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="FilterMbrWithin" code="FilterMbrWithin()">
+			<DES><![CDATA[<h4>FilterMbrWithin(  x1 <i>Double precision</i> , y1 <i>Double precision</i> ,x2 <i>Double precision</i><br>, y2 <i>Double precision</i> )</h4><br>Retrieves from an MbrCache any entity whose MBR falls <u><i>within</i></u>the rectangle identified by<br>extreme points x1 y1</b> and x2 y2</b> ]]></DES>
+		</FUNC>
+		<FUNC caption="AsBinary" code="AsBinary()">
+			<DES><![CDATA[<h4>AsBinary( geom <i>Geometry</i> ) : <i>Binary</i></h4><br>returns the Well-known Binary representation ]]></DES>
+		</FUNC>
+		<FUNC caption="AsText" code="AsText()">
+			<DES><![CDATA[<h4>AsText( geom <i>Geometry</i> ) : <i>String</i></h4><br>returns the Well-known Text representation ]]></DES>
+		</FUNC>
+		<FUNC caption="AddGeometryColumn" code="AddGeometryColumn()">
+			<DES><![CDATA[<h4>AddGeometryColumn( table <i>String</i> , column <i>String</i> , srid <i>Integer</i> ,geom_type <i>String</i><br>, dimension <i>Integer</i> [ , not_null <i>Integer</i> ] ) : <i>Integer</i></h4><br>Creates a new <u>geometry column</u> updating the Spatial Metadata tables and creating anyrequired <u>trigger</u><br>in order to enforce constraints<br>---<br>geom_type</b> has to be one of the followings:<ul><li>'POINT'</li><li>'LINESTRING'</li><li>'POLYGON'</li><li>'MULTIPOINT'</li><li>'MULTILINESTRING'</li><li>'MULTIPOLYGON'</li><li>'GEOMETRYCOLLECTION'</li></ul>dimension</b><br>has to be always 2</b>, because current SpatiaLite version only supports 2D<br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE<br>---<br>the optional 6th arg [not_null</b>] is a non-standard extension required by the peculiar SQLite arch:<ul><li>if<br>set to 0</b> [<i>false</i>], then the Geometry column will accept NULL values as well.This is the <u>default</u><br>behaviour</li><li>if set to any &lt;&gt; 0 value</b> [<i>true</i>], then the Geometry will be defined<br>using a NOT NULL</b> clause</li></ul> ]]></DES>
+		</FUNC>
+		<FUNC caption="CreateMbrCache" code="CreateMbrCache()">
+			<DES><![CDATA[<h4>CreateMbrCache( table <i>String</i> , column <i>String</i> ) : <i>Integer</i></h4><br>Builds an MbrCache</b> on a <u>geometry column</u>, creating any required <u>trigger</u>required in order<br>to enforce full data coherency between the main table and the MbrCache<br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="CreateSpatialIndex" code="CreateSpatialIndex()">
+			<DES><![CDATA[<h4>CreateSpatialIndex( table <i>String</i> , column <i>String</i> ) : <i>Integer</i></h4><br>Builds an RTree Spatial Index</b> on a <u>geometry column</u>, creating any required <u>trigger</u>required<br>in order to enforce full data coherency between the main table and Spatial Index<br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="DisableSpatialIndex" code="DisableSpatialIndex()">
+			<DES><![CDATA[<h4>DisableSpatialIndex( table <i>String</i> , column <i>String</i> ) : <i>Integer</i></h4><br>Disables an RTree Spatial Index</b> or MbrCache</b>, removing any related <u>trigger</u><br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="DiscardGeometryColumn" code="DiscardGeometryColumn()">
+			<DES><![CDATA[<h4>DiscardGeometryColumn( table <i>String</i> , column <i>String</i> ) : <i>Integer</i></h4><br>Removes a <u>geometry column</u> from Spatial MetaData tables and drops any related <u>trigger</u><br>the column itself still continues to exist untouched as an ordinary, unconstrained column<br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="InitSpatialMetaData" code="InitSpatialMetaData()">
+			<DES><![CDATA[<h4>InitSpatialMetaData( void ) : <i>Integer</i></h4><br>Creates the geometry_columns</b> and spatial_ref_sys</b> metadata tables<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE<br>---<br>direct invocation of these function is <u>discouraged</u>; you have to run the init_spatialite.sql</b>script<br>in order to fully initialize the Spatial MetaData tables ]]></DES>
+		</FUNC>
+		<FUNC caption="RecoverGeometryColumn" code="RecoverGeometryColumn()">
+			<DES><![CDATA[<h4>RecoverGeometryColumn( table <i>String</i> , column <i>String</i> , srid <i>Integer</i> ,geom_type<br><i>String</i> , dimension <i>Integer</i> ) : <i>Integer</i></h4><br>Validates an existing ordinary column in order to possibly transform it in a real <u>geometry column</u>,thus<br>updating the Spatial Metadata tables and creating any required <u>trigger</u> in order to enforce constraints<br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="AddFDOGeometryColumn" code="AddFDOGeometryColumn()">
+			<DES><![CDATA[<h4>AddFDOGeometryColumn( table <i>String</i> , column <i>String</i> , srid <i>Integer</i> ,geom_type<br><i>Integer</i> , dimension <i>Integer</i>, geometry_format <i>String</i> ) : <i>Integer</i> </h4><br>Creates a new <u>geometry column</u> updating the FDO/OGR Spatial Metadata tables<br>---<br>geom_type</b> has to be one of the followings:<ul><li>1</b> <i>POINT</i></li><li>2</b> <i>LINESTRING</i></li><li>3</b><br><i>POLYGON</i></li><li>4</b> <i>MULTIPOINT</i></li><li>5</b> <i>MULTILINESTRING</i></li><li>6</b> <i>MULTIPOLYGON</i></li><li>7</b><br><i>GEOMETRYCOLLECTION</i></li></ul>dimension</b> may be 2</b>, 3</b> or 4</b>, accordingly to OGR/FDO<br>specs<br>geometry_format</b> has to be one of the followings:<ul><li>'WBT'</li><li>'WKT'</li><li>'FGF'</li></ul><br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="AutoFDOStart" code="AutoFDOStart()">
+			<DES><![CDATA[<h4>AutoFDOStart( void ) : <i>Integer</i></h4><br>This function will inspect the Spatial Metadata, then automatically creating/refreshing a VirtualFDO</b>wrapper<br>for each FDO/OGR geometry table<br>---<br>the return type is Integer [how many VirtualFDO tables have been created] ]]></DES>
+		</FUNC>
+		<FUNC caption="AutoFDOStop" code="AutoFDOStop()">
+			<DES><![CDATA[<h4>AutoFDOStop( void ) : <i>Integer</i></h4><br>This function will inspect the Spatial Metadata, then automatically destroying any VirtualFDO</b>wrapper<br>found<br>---<br>the return type is Integer [how many VirtualFDO tables have been destroyed] ]]></DES>
+		</FUNC>
+		<FUNC caption="CheckSpatialMetaData" code="CheckSpatialMetaData()">
+			<DES><![CDATA[<h4>CheckSpatialMetaData( void ) : <i>Integer</i></h4><br>Checks the Spatial Metadata type, then returning:<ul><li>0</b> - if geometry_columns</b> and spatial_ref_sys</b><br>tables does not exists</li><li>1</b> - if both tables exist, and their layout is the one used by SpatiaLite</b></li><li>2</b><br>- if both tables exist, and their layout is the one used by FDO/OGR</b></li></ul> ]]></DES>
+		</FUNC>
+		<FUNC caption="DiscardFDOGeometryColumn" code="DiscardFDOGeometryColumn()">
+			<DES><![CDATA[<h4>DiscardFDOGeometryColumn( table <i>String</i> , column <i>String</i> ) : <i>Integer</i></h4><br>Removes a <u>geometry column</u> from FDO/OGR Spatial MetaData tables<br>the column itself still continues to exist untouched as an ordinary column<br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="InitFDOSpatialMetaData" code="InitFDOSpatialMetaData()">
+			<DES><![CDATA[<h4>InitFDOSpatialMetaData( void ) : <i>Integer</i></h4><br>Creates the geometry_columns</b> and spatial_ref_sys</b> metadata tables<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE<br>---<br><u>Please note:</u> Spatial Metadata created using this function will have the FDO/OGR layout, and not<br>the SpatiaLite's own ]]></DES>
+		</FUNC>
+		<FUNC caption="RecoverFDOGeometryColumn" code="RecoverFDOGeometryColumn()">
+			<DES><![CDATA[<h4>RecoverFDOGeometryColumn( table <i>String</i> , column <i>String</i> , srid <i>Integer</i> ,geom_type<br><i>String</i> , dimension <i>Integer</i>, geometry_format <i>String</i> ) : <i>Integer</i></h4><br>Validates an existing ordinary column in order to possibly transform it in a real <u>geometry column</u>,thus<br>updating the FDO/OGR Spatial Metadata tables<br>---<br>the return type is Integer, with a return value of 1 for TRUE or 0 for FALSE ]]></DES>
+		</FUNC>
+		<FUNC caption="AsFGF" code="AsFGF()">
+			<DES><![CDATA[<h4>AsFGF( geom <i>Geometry</i> ) : <i>Binary</i></h4><br>returns the FGF [<i>FDO Geometry Binary Format</i>] representation ]]></DES>
+		</FUNC>
+		<FUNC caption="AsSVG" code="AsSVG()">
+			<DES><![CDATA[<h4>AsSVG( geom <i>Geometry</i> [ , relative <i>Integer</i> [ , precision <i>Integer</i> ] ] ) : <i>String</i></h4><br>returns the SVG [<i>Scalable Vector Graphics</i>] representation ]]></DES>
+		</FUNC>
+		<FUNC caption="GeomFromFGF" code="GeomFromFGF()">
+			<DES><![CDATA[<h4>GeomFromFGF( fgfGeometry <i>Binary</i> [ , SRID <i>Integer</i>] ) : <i>Geometry</i></h4><br>construct a geometric object given its FGF binary Representation ]]></DES>
+		</FUNC>
+		<FUNC caption="BuildCircleMbr" code="BuildCircleMbr()">
+			<DES><![CDATA[<h4>BuildCircleMbr( x <i>Double precision</i> , y <i>Double precision</i> ,radius <i>Double precision</i><br>[ , SRID <i>Integer</i>] ) : <i>Geometry</i></h4><br>[x y</b>] is assumed to be the center of a circle of given radius</b>;then a Geometry will be returned<br>representing the MBR for this circle ]]></DES>
+		</FUNC>
+		<FUNC caption="BuildMbr" code="BuildMbr()">
+			<DES><![CDATA[<h4>BuildMbr( x1 <i>Double precision</i> , y1 <i>Double precision</i> ,x2 <i>Double precision</i> , y2<br><i>Double precision</i> [ , SRID <i>Integer</i>] ) : <i>Geometry</i></h4><br>[x1 y1</b>] and [x2 y2</b>] are assumed to be Points identifying a line segment;then a Geometry will<br>be returned representing the MBR for this line segment ]]></DES>
+		</FUNC>
+		<FUNC caption="GeomFromExifGpsBlob" code="GeomFromExifGpsBlob()">
+			<DES><![CDATA[<h4>GeomFromExifGpsBlob( image <i>BLOB</i> ) : <i>Geometry</i></h4><br>a POINT Geometry will be returned representing the GPS long/lat contained within EXIF-GPS <i>metadata</i>for<br>the BLOB image<br>---<br>NULL will be returned if for any reason it's not possible to build such a POINT ]]></DES>
+		</FUNC>
+		<FUNC caption="MakePoint" code="MakePoint()">
+			<DES><![CDATA[<h4>MakePoint( x <i>Double precision</i> , y <i>Double precision</i> ,[ , SRID <i>Integer</i>] ) : <i>Geometry</i></h4><br>a Geometry will be returned representing the POINT defined by [x y</b>] coordinates ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrMaxX" code="MbrMaxX()">
+			<DES><![CDATA[<h4>MbrMaxX( geom <i>Geometry</i>) : <i>Double precision</i></h4><br>return the x-coordinate for <i>geom</i> MBR's <u>rightmost side</u> as a double precision number ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrMaxY" code="MbrMaxY()">
+			<DES><![CDATA[<h4>MbrMaxY( geom <i>Geometry</i>) : <i>Double precision</i></h4><br>return the y-coordinate for <i>geom</i> MBR's <u>uppermost side</u> as a double precision number ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrMinX" code="MbrMinX()">
+			<DES><![CDATA[<h4>MbrMinX( geom <i>Geometry</i>) : <i>Double precision</i></h4><br>return the x-coordinate for <i>geom</i> MBR's <u>leftmost side</u> as a double precision number ]]></DES>
+		</FUNC>
+		<FUNC caption="MbrMinY" code="MbrMinY()">
+			<DES><![CDATA[<h4>MbrMinY( geom <i>Geometry</i>) : <i>Double precision</i></h4><br>return the y-coordinate for <i>geom</i> MBR's <u>lowermost side</u> as a double precision number ]]></DES>
+		</FUNC>
+		<FUNC caption="geos_version" code="geos_version()">
+			<DES><![CDATA[<h4>geos_version( void ) : <i>String</i></h4><br>returns the current GEOS</b> version as a text string<br>or NULL if GEOS is currently unsupported ]]></DES>
+		</FUNC>
+		<FUNC caption="proj4_version" code="proj4_version()">
+			<DES><![CDATA[<h4>proj4_version( void ) : <i>String</i></h4><br>returns the current PROJ.4</b> version as a text string<br>or NULL if PROJ.4 is currently unsupported ]]></DES>
+		</FUNC>
+		<FUNC caption="spatialite_version" code="spatialite_version()">
+			<DES><![CDATA[<h4>spatialite_version( void ) : <i>String</i></h4><br>returns the current SpatiaLite</b> version as a text string ]]></DES>
+		</FUNC>
+		</GROUP>
+	</GROUP>
+	<GROUP caption="SQL" code="textcode1" >
+		<EXPR caption="SELECT" code="SELECT" />
+		<EXPR caption="FROM" code="FROM" />
+		<EXPR caption="WHERE" code="WHERE" />
+		<EXPR caption="ORDER BY" code="ORDER BY" />
+		<EXPR caption="AND" code="AND" />
+		<EXPR caption="AS" code="AS" />
+		<EXPR caption="ASC" code="ASC" />
+		<EXPR caption="CASE" code="CASE" />
+		<EXPR caption="CAST" code="CAST" />
+		<EXPR caption="CURRENT_DATE" code="CURRENT_DATE" />
+		<EXPR caption="CURRENT_TIME" code="CURRENT_TIME" />
+		<EXPR caption="CURRENT_TIMESTAMP" code="CURRENT_TIMESTAMP" />
+		<EXPR caption="DESC" code="DESC" />
+		<EXPR caption="DISTINCT" code="DISTINCT" />
+		<EXPR caption="EXISTS" code="EXISTS" />
+		<EXPR caption="GROUP" code="GROUP" />
+		<EXPR caption="HAVING" code="HAVING" />
+		<EXPR caption="IN" code="IN" />
+		<EXPR caption="INNER" code="INNER" />
+		<EXPR caption="IS" code="IS" />
+		<EXPR caption="ISNULL" code="ISNULL" />
+		<EXPR caption="JOIN" code="JOIN" />
+		<EXPR caption="NOTNULL" code="NOTNULL" />
+		<EXPR caption="NULL" code="NULL" />
+		<EXPR caption="OFFSET" code="OFFSET" />
+		<EXPR caption="ON" code="ON" />
+		<EXPR caption="OR" code="OR" />
+		<EXPR caption="OUTER" code="OUTER" />
+		<EXPR caption="REGEXP" code="REGEXP" />
+		<EXPR caption="UNION" code="UNION" />
+	</GROUP>
+	<GROUP caption="SQL functions" code="" >
+		<FUNC caption="abs" code="abs()" >
+			<DES><![CDATA[<h4>abs(<i>X</i>)</h4><br>Return the absolute value of the numeric argument <i>X</i>. Return NULL if <i>X</i> is NULL. Return 0.0<br>if <i>X</i> is not a numeric value.]]></DES>
+		</FUNC>
+		<FUNC caption="changes" code="changes()" >
+			<DES><![CDATA[<h4>changes()</h4><br>Return the number of database rows that were changed or inserted or deleted by the most recently complete<br>SQL. This is a wrapper around the sqlite3_changes() C/C++ function.]]></DES>
+		</FUNC>
+		<FUNC caption="coalesce" code="coalesce()" >
+			<DES><![CDATA[<h4>coalesce(<i>X</i>,<i>Y</i>,...)</h4><br>Return a copy of the first non-NULL argument. If all arguments are NULL then NULL is returned. There<br>must be at least  2 arguments.]]></DES>
+		</FUNC>
+		<FUNC caption="glob" code="glob()" >
+			<DES><![CDATA[<h4>glob(<i>X</i>,<i>Y</i>)</h4><br>This function is used to implement the "<b>Y GLOB X</b>" syntax of SQLite. Note that the X and Y arguments<br>are reversed in the glob() function relative to the infix GLOB operator.]]></DES>
+		</FUNC>
+		<FUNC caption="ifnull" code="ifnull()" >
+			<DES><![CDATA[<h4>ifnull(<i>X</i>,<i>Y</i>)</h4><br>Return a copy of the first non-NULL argument. If both arguments are NULL then NULL is returned. The ifnull()<br>functions and  coalesce() with two arguments are interchangeable.]]></DES>
+		</FUNC>
+		<FUNC caption="hex" code="hex()" >
+			<DES><![CDATA[<h4>hex(<i>X</i>)</h4><br>The argument is interpreted as a BLOB. The result is a hexadecimal rendering of the content of that blob.<br>]]></DES>
+		</FUNC>
+		<FUNC caption="last_insert_rowid" code="last_insert_rowid()" >
+			<DES><![CDATA[<h4>last_insert_rowid()</h4><br>Return the sqlite3_last_insert_rowid() API function.]]></DES>
+		</FUNC>
+		<FUNC caption="length" code="length()" >
+			<DES><![CDATA[<h4>length(<i>X</i>)</h4><br>Return the string length of <i>X</i> in characters if <i>X</i> is a string, or in bytes if <i>X</i> is<br>a blob.]]></DES>
+		</FUNC>
+		<FUNC caption="like" code="like()" >
+			<DES><![CDATA[<h4>like(<i>X</i>,<i>Y</i>, [<i>Z</i>])</h4><br>This function is used to implement the "<b>Y LIKE X [ESCAPE Z]</b>" syntax of SQL. If the optional ESCAPE<br>clause is present, then the user-function is invoked with three arguments. Otherwise, it is invoked<br>with two arguments only. Note that the X and Y parameters are reversed in the like() function relative<br>to the infix LIKE operator depending on whether or not an ESCAPE clause was  specified.]]></DES>
+		</FUNC>
+		<FUNC caption="load_extension" code="load_extension()" >
+			<DES><![CDATA[<h4>load_extension(<i>X</i>,[<i>Y</i>])</h4><br>Load SQLite extensions out of the shared library file named <i>X</i> using the entry point <i>Y</i>.<br>The result is a NULL. If <i>Y</i> is omitted then the default entry point of <b>sqlite3_extension_init</b><br>is used. This function raises an exception if the extension fails to load or initialize correctly. <p>This<br>function will fail if the extension attempts to modify or delete a SQL function or collating sequence.<br>The extension can add new functions or collating sequences, but cannot modify or delete existing functions<br>or collating sequences because those functions and/or collating sequences might be used elsewhere in<br>the currently running SQL statement. To load an extension that changes or deletes functions or collating<br>sequences, use the  sqlite3_load_extension() C-language API.</p>]]></DES>
+		</FUNC>
+		<FUNC caption="lower" code="lower()" >
+			<DES><![CDATA[<h4>lower(<i>X</i>)</h4><br>Return a copy of string <i>X</i> with all ASCII characters converted to lower case. The default built-in<br>lower() function works for ASCII characters only. To do case conversions on non-ASCII characters, load<br>the ICU extension.]]></DES>
+		</FUNC>
+		<FUNC caption="ltrim" code="ltrim()" >
+			<DES><![CDATA[<h4>ltrim(<i>X</i>,[<i>Y</i>)])</h4><br>Return a string formed by removing any and all characters that appear in <i>Y</i> from the left side<br>of <i>X</i>. If the <i>Y</i> argument is omitted, spaces are removed.]]></DES>
+		</FUNC>
+		<FUNC caption="max" code="max()" >
+			<DES><![CDATA[<h4>max(<i>X</i>,<i>Y</i>,...)</h4><br>Return the argument with the maximum value. Or return NULL if any argument is NULL. Note that <b>max()</b><br>is a simple function when it has 2 or more arguments but converts to an aggregate function if given<br>only a single argument.]]></DES>
+		</FUNC>
+		<FUNC caption="min" code="min()" >
+			<DES><![CDATA[<h4>min(<i>X</i>,<i>Y</i>,...)</h4><br>Return the argument with the minimum value.  Note that <b>min()</b> is a simple function when it has<br>2 or more arguments but converts to an aggregate function if given only a single argument.]]></DES>
+		</FUNC>
+		<FUNC caption="nullif" code="nullif()" >
+			<DES><![CDATA[<h4>nullif(<i>X</i>,<i>Y</i>)</h4><br>Return the first argument if the arguments are different,  otherwise return NULL.]]></DES>
+		</FUNC>
+		<FUNC caption="quote" code="quote()" >
+			<DES><![CDATA[<h4>quote(<i>X</i>)</h4><br>This routine returns a string which is the value of its argument suitable for inclusion into another<br>SQL statement. Strings are surrounded by single-quotes with escapes on interior quotes as needed. BLOBs<br>are encoded as hexadecimal literals. SQLite uses this function internally in its implementation of VACUUM<br>command will likely cease to work.]]></DES>
+		</FUNC>
+		<FUNC caption="random" code="random()" >
+			<DES><![CDATA[<h4>random()</h4><br>Return a pseudo-random integer between -9223372036854775808 and +9223372036854775807.]]></DES>
+		</FUNC>
+		<FUNC caption="randomblob" code="randomblob()" >
+			<DES><![CDATA[<h4>randomblob(<i>N</i>)</h4><br>Return an <i>N</i>-byte blob containing pseudo-random bytes. <i>N</i> should be a postive integer. <p>Hint:<br>applications can generate globally unique identifiers using this function together with lower() like<br>this:</p> <blockquote> hex(randomblob(16))<br> lower(hex(randomblob(16))) </blockquote>]]></DES>
+		</FUNC>
+		<FUNC caption="replace" code="replace()" >
+			<DES><![CDATA[<h4>replace(<i>X</i>,<i>Y</i>,<i>Z</i>)</h4><br>Return a string formed by substituting string <i>Z</i> for every occurrance of string <i>Y</i> in string<br><i>X</i>. The BINARY collating sequence is used for comparisons. If <i>Y</i> is an empty string then<br>return <i>X</i> unchanged. If <i>Z</i> is not initially a string, it is cast to a UTF-8 string prior<br>to processing.]]></DES>
+		</FUNC>
+		<FUNC caption="round" code="round()" >
+			<DES><![CDATA[<h4>round(<i>X</i>,[<i>Y</i>])</h4><br>Round off the number <i>X</i> to <i>Y</i> digits to the right of the decimal point. If the <i>Y</i> argument<br>is omitted, 0 is  assumed.]]></DES>
+		</FUNC>
+		<FUNC caption="rtrim" code="rtrim()" >
+			<DES><![CDATA[<h4>rtrim(<i>X</i>,[<i>Y</i>])</h4><br>Return a string formed by removing any and all characters that appear in <i>Y</i> from the right side<br>of <i>X</i>. If the <i>Y</i> argument is omitted, spaces are removed.]]></DES>
+		</FUNC>
+		<FUNC caption="soundex" code="soundex()" >
+			<DES><![CDATA[<h4>soundex(<i>X</i>)</h4><br>Compute the soundex encoding of the string <i>X</i>. The string "?000" is returned if the argument is<br>NULL. This function is omitted from SQLite by default. It is only available the -DSQLITE_SOUNDEX=1 compiler<br>option is used when SQLite is built.]]></DES>
+		</FUNC>
+		<FUNC caption="sqlite_source_id" code="sqlite_source_id()" >
+			<DES><![CDATA[<h4>sqlite_source_id()</h4><br>Return a string that identifies the specific version of the source code that was used to build the SQLite<br>library. The return string begins with the date and time that the source code was checked in and is<br>follows by an SHA1 hash that uniquely identifies the source tree. This function is an SQL wrapper around<br>the sqlite3_sourceid() C interface.]]></DES>
+		</FUNC>
+		<FUNC caption="sqlite_version" code="sqlite_version()" >
+			<DES><![CDATA[<h4>sqlite_version()</h4><br>Return the version string for the SQLite library that is running. Example: "3.5.9". This function is<br>an SQL wrapper around the sqlite3_libversion() C-interface.]]></DES>
+		</FUNC>
+		<FUNC caption="substr" code="substr()" >
+			<DES><![CDATA[<h4>substr(<i>X</i>,<i>Y</i>,[<i>Z</i>])</h4><br>Return a substring of input string <i>X</i> that begins with the <i>Y</i>-th character and which is <i>Z</i><br>characters long. If <i>Z</i> is omitted then all character through the end of the string are returned.<br>The left-most character of <i>X</i> is number 1. If <i>Y</i> is negative the the first character of<br>the substring is found by counting from the right rather than the left. If <i>Z</i> is negative then<br>return the <i>Z</i> characters preceeding the <i>Y</i>-th character. If <i>X</i> is string then characters<br>indices refer to actual UTF-8  characters. If <i>X</i> is a BLOB then the indices refer to bytes.]]></DES>
+		</FUNC>
+		<FUNC caption="total_changes" code="total_changes()" >
+			<DES><![CDATA[<h4>total_changes()</h4><br>Return the number of row changes caused by INSERT, UPDATE or DELETE statements since the current database<br>connection was opened. This function is a wrapper around the sqlite3_total_changes() C/C++ interface.]]></DES>
+		</FUNC>
+		<FUNC caption="trim" code="trim()" >
+			<DES><![CDATA[<h4>trim(<i>X</i>,[<i>Y</i>])</h4><br>Return a string formed by removing any and all characters that appear in <i>Y</i> from both ends of <i>X</i>.<br>If the <i>Y</i> argument is omitted, spaces are removed.]]></DES>
+		</FUNC>
+		<FUNC caption="typeof" code="typeof()" >
+			<DES><![CDATA[<h4>typeof(<i>X</i>)</h4><br>Return the datatype of the expression <i>X</i>. The only  return values are "null", "integer", "real",<br>"text", and "blob".]]></DES>
+		</FUNC>
+		<FUNC caption="upper" code="upper()" >
+			<DES><![CDATA[<h4>upper(<i>X</i>)</h4><br>Return a copy of input string <i>X</i> converted to all upper-case letters. The implementation of this<br>function uses the C library routine <b>toupper()</b> which means it may not work correctly on  non-ASCII<br>UTF-8 strings.]]></DES>
+		</FUNC>
+		<FUNC caption="zeroblob" code="zeroblob()" >
+			<DES><![CDATA[<h4>zeroblob(<i>N</i>)</h4><br>Return a BLOB consisting of N bytes of 0x00. SQLite manages these zeroblobs very efficiently. Zeroblobs<br>can be used to reserve space for a BLOB that is later written using  sqlite3_result_zeroblob() routine<br>from the C/C++ interface.]]></DES>
+		</FUNC>
+	</GROUP>
+</ROOT>
