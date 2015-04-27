@@ -31,7 +31,7 @@ package org.jam.openjump.spatialiteplugin;
 
 import javax.swing.*;
 
-public class PuglinTest {
+public class PluginTest {
 
 	/**
 	 * @param args

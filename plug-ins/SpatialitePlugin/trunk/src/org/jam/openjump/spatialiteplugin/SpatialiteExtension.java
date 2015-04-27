@@ -36,7 +36,7 @@ public class SpatialiteExtension extends Extension {
 
 	@Override
 	public void configure(PlugInContext context) throws Exception {
-		new SpatialitePluging().initialize(context);
+		new SpatialitePlugin().initialize(context);
 
 	}
 

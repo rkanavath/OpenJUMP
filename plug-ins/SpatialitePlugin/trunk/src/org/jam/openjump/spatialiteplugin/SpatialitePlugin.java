@@ -40,7 +40,7 @@ import com.vividsolutions.jump.workbench.ui.MenuNames;
 import java.io.PrintStream;
 
 
-public class SpatialitePluging extends AbstractPlugIn {
+public class SpatialitePlugin extends AbstractPlugIn {
 	static private PlugInContext pc=null;
 
 	public void initialize(PlugInContext context) throws Exception {
@@ -62,7 +62,7 @@ public class SpatialitePluging extends AbstractPlugIn {
 	}
 	
 	public boolean execute(PlugInContext context) throws Exception{
-		SpatialitePluging.pc = context;
+		SpatialitePlugin.pc = context;
 		context.getWorkbenchFrame().getOutputFrame().createNewDocument();
 		try {
             //Class.forName("org.sqlite.Driver");
