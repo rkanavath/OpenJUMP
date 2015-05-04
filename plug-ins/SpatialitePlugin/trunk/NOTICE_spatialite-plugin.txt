@@ -4,7 +4,7 @@ License, version 2, or any later version.
 It includes the following other software:
 
 * Xerial SQLite JDBC Driver (https://bitbucket.org/xerial/sqlite-jdbc)
-* jEdit (http://www.jedit.org/)
+* jEdit Syntax Package (http://syntax.jedit.org/)
 * mod_spatialite (https://www.gaia-gis.it/fossil/libspatialite/index)
 
 For licenses see the LICENSE.txt file.

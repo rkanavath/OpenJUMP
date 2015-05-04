@@ -3,7 +3,7 @@ attribute and vector data from SQLite databases which have geometries
 encoded either as SpatiaLite BLOBs or according to the Feature Data 
 Objects (FDO) specification. The plugin can be used for entering 
 arbitrary SQL queries. The results of the queries are presented as a
-a table ot, if the result set contains geometries, alternatively on 
+a table or, if the result set contains geometries, alternatively on 
 a map.
 
 License
