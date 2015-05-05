@@ -8,6 +8,8 @@ package jedit;
  * permitted, in both source and binary form, provided that this notice
  * remains intact in all source distributions of this package.
  */
+// Backported from jEdit-syntax 2.2.2: Ctrl-a, Ctrl-c, Ctrl-v, Ctrl-x
+// 2015-05-05 Jukka Rahkonen
 
 import javax.swing.KeyStroke;
 import java.awt.event.*;
@@ -49,6 +51,7 @@ public class DefaultInputHandler extends InputHandler
 
 		addKeyBinding("HOME",HOME);
 		addKeyBinding("END",END);
+		addKeyBinding("C+A",SELECT_ALL);
 		addKeyBinding("S+HOME",SELECT_HOME);
 		addKeyBinding("S+END",SELECT_END);
 		addKeyBinding("C+HOME",DOCUMENT_HOME);
@@ -75,6 +78,11 @@ public class DefaultInputHandler extends InputHandler
 		addKeyBinding("S+DOWN",SELECT_NEXT_LINE);
 
 		addKeyBinding("C+ENTER",REPEAT);
+		
+		// Clipboard
+		addKeyBinding("C+C", CLIP_COPY);
+		addKeyBinding("C+V", CLIP_PASTE);
+		addKeyBinding("C+X", CLIP_CUT);
 	}
 
 	/**

@@ -44,6 +44,7 @@ public abstract class InputHandler extends KeyAdapter
 	public static final ActionListener DELETE_WORD = new delete_word();
 	public static final ActionListener END = new end(false);
 	public static final ActionListener DOCUMENT_END = new document_end(false);
+	public static final ActionListener SELECT_ALL = new select_all();
 	public static final ActionListener SELECT_END = new end(true);
 	public static final ActionListener SELECT_DOC_END = new document_end(true);
 	public static final ActionListener INSERT_BREAK = new insert_break();
@@ -71,6 +72,10 @@ public abstract class InputHandler extends KeyAdapter
 	public static final ActionListener SELECT_PREV_WORD = new prev_word(true);
 	public static final ActionListener REPEAT = new repeat();
 	public static final ActionListener TOGGLE_RECT = new toggle_rect();
+	// Clipboard
+	public static final ActionListener CLIP_COPY = new clip_copy();
+	public static final ActionListener CLIP_PASTE = new clip_paste();
+	public static final ActionListener CLIP_CUT = new clip_cut();
 
 	// Default action
 	public static final ActionListener INSERT_CHAR = new insert_char();
@@ -85,6 +90,7 @@ public abstract class InputHandler extends KeyAdapter
 		actions.put("delete",DELETE);
 		actions.put("delete-word",DELETE_WORD);
 		actions.put("end",END);
+		actions.put("select-all",SELECT_ALL);
 		actions.put("select-end",SELECT_END);
 		actions.put("document-end",DOCUMENT_END);
 		actions.put("select-doc-end",SELECT_DOC_END);
@@ -114,6 +120,9 @@ public abstract class InputHandler extends KeyAdapter
 		actions.put("repeat",REPEAT);
 		actions.put("toggle-rect",TOGGLE_RECT);
 		actions.put("insert-char",INSERT_CHAR);
+		actions.put("clipboard-copy",CLIP_COPY);
+		actions.put("clipboard-paste",CLIP_PASTE);
+		actions.put("clipboard-cut",CLIP_CUT);
 	}
 
 	/**
@@ -611,6 +620,13 @@ public abstract class InputHandler extends KeyAdapter
 				textArea.setCaretPosition(caret);
 		}
 	}
+	public static class select_all implements ActionListener {
+		public void actionPerformed(ActionEvent evt)
+		{
+			JEditTextArea textArea = getTextArea(evt);
+			textArea.selectAll();
+		}
+	}
 
 	public static class document_end implements ActionListener
 	{
@@ -1066,6 +1082,29 @@ public abstract class InputHandler extends KeyAdapter
 			{
 				textArea.getToolkit().beep();
 			}
+		}
+	}
+	public static class clip_copy implements ActionListener {
+		public void actionPerformed(ActionEvent evt)
+		{
+			JEditTextArea textArea = getTextArea(evt);
+			textArea.copy();
+		}
+	}
+	
+	public static class clip_paste implements ActionListener {
+		public void actionPerformed(ActionEvent evt)
+		{
+			JEditTextArea textArea = getTextArea(evt);
+			textArea.paste();
+		}
+	}
+	
+	public static class clip_cut implements ActionListener {
+		public void actionPerformed(ActionEvent evt)
+		{
+			JEditTextArea textArea = getTextArea(evt);
+			textArea.cut();
 		}
 	}
 }
