@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setAttributesToolbox title="Titre boite de la dialogue">
+    <button text="A">
+        <attribute name="Nom" value="a" />
+        <attribute name="Remarque" value="modifié" />
+    </button>
+    <button text="B">
+        <attribute name="Nom" value="b" />
+        <attribute name="Remarque" value="modifié" />
+    </button>
+</setAttributesToolbox>
