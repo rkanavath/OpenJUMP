@@ -25,6 +25,8 @@ public class SetOfAttributes {
 
     final Logger LOG = Logger.getLogger(SetOfAttributes.class);
 
+    I18N I18N_ = I18N.getInstance("set_attributes");
+
     FlexibleDateParser dateParser = new FlexibleDateParser();
 
     @XmlAttribute
@@ -70,7 +72,7 @@ public class SetOfAttributes {
      * @param features to be modified
      * @throws Exception
      */
-    public Map<Feature,Feature> setAttributes(Collection<Feature> features) throws Exception {
+    public Map<Feature,Feature> setAttributes(Collection<Feature> features, String layerName) throws Exception {
         // map original feature to modified features
         Map<Feature,Feature> map = new HashMap();
 
@@ -84,7 +86,9 @@ public class SetOfAttributes {
 
                     if (!schema.hasAttribute(name)) {
                         if (isAtomic()) {
-                            throw new Exception("Set attribute " + name + " is not consistent with feature schema of feature " + feature.getID());
+                            throw new Exception(I18N.getMessage("set_attributes",
+                                    "SetAttributesPlugIn.not-consistent-with-schema",
+                                    new Object[]{name, layerName, feature.getID()}));
                         } else {
                             continue;
                         }
@@ -120,6 +124,7 @@ public class SetOfAttributes {
                 map.put(feature,newFeature);
             } catch(Exception e) {
                 LOG.warn(e.getMessage());
+                throw e;
             }
 
         }

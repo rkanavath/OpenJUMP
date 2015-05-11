@@ -105,7 +105,7 @@ public class SetAttributesToolbox {
                             for (Feature feature : features) {
                                 srcLayerMap.put(feature, feature.clone(false));
                             }
-                            tgtLayerMap.putAll(setOfAttributes.setAttributes(selectionManager.getFeaturesWithSelectedItems(lyr)));
+                            tgtLayerMap.putAll(setOfAttributes.setAttributes(selectionManager.getFeaturesWithSelectedItems(lyr), lyr.getName()));
                             mapSource.put(lyr,srcLayerMap);
                             mapTarget.put(lyr,tgtLayerMap);
                         }
