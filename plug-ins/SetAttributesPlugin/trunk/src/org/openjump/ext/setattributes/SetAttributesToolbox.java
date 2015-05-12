@@ -109,8 +109,20 @@ public class SetAttributesToolbox {
                             mapSource.put(lyr,srcLayerMap);
                             mapTarget.put(lyr,tgtLayerMap);
                         }
-                        if (editableLayers == 0 || editableFeatures == 0) {
-                            pluginContext.getWorkbenchFrame().warnUser(I18N_.getText("set_attributes","SetAttributesPlugIn.no-feature-found"));
+                        if (editableLayers == 0 && setOfAttributes.getLayer() == null) {
+                            pluginContext.getWorkbenchFrame().warnUser(I18N_.getText("set_attributes",
+                                    "SetAttributesPlugIn.no-feature-found"));
+                        } else if (editableLayers == 0) {
+                            pluginContext.getWorkbenchFrame().warnUser(I18N_.getMessage("set_attributes",
+                                    "SetAttributesPlugIn.no-feature-found-in-layer",
+                                    new Object[]{setOfAttributes.getLayer()}));
+                        } else if (editableFeatures == 0 && setOfAttributes.getLayer() == null) {
+                            pluginContext.getWorkbenchFrame().warnUser(I18N_.getText("set_attributes",
+                                    "SetAttributesPlugIn.no-feature-found"));
+                        } else if (editableFeatures == 0) {
+                            pluginContext.getWorkbenchFrame().warnUser(I18N_.getMessage("set_attributes",
+                                    "SetAttributesPlugIn.no-feature-found-in-layer",
+                                    new Object[]{setOfAttributes.getLayer()}));
                         } else {
                             UndoableCommand command =
                                     new UndoableCommand(I18N.get(SetAttributesPlugIn.class.getName())) {

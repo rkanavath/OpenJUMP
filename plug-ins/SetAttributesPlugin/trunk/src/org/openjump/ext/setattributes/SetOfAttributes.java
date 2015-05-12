@@ -44,6 +44,9 @@ public class SetOfAttributes {
     @XmlAttribute
     String layer;
 
+    @XmlAttribute (name="dimension", required=false)
+    int dimension = -1;
+
     @XmlElement (name="attribute")
     List<SetAttribute> attributes;
 
@@ -61,6 +64,10 @@ public class SetOfAttributes {
 
     public String getLayer() {
         return layer;
+    }
+
+    public int getDimension() {
+        return dimension;
     }
 
     public List<SetAttribute> getAttributes() {
@@ -97,6 +104,9 @@ public class SetOfAttributes {
                     if (!setAtt.checkPrerequisite(feature.getAttribute(name))) {
                         continue;
                     }
+                    if (!checkDimension(feature)) {
+                        continue;
+                    }
                     //Feature newFeature = map.get(feature);
                     AttributeType type = schema.getAttributeType(name);
                     if (type == AttributeType.STRING) {
@@ -129,6 +139,12 @@ public class SetOfAttributes {
 
         }
         return map;
+    }
+
+    boolean checkDimension(Feature feature) {
+        if (dimension > -1) {
+            return feature.getGeometry().getDimension() == dimension;
+        } else return true;
     }
 
 }

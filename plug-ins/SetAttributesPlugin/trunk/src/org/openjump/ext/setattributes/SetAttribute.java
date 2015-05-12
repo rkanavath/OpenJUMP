@@ -20,8 +20,9 @@ public class SetAttribute {
     @XmlAttribute (name="value", required=false)
     String value;
 
-    @XmlAttribute
+    @XmlAttribute (name="prerequisite", required=false)
     String prerequisite;
+
 
     public SetAttribute() {}
 
@@ -56,4 +57,5 @@ public class SetAttribute {
             return true;
         } else return true;
     }
+
 }
