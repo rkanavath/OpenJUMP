@@ -46,6 +46,9 @@ public class SetAttributesToolbox {
     @XmlAttribute
     Integer iconHeight = 32;
 
+    @XmlAttribute (required=false)
+    boolean unselect;
+
     @XmlElement (name="button")
     List<SetOfAttributes> buttons;
 
@@ -108,6 +111,11 @@ public class SetAttributesToolbox {
                             tgtLayerMap.putAll(setOfAttributes.setAttributes(selectionManager.getFeaturesWithSelectedItems(lyr), lyr.getName()));
                             mapSource.put(lyr,srcLayerMap);
                             mapTarget.put(lyr,tgtLayerMap);
+                        }
+                        if (unselect) {
+                            for (Layer lyr : selectionManager.getLayersWithSelectedItems()) {
+                                selectionManager.unselectItems(lyr);
+                            }
                         }
                         if (editableLayers == 0 && setOfAttributes.getLayer() == null) {
                             pluginContext.getWorkbenchFrame().warnUser(I18N_.getText("set_attributes",
