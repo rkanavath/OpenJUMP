@@ -76,7 +76,7 @@ public class SpatialiteDialog extends JDialog  implements ActionListener {
 	
 	public SpatialiteDialog(PlugInContext ctx) {
 		
-		super(ctx.getWorkbenchFrame() ,"Spatialite Plugin",true);
+		super(ctx.getWorkbenchFrame() ,"Spatialite Plugin",false);
 		context=ctx;
 		initComponents();
 	}
