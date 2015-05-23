@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,9 @@ public class SetOfAttributes {
     String text;
 
     @XmlAttribute
+    String backgroundColor;
+
+    @XmlAttribute
     String tooltip;
 
     @XmlAttribute
@@ -52,6 +56,15 @@ public class SetOfAttributes {
 
     public String getIcon() {
         return icon;
+    }
+
+    public Color getBackgroundColor() {
+        Color c = null;
+        if (backgroundColor == null) return null;
+        try {
+            c = Color.decode(backgroundColor);
+        } catch(NumberFormatException e) {}
+        return c;
     }
 
     public String getTooltip() {
