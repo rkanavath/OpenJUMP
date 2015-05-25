@@ -129,7 +129,7 @@ public class SpatialiteDialog extends JDialog  implements ActionListener {
 		tree.setEditable(false);
 		
 		treeview= new JScrollPane(tree);
-		treeview.setPreferredSize(new Dimension(200,200));
+		treeview.setPreferredSize(new Dimension(250,200));
 		this.add(treeview,BorderLayout.WEST);
 		tree.addMouseListener(new MouseAdapter() {
 		     public void mousePressed(MouseEvent e) {
