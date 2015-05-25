@@ -199,13 +199,13 @@ public class SetAttributesToolbox {
             button.addMouseListener(new MouseAdapter() {
 
                 final int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+                final int defaultInitialDelay = ToolTipManager.sharedInstance().getInitialDelay();
 
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    int defaultDismissTimeout = ToolTipManager.sharedInstance().getDismissDelay();
-
                     if (SwingUtilities.isRightMouseButton(e)) {
                         ToolTipManager.sharedInstance().setDismissDelay(10000);
+                        ToolTipManager.sharedInstance().setInitialDelay(100);
                         button.setToolTipText(getHtmlToolTip(setOfAttributes));
                         MouseEvent phantom = new MouseEvent(
                                 button,
@@ -225,6 +225,7 @@ public class SetAttributesToolbox {
                     if (SwingUtilities.isRightMouseButton(e)) {
                         button.setToolTipText(setOfAttributes.getTooltip());
                         ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
+                        ToolTipManager.sharedInstance().setInitialDelay(defaultInitialDelay);
                     }
                 }
             });
