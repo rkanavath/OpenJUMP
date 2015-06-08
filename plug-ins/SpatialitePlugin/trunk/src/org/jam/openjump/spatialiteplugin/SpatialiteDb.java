@@ -226,9 +226,11 @@ public final class SpatialiteDb {
             stmt.setQueryTimeout(30); // set timeout to 30 sec.
 
             // loading SpatiaLite
+            // and switching foreign keys ON
             //stmt.execute("SELECT load_extension('libspatialite-1.dll')");
             System.out.println("sql : " + loadExtension);
             stmt.execute(loadExtension);
+            stmt.execute("PRAGMA foreign_keys=1");
             System.out.println(loadExtension);
             // enabling Spatial Metadata
             // using v.2.4.0 this automatically initializes SPATIAL_REF_SYS and GEOMETRY_COLUMNS
