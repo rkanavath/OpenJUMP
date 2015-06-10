@@ -160,9 +160,13 @@ public final class SpatialiteDb {
 		String  metadataSQL_0 = "SELECT tbl_name FROM sqlite_master as m"+
 				"where (m.type=\'table\' or m.type=\'view\') ";
 		
-		String metadataSQL_1_2 = "SELECT tbl_name,f_geometry_column,sql FROM sqlite_master as m "+
-		"left join geometry_columns as g on g.f_table_name=m.tbl_name "+ 
-		"where (m.type=\'table\') ";
+		String metadataSQL_1_2 = "select m.tbl_name, "+
+		"coalesce(g.f_geometry_column,vg.view_geometry) as f_geometry_column, sql "+
+		"from sqlite_master m "+
+		"left join geometry_columns g on m.tbl_name = g.f_table_name "+ 
+		"left join views_geometry_columns vg on m.tbl_name = vg.view_name "+
+		"where (m.type=\'table\' or m.type=\'view\')"+
+		"and (m.tbl_name not like \'idx_%\') and (m.tbl_name not like \'SpatialIndex\') ";
 		Statement st=null;
 		ResultSet rs =null;
 		String sql=(spatialMetaData>0) ? metadataSQL_1_2 : metadataSQL_0;
