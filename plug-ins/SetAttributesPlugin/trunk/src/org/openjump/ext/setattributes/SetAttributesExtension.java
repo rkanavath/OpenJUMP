@@ -15,7 +15,7 @@ public class SetAttributesExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.6 (2015-05-23)";
+        return "0.7.0 (2015-06-13)";
     }
 
     public void configure(PlugInContext context) throws Exception {

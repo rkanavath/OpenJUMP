@@ -34,7 +34,7 @@ public class SetOfAttributes {
     String icon;
 
     @XmlAttribute
-    String text;
+    String text = "";
 
     @XmlAttribute
     String backgroundColor;
