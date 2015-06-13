@@ -22,6 +22,8 @@
 			- name with glob (ex. "road*" includes road, road1, road2)
 			- regex between / (ex. "/road.*|highway/")
 		tooltip : tooltip to dispoverflying the button
+	A button without sub-elements will be displayed as a disabled button (useful
+	to complete a line of buttons)
     -->
     <button icon="" text="Button1" atomic="false" layer="*" tooltip="Michaël [Major if null]">
         <!--
