@@ -76,7 +76,7 @@ public class SpatialiteDialog extends JDialog  implements ActionListener {
 	
 	public SpatialiteDialog(PlugInContext ctx) {
 		
-		super(ctx.getWorkbenchFrame() ,"Spatialite Plugin",false);
+		super(ctx.getWorkbenchFrame() ,"Spatialite Plugin",true);
 		context=ctx;
 		initComponents();
 	}
@@ -129,7 +129,7 @@ public class SpatialiteDialog extends JDialog  implements ActionListener {
 		tree.setEditable(false);
 		
 		treeview= new JScrollPane(tree);
-		treeview.setPreferredSize(new Dimension(250,200));
+		treeview.setPreferredSize(new Dimension(200,200));
 		this.add(treeview,BorderLayout.WEST);
 		tree.addMouseListener(new MouseAdapter() {
 		     public void mousePressed(MouseEvent e) {
@@ -212,6 +212,11 @@ public class SpatialiteDialog extends JDialog  implements ActionListener {
                 System.out.println("update nodes");
 				if (currentDb.getSpatialMetaData() == 2) {
 					JOptionPane.showMessageDialog(null, "<html><h3>FDO-OGR detected.</h3><br>Activating FDO-OGR auto-wrapping</html>");
+					
+                }
+				else if (currentDb.getGeoPackageMetaData() == 1) {
+					JOptionPane.showMessageDialog(null, "<html><h3>GeoPackage detected.</h3><br>Activating GeoPackage auto-wrapping</html>");
+					
                 }
 			}	
 		}	

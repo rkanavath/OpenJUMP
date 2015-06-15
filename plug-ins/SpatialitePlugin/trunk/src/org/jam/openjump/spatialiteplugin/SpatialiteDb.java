@@ -45,6 +45,7 @@ public final class SpatialiteDb {
 
 	private  Connection dbcon;
 	private  int spatialMetaData;
+	private  int geoPackageMetaData;
 
 	public boolean openDataBase(String database){
 		try {
@@ -56,10 +57,15 @@ public final class SpatialiteDb {
             System.out.println(dbcon);
 			
 			if (loadGisExtension()){
+				geoPackageMetaData = queryToInt("select CheckGeoPackageMetaData()");
 				spatialMetaData = queryToInt("select CheckSpatialMetaData()");
                 System.out.println("spatialMetaData: " + spatialMetaData);
+                System.out.println("geoPackageMetaData: " + geoPackageMetaData);
 				if (spatialMetaData == 2) { //FDO/OGR
 					queryToInt("select AutoFDOStart()");
+				}
+				if (geoPackageMetaData == 1) { // GeoPackage
+				    queryToInt("select AutoGPKGStart()");
                 }
 				return true;
 			} else return false;
@@ -100,6 +106,9 @@ public final class SpatialiteDb {
 
 	public int getSpatialMetaData(){
 		return spatialMetaData;
+	}
+	public int getGeoPackageMetaData(){
+		return geoPackageMetaData;
 	}
 	
 	public int queryToInt(String sql){
@@ -157,19 +166,45 @@ public final class SpatialiteDb {
 	}
 	
 	private List<TableType> getTablesList(){
+		//According to metadata just some generic SQLite database
+		//but it may still contain geometries
 		String  metadataSQL_0 = "SELECT tbl_name FROM sqlite_master as m"+
-				"where (m.type=\'table\' or m.type=\'view\') ";
+		"where (m.type=\'table\' or m.type=\'view\') ";
 		
-		String metadataSQL_1_2 = "select m.tbl_name, "+
+		//Either SpatiaLite db of version 3.1.0 or earlier (1)
+		//or SpatiaLite db of version higher than 3.1.0 (3) 
+		String metadataSQL_1_3 = "select m.tbl_name, "+
 		"coalesce(g.f_geometry_column,vg.view_geometry) as f_geometry_column, sql "+
 		"from sqlite_master m "+
 		"left join geometry_columns g on m.tbl_name = g.f_table_name "+ 
 		"left join views_geometry_columns vg on m.tbl_name = vg.view_name "+
 		"where (m.type=\'table\' or m.type=\'view\')"+
 		"and (m.tbl_name not like \'idx_%\') and (m.tbl_name not like \'SpatialIndex\') ";
+		
+		//SQLite db that contains FDO geometries
+		String metadataSQL_2 = "SELECT tbl_name,f_geometry_column,sql FROM sqlite_master as m "+
+		"left join geometry_columns as g on g.f_table_name=m.tbl_name "+
+		"where (m.type=\'table\') ";
+		
+		//GeoPackage database
+		String metadataSQL_4 = "select m.tbl_name, "+
+		"g.column_name as f_geometry_column, sql "+
+		"from sqlite_master m "+
+		"left join gpkg_geometry_columns g on m.tbl_name = g.table_name "+ 
+		"where (m.type=\'table\' or m.type=\'view\')"+
+		"and (m.tbl_name not like \'rtree_%\') and (m.tbl_name not like \'sqlite_sequence\') ";
+
 		Statement st=null;
 		ResultSet rs =null;
-		String sql=(spatialMetaData>0) ? metadataSQL_1_2 : metadataSQL_0;
+		//Switch from ternary operator into if..else because 
+		//selection in no more boolean
+		//String sql=(spatialMetaData>0) ? metadataSQL_1_2 : metadataSQL_0;
+		String sql="";
+		if (geoPackageMetaData==1) {sql=metadataSQL_4;}
+		else if (spatialMetaData==0) {sql=metadataSQL_0;}
+		else if (spatialMetaData==2) {sql=metadataSQL_2;}
+		else {sql=metadataSQL_1_3;}
+		;
 		
 		ArrayList<TableType> result= new ArrayList<TableType>();
 		
