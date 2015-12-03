@@ -1,0 +1,96 @@
+<project name="kml-driver" default="compile-all" basedir=".">
+
+    <!--*************************************************************************
+      *****************************************************************************
+      **                                  PROPERTIES                             **
+      *****************************************************************************
+      **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src" value="src" />
+    <property name="bin" value="bin" />
+    <property name="lib" value="lib" />
+    <property name="build" value="build" />
+    <property name="dist" value="dist" />
+    <property name="doc-api" value="doc-api" />
+    <property name="resources" value="resources" />
+    <!--property name="openjump-ext"  value="../OpenJUMP-2012/dist/openjump-1.6.0alpha/lib/ext" /-->
+
+    <!-- plugins -->
+    <!-- drivers -->
+    <property name="view-manager" value="ViewManager" />
+    <property name="view-manager-version" value="0.2.0" />
+
+
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <target name="clean" id="clean">
+        <delete dir="${build}" />
+        <delete dir="${dist}" />
+    </target>
+
+    <target name="compile-all" id="compile-all" depends="clean">
+        <tstamp />
+        <mkdir dir="${build}" />
+        <javac srcdir="${src}" destdir="${build}"
+               debug="on" deprecation="false" verbose="no" includeantruntime="false"
+               source="1.5" target="1.5">
+            <classpath refid="classpath" />
+        </javac>
+        <copy todir="${build}">
+            <fileset dir="${src}" casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.properties" />
+            <fileset dir="${resources}" casesensitive="false" includes="**/*.properties" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.html" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.txt" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.java2xml" />
+        </copy>
+        <tstamp>
+            <format property="build-date" pattern="yyyy-MM-dd" locale="en,GB"/>
+        </tstamp>
+        <!--replace dir="${build}">
+            <include name="**/*.properties"/>
+            <replacefilter token="@name@" value="${kml-driver-name}"/>
+            <replacefilter token="@version@" value="${kml-driver-version}" />
+            <replacefilter token="@date@" value="${build-date}" />
+        </replace-->
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- kml driver                                                          -->
+    <!-- =================================================================== -->
+    <target name="jar-ViewManager" id="jar-ViewManager" depends="compile-all">
+        <jar basedir="${build}" jarfile="${dist}/${view-manager}-${view-manager-version}.jar">
+            <!--include name="org/openjump/ext/setattributes/**/*" /-->
+            <!--fileset dir="${build}"/-->
+        </jar>
+        <!--copy todir="${dist}">
+            <fileset dir="${resources}" />
+        </copy-->
+        <copy file="${dist}/${view-manager}-${view-manager-version}.jar"
+              todir="D:/LOGICIELS/OpenJUMP-Portable-20150328-r4357-PLUS/OpenJUMP-20150328-r4357-PLUS/lib/ext" />
+    </target>
+
+    <target name="zip-ViewManager-src" id="zip-ViewManager-src" depends="jar-ViewManager">
+        <zip basedir="." destfile="${dist}/${view-manager}-src-${view-manager-version}.zip">
+            <include name="${dist}/*.jar" />
+            <include name="${src}/org/openjump/ext/**/*.java" />
+            <include name="${resources}/**/*.properties" />
+            <include name="build.xml" />
+            <include name="ChangeLog" />
+        </zip>
+    </target>
+
+    <target name="copy-oj-maison" depends="jar-ViewManager">
+        <copy file="${dist}/${view-manager}-${view-manager-version}.jar"
+              tofile="D:\\LOGICIELS\\OpenJUMP\\OpenJUMP-Portable-20150518-r4453-PLUS-IGN\\OpenJUMP-20150518-r4453-PLUS\\lib\\ext\\${view-manager}-${view-manager-version}.jar"/>
+    </target>
+
+</project>
