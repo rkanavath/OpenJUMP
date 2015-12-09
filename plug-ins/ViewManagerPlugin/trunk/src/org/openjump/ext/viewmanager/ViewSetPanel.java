@@ -19,9 +19,11 @@ public class ViewSetPanel extends JPanel {
     I18N I18N_ = I18N.getInstance("view_manager");
 
     ViewSet viewSet;
+    PlugInContext context;
 
     public ViewSetPanel(final PlugInContext context, final ViewSet viewSet) {
         super(new GridBagLayout());
+        this.context = context;
         setBorder(BorderFactory.createLineBorder(Color.black));
         initToolBar();
         if (viewSet != null) {
@@ -79,6 +81,8 @@ public class ViewSetPanel extends JPanel {
         private JMenuItem upMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-up"));
         private JMenuItem downMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-down"));
         private JMenuItem bottomMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-to-bottom"));
+        private JMenuItem replaceByCurrentViewItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.replace-by-current-view"));
+        private JMenuItem replaceBySelectedLayerItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.replace-by-selected-layers"));
         private JPopupMenu popupMenu = new JPopupMenu();
 
         final private PlugInContext context;
@@ -111,6 +115,14 @@ public class ViewSetPanel extends JPanel {
             popupMenu.add(bottomMenuItem);
             bottomMenuItem.addActionListener(this);
             bottomMenuItem.setActionCommand("moveToBottom");
+
+            popupMenu.add(replaceByCurrentViewItem);
+            replaceByCurrentViewItem.addActionListener(this);
+            replaceByCurrentViewItem.setActionCommand("replaceByCurrentView");
+
+            popupMenu.add(replaceBySelectedLayerItem);
+            replaceBySelectedLayerItem.addActionListener(this);
+            replaceBySelectedLayerItem.setActionCommand("replaceBySelectedLayers");
 
             viewTextField.addActionListener(this);
             viewTextField.setActionCommand("changeName");
@@ -164,6 +176,10 @@ public class ViewSetPanel extends JPanel {
                 moveDown();
             } else if (action.equals("moveToBottom")) {
                 moveToBottom();
+            } else if (action.equals("replaceByCurrentView")) {
+                replaceByCurrentView();
+            } else if (action.equals("replaceBySelectedLayers")) {
+                replaceBySelectedLayers();
             }
         }
 
@@ -189,6 +205,18 @@ public class ViewSetPanel extends JPanel {
 
         private void moveToBottom() {
             viewSet.moveViewToBottom(view);
+        }
+
+        private void replaceByCurrentView() {
+            View newView = new View(context, false);
+            newView.name = view.name;
+            viewSet.replaceView(view, newView);
+        }
+
+        private void replaceBySelectedLayers() {
+            View newView = new View(context, true);
+            newView.name = view.name;
+            viewSet.replaceView(view, newView);
         }
 
         private void apply() {

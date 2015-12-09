@@ -14,9 +14,10 @@ import java.util.Set;
 @XmlRootElement
 public class ViewSet {
 
-    public static int REMOVE = -1;
-    public static int MOVMOD =  0;
-    public static int ADD    =  1;
+    public static int REMOVE  = -1;
+    public static int MOVMOD  =  0;
+    public static int ADD     =  1;
+    public static int REPLACE =  2;
 
     List<Listener> listeners = new ArrayList<Listener>();
 
@@ -78,6 +79,14 @@ public class ViewSet {
         }
     }
 
+    public void replaceView(View oldView, View newView) {
+        int pos = views.indexOf(oldView);
+        if (pos>0) {
+            views.set(pos, newView);
+            fireReplaceView(oldView);
+        }
+    }
+
     public void fireAddView(View view) {
         for (Listener listener : listeners) {
             listener.actionPerformed(this, ADD, view);
@@ -93,6 +102,12 @@ public class ViewSet {
     public void fireMoveView(View view) {
         for (Listener listener : listeners) {
             listener.actionPerformed(this, MOVMOD, view);
+        }
+    }
+
+    public void fireReplaceView(View oldView) {
+        for (Listener listener : listeners) {
+            listener.actionPerformed(this, REPLACE, oldView);
         }
     }
 
