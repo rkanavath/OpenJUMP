@@ -48,6 +48,7 @@
             <fileset dir="${src}" casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
             <fileset dir="${src}" casesensitive="false" includes="**/*.properties" />
             <fileset dir="${resources}" casesensitive="false" includes="**/*.properties" />
+            <fileset dir="${resources}" casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
             <fileset dir="${src}" casesensitive="false" includes="**/*.html" />
             <fileset dir="${src}" casesensitive="false" includes="**/*.txt" />
             <fileset dir="${src}" casesensitive="false" includes="**/*.java2xml" />
@@ -83,6 +84,7 @@
             <include name="${dist}/*.jar" />
             <include name="${src}/org/openjump/ext/**/*.java" />
             <include name="${resources}/**/*.properties" />
+            <include name="${resources}/**/*.png" />
             <include name="build.xml" />
             <include name="ChangeLog" />
         </zip>

@@ -20,11 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.*;
-import java.util.List;
 
 /**
  * A plugin to apply a "view" to the project (specific styles on defined layers)
@@ -34,7 +30,7 @@ public class ViewManagerPlugIn extends AbstractPlugIn implements ActionListener 
     static Logger LOG = Logger.getLogger(ViewManagerPlugIn.class);
     I18N I18N_ = I18N.getInstance("view_manager");
 
-    final JLabel viewSetNameLabel = new JLabel();
+    final JLabel viewSetNameLabel = new JLabel("", SwingConstants.LEFT);
 
     File viewDir;
     ViewSetPanel viewSetPanel;
@@ -138,60 +134,80 @@ public class ViewManagerPlugIn extends AbstractPlugIn implements ActionListener 
         saveViewSetAsButton.addActionListener(this);
         toolBar.add(saveViewSetAsButton);
 
-        dialog.add(toolBar, BorderLayout.PAGE_START);
+        //dialog.add(toolBar, BorderLayout.PAGE_START);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.add(toolBar, BorderLayout.NORTH);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridBagLayout());
+        // Main panel
+        JPanel mainPanel = new JPanel(new GridBagLayout());
         dialog.add(mainPanel, BorderLayout.CENTER);
         final GridBagConstraints constraints = new GridBagConstraints();
 
-        constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.gridwidth = 2;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridx = 0;
+        constraints.weightx = 1.0;
         constraints.anchor = GridBagConstraints.WEST;
         constraints.insets = new Insets(2,2,2,2);
 
-        JPanel viewSetNamePanel = new JPanel(new FlowLayout());
-        viewSetNamePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        viewSetNamePanel.add(new JLabel(I18N_.getText("view_manager","ViewManagerPlugIn.ViewSetName") + ":"));
-        viewSetNameLabel.setText(createNewViewSetName());
-        viewSetNameLabel.setForeground(Color.RED);
-        viewSetNamePanel.add(viewSetNameLabel);
-        mainPanel.add(viewSetNamePanel, constraints);
+        constraints.gridwidth = 2;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(new JSeparator(), constraints);
+        constraints.fill = GridBagConstraints.NONE;
 
-        constraints.gridx = 0;
         constraints.gridy++;
         constraints.gridwidth = 1;
+        constraints.weightx = 0.0;
+        mainPanel.add(new JLabel(I18N_.getText("view_manager","ViewManagerPlugIn.ViewSetName") + ":"), constraints);
+        constraints.gridx++;
+        constraints.weightx = 1.0;
+        viewSetNameLabel.setText(createNewViewSetName());
+        viewSetNameLabel.setForeground(Color.RED);
+        mainPanel.add(viewSetNameLabel, constraints);
+
+        constraints.gridy++;
+        constraints.gridx = 0;
+        constraints.weightx = 1.0;
+        constraints.gridwidth = 2;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(new JSeparator(), constraints);
+        constraints.fill = GridBagConstraints.NONE;
+
+        constraints.gridy++;
+        constraints.gridx = 0;
+        constraints.gridwidth = 1;
+        constraints.weightx = 0.0;
         mainPanel.add(new JLabel(I18N_.getText("view_manager","ViewManagerPlugIn.add-view-from-project")), constraints);
         constraints.gridx++;
+        constraints.weightx = 0.0;
         JButton jbAddFromProject = new JButton(I18N_.getText("view_manager","ViewManagerPlugIn.add"));
         jbAddFromProject.addActionListener(this);
         jbAddFromProject.setActionCommand("addFromProject");
         mainPanel.add(jbAddFromProject, constraints);
 
-        constraints.gridx = 0;
         constraints.gridy++;
+        constraints.gridx = 0;
+        constraints.weightx = 0.0;
         mainPanel.add(new JLabel(I18N_.getText("view_manager","ViewManagerPlugIn.add-view-from-selected-layers")), constraints);
         constraints.gridx++;
+        constraints.weightx = 0.0;
         JButton jbAddFromSelectedLayers = new JButton(I18N_.getText("view_manager","ViewManagerPlugIn.add"));
         jbAddFromSelectedLayers.addActionListener(this);
         jbAddFromSelectedLayers.setActionCommand("addFromSelectedLayers");
         mainPanel.add(jbAddFromSelectedLayers, constraints);
 
-        constraints.gridx = 0;
         constraints.gridy++;
-        constraints.gridwidth = 2;
-        mainPanel.add(new JSeparator(), constraints);
-
         constraints.gridx = 0;
-        constraints.gridy++;
         constraints.gridwidth = 2;
         constraints.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(new JSeparator(), constraints);
+        constraints.fill = GridBagConstraints.NONE;
+
+        constraints.gridy++;
+        constraints.gridx = 0;
+        constraints.gridwidth = 2;
+        constraints.weightx = 1.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         viewSetPanel = new ViewSetPanel(context, currentViewSet);
-        //addNewViewSet();
         mainPanel.add(viewSetPanel, constraints);
 
         return dialog;
@@ -245,6 +261,7 @@ public class ViewManagerPlugIn extends AbstractPlugIn implements ActionListener 
             String newViewSetName = createNewViewSetName();
             viewSetNameLabel.setText(newViewSetName);
             viewSetNameLabel.setForeground(Color.RED);
+            viewSetNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
             currentViewSet = new ViewSet();
             currentViewSet.setName(newViewSetName);
             viewSetPanel.reset(context, currentViewSet);
@@ -356,12 +373,12 @@ public class ViewManagerPlugIn extends AbstractPlugIn implements ActionListener 
 
     public void addFromProject(boolean selectedLayersOnly) {
         try {
-            System.out.println("Create view");
+            //System.out.println("Create view");
             View view = new View(context, selectedLayersOnly);
             if (view.name.equals(context.getTask().getName())) {
                 view.name = context.getTask().getName() + " (" + currentViewSet.views.size() + ")";
             }
-            System.out.println("Add project's view to ViewSet");
+            //System.out.println("Add project's view to ViewSet");
             currentViewSet.addView(view);
             viewSetNameLabel.setForeground(Color.RED);
             dialog.repaint();

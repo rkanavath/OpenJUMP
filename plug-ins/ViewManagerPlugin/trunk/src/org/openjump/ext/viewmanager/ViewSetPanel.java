@@ -10,6 +10,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Created by UMichael on 14/06/2015.
@@ -24,14 +26,11 @@ public class ViewSetPanel extends JPanel {
     public ViewSetPanel(final PlugInContext context, final ViewSet viewSet) {
         super(new GridBagLayout());
         this.context = context;
-        setBorder(BorderFactory.createLineBorder(Color.black));
-        initToolBar();
         if (viewSet != null) {
             init(context, viewSet);
             viewSet.addListener(new ViewSet.Listener() {
                 public void actionPerformed(ViewSet viewSet, int mod, View view) {
                     removeAll();
-                    initToolBar();
                     init(context, viewSet);
                     Window window = SwingUtilities.getWindowAncestor(ViewSetPanel.this);
                     if (window != null) window.pack();
@@ -45,7 +44,6 @@ public class ViewSetPanel extends JPanel {
         viewSet.addListener(new ViewSet.Listener(){
             public void actionPerformed(ViewSet viewSet, int mod, View view) {
                 removeAll();
-                initToolBar();
                 init(context, viewSet);
                 Window window = SwingUtilities.getWindowAncestor(ViewSetPanel.this);
                 if (window != null) window.pack();
@@ -53,21 +51,16 @@ public class ViewSetPanel extends JPanel {
         });
     }
 
-    private void initToolBar() {
-
-    }
 
     private void init(PlugInContext context, ViewSet viewSet) {
         this.viewSet = viewSet;
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.weightx = 1.0;
         constraints.insets = new Insets(2,2,2,2);
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         if (viewSet != null) {
             constraints.gridy = viewSet.views.size();
             for (View view : viewSet.views) {
-                constraints.gridx = 0;
                 constraints.gridy--;
                 add(new ViewPanel(context, view), constraints);
             }
@@ -76,19 +69,36 @@ public class ViewSetPanel extends JPanel {
 
     class ViewPanel extends JPanel implements ActionListener {
 
-        private JMenuItem deleteMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.delete"));
-        private JMenuItem topMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-to-top"));
-        private JMenuItem upMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-up"));
-        private JMenuItem downMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-down"));
-        private JMenuItem bottomMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-to-bottom"));
+        ImageIcon deleteIcon  = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/delete.png"));
+        ImageIcon replaceIcon = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/replace.png"));
+        ImageIcon moveIcon    = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/move-vertical.png"));
+        ImageIcon topIcon     = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/arrow-top.png"));
+        ImageIcon upIcon      = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/arrow-up.png"));
+        ImageIcon downIcon    = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/arrow-down.png"));
+        ImageIcon bottomIcon  = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/arrow-bottom.png"));
+
         private JMenuItem replaceByCurrentViewItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.replace-by-current-view"));
         private JMenuItem replaceBySelectedLayerItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.replace-by-selected-layers"));
-        private JPopupMenu popupMenu = new JPopupMenu();
+
+        private JMenuItem topMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-to-top"), topIcon);
+        private JMenuItem upMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-up"), upIcon);
+        private JMenuItem downMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-down"), downIcon);
+        private JMenuItem bottomMenuItem = new JMenuItem(I18N_.getText("view_manager","ViewSetPanel.move-to-bottom"), bottomIcon);
+
+        private JPopupMenu replacePopupMenu = new JPopupMenu();
+        private JPopupMenu movePopupMenu = new JPopupMenu();
+
+
 
         final private PlugInContext context;
         final private View view;
         final private JTextField viewTextField = new JTextField(24);
-        final private JButton apply = new JButton(I18N_.getText("view_manager","ViewSetPanel.apply"));
+        final private JButton applyButton      = new JButton(I18N_.getText("view_manager","ViewSetPanel.apply"));
+        final private JButton deleteButton     = new JButton(deleteIcon);
+        final private JButton replaceButton    = new JButton(replaceIcon);
+        final private JButton moveButton       = new JButton(moveIcon);
+
+
 
         public ViewPanel(PlugInContext context, View view) {
             super(new GridBagLayout());
@@ -96,39 +106,63 @@ public class ViewSetPanel extends JPanel {
             this.view = view;
             init();
 
-            popupMenu.add(deleteMenuItem);
-            deleteMenuItem.addActionListener(this);
-            deleteMenuItem.setActionCommand("delete");
+            applyButton.addActionListener(this);
+            applyButton.setActionCommand("apply");
+            applyButton.setPreferredSize(new Dimension(applyButton.getPreferredSize().width, 22));
 
-            popupMenu.add(topMenuItem);
-            topMenuItem.addActionListener(this);
-            topMenuItem.setActionCommand("moveToTop");
+            deleteButton.addActionListener(this);
+            deleteButton.setToolTipText(I18N_.getText("view_manager","ViewSetPanel.delete"));
+            deleteButton.setActionCommand("delete");
+            deleteButton.setPreferredSize(new Dimension(22,22));
 
-            popupMenu.add(upMenuItem);
-            upMenuItem.addActionListener(this);
-            upMenuItem.setActionCommand("moveUp");
-
-            popupMenu.add(downMenuItem);
-            downMenuItem.addActionListener(this);
-            downMenuItem.setActionCommand("moveDown");
-
-            popupMenu.add(bottomMenuItem);
-            bottomMenuItem.addActionListener(this);
-            bottomMenuItem.setActionCommand("moveToBottom");
-
-            popupMenu.add(replaceByCurrentViewItem);
+            replacePopupMenu.add(replaceByCurrentViewItem);
             replaceByCurrentViewItem.addActionListener(this);
             replaceByCurrentViewItem.setActionCommand("replaceByCurrentView");
 
-            popupMenu.add(replaceBySelectedLayerItem);
+            replacePopupMenu.add(replaceBySelectedLayerItem);
             replaceBySelectedLayerItem.addActionListener(this);
             replaceBySelectedLayerItem.setActionCommand("replaceBySelectedLayers");
 
+            movePopupMenu.add(topMenuItem);
+            topMenuItem.addActionListener(this);
+            topMenuItem.setActionCommand("moveToTop");
+
+            movePopupMenu.add(upMenuItem);
+            upMenuItem.addActionListener(this);
+            upMenuItem.setActionCommand("moveUp");
+
+            movePopupMenu.add(downMenuItem);
+            downMenuItem.addActionListener(this);
+            downMenuItem.setActionCommand("moveDown");
+
+            movePopupMenu.add(bottomMenuItem);
+            bottomMenuItem.addActionListener(this);
+            bottomMenuItem.setActionCommand("moveToBottom");
+
             viewTextField.addActionListener(this);
             viewTextField.setActionCommand("changeName");
-            apply.addActionListener(this);
-            apply.setActionCommand("apply");
-            apply.setComponentPopupMenu(popupMenu);
+
+
+            replaceButton.setToolTipText(I18N_.getText("view_manager","ViewSetPanel.replace"));
+            replaceButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    replacePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            });
+            replaceButton.setPreferredSize(new Dimension(22,22));
+
+
+            moveButton.setToolTipText(I18N_.getText("view_manager","ViewSetPanel.move"));
+            moveButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    movePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            });
+            moveButton.setPreferredSize(new Dimension(22,22));
+
+
             viewTextField.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent e) {
@@ -145,18 +179,30 @@ public class ViewSetPanel extends JPanel {
                     changeName();
                 }
             });
+
         }
 
         public void init() {
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.gridx = 0;
             constraints.gridy = 0;
-            constraints.insets = new Insets(0,2,0,2);
-            constraints.anchor = GridBagConstraints.WEST;
+            constraints.weightx = 1.0;
+            constraints.insets = new Insets(0,1,0,1);
+            constraints.fill = GridBagConstraints.HORIZONTAL;
             viewTextField.setText(view.name);
             add(viewTextField, constraints);
+
+            constraints.weightx = 0.0;
+            constraints.fill = GridBagConstraints.NONE;
+            //constraints.anchor = GridBagConstraints.EAST;
             constraints.gridx = 1;
-            add(apply, constraints);
+            add(applyButton, constraints);
+            constraints.gridx = 2;
+            add(deleteButton, constraints);
+            constraints.gridx = 3;
+            add(replaceButton, constraints);
+            constraints.gridx = 4;
+            add(moveButton, constraints);
         }
 
         @Override

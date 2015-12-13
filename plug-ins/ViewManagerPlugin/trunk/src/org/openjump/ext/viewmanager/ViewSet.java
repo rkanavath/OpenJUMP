@@ -33,7 +33,6 @@ public class ViewSet {
     }
 
     public void addView(View view) {
-        System.out.println("addView");
         views.add(view);
         fireAddView(view);
     }

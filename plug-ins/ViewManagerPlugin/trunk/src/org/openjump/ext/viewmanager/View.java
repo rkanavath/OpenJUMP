@@ -33,20 +33,17 @@ public class View {
     public View(){}
 
     public View(PlugInContext context, boolean selectedOnly) {
-        System.out.println("new View");
         LayerManager layerManager = context.getLayerManager();
         List<Layerable> layerables = layerManager.getLayerables(Layerable.class);
         name = context.getTask().getName();
         for (Layerable layerable : layerables) {
-            System.out.println("    layerable " + layerable);
+            //System.out.println("    layerable " + layerable);
             if ((!selectedOnly) || (selectedOnly && context.getSelectedLayerables().contains(layerable))) {
-                System.out.println("    styledLayer");
                 StyledLayer styledLayer = new StyledLayer();
                 styledLayer.layer = layerable.getName();
                 styledLayer.visible = layerable.isVisible();
-                System.out.println("    styledLayer : " + styledLayer);
+                //System.out.println("    styledLayer : " + styledLayer);
                 if (layerable.isScaleDependentRenderingEnabled()) {
-                    System.out.println("    isScaleDependentRenderingEnabled");
                     PScale scale = new PScale();
                     scale.scaleDependent = true;
                     scale.minScale = layerable.getMinScale();
@@ -54,14 +51,12 @@ public class View {
                     styledLayer.scale = scale;
                 }
                 if (layerable instanceof Layer) {
-                    System.out.println("layerable instanceof Layer");
                     styledLayer.selectable = ((Layer)layerable).isSelectable();
                     styledLayer.editable = ((Layer)layerable).isEditable();
                     styledLayer.setBasicStyle(((Layer)layerable).getBasicStyle());
                     styledLayer.setVertexStyle(((Layer) layerable).getBasicStyle(), ((Layer) layerable).getVertexStyle());
                     styledLayer.setLabelStyle(((Layer)layerable).getLabelStyle());
                     styledLayer.setColorThemingStyle((ColorThemingStyle)((Layer) layerable).getStyle(ColorThemingStyle.class));
-                    System.out.println("end layerable instanceof Layer");
                 }
                 addStyledLayer(styledLayer);
             }

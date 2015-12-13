@@ -32,18 +32,12 @@ public class PColorThemingStyle extends AbstractPStyle {
 
     public PColorThemingStyle(ColorThemingStyle style) {
         super();
-        System.out.println("    new PColorThemingStyle");
         setEnabled(style.isEnabled());
         attribute = style.getAttributeName();
         vertexStyleEnabled = style.isVertexStyleEnabled();
         defaultStyle = new PBasicStyle(style.getDefaultStyle());
-        //Map map = style.getAttributeValueToBasicStyleMap();
-        System.out.println("    PColorThemingStyle initialization");
         for (Map.Entry entry : (Set<Map.Entry>)style.getAttributeValueToBasicStyleMap().entrySet()) {
             if (entry.getKey() instanceof com.vividsolutions.jump.util.Range) {
-                //System.out.println("      range : " + new RangeKey(
-                //        ((Range)entry.getKey()).getMin(),
-                //        ((Range)entry.getKey()).getMax()));
                 themes.add(new Theme(new RangeKey(
                         ((Range)entry.getKey()).getMin(),
                         ((Range)entry.getKey()).getMax()),
