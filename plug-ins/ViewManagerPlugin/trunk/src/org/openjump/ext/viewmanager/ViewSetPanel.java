@@ -14,7 +14,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Created by UMichael on 14/06/2015.
+ * A JPanel containing all the elements to manage a viewSet
+ * <ul>
+ *     <li>add a new view to the viewSet</li>
+ *     <li>rename a view</li>
+ *     <li>remove a view from a viewSet</li>
+ *     <li>apply the view to current viewPanel</li>
+ *     <li>replace a view</li>
+ *     <li>move a viewup or down in the view list</li>
+ * </ul>
  */
 public class ViewSetPanel extends JPanel {
 
@@ -54,6 +62,7 @@ public class ViewSetPanel extends JPanel {
 
     private void init(PlugInContext context, ViewSet viewSet) {
         this.viewSet = viewSet;
+        removeAll();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.weightx = 1.0;
         constraints.insets = new Insets(2,2,2,2);

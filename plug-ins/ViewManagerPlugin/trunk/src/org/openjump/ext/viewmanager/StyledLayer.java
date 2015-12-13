@@ -108,7 +108,7 @@ public class StyledLayer {
         if (style.isEnabled()) {
             PStyle basicStyle = getStyle(PBasicStyle.class);
             if (basicStyle != null) {
-                ((PBasicStyle)basicStyle).setEnabled(false);
+                basicStyle.setEnabled(false);
             }
         }
     }
@@ -163,8 +163,13 @@ public class StyledLayer {
                         Style newStyle = pstyle.getStyle(lyr);
                         LOG.info("  - apply " + newStyle.getClass().getSimpleName());
                         Style rm = layer.getStyle(newStyle.getClass());
-                        if (rm != null) layer.removeStyle(rm);
+                        if (rm != null) {
+                            layer.removeStyle(rm);
+                        } else if (BasicStyle.class.isInstance(newStyle)) {
+                            layer.removeStyle(layer.getBasicStyle());
+                        }
                         layer.addStyle(newStyle);
+                        //System.out.println(layer.getName() + ":" + newStyle.getClass().getSimpleName() + " : " + newStyle.isEnabled());
                     } catch (Exception e) {
                         LOG.warn(pstyle, e);
                     }
