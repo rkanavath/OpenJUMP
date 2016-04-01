@@ -66,6 +66,8 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
     private final String TRANSFORMED_LAYERS = I18N_.getText("cts_plugin","CTSPlugIn.transformed-layers");
     private final String INVALID_SRC_CRS    = I18N_.getText("cts_plugin","CTSPlugIn.invalid-src-crs");
     private final String INVALID_TGT_CRS    = I18N_.getText("cts_plugin","CTSPlugIn.invalid-tgt-crs");
+    private final String SOURCE_PROJECTION  = I18N_.getText("cts_plugin","CTSPlugIn.srcProjection");
+    private final String TARGET_PROJECTION  = I18N_.getText("cts_plugin","CTSPlugIn.tgtProjection");
 
     private static final String EPSG = "EPSG";
     private static final String IGNF = "IGNF";
@@ -317,11 +319,13 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
         html.addField(SOURCE_DATUM, srcCRS.getDatum().toString());
         html.addField(SOURCE_TOWGS84, srcCRS.getDatum().getToWGS84().toString());
         html.addField(SOURCE_SPHEROID, ((GeodeticDatum)srcCRS.getDatum()).getEllipsoid().toString());
+        html.addField(SOURCE_PROJECTION, srcCRS.getProjection() == null ? "null" : srcCRS.getProjection().toWKT());
         html.append("<h2>" + TARGET_LABEL + "</h2>");
         html.addField(TARGET_LABEL, tgtCRS.toString());
         html.addField(TARGET_DATUM, tgtCRS.getDatum().toString());
         html.addField(TARGET_TOWGS84, tgtCRS.getDatum().getToWGS84().toString());
         html.addField(TARGET_SPHEROID, ((GeodeticDatum)srcCRS.getDatum()).getEllipsoid().toString());
+        html.addField(TARGET_PROJECTION, tgtCRS.getProjection() == null ? "null" : tgtCRS.getProjection().toWKT());
         html.append("<h2>" + getName() + "</h2>");
         html.addField("", getOperation(srcCRS, tgtCRS).toString().replaceAll("\n","<br>"));
     }
@@ -329,7 +333,7 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
     private CoordinateOperation getOperation(final CoordinateReferenceSystem srcCRS,
                                              final CoordinateReferenceSystem tgtCRS)
             throws CoordinateOperationException{
-        Set<CoordinateOperation> ops = CoordinateOperationFactory
+        Collection<CoordinateOperation> ops = CoordinateOperationFactory
                 .createCoordinateOperations((GeodeticCRS) srcCRS, (GeodeticCRS) tgtCRS);
         CoordinateOperation op = ops.size() == 0 ? null : CoordinateOperationFactory.getMostPrecise(ops);
         return op;

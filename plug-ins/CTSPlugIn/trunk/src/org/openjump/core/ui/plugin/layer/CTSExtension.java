@@ -13,7 +13,7 @@ public class CTSExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.1.0 (2014-12-06)";
+        return "0.1.2 (2016-04-01)";
     }
 
     public void configure(PlugInContext context) throws Exception {

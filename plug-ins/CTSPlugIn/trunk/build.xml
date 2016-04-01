@@ -22,7 +22,7 @@ build.properties file too.
         <fileset dir="${openjump.svn}/lib/imageio-ext.plus" includes="*.jar" /-->
         <path path="${openjump.svn}/target/classes" />
         <!--fileset dir="${cts.svn}/lib" includes="**/*.jar" /-->
-        <path path="${cts.svn}/target/classes" />
+        <!--path path="${cts.svn}/target/classes" /-->
         <fileset dir="${java.lib}" includes="**/*.jar"/>
         <pathelement location="${build.classes}" />
     </path>
@@ -38,7 +38,7 @@ build.properties file too.
             classpathref="classpath"
             includeantruntime="false"
             debug="true"
-            source="${java.targetversion}"
+            source="${java.sourceversion}"
             target="${java.targetversion}"
         />
         <copy todir="${build.classes}" description="we need the i18n files too">
