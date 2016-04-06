@@ -104,9 +104,10 @@ public class SetAttributesButtonActionListener implements ActionListener {
                         new UndoableCommand(I18N.get(SetAttributesPlugIn.class.getName())) {
                             public void execute() {
                                 for (Layer lyr : mapTarget.keySet()) {
-                                    Map<Feature, Feature> map = mapTarget.get(lyr);
-                                    for (Feature feature : map.keySet()) {
-                                        Feature newFeature = map.get(feature);
+                                    Map<Feature,Feature> mapTgt = mapTarget.get(lyr);
+                                    Map<Feature,Feature> mapSrc = mapSource.get(lyr);
+                                    for (Feature feature : mapTgt.keySet()) {
+                                        Feature newFeature = mapTgt.get(feature);
                                         FeatureSchema schema = feature.getSchema();
                                         for (SetAttribute setAtt : setOfAttributes.attributes) {
                                             String name = setAtt.getName();
@@ -115,17 +116,18 @@ public class SetAttributesButtonActionListener implements ActionListener {
                                             }
                                         }
                                     }
-                                    //pluginContext.getLayerManager().fireFeaturesAttChanged(map.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr, map.keySet());
-                                    pluginContext.getLayerManager().fireFeaturesChanged(map.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr);
+                                    pluginContext.getLayerManager().fireFeaturesAttChanged(mapTgt.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr, mapSrc.values());
+                                    //pluginContext.getLayerManager().fireFeaturesChanged(map.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr);
                                 }
                                 pluginContext.getLayerViewPanel().repaint();
                             }
 
                             public void unexecute() {
                                 for (Layer lyr : mapSource.keySet()) {
-                                    Map<Feature, Feature> map = mapSource.get(lyr);
-                                    for (Feature feature : map.keySet()) {
-                                        Feature newFeature = map.get(feature);
+                                    Map<Feature, Feature> mapSrc = mapSource.get(lyr);
+                                    Map<Feature, Feature> mapTgt = mapTarget.get(lyr);
+                                    for (Feature feature : mapSrc.keySet()) {
+                                        Feature newFeature = mapSrc.get(feature);
                                         FeatureSchema schema = feature.getSchema();
                                         for (SetAttribute setAtt : setOfAttributes.attributes) {
                                             String name = setAtt.getName();
@@ -133,8 +135,8 @@ public class SetAttributesButtonActionListener implements ActionListener {
                                                 feature.setAttribute(name, newFeature.getAttribute(name));
                                             }
                                         }
-                                        //pluginContext.getLayerManager().fireFeaturesAttChanged(map.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr, map.keySet());
-                                        pluginContext.getLayerManager().fireFeaturesChanged(map.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr);
+                                        pluginContext.getLayerManager().fireFeaturesAttChanged(mapSrc.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr, mapTgt.values());
+                                        //pluginContext.getLayerManager().fireFeaturesChanged(mapSrc.keySet(), FeatureEventType.ATTRIBUTES_MODIFIED, lyr);
                                     }
                                 }
                                 pluginContext.getLayerViewPanel().repaint();
