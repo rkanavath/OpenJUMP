@@ -94,12 +94,17 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
     private Layer input = null;
     private MultiInputDialog dialog;
     private JCheckBox usePercentBox;
+    private JCheckBox oneAnimalBox;
+    private JCheckBox genSingleLayersBox;
     private JTextField percentageField;
     private JComboBox centreMethodComboBox = null;
+    private JComboBox selectAnimalIDAttributeBox = null;
     private PlugInContext context = null;
 	private String idAttribute = "";
     private String sATTRIBUTEA = "Animal ID Attribute";
+    private String sONEANIMAL = "One animal";
     private String sGENERATELAYERS = "one output layer per indiviual";
+    private boolean oneAnimal = true;
     private boolean generateLayerPerObject = false;
     private boolean usePercentage = false;
     private double percentage = 0.95;
@@ -150,7 +155,7 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
 	    	System.gc(); //flush garbage collector
 	    	this.context = context;
 	    	monitor.allowCancellationRequests();
-	    	FeatureCollection resultC = this.calculateConvexHulls(this.points, this.idAttribute, this.generateLayerPerObject, 
+	    	FeatureCollection resultC = this.calculateConvexHulls(this.points, this.idAttribute, this.oneAnimal, this.generateLayerPerObject, 
 	    			this.usePercentage, this.percentage, this.selectedCentreCalculation, context, monitor);
 	        if(this.generateLayerPerObject == false){
 	        	String ending = "-MCP";
@@ -170,28 +175,41 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
         	JComboBox addLayerComboBoxRegions = dialog.addLayerComboBox(this.sLAYERPTS, context.getCandidateLayer(0), null, context.getLayerManager());
         }
         catch (IndexOutOfBoundsException e) {}
+        
+        this.oneAnimalBox = dialog.addCheckBox(this.sONEANIMAL, this.oneAnimal, this.sONEANIMAL);
+ 	    //-- add listener
+        oneAnimalBox.addActionListener(new ActionListener() {
+ 	        public void actionPerformed(ActionEvent e) {
+ 	            updateAnimalControls();
+ 	        }
+ 	    });
+ 	    dialog.addSeparator();
         List list = FeatureSchemaTools.getFieldsFromLayerWithoutGeometryAndString(context.getCandidateLayer(0));
         Object valA = list.size()>0?list.iterator().next():null;
         Object valB = list.size()>0?list.iterator().next():null;
-        final JComboBox jcb_attributeA = dialog.addComboBox(this.sATTRIBUTEA, valA, list,this.sATTRIBUTEA);
-        if (list.size() == 0) jcb_attributeA.setEnabled(false);
-        dialog.addCheckBox(this.sGENERATELAYERS, this.generateLayerPerObject, this.sGENERATELAYERS);
-        
+        this.selectAnimalIDAttributeBox = dialog.addComboBox(this.sATTRIBUTEA, valA, list,this.sATTRIBUTEA);
+        if (list.size() == 0) selectAnimalIDAttributeBox.setEnabled(false);
+        this.genSingleLayersBox = dialog.addCheckBox(this.sGENERATELAYERS, this.generateLayerPerObject, this.sGENERATELAYERS);
+        dialog.addSeparator();
         dialog.getComboBox(this.sLAYERPTS).addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 List list = getFieldsFromLayerWithoutGeometryAndString();
                 if (list.size() == 0) {
-                    jcb_attributeA.setModel(new DefaultComboBoxModel(new String[0]));
-                    jcb_attributeA.setEnabled(false);
+                    selectAnimalIDAttributeBox.setModel(new DefaultComboBoxModel(new String[0]));
+                    selectAnimalIDAttributeBox.setEnabled(false);
                 }
-                jcb_attributeA.setModel(new DefaultComboBoxModel(list.toArray(new String[0])));
+                selectAnimalIDAttributeBox.setModel(new DefaultComboBoxModel(list.toArray(new String[0])));
             }            
         });
+        if(this.oneAnimalBox.isSelected()){
+			this.genSingleLayersBox.setEnabled(false);
+			this.selectAnimalIDAttributeBox.setEnabled(false);
+        }
         this.usePercentBox = dialog.addCheckBox(this.sPERCENTAGEOPTION, this.usePercentage, this.sPERCENTAGEOPTION);
         this.percentageField = dialog.addDoubleField(this.sPERCENTAGE, this.percentage, 4);
         this.percentageField.setEnabled(this.usePercentBox.isSelected());
  	    //-- add listener
- 	   usePercentBox.addActionListener(new ActionListener() {
+ 	    usePercentBox.addActionListener(new ActionListener() {
  	        public void actionPerformed(ActionEvent e) {
  	            updateControls();
  	        }
@@ -220,6 +238,20 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
 		}
 	}
 	
+	private void updateAnimalControls() {
+		//System.out.print("process update method: ");
+		if (this.oneAnimalBox.isSelected()){
+			this.genSingleLayersBox.setEnabled(false);
+			this.selectAnimalIDAttributeBox.setEnabled(false);
+			//System.out.print(" switch one Animal selection on ");
+		}
+		else{
+			this.genSingleLayersBox.setEnabled(true);
+			this.selectAnimalIDAttributeBox.setEnabled(true);
+			//System.out.print(" switch one Animal selection off ");
+		}
+	}
+	
     private List getFieldsFromLayerWithoutGeometryAndString() {
         return FeatureSchemaTools.getFieldsFromLayerWithoutGeometryAndString(dialog.getLayer(this.sLAYERPTS));
     }
@@ -231,6 +263,7 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
         this.generateLayerPerObject = dialog.getBoolean(this.sGENERATELAYERS); 
         this.usePercentage = dialog.getBoolean(this.sPERCENTAGEOPTION);
         this.percentage = dialog.getDouble(this.sPERCENTAGE);
+        this.oneAnimal = dialog.getBoolean(this.sONEANIMAL);
         
         this.calcSelected = dialog.getText(sSELECTCENTRECALC);
         this.selectedCentreCalculation = getcalcMethodCode(this.calcSelected);
@@ -247,7 +280,8 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
 	 * centre can be excluded with the percentage parameter.  
 	 * @param pointFeatures
 	 * @param idAttribute
-	 * @param timeAttributeNames[yearField, monthField, dayField]
+	 * @param oneIndividual
+	 * @param individualLayers
 	 * @param usePercentage true if only a percentage of the points should be used
 	 * @param percentage the subset of points in percent [0..100] to be used.
 	 * @param percentageMethod method used for the centre calculation to retrieve subsets 0: Mean or 1: Median
@@ -256,7 +290,7 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
 	 * @return the convex hull polygon(s) in a FeatureCollection. Result can also be null 
 	 * for usePercentage = true and the method defined for percentageMethod calculation is not known 
 	 */
-    private FeatureCollection calculateConvexHulls(FeatureCollection pointFeatures, String idAttribute, boolean individualLayers, boolean usePercentage, 
+    private FeatureCollection calculateConvexHulls(FeatureCollection pointFeatures, String idAttribute, boolean oneIndividual , boolean individualLayers, boolean usePercentage, 
     		double percentage, int percentageMethod, PlugInContext context, TaskMonitor monitor) {
     	//-- featureschema for all points in one track
     	FeatureSchema fsNewAllInOne = new FeatureSchema();
@@ -273,14 +307,22 @@ public class CalculateMinimumConvexPolygonPlugIn extends AbstractThreadedUiPlugI
     			monitor.report("generating MCP");
     		}	
     		//-- sort according to individual id
-    		if (monitor != null){
-    			monitor.report("sort by individual");
+    		List<Feature>[] individualPts = null;
+    		int[] uniqueValues = null;
+    		if(oneIndividual == true){ 
+    			individualPts = new List[1];
+    			individualPts[0] = pointFeatures.getFeatures();
+    			uniqueValues = new int[1];
+    			uniqueValues[0] = 1;
     		}
-    		ArrayList<Feature>[] individualPts = null;
-    		Object[] myReturns = FeatureCollectionTools.sortFeaturesIntoListsByAttributeValue(pointFeatures, idAttribute); 
-    		individualPts = (ArrayList[])myReturns[0]; 
-    		int[] uniqueValues = (int[])myReturns[1];
-
+    		else{
+	    		if (monitor != null){
+	    			monitor.report("sort by individual");
+	    		}
+	    		Object[] myReturns = FeatureCollectionTools.sortFeaturesIntoListsByAttributeValue(pointFeatures, idAttribute); 
+	    		individualPts = (ArrayList[])myReturns[0]; 
+	    		uniqueValues = (int[])myReturns[1];
+    		}
     		//-- generate the hulls from the points
     		if (monitor != null){
     			monitor.report("generate convex hulls");

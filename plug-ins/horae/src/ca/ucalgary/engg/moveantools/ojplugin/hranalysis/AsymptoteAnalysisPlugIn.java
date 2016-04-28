@@ -205,16 +205,19 @@ public class AsymptoteAnalysisPlugIn extends AbstractThreadedUiPlugIn{
 	    	if(this.useMCP){
 	    		resultC = this.calculateConvexHulls(this.points, this.isGPSTrackData, this.locAttribute, context, monitor);
 	    	}
-	    	if(this.useLineBuffer){
+	    	else if(this.useLineBuffer){
 	    		resultC = this.calculateLineBuffer(this.points, this.locAttribute, this.dayAttribute, context, monitor);
 	    	}
-	    	if(this.usePointKDEFixed){
+	    	else if(this.usePointKDEFixed){
 	    		//System.out.println("fixed KDE"); return;
 	    		resultC = this.calculatePointKDE(this.points, this.isGPSTrackData, true, this.locAttribute, this.cellSize, context, monitor);
 	    	}
-	    	if(this.usePointKDEAdaptive){
+	    	else if(this.usePointKDEAdaptive){
 	    		//System.out.println("adaptive KDE"); return;
 	    		resultC = this.calculatePointKDE(this.points, this.isGPSTrackData, false, this.locAttribute, this.cellSize, context, monitor);
+	    	}
+	    	else{
+	    		//
 	    	}
 	    	if((resultC != null) && (resultC.size() > 0)){
 	        	context.addLayer(StandardCategoryNames.RESULT, this.input.getName() + "-as_geoms", resultC);
