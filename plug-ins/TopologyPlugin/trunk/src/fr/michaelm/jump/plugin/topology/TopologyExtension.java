@@ -34,6 +34,13 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 // History
+// 0.8.2 (2016-06-12) : fix two bugs in CoverageCleanerPlugIn (angle between
+//                      - angle between segments was not computed correctly
+//                      - holes were not managed in some cases
+// 0.8.1 (2014-05-27) : fix a bug in project point on line affecting multiple
+//                      target option
+// 0.8.0 (2014-05-26) : rewrite project point on line to handle correctly
+//                      the insertion of several points on a single segment
 // 0.7.1 (2014-05-17) : fix a bug in ProjectPointsOnLinesPlugIn
 // 0.7.0 (2013-01-27) : add CoverageCleanerPlugIn
 // 0.6.1 (2013-01-09) : add es/it/fi language files (from G. Aruta and J. Rahkonen)
@@ -63,7 +70,7 @@ public class TopologyExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.7.0 (2013-02-17)";
+        return "0.8.2 (2016-06-12)";
     }
 
     public void configure(PlugInContext context) throws Exception {

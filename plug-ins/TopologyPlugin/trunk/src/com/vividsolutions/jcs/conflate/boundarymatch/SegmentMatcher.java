@@ -64,45 +64,28 @@ public class SegmentMatcher {
 
     /**
      * Computes an equivalent angle in the range 0 <= ang < 2*PI
+     * This method is now recursive.
      *
      * @param angle the angle to be normalized
      * @return the normalized equivalent angle
      */
     public static double normalizedAngle(double angle) {
-        if (angle < 0.0) return PI2 + angle;
-        if (angle >= PI2) angle -= PI2;
-        return angle;
+        if (angle < 0.0) return normalizedAngle(angle + PI2);
+        else if (angle >= PI2) return normalizedAngle(angle - PI2);
+        else return angle;
     }
 
     /**
-     * Computes the delta in the angles between two line segments.
+     * Computes the minimum angle between two line segments.
+     * The minimum angle is a positive angle between 0 and PI (this is the
+     * cw angle between 0 and 1 if cw angle is < PI and the ccw angle if not).
+     * (LineSegment.angle returns an angle in the range [-PI, PI]
      */
     public static double angleDiff(LineSegment seg0, LineSegment seg1) {
         double a0 = normalizedAngle(seg0.angle());
         double a1 = normalizedAngle(seg1.angle());
-        double delta = Math.abs(a0 - a1);
+        double delta = Math.min(normalizedAngle(a0 - a1), normalizedAngle(a1-a0));
         return delta;
-    }
-
-    /**
-     * Computes the delta in the angles between a line segment and the inverse of another line seg.
-     */
-    public static double angleInverseDiff(LineSegment seg0, LineSegment seg1) {
-        return angleDiff(seg0.angle(), seg1.angle() + Math.PI);
-    }
-
-    /**
-     * Computes the angle difference between two angles.
-     * @param angle0
-     * @param angle1
-     * @return the angle difference.  This will always be <= PI.
-     */
-    public static double angleDiff(double angle0, double angle1) {
-        double norm0 = normalizedAngle(angle0);
-        double norm1 = normalizedAngle(angle1);
-        double angleDiff = Math.abs(norm0 - norm1);
-        if (angleDiff > Math.PI) return PI2 - angleDiff;
-        return angleDiff;
     }
 
     // temp storage for point args
@@ -160,8 +143,7 @@ public class SegmentMatcher {
     public boolean isMatch(LineSegment seg1, LineSegment seg2) {
         boolean isMatch = true;
         double dAngle = angleDiff(seg1, seg2);
-        //double dAngleInv = angleInverseDiff(seg1, seg2);
-        double dAngleInv = (dAngle + Math.PI)%PI2;
+        double dAngleInv = angleDiff(new LineSegment(seg1.p1, seg1.p0), seg2);
         switch (segmentOrientation) {
             case OPPOSITE_ORIENTATION:
                 if (dAngleInv > angleToleranceRad) {

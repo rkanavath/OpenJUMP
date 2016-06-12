@@ -17,8 +17,8 @@
     <property name="dist"    value="dist" />
     <property name="javadoc" value="javadoc" />
 
-    <property name="version" value="0.8.1" />
-    <property name="current-oj" value="C:\Users\Michaël\DEVELOPPEMENTS\OpenJUMP-2012\dist\openjump-1.6.0alpha\lib\ext" />
+    <property name="version" value="0.8.2" />
+    <!--property name="current-oj" value="C:\Users\Michaël\DEVELOPPEMENTS\OpenJUMP-2012\dist\openjump-1.6.0alpha\lib\ext" /-->
     
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->
@@ -65,7 +65,7 @@
         <jar basedir="${build}" jarfile="${dist}/topology-${version}.jar">
             <include name="**"/>
         </jar>
-        <copy file="${dist}/topology-${version}.jar" todir="${current-oj}"/>
+        <!--copy file="${dist}/topology-${version}.jar" todir="${current-oj}"/-->
     </target>
     
     <!-- =================================================================== -->

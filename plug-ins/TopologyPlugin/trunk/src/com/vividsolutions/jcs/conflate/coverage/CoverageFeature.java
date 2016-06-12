@@ -139,8 +139,12 @@ public class CoverageFeature {
             //if (cgf.getFeature().getID() < feature.getID()) continue;
             Debug.println("      Try to match " + feature.getID() + "/0 with feature " + cgf.getFeature().getID() + "...");
             isModified |= shell.match(cgf.shell, segMatcher, matchedSegmentIndex);
+            // [mmichaud 2016-06-12] process target feature holes as well
+            for (Shell hole : cgf.getHoles()) {
+                isModified |= shell.match(hole, segMatcher, matchedSegmentIndex);
+            }
             
-            // proessing holes added by michaud on 2010-01-17
+            // [mmichaud 2010-01-17] process this feature holes
             int count = 0;
             for (Shell hole : holes) {
                 Debug.println("      Try to match " + feature.getID() + "/" + (++count) + " with feature " + cgf.getFeature().getID() + "...");

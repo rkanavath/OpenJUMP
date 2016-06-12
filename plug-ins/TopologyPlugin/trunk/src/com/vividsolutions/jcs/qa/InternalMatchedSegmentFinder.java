@@ -340,7 +340,7 @@ public class InternalMatchedSegmentFinder {
      * Find any segments that match the query segment.  The segment index is
      * used to speed up the performance.
      *
-     * @param fs the candidate segment to be matched
+     * @param querySeg the candidate segment to be matched
      */
     private void findMatches(FeatureSegment querySeg) {
         // zero-length segments should not be matched
