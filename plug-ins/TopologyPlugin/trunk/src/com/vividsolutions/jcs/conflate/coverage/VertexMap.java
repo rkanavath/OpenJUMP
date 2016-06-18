@@ -53,7 +53,7 @@ public class VertexMap {
 
     /**
      * get the Vertex which source coordinate is p.
-     * Note that if the vertext does not exists, it is created and returned by
+     * Note that if the vertex does not exists, it is created and returned by
      * this method.
      * See usage in Shell.
      */

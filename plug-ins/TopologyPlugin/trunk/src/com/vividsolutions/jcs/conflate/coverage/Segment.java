@@ -34,7 +34,6 @@ package com.vividsolutions.jcs.conflate.coverage;
 
 import java.util.*;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.util.Debug;
 
 /**
  * Represents a single line segment from the edge of a shell of a Polygon
@@ -45,15 +44,18 @@ public class Segment extends GeometryComponent {
 
     private Shell shell;
     private Vertex vertex[] = new Vertex[2];
+    private double z_ini, z_fin;
     private LineSegment seg;
     private List<MatchedVertex> matchedVertexList = new ArrayList<MatchedVertex>();
     private List<Coordinate> insertedCoordList = null;
     // a marker to know if this Segment is referenced in the SegmentIndex
     private boolean isInIndex = false;
 
-    public Segment(Vertex v0, Vertex v1, Shell shell) {
+    public Segment(Vertex v0, Vertex v1, Shell shell, double z_ini, double z_fin) {
         vertex[0] = v0;
         vertex[1] = v1;
+        this.z_ini = z_ini;
+        this.z_fin = z_fin;
         this.shell = shell;
         seg = new LineSegment(vertex[0].getCoordinate(), vertex[1].getCoordinate());
         double segLen = v0.getCoordinate().distance(v1.getCoordinate());
@@ -63,10 +65,12 @@ public class Segment extends GeometryComponent {
 
     public Vertex getVertex(int i) { return vertex[i]; }
 
+    public double getZIni() {return z_ini;}
+
     public LineSegment getLineSegment() { return seg; }
 
-    public List getInsertedCoordinates() {
-        if (insertedCoordList == null) computeInserted();
+    public List getInsertedCoordinates(boolean interpolate_z, double scale) {
+        if (insertedCoordList == null) computeInserted(interpolate_z, scale);
         return insertedCoordList;
     }
     
@@ -158,8 +162,12 @@ public class Segment extends GeometryComponent {
         return false;
     }
 
-    private void computeInserted() {
-        // compute position of matched vertices, taking into acccount any adjustments to the underlying vertex
+    private void computeInserted(boolean interpolate_z, double scale) {
+        //System.out.println("v0 avant :" + this + " : " + vertex[0].getOriginalCoordinate());
+        //System.out.println("v0 après :" + this + " : " + vertex[0].getAdjustedCoordinate());
+        //System.out.println("v1 avant :" + this + " : " + vertex[1].getOriginalCoordinate());
+        //System.out.println("v1 après :" + this + " : " + vertex[1].getAdjustedCoordinate());
+        // compute position of matched vertices, taking into account any adjustments to the underlying vertex
         for (Iterator j = matchedVertexList.iterator(); j.hasNext(); ) {
             MatchedVertex mv = (MatchedVertex) j.next();
             mv.computePosition(this.getLineSegment());
@@ -174,15 +182,31 @@ public class Segment extends GeometryComponent {
         for (Iterator i = matchedVertexList.iterator(); i.hasNext(); ) {
             MatchedVertex mv = (MatchedVertex) i.next();
             Coordinate coord = mv.getVertex().getCoordinate();
-            
             // prevent duplicate coordinates
             if (prevCoord != null && coord.equals2D(prevCoord)) continue;
             prevCoord = coord;
             
             if (mv.getPosition() > 0.0 && mv.getPosition() < 1.0) {
+                if (interpolate_z) {
+                    coord = (Coordinate)coord.clone();
+                    coord.z = Math.round(interpolate(coord)*scale)/scale;
+                }
                 insertedCoordList.add(coord);
             }
         }
+    }
+
+    private double interpolate(Coordinate c) {
+        Coordinate c0 = vertex[0].getOriginalCoordinate();
+        Coordinate c1 = vertex[1].getOriginalCoordinate();
+        double d0 = c.distance(c0);
+        double d1 = c.distance(c1);
+        double l = c0.distance(c1);
+        if (d0 >= l) return z_fin;
+        else if (d1 >= l) return z_ini;
+        else if (Double.isNaN(z_ini)) return z_fin;
+        else if (Double.isNaN(z_fin)) return z_ini;
+        else return c0.z + (z_fin-z_ini)*d0/l;
     }
 
     public String toString() {

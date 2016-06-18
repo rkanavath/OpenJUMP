@@ -34,6 +34,7 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 // History
+// 0.9.0 (2016-06-18) : add an option to interpolate z in CoverageCleanerPlugIn
 // 0.8.2 (2016-06-12) : fix two bugs in CoverageCleanerPlugIn (angle between
 //                      - angle between segments was not computed correctly
 //                      - holes were not managed in some cases
@@ -70,7 +71,7 @@ public class TopologyExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.8.2 (2016-06-12)";
+        return "0.9.0 (2016-06-18)";
     }
 
     public void configure(PlugInContext context) throws Exception {

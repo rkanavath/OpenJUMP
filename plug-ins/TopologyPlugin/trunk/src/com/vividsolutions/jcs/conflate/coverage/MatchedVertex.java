@@ -32,7 +32,6 @@
 
 package com.vividsolutions.jcs.conflate.coverage;
 
-import java.util.*;
 import com.vividsolutions.jts.geom.*;
 
 /**

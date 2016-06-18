@@ -73,11 +73,11 @@ public class CoverageFeature {
          return holes;
     }
 
-    public boolean isAdjusted(double distanceTolerance) {
+    public boolean isAdjusted(double distanceTolerance, boolean interpolate_z, double scale) {
         if (!isProcessed) return false;
-        isAdjusted |= shell.isAdjusted(distanceTolerance);
+        isAdjusted |= shell.isAdjusted(distanceTolerance, interpolate_z, scale);
         for (Shell hole : holes) {
-            isAdjusted |= hole.isAdjusted(distanceTolerance);
+            isAdjusted |= hole.isAdjusted(distanceTolerance, interpolate_z, scale);
         }
         return isAdjusted;
     }
@@ -91,11 +91,11 @@ public class CoverageFeature {
      * the original geometry are cloned and added to the new geometry.
      *
      * @return an adjusted version of the geometry for this Feature
-     * @return null if the adjusted geometry is invalid
+     *         (or null if the adjusted geometry is invalid)
      */
-    public Geometry getAdjustedGeometry(double distanceTolerance) {
+    public Geometry getAdjustedGeometry(double distanceTolerance, boolean interpolate_z, double scale) {
         Debug.println("      adjust shell");
-        Coordinate[] coord = shell.getAdjusted(distanceTolerance);
+        Coordinate[] coord = shell.getAdjusted(distanceTolerance, interpolate_z, scale);
         // check for a valid ring
         if (coord.length <= 3) return null;
         
@@ -107,12 +107,11 @@ public class CoverageFeature {
         Coordinate[][] coords = new Coordinate[holes.length][];
         for (int i = 0 ; i < holes.length ; i++) {
             Debug.println("      adjust hole " + (i+1));
-            coords[i] = holes[i].getAdjusted(distanceTolerance);
+            coords[i] = holes[i].getAdjusted(distanceTolerance, interpolate_z, scale);
             if (coords[i].length <= 3) continue;
             rings.add(fact.createLinearRing(coords[i]));
         }
-        Geometry adjGeom = fact.createPolygon(fact.createLinearRing(coord), rings.toArray(new LinearRing[0]));
-        return adjGeom;
+        return fact.createPolygon(fact.createLinearRing(coord), rings.toArray(new LinearRing[0]));
     }
 
     /**
@@ -121,20 +120,19 @@ public class CoverageFeature {
      * @param nearFeatures a list of CoverageGapFeatures that are close to this feature
      * @param segMatcher the SegmentMatcher to use, initialized with the distance tolerance
      */
-    public void computeAdjustment(List nearFeatures,
+    public void computeAdjustment(List<CoverageFeature> nearFeatures,
                                   SegmentMatcher segMatcher,
                                   SegmentIndex matchedSegmentIndex) {
         computeAdjustmentSingle(nearFeatures, segMatcher, matchedSegmentIndex);
     }
 
-    public boolean computeAdjustmentSingle(List nearFeatures,
+    public boolean computeAdjustmentSingle(List<CoverageFeature> nearFeatures,
                                 SegmentMatcher segMatcher,
                                 SegmentIndex matchedSegmentIndex) {
         isProcessed = true;
         boolean isModified = false;
         // Compare this feature with all near feature candidates
-        for (Iterator i = nearFeatures.iterator(); i.hasNext(); ) {
-            CoverageFeature cgf = (CoverageFeature) i.next();
+        for (CoverageFeature cgf : nearFeatures) {
             if (cgf == this) continue;
             //if (cgf.getFeature().getID() < feature.getID()) continue;
             Debug.println("      Try to match " + feature.getID() + "/0 with feature " + cgf.getFeature().getID() + "...");

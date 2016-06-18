@@ -40,7 +40,6 @@ import com.vividsolutions.jts.util.Debug;
 /**
  * A coverage is a set of adjacent polygons build from a FeatureCollection.
  */
-
 public class Coverage {
 
     private Map<Feature,CoverageFeature> featureMap =
@@ -67,16 +66,15 @@ public class Coverage {
      *
      * @param adjustableCoords a Set of the coordinates which can be adjusted
      */
-    public void setAdjustableCoordinates(Set adjustableCoords) {
+    public void setAdjustableCoordinates(Set<Coordinate> adjustableCoords) {
         this.adjustableCoords = adjustableCoords;
     }
 
     public FeatureCollection getAdjustmentIndicators() {
         GeometryFactory fact = new GeometryFactory();
-        List indicatorLineList = new ArrayList();
-        Collection vertices = vertexMap.getVertices();
-        for (Iterator i = vertices.iterator(); i.hasNext(); ) {
-            Vertex v = (Vertex) i.next();
+        List<Geometry> indicatorLineList = new ArrayList<Geometry>();
+        Collection<Vertex> vertices = vertexMap.getVertices();
+        for (Vertex v : vertices) {
             if (v.isAdjusted()) {
                 Coordinate[] lineSeg = new Coordinate[] { v.getOriginalCoordinate(), v.getAdjustedCoordinate() };
                 Geometry line = fact.createLineString(lineSeg);
@@ -99,26 +97,25 @@ public class Coverage {
     * Returns Polygon from featureList
     * @TODO : process multipolygons
     */
-    public List getCoverageFeatureList(List<Feature> featureList) {
-        List<CoverageFeature> cgfList = new ArrayList();
-        for (Iterator<Feature> i = featureList.iterator(); i.hasNext(); ) {
-            Feature f = (Feature) i.next();
+    public List<CoverageFeature> getCoverageFeatureList(List<Feature> featureList) {
+        List<CoverageFeature> cgfList = new ArrayList<CoverageFeature>();
+        for (Feature feature : featureList) {
             // currently only polygons are handled
-            if (f.getGeometry() instanceof Polygon)
-              cgfList.add(getCoverageFeature(f));
+            if (feature.getGeometry() instanceof Polygon) {
+                cgfList.add(getCoverageFeature(feature));
+            }
         }
         return cgfList;
     }
 
-    public void computeAdjustedFeatureUpdates(double distanceTolerance) {
+    public void computeAdjustedFeatureUpdates(double distanceTolerance, boolean interpolate_z, double scale) {
         adjustedFC = new FeatureDataset(features.getFeatureSchema());
         Collection<CoverageFeature> cgfColl = featureMap.values();
-        for (Iterator<CoverageFeature> i = cgfColl.iterator(); i.hasNext(); ) {
-            CoverageFeature cgf = i.next();
+        for (CoverageFeature cgf : cgfColl) {
             Debug.println("    feature " + cgf.getFeature().getID());
-            if (cgf.isAdjusted(distanceTolerance)) {
+            if (cgf.isAdjusted(distanceTolerance, interpolate_z, scale)) {
                 Debug.println("    feature " + cgf.getFeature().getID() + " is adjusted");
-                Geometry g = cgf.getAdjustedGeometry(distanceTolerance);
+                Geometry g = cgf.getAdjustedGeometry(distanceTolerance, interpolate_z, scale);
                 // The following tip is able to transform an auto-intersecting
                 // polygon into a MultiPolygon (only if it is noded)
                 if (!g.isValid()) g = g.buffer(0);

@@ -34,9 +34,7 @@ package com.vividsolutions.jcs.qa;
 
 import java.util.*;
 import com.vividsolutions.jump.feature.*;
-import com.vividsolutions.jump.geom.*;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jump.util.CoordinateArrays;
 import com.vividsolutions.jump.task.*;
 
@@ -54,13 +52,12 @@ public class FeatureCoordinateMap {
 
     public static Set getFeaturesWithVertices(TaskMonitor monitor,
                                               FeatureCollection fc,
-                                              Collection coords) {
+                                              Collection<Coordinate> coords) {
         FeatureCoordinateMap map = new FeatureCoordinateMap(monitor);
         map.add(fc);
-        Set featuresWithVertices = new HashSet();
-        for (Iterator i = coords.iterator(); i.hasNext(); ) {
-            Coordinate pt = (Coordinate) i.next();
-            featuresWithVertices.addAll(map.getFeatures(pt));
+        Set<Feature> featuresWithVertices = new HashSet<Feature>();
+        for (Coordinate coord : coords) {
+            featuresWithVertices.addAll(map.getFeatures(coord));
         }
         return featuresWithVertices;
     }
@@ -108,18 +105,16 @@ public class FeatureCoordinateMap {
     }
     
     public void add(Coordinate pt, Feature f) {
-        List<Feature> featureList = (List) coordMap.get(pt);
+        List<Feature> featureList = coordMap.get(pt);
         if (featureList == null) {
             featureList = new ArrayList<Feature>();
             coordMap.put(pt, featureList);
         }
         featureList.add(f);
     }
-    
-    public Collection values() { return coordMap.values(); }
-    
-    public List getFeatures(Coordinate p) {
-        return (List) coordMap.get(p);
+
+    public List<Feature> getFeatures(Coordinate p) {
+        return coordMap.get(p);
     }
 
 }

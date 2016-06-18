@@ -49,10 +49,9 @@ import fr.michaelm.jump.plugin.topology.I18NPlug;
  */
 public class CoverageCleaner {
   
-    public static boolean hasMultiPolygonFeature(List featureList) {
-        for (Iterator i = featureList.iterator(); i.hasNext(); ) {
-            Feature f = (Feature) i.next();
-            if (f.getGeometry() instanceof MultiPolygon) {
+    public static boolean hasMultiPolygonFeature(List<Feature> featureList) {
+        for (Feature feature : featureList) {
+            if (feature.getGeometry() instanceof MultiPolygon) {
                 return true;
             }
         }
@@ -73,9 +72,19 @@ public class CoverageCleaner {
         * The maximum angle between matching segments.
         */
         public double angleTolerance = 22.5;
+        /**
+         * If true, coordinates inserted in a segment from another feature will
+         * have a z interpolated on the segment ends rather than the z of the
+         * other feature
+         */
+        public boolean interpolateZ = false;
+        /**
+         * Scale factor to reduce precision of the z if interpolate_z is true
+         */
+        public double zScale = 1.0;
     }
 
-    private static GeometryFactory geomFactory = new GeometryFactory();
+    //private static GeometryFactory geomFactory = new GeometryFactory();
 
     //input data
     private Parameters param;
@@ -86,7 +95,7 @@ public class CoverageCleaner {
     private FeatureCollection matchedFC;
     private List<FeatureSegment> matchedSegments = null;
     private SegmentIndex matchedSegmentIndex = null;
-    private Set matchedSegmentCoordSet = null;
+    private Set<Coordinate> matchedSegmentCoordSet = null;
 
     /**
      * The features which may be adjusted (due to having matched segments
@@ -269,7 +278,7 @@ public class CoverageCleaner {
                                 segmentMatcher, matchedSegmentIndex);
         }
         Debug.println("  6.2 computeAdjustedFeatureUpdates");
-        cvg.computeAdjustedFeatureUpdates(param.distanceTolerance);
+        cvg.computeAdjustedFeatureUpdates(param.distanceTolerance, param.interpolateZ, param.zScale);
     }
 
 }

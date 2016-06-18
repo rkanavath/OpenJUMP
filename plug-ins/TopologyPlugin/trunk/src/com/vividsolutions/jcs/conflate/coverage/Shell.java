@@ -81,6 +81,14 @@ public class Shell extends GeometryComponent {
         return shellIndex;
     }
 
+    public VertexMap getVertexMap() {
+        return vertexMap;
+    }
+
+    public LinearRing getRing() {
+        return ring;
+    }
+
     public void initialize(LinearRing ring, Set<Coordinate> adjustableCoords) {
         this.ring = ring;
         uniqueCoord = CoordinateArrays.removeRepeatedPoints(ring.getCoordinates());
@@ -111,8 +119,8 @@ public class Shell extends GeometryComponent {
     * Creates a Vertex for vertex i <b>if</b>
     * this is a vertex that might be modified.
     *
-    * @param i
-    * @param adjustableCoords
+    * @param i index
+    * @param adjustableCoords Set of adjustable coordinates
     */
     private void createVertex(int i, Set<Coordinate> adjustableCoords) {
         Coordinate pt = uniqueCoord[i];
@@ -130,21 +138,13 @@ public class Shell extends GeometryComponent {
     private Segment createSegment(int i) {
         Vertex v0 = vertexMap.get(uniqueCoord[i]);
         Vertex v1 = vertexMap.get(uniqueCoord[i+1]);
-        Segment segment = new Segment(v0, v1, this);
-        return segment;
+        return new Segment(v0, v1, this, uniqueCoord[i].z, uniqueCoord[i+1].z);
     }
 
     // [2013-01-26] segmentIndex contains segments with original coordinates
     // 
     private boolean isInIndex(SegmentIndex segmentIndex, int i) {
-        //if (segments[i] == null) {
-            return segmentIndex.contains(new FeatureSegment(null, uniqueCoord[i], uniqueCoord[i + 1], -1, -1));
-        //}
-        //return segmentIndex.contains(new FeatureSegment(null, segments[i].getVertex(0).getCoordinate(), segments[i].getVertex(1).getCoordinate()));
-        // 
-        //return segmentIndex.contains(new FeatureSegment(null, 
-        //    segments[i].getVertex(0).getOriginalCoordinate(), 
-        //    segments[i].getVertex(1).getOriginalCoordinate()));
+        return segmentIndex.contains(new FeatureSegment(null, uniqueCoord[i], uniqueCoord[i + 1], -1, -1));
     }
 
     public boolean match(Shell shell, SegmentMatcher segmentMatcher,
@@ -160,6 +160,7 @@ public class Shell extends GeometryComponent {
         // this method might cause the coordinates to change, so make sure they are recomputed
         adjustedCoord = null;
         boolean isAdjusted = false;
+
         /**
          * Only matched segments are considered for adjustment
          * (Non-matched ones either are already paired,
@@ -172,25 +173,12 @@ public class Shell extends GeometryComponent {
         for (int i = 0; i < segments.length; i++) {
             if (segments[i] == null) continue;
             if (!segments[i].isInIndex()) continue;
-            //if (!isInIndex(matchedSegmentIndex, i)) {
-            //    Debug.println("          match segment " + getFeatureID() + "/" + shellIndex + "/" + i + " not in index");
-            //    continue;
-            //}
             Envelope env = new Envelope(segments[i].getLineSegment().p0.x, segments[i].getLineSegment().p1.x, segments[i].getLineSegment().p0.y, segments[i].getLineSegment().p1.y);
             env.expandBy(2*segmentMatcher.getDistanceTolerance());
-            //Set<FeatureSegment> candidateSegments = matchedSegmentIndex.query(env);
-            //Set<FeatureSegment> candidateSegments = matchedSegmentIndex.getMatches(new FeatureSegment(null, uniqueCoord[i], uniqueCoord[i + 1], -1, -1));
             for (int j = 0; j < shell.segments.length; j++) {
-                //Debug.print("          match segment " + 
-                //        getFeatureID() + "/" + shellIndex + "/" + i + " with " + 
-                //        shell.getFeatureID() + "/" + shell.getShellIndex() + "/" + j + " : ");
                 if (shell.segments[j] == null) continue;
                 if (!shell.segments[j].isInIndex()) continue;
-                //if (!shell.isInIndex(matchedSegmentIndex, j)) {
-                //    Debug.println("not in index");
-                //    continue;
-                //}
-                
+
                 Segment seg0 = getSegment(i);
                 Segment seg1 = shell.getSegment(j);
                 /**
@@ -222,18 +210,18 @@ public class Shell extends GeometryComponent {
         return isAdjusted;
     }
 
-    public boolean isAdjusted(double distanceTolerance) {
-        computeAdjusted(distanceTolerance);
+    public boolean isAdjusted(double distanceTolerance, boolean interpolate_z, double scale) {
+        computeAdjusted(distanceTolerance, interpolate_z, scale);
         boolean isAdjusted = ! CoordinateArrays.equals(uniqueCoord, adjustedCoord);
         return isAdjusted;
     }
 
-    public Coordinate[] getAdjusted(double distanceTolerance) {
-        computeAdjusted(distanceTolerance);
+    public Coordinate[] getAdjusted(double distanceTolerance, boolean interpolate_z, double scale) {
+        computeAdjusted(distanceTolerance, interpolate_z, scale);
         return adjustedCoord;
     }
 
-    private void computeAdjusted(double distanceTolerance) {
+    private void computeAdjusted(double distanceTolerance, boolean interpolate_z, double scale) {
         // already computed
         if (adjustedCoord != null) return;
         CoordinateList coordList = new CoordinateList();
@@ -241,6 +229,10 @@ public class Shell extends GeometryComponent {
         // For each segment of this Shell
         for (int i = 0; i < segments.length; i++) {
             Coordinate pt = getAdjustedCoordinate(i);
+            if (interpolate_z && segments[i] != null) {
+                pt = (Coordinate)pt.clone();
+                pt.z = segments[i].getZIni();
+            }
             // add first coordinate
             coordList.add(pt, false);
             if (!pt.equals(uniqueCoord[i])) {
@@ -248,8 +240,8 @@ public class Shell extends GeometryComponent {
             }
             if (segments[i] != null) {
                 // add inserted coordinates
-                coordList.addAll(segments[i].getInsertedCoordinates(), false);
-                Debug.println("        " + i + " : insert " + segments[i].getInsertedCoordinates());
+                coordList.addAll(segments[i].getInsertedCoordinates(interpolate_z, scale), false);
+                Debug.println("        " + i + " : insert " + segments[i].getInsertedCoordinates(interpolate_z, scale));
             } 
         }
         coordList.closeRing();
@@ -257,7 +249,7 @@ public class Shell extends GeometryComponent {
         // modulo arithmetic
         coordList.remove(coordList.size()-1);
         CoordinateList noRepeatCoordList = removeRepeatedSegments(coordList);
-        noRepeatCoordList = removeMicroLoops(coordList, distanceTolerance);
+        noRepeatCoordList = removeMicroLoops(noRepeatCoordList, distanceTolerance);
         noRepeatCoordList.closeRing();
         adjustedCoord = noRepeatCoordList.toCoordinateArray();
     }
@@ -267,7 +259,7 @@ public class Shell extends GeometryComponent {
         if (segments[i] != null) {
             Coordinate c = segments[i].getVertex(0).getCoordinate();
             //[mmichaud 2013-01-26] improvement : if the new position of the
-            // vertex has itself been adjuste, return the new new position
+            // vertex has itself been adjusted, return the new new position
             // TODO : may it enter an infinite loop ? 
             if (!vertexMap.contains(c)) return c;
             Vertex v = vertexMap.get(c);
@@ -285,7 +277,7 @@ public class Shell extends GeometryComponent {
     * Remove any repeated segments
     * (e.g. a pattern of Coordinates of the form "a-b-a" is converted to "a" )
     *
-    * @param coordList
+    * @param coordList list of coordinates to clean
     */
     private CoordinateList removeRepeatedSegments(CoordinateList coordList) {
         int size = coordList.size();
@@ -308,10 +300,9 @@ public class Shell extends GeometryComponent {
     * (e.g. a pattern of Coordinates of the form "a-b-c-a" with a-b, b-c and c-a
     * smaller than tolerance is converted to "a" )
     *
-    * @param coordList
+    * @param coordList list of coordinates to clean
     */
     private CoordinateList removeMicroLoops(CoordinateList coordList, double distanceTolerance) {
-        //CoordinateList noRepeatCoordList = new CoordinateList();
         int size = coordList.size();
         for (int i = 0; i < size && size > 4; i++) {
             Coordinate a = coordList.getCoordinate(i%(size));
@@ -334,11 +325,11 @@ public class Shell extends GeometryComponent {
     }
 
     public boolean isConflict() {
-        for (int i = 0; i < segments.length; i++) {
-            if (segments[i] == null) continue;
-            if (segments[i].isConflict()) return true;
-            if (segments[i].getVertex(0).isConflict()) return true;
-            if (segments[i].getVertex(1).isConflict()) return true;
+        for (Segment segment : segments) {
+            if (segment == null) continue;
+            if (segment.isConflict()) return true;
+            if (segment.getVertex(0).isConflict()) return true;
+            if (segment.getVertex(1).isConflict()) return true;
         }
         return false;
     }
