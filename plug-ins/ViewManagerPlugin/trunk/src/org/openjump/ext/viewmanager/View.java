@@ -19,7 +19,6 @@ import java.util.List;
 
 /**
  * A view is a set of styles applied on specified layers.
- *
  */
 @XmlRootElement
 public class View {

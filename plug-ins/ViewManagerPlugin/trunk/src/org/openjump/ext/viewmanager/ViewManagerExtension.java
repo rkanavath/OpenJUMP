@@ -4,7 +4,8 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 /**
- * Created by UMichael on 13/06/2015.
+ * Extension to manage views.
+ * A "View" is defined by the styles associated to the layers of a project.
  */
 public class ViewManagerExtension extends Extension {
 
@@ -13,7 +14,7 @@ public class ViewManagerExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.3.0 (2015-12-14)";
+        return "0.3.2 (2016-10-09)";
     }
 
     public void configure(PlugInContext context) throws Exception {

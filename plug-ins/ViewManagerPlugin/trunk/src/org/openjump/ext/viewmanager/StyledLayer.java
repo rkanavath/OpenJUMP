@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Created by UMichael on 13/06/2015.
+ * A set of styles we want to apply to a Layer.
  */
 @XmlRootElement
 public class StyledLayer {

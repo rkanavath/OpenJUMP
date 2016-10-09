@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by UMichael on 14/06/2015.
+ * A set of Views with some methods to move views up and down
+ * and to replace a view definition.
  */
 @XmlRootElement
 public class ViewSet {
@@ -80,10 +81,8 @@ public class ViewSet {
 
     public void replaceView(View oldView, View newView) {
         int pos = views.indexOf(oldView);
-        if (pos>0) {
-            views.set(pos, newView);
-            fireReplaceView(oldView);
-        }
+        views.set(pos, newView);
+        fireReplaceView(oldView);
     }
 
     public void fireAddView(View view) {
