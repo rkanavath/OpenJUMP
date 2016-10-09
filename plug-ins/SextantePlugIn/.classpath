@@ -2,14 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/OpenJUMP-20160706-r4951-nolang.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/ext/sextante/sextante.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/ext/sextante/sextante_algorithms.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/ext/sextante/sextante_gui.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/jts-core-1.14.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/jts-io-1.14.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/jai_codec-1.1.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/jai_core-1.1.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951-CORE/lib/jai_imageio-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/jai_codec-1.1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/jai_core-1.1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/jts-core-1.14.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/jts-io-1.14.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/ext/sextante/sextante.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/ext/sextante/sextante_algorithms.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/ext/sextante/sextante_gui.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUMP-Portable-20160706-r4951-CORE/OpenJUMP-20160706-r4951/lib/OpenJUMP-20160706-r4951-nolang.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
