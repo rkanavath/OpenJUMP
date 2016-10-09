@@ -4,6 +4,10 @@ import org.openjump.sigle.plugin.tutorial.HelpPlugIn;
 
 import sun.security.x509.Extension;
 
+import com.vividsolutions.jump.workbench.WorkbenchContext;
+import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
+
 public class SextanteExtension extends Extension {
 
     /*
@@ -28,12 +32,17 @@ public class SextanteExtension extends Extension {
     }
 
     public void configure(PlugInContext context) throws Exception {
+        WorkbenchContext workbenchContext = context.getWorkbenchContext();
+        FeatureInstaller featureInstaller = new FeatureInstaller(
+                workbenchContext);
 
         new SextanteToolboxPlugin().initialize(context);
         new SextanteResultsPlugin().initialize(context);
         new SextanteHistoryPlugin().initialize(context);
         new SextanteModelerPlugin().initialize(context);
         new SextanteCommandLinePlugin().initialize(context);
+        new SextanteDataExplorerPlugin().initialize(context);
+        featureInstaller.addMenuSeparator(new String[] { "Sextante" });
         new HelpPlugIn().initialize(context);
 
     }

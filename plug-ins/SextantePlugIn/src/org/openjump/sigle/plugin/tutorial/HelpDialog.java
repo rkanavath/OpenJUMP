@@ -19,6 +19,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.vividsolutions.jump.workbench.ui.images.IconLoader;
+
 public class HelpDialog extends JPanel implements TreeSelectionListener {
     /**
      * Class adapted from HelpOJPlugIn.class from SIGLE OpenJump Viatoris
