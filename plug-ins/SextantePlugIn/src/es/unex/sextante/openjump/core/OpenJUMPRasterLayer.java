@@ -378,26 +378,25 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
             final FileOutputStream tifOut = new FileOutputStream(m_sFilename);
             final TIFFEncodeParam param = new TIFFEncodeParam();
             param.setCompression(TIFFEncodeParam.COMPRESSION_NONE);
-            TIFFField[] tiffFields = new TIFFField[2];
+            TIFFField[] tiffFields = new TIFFField[3];
+
+            // [Giuseppe Aruta 8 Oct. 2016] the following parameters come from
+            // RasterImageIO class
+            // and add cell size, nodata value and Tie point to the new created
+            // file.
 
             // Cell size
-
-            /*
-             * tiffFields[0] = new
-             * TIFFField(GeoTiffConstants.ModelPixelScaleTag,
-             * TIFFField.TIFF_DOUBLE, 2, new double[] { cellSize.cellSizeX,
-             * cellSize.cellSizeY });
-             */
-
+            tiffFields[0] = new TIFFField(GeoTiffConstants.ModelPixelScaleTag,
+                    TIFFField.TIFF_DOUBLE, 2, new double[] {
+                            getLayerCellSize(), getLayerCellSize() });
             // No data
             String noDataS = Double.toString(getNoDataValue());
             byte[] bytes = noDataS.getBytes();
-            tiffFields[0] = new TIFFField(TiffTags.TIFFTAG_GDAL_NODATA,
+            tiffFields[1] = new TIFFField(TiffTags.TIFFTAG_GDAL_NODATA,
                     TIFFField.TIFF_BYTE, noDataS.length(), bytes);
-
             // Tie point
             final Envelope envelope = m_Layer.getWholeImageEnvelope();
-            tiffFields[1] = new TIFFField(GeoTiffConstants.ModelTiepointTag,
+            tiffFields[2] = new TIFFField(GeoTiffConstants.ModelTiepointTag,
                     TIFFField.TIFF_DOUBLE, 6, new double[] { 0, 0, 0,
                             envelope.getMinX(), envelope.getMaxY(), 0 });
             param.setExtraFields(tiffFields);
