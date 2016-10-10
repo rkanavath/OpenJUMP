@@ -34,7 +34,7 @@ public class HelpPlugIn implements ThreadedPlugIn {
     public boolean execute(PlugInContext context) throws Exception {
         this.panel = new HelpDialog();
 
-        HelpDialog.createAndShowGUI();
+        HelpDialog.createAndShowGUI(context);
 
         return true;
     }

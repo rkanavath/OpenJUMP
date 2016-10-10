@@ -9,7 +9,6 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -19,7 +18,12 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.openjump.core.ui.swing.DetachableInternalFrame;
+
+import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
+
+import es.unex.sextante.openjump.language.I18NPlug;
 
 public class HelpDialog extends JPanel implements TreeSelectionListener {
     /**
@@ -155,78 +159,15 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
         top.add(new DefaultMutableTreeNode(new BookInfo("List of algotithms",
                 "/sextante_help/en/general/sextante_algo.html")));
 
-        /*
-         * category = new DefaultMutableTreeNode("Sextante Manual");
-         * top.add(category);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("Introduction",
-         * "intro.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("Toolbox",
-         * "toolbox.html")); category.add(book);
-         * 
-         * category2 = new DefaultMutableTreeNode("List of Algorithms");
-         * top.add(category2);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("Sextante Algorithms",
-         * "sextante_algo.html")); category2.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("2. Les menus",
-         * "/sextante/help/en/general/sextante.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode( new
-         * BookInfo("3. Les barres d'outils",
-         * "/helpfile/fr/tutorial/3_barres.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("4. Le clic-droit",
-         * "/helpfile/fr/tutorial/4_clicdroit.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo(
-         * "5. Les données géographiques",
-         * "/helpfile/fr/tutorial/5_donneesgeo.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo(
-         * "6. La gestion des données géographiques",
-         * "/helpfile/fr/tutorial/6_gestiondonnees.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("7. Les styles",
-         * "/helpfile/fr/tutorial/7_style.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo(
-         * "8. Les données attributaires",
-         * "/helpfile/fr/tutorial/8_attributs.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("9. Analyse",
-         * "/helpfile/fr/tutorial/9_analyse.html")); category.add(book);
-         * 
-         * category = new DefaultMutableTreeNode("Exercices");
-         * top.add(category);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("Exercice 1",
-         * "/helpfile/fr/tutorial/exercice.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("Exercice 2",
-         * "/helpfile/fr/tutorial/exercice.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("Exercice 3",
-         * "/helpfile/fr/tutorial/exercice.html")); category.add(book);
-         * 
-         * category = new DefaultMutableTreeNode("BeanShell Editor");
-         * top.add(category);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("BeanShell Editor",
-         * "/helpfile/fr/tutorial/BshEditor4jump-fr.html")); category.add(book);
-         * 
-         * book = new DefaultMutableTreeNode(new BookInfo("Spim",
-         * "/helpfile/fr/tutorial/jump-spim-fr.html")); category.add(book);
-         */
     }
 
-    public static void createAndShowGUI() {
+    public static void createAndShowGUI(PlugInContext context) {
 
         // JFrame.setDefaultLookAndFeelDecorated(true);
-
-        JFrame frame = new JFrame("Help Sextante");
+        DetachableInternalFrame frame = new DetachableInternalFrame();
+        frame.setTitle(I18NPlug
+                .getI18N("es.unex.sextante.kosmo.extensions.SextanteHelpPlugin.help"));
+        // JFrame frame = new JFrame("Help Sextante");
 
         HelpDialog newContentPane = new HelpDialog();
         newContentPane.setOpaque(true);
@@ -234,7 +175,14 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
 
         frame.pack();
         frame.setVisible(true);
-        frame.setAlwaysOnTop(true);
+        frame.setClosable(true);
+        frame.setResizable(true);
+        frame.setMaximizable(true);
+        frame.setSize(550, 400);
+        frame.setVisible(true);
+        context.getWorkbenchFrame().addInternalFrame(frame, true, true);
+        // frame.setAlwaysOnTop(true);
+
     }
 
     public static void main(String[] args) {
