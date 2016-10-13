@@ -19,7 +19,7 @@
     <!-- plugins -->
     <!-- drivers -->
     <property name="view-manager" value="ViewManager" />
-    <property name="view-manager-version" value="0.3.2" />
+    <property name="view-manager-version" value="0.3.3" />
 
 
     <!-- =================================================================== -->
