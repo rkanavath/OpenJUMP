@@ -43,6 +43,8 @@ public class SextanteExtension extends Extension {
         new SextanteCommandLinePlugin().initialize(context);
         new SextanteDataExplorerPlugin().initialize(context);
         featureInstaller.addMenuSeparator(new String[] { "Sextante" });
+        new SextanteSettingsPlugin().initialize(context);
+        featureInstaller.addMenuSeparator(new String[] { "Sextante" });
         new HelpPlugIn().initialize(context);
 
     }
