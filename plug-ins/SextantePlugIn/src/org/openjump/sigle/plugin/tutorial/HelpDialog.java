@@ -9,6 +9,7 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -18,12 +19,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.openjump.core.ui.swing.DetachableInternalFrame;
-
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
-
-import es.unex.sextante.openjump.language.I18NPlug;
 
 public class HelpDialog extends JPanel implements TreeSelectionListener {
     /**
@@ -163,11 +160,7 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
 
     public static void createAndShowGUI(PlugInContext context) {
 
-        // JFrame.setDefaultLookAndFeelDecorated(true);
-        DetachableInternalFrame frame = new DetachableInternalFrame();
-        frame.setTitle(I18NPlug
-                .getI18N("es.unex.sextante.kosmo.extensions.SextanteHelpPlugin.help"));
-        // JFrame frame = new JFrame("Help Sextante");
+        JFrame frame = new JFrame("Help Sextante");
 
         HelpDialog newContentPane = new HelpDialog();
         newContentPane.setOpaque(true);
@@ -175,13 +168,7 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
 
         frame.pack();
         frame.setVisible(true);
-        frame.setClosable(true);
-        frame.setResizable(true);
-        frame.setMaximizable(true);
-        frame.setSize(550, 400);
-        frame.setVisible(true);
-        context.getWorkbenchFrame().addInternalFrame(frame, true, true);
-        // frame.setAlwaysOnTop(true);
+        frame.setAlwaysOnTop(true);
 
     }
 
