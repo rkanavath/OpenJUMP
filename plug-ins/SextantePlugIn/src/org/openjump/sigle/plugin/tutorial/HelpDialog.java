@@ -144,7 +144,8 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
                 Sextante.getText("Algorithms"));
         DefaultMutableTreeNode child;
         DefaultMutableTreeNode node;
-
+        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(
+                "About Sextante", "/sextante_help/en/general/about.htm")));
         basic_concept.add(new DefaultMutableTreeNode(new BookInfo(
                 "Introduction", "/sextante_help/en/general/intro.html")));
         basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
