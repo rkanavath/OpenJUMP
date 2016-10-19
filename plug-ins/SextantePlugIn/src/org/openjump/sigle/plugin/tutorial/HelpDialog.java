@@ -22,6 +22,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
+import es.unex.sextante.core.Sextante;
+
 public class HelpDialog extends JPanel implements TreeSelectionListener {
     /**
      * Class adapted from HelpOJPlugIn.class from SIGLE OpenJump Viatoris
@@ -135,26 +137,41 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
 
     private void createNodes(DefaultMutableTreeNode top) {
 
-        DefaultMutableTreeNode intro = new DefaultMutableTreeNode(new BookInfo(
-                "Introduction", "/sextante_help/en/general/intro.html"));
+        DefaultMutableTreeNode basic_concept = new DefaultMutableTreeNode(
+                Sextante.getText("Basic_concepts"));
 
-        top.add(new DefaultMutableTreeNode(new BookInfo("Introduction",
-                "/sextante_help/en/general/intro.html")));
-        top.add(new DefaultMutableTreeNode(new BookInfo("Toolbox",
+        DefaultMutableTreeNode algorithms = new DefaultMutableTreeNode(
+                Sextante.getText("Algorithms"));
+        DefaultMutableTreeNode child;
+        DefaultMutableTreeNode node;
+
+        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(
+                "Introduction", "/sextante_help/en/general/intro.html")));
+        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
+                .getText("SEXTANTE_toolbox"),
                 "/sextante_help/en/general/toolbox.html")));
-        top.add(new DefaultMutableTreeNode(new BookInfo("History",
-                "/sextante_help/en/general/history.html")));
-        top.add(new DefaultMutableTreeNode(new BookInfo("Modeler",
-                "/sextante_help/en/general/modeler.html")));
-        top.add(new DefaultMutableTreeNode(new BookInfo("Command line",
-                "/sextante_help/en/general/cmd.html")));
-        top.add(new DefaultMutableTreeNode(new BookInfo("Batch",
+        basic_concept
+                .add(new DefaultMutableTreeNode(new BookInfo(Sextante
+                        .getText("History"),
+                        "/sextante_help/en/general/history.html")));
+        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
+                .getText("Models"), "/sextante_help/en/general/modeler.html")));
+        basic_concept
+                .add(new DefaultMutableTreeNode(new BookInfo(Sextante
+                        .getText("Command_line"),
+                        "/sextante_help/en/general/cmd.html")));
+        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
+                .getText("Batch_processing"),
                 "/sextante_help/en/general/batch.html")));
-        top.add(new DefaultMutableTreeNode(new BookInfo(
-                "Configure algorithm providers",
+        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
+                .getText("ConfiguringProviders"),
                 "/sextante_help/en/general/providers.html")));
-        top.add(new DefaultMutableTreeNode(new BookInfo("List of algotithms",
+        algorithms.add(new DefaultMutableTreeNode(new BookInfo(
+                "List of algotithms",
                 "/sextante_help/en/general/sextante_algo.html")));
+
+        top.add(basic_concept);
+        top.add(algorithms);
 
     }
 
