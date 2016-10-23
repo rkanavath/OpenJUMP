@@ -17,7 +17,12 @@
     <property name="dist"    value="dist" />
     <property name="javadoc" value="javadoc" />
 
-    <property name="version" value="0.5" />
+    <!-- Versions
+    0.6 : clean and upgrade to java 7 and jgrapht 1.0
+    0.5 :
+    0.4 :
+    -->
+    <property name="version" value="0.6" />
     
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->
@@ -37,7 +42,7 @@
     <!-- =================================================================== -->
     <target name="compile" id="compile" depends="clean">
         <mkdir dir="${build}"/>
-        <javac destdir="${build}" debug="true" deprecation="false" nowarn="true" source="1.5" target="1.5">
+        <javac destdir="${build}" debug="true" deprecation="false" nowarn="true" source="1.7" target="1.7">
             <src path="${src}"/>
             <classpath refid="classpath"/>
             <include name="**/*.java"/>

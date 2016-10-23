@@ -3,7 +3,6 @@ package fr.michaelm.jump.feature.jgrapht;
 import java.util.*;
 
 import org.jgrapht.*;
-import org.jgrapht.graph.*;
 import org.jgrapht.alg.*;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -75,11 +74,6 @@ public class GraphUtil {
         }
         return geometries;
     }
-    
-    
-    //public static List shortestPath(Collection features, boolean dim3) {
-    
-    //}
     
 }
 

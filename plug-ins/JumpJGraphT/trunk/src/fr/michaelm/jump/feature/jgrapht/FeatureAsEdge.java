@@ -1,16 +1,9 @@
 package fr.michaelm.jump.feature.jgrapht;
 
-import java.util.*;
-
-import org.jgrapht.*;
 import org.jgrapht.graph.*;
-import org.jgrapht.alg.*;
 
 import com.vividsolutions.jump.feature.*;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.CoordinateList;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * Encapsulates a Feature into a DefaultWeightedEdge
@@ -46,6 +39,10 @@ public class FeatureAsEdge extends DefaultWeightedEdge implements Feature {
     
     public Feature clone(boolean deep) {
         return feature.clone(deep);
+    }
+
+    public Feature clone(boolean deep, boolean copyPK) {
+        return feature.clone(deep, copyPK);
     }
     
     public Object getAttribute(int i) {
@@ -111,4 +108,3 @@ public class FeatureAsEdge extends DefaultWeightedEdge implements Feature {
         return feature.compareTo(o);
     }
 }
-

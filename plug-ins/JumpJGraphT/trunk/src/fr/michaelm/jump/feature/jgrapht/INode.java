@@ -18,17 +18,17 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 public interface INode {
     
-    public static final GeometryFactory DEFAULT_GEOMETRY_FACTORY = new GeometryFactory();
+    static final GeometryFactory DEFAULT_GEOMETRY_FACTORY = new GeometryFactory();
     
    /**
     * Return the coordinate of this Node.
     */
-    public Coordinate getCoordinate();
+    Coordinate getCoordinate();
 
    /**
     * Return a Geometry representing this Node.
     */
-    public Geometry getGeometry();
+    Geometry getGeometry();
 
 }
 

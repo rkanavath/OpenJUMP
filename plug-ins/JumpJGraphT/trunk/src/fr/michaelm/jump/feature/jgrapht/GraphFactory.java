@@ -4,15 +4,12 @@ import java.util.*;
 
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
-import org.jgrapht.alg.*;
 
 import com.vividsolutions.jump.feature.AttributeType;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.index.strtree.STRtree;
 
 /**
