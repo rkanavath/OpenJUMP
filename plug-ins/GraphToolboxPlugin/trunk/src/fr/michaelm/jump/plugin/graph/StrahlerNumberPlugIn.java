@@ -74,8 +74,7 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
                 context.getWorkbenchFrame(), STRAHLER_NUMBERS, true);
         dialog.setSideBarImage(new ImageIcon(this.getClass().getResource("StrahlerNumber.png")));
         dialog.setSideBarDescription(I18NPlug.getI18N("StrahlerNumberPlugIn.description"));
-        final JComboBox jcb_layer = dialog.addLayerComboBox(
-                LAYER, context.getCandidateLayer(0), null, context.getLayerManager());
+        dialog.addLayerComboBox(LAYER, context.getCandidateLayer(0), null, context.getLayerManager());
 
         GUIUtil.centreOnWindow(dialog);
         dialog.setPreferredSize(new Dimension(400,480));
@@ -116,9 +115,7 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
             if (arc.getAttribute(STREAM_ORDER) != null) continue;
             computeStreamOrder(graph, arc, ancestorMap);
         }
-        //for (FeatureAsEdge arc : graph.edgeSet()) {
-        //    computeStrahlerNumber(graph, arc, null);
-        //}
+
         context.getLayerManager().addLayer(StandardCategoryNames.RESULT, layer.getName()+"-strahler",resultFC);
         Layer resultLayer = context.getLayerManager().getLayer(layer.getName() + "-strahler");
         // Styling

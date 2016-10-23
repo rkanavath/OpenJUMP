@@ -23,12 +23,8 @@
 
 package fr.michaelm.jump.plugin.graph;
 
-import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Graph Extension contains 3 plugins
@@ -39,8 +35,9 @@ import java.util.ResourceBundle;
  * <li>CycleFinderPlugIn : computes a graph from a linear network and find base cycles</li>
  * </ul>
  * @author Micha&euml;l Michaud
- * @version 0.2.0 (2014-07-15)
+ * @version 0.3.0 (2016-10-23)
  */
+//version 0.3.0 (2016-10-23) upgrade jgrapht to 0.9, add SkeletonPlugIn
 //version 0.2.0 (2014-07-15) add Strahler number computation on hydrographic networks
 //version 0.1.4 (2013-01-15) fix CycleFinding (did not always find cycle with duplicate lines) 
 //version 0.1.3 (2013-01-14) recompiled for java 1.5 compatibility 
@@ -54,7 +51,7 @@ public class GraphExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.1.4 (2013-01-15)";
+        return "0.3.0 (2016-10-15)";
     }
 
     public void configure(PlugInContext context) throws Exception {
@@ -80,6 +77,7 @@ public class GraphExtension extends Extension {
         new GraphComponentsPlugIn().initialize(context);
         new CycleFinderPlugIn().initialize(context);
         new StrahlerNumberPlugIn().initialize(context);
+        new SkeletonPlugIn().initialize(context);
     }
 
 }
