@@ -134,7 +134,7 @@ public class ViewSet {
     }
 
     public static interface Listener {
-        public void actionPerformed(ViewSet viewSet, int mod, View view);
+        void actionPerformed(ViewSet viewSet, int mod, View view);
     }
 
 }

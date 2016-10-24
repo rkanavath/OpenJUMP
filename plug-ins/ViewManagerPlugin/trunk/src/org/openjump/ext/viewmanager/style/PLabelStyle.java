@@ -83,7 +83,7 @@ public class PLabelStyle extends AbstractPStyle {
 
     public Style getStyle(Layerable layerable) {
         LabelStyle labelStyle = new LabelStyle();
-        LOG.info("    getLabelStyle");
+        //LOG.info("    getLabelStyle");
         if (layerable instanceof Layer) {
             labelStyle.initialize((Layer) layerable);
             labelStyle.setEnabled(isEnabled());
@@ -93,7 +93,7 @@ public class PLabelStyle extends AbstractPStyle {
             labelStyle.setHideAtScale(hideAtScale);
             labelStyle.setScaleToHideAt(maxScale);
 
-            LOG.info("    getLabelStyle 1");
+            //LOG.info("    getLabelStyle 1");
 
             int s = 0;
             s += font.bold ? java.awt.Font.BOLD : 0;
@@ -103,7 +103,7 @@ public class PLabelStyle extends AbstractPStyle {
             labelStyle.setColor(ColorUtil.decode(font.color));
             labelStyle.setHeightAttribute(font.heightAttribute);
 
-            LOG.info("    getLabelStyle 2");
+            //LOG.info("    getLabelStyle 2");
 
             if (outline != null) {
                 labelStyle.setOutlineShowing(outline.enabled);
@@ -111,7 +111,7 @@ public class PLabelStyle extends AbstractPStyle {
                 labelStyle.setOutlineWidth(outline.width);
             } else labelStyle.setOutlineShowing(false);
 
-            LOG.info("    getLabelStyle 3");
+            //LOG.info("    getLabelStyle 3");
 
             if (alignment != null) {
                 labelStyle.setHorizontalAlignment(alignment.horizontalAlignment.alignment);
@@ -120,11 +120,11 @@ public class PLabelStyle extends AbstractPStyle {
                 labelStyle.setAngleAttribute(alignment.angleAttribute);
             }
         }
-        LOG.info(labelStyle);
-        LOG.info("    " + labelStyle.getAttribute());
-        LOG.info("    " + labelStyle.isEnabled());
-        LOG.info("    " + labelStyle.isScaling());
-        LOG.info("    " + labelStyle.getHeight());
+        //LOG.info(labelStyle);
+        //LOG.info("    " + labelStyle.getAttribute());
+        //LOG.info("    " + labelStyle.isEnabled());
+        //LOG.info("    " + labelStyle.isScaling());
+        //LOG.info("    " + labelStyle.getHeight());
         return labelStyle;
     }
 

@@ -134,7 +134,6 @@ public class ViewManagerPlugIn extends AbstractPlugIn implements ActionListener 
         saveViewSetAsButton.addActionListener(this);
         toolBar.add(saveViewSetAsButton);
 
-        //dialog.add(toolBar, BorderLayout.PAGE_START);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.add(toolBar, BorderLayout.NORTH);
 
@@ -213,11 +212,6 @@ public class ViewManagerPlugIn extends AbstractPlugIn implements ActionListener 
         return dialog;
     }
 
-    //FilenameFilter xmlFileFilter = new FilenameFilter() {
-    //    public boolean accept(File dir, String name) {
-    //        return name.toLowerCase().endsWith(".xml");
-    //    }
-    //};
 
     FileFilter xmlFileFilter = new FileFilter() {
         public boolean accept(File file) {
@@ -326,14 +320,13 @@ public class ViewManagerPlugIn extends AbstractPlugIn implements ActionListener 
     public void saveViewSetAs() {
         JFileChooser jfc = new JFileChooser(viewDir);
         jfc.setDialogType(JFileChooser.SAVE_DIALOG);
-        //jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setFileFilter(xmlFileFilter);
         int r = jfc.showSaveDialog(dialog);
         if (r == JFileChooser.APPROVE_OPTION) {
             File viewSetFile = jfc.getSelectedFile();
             try {
                 if (currentViewSet == null) {
-                    System.out.println("No current view set");
+                    context.getWorkbenchFrame().warnUser("No current view set");
                     return;
                 }
                 currentViewSet.setName(viewSetFile.getName());

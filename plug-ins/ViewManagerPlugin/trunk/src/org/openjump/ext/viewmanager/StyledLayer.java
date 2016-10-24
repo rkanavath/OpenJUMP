@@ -1,9 +1,6 @@
 package org.openjump.ext.viewmanager;
 
-import com.vividsolutions.jump.workbench.model.Category;
-import com.vividsolutions.jump.workbench.model.Layer;
-import com.vividsolutions.jump.workbench.model.LayerManager;
-import com.vividsolutions.jump.workbench.model.Layerable;
+import com.vividsolutions.jump.workbench.model.*;
 import com.vividsolutions.jump.workbench.ui.renderer.style.*;
 import org.apache.log4j.Logger;
 import org.openjump.ext.viewmanager.style.*;
@@ -156,31 +153,29 @@ public class StyledLayer {
             layer.setEditable(editable);
             if (styles != null) {
                 LOG.info("Nombre de styles enregistrés : " + styles.size());
-                LOG.info("Styles : " + styles);
                 for (PStyle pstyle : styles) {
-                    LOG.info("  - transform " + pstyle + " to");
                     try {
                         Style newStyle = pstyle.getStyle(lyr);
-                        LOG.info("  - apply " + newStyle.getClass().getSimpleName());
                         Style rm = layer.getStyle(newStyle.getClass());
                         if (rm != null) {
                             layer.removeStyle(rm);
                         } else if (BasicStyle.class.isInstance(newStyle)) {
                             layer.removeStyle(layer.getBasicStyle());
                         }
+                        LOG.info("  - replace " + newStyle.getClass().getSimpleName());
                         layer.addStyle(newStyle);
-                        //System.out.println(layer.getName() + ":" + newStyle.getClass().getSimpleName() + " : " + newStyle.isEnabled());
                     } catch (Exception e) {
                         LOG.warn(pstyle, e);
                     }
                 }
             }
+            layer.getLayerManager().fireLayerChanged(layer, LayerEventType.APPEARANCE_CHANGED);
         }
     }
 
-    boolean accept(String categoryFilter, String layerFilter, Category category, Layerable layer) {
-        Pattern categoryPattern = null;
-        Pattern layerPattern = null;
+    private boolean accept(String categoryFilter, String layerFilter, Category category, Layerable layer) {
+        Pattern categoryPattern = Pattern.compile(".*");
+        Pattern layerPattern = Pattern.compile(".*");
         try {
             categoryPattern = getPattern(categoryFilter);
             layerPattern = getPattern(layerFilter);

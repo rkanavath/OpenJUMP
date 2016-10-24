@@ -2,7 +2,6 @@ package org.openjump.ext.viewmanager;
 
 import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -26,10 +25,10 @@ import java.awt.event.MouseEvent;
  */
 public class ViewSetPanel extends JPanel {
 
-    I18N I18N_ = I18N.getInstance("view_manager");
+    private I18N I18N_ = I18N.getInstance("view_manager");
 
-    ViewSet viewSet;
-    PlugInContext context;
+    private ViewSet viewSet;
+    private PlugInContext context;
 
     public ViewSetPanel(final PlugInContext context, final ViewSet viewSet) {
         super(new GridBagLayout());
@@ -76,7 +75,7 @@ public class ViewSetPanel extends JPanel {
         }
     }
 
-    class ViewPanel extends JPanel implements ActionListener {
+    private class ViewPanel extends JPanel implements ActionListener {
 
         ImageIcon deleteIcon  = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/delete.png"));
         ImageIcon replaceIcon = new ImageIcon(ViewSetPanel.class.getClassLoader().getResource("/images/replace.png"));
@@ -203,7 +202,6 @@ public class ViewSetPanel extends JPanel {
 
             constraints.weightx = 0.0;
             constraints.fill = GridBagConstraints.NONE;
-            //constraints.anchor = GridBagConstraints.EAST;
             constraints.gridx = 1;
             add(applyButton, constraints);
             constraints.gridx = 2;

@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
 
 /**
- * Created by UMichael on 13/06/2015.
+ * Persistent vertex style
  */
 @XmlRootElement(name="vertexStyle")
 public class PVertexStyle extends AbstractPStyle {
@@ -45,7 +45,6 @@ public class PVertexStyle extends AbstractPStyle {
     }
 
     public Style getStyle(Layerable layerable) {
-        //BasicStyle style = new BasicStyle();
         VertexStyle vStyle;
         if (shape.equals("Circle")) {
             vStyle = new CircleVertexStyle();
@@ -68,12 +67,4 @@ public class PVertexStyle extends AbstractPStyle {
         return vStyle;
     }
 
-    //public Style getStyle(Layerable layerable) {
-    //    return new VertexStyle() {
-    //        @Override
-    //        public void setEnabled(boolean enabled) {
-    //            super.setEnabled(enabled);
-    //        }
-    //    };
-    //}
 }
