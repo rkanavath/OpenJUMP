@@ -72,8 +72,28 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
         // [sstein 26 Oct. 2010] using the new method instead
         // so I do not need to change the code in all the cases
         // where #.create(layer) is used
-        System.out.println("creation of raster layer");
-        create(layer, true);
+        // System.out.println("creation of raster layer");
+        // create(layer, true);
+
+        // [Giuseppe Aruta 29 Oct. 2016]
+        // Uncomment pevious modification made by sstein.
+        // It seems that after modification made in those years
+        // (Raster framework now always save data/load data as file)
+        // the previous described bug is not evident
+        // I restored the previous code (with some modifications)
+        // As it solves some problems on algorithms (Raster calculator) and
+        // on Sextante Command Plugin
+        m_Layer = layer;
+        m_Raster = layer.getRasterData(null);
+        m_sName = layer.getName();
+        m_sFilename = layer.getImageFileName();
+        final Envelope env = layer.getWholeImageEnvelope();
+        m_LayerExtent = new AnalysisExtent();
+        m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX())
+                / m_Raster.getWidth());
+        m_LayerExtent.setXRange(env.getMinX(), env.getMaxX(), true);
+        m_LayerExtent.setYRange(env.getMinY(), env.getMaxY(), true);
+        m_dNoDataValue = layer.getNoDataValue();
 
     }
 
