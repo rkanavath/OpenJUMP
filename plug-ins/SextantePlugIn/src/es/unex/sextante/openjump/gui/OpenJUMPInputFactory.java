@@ -4,13 +4,11 @@ import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.geotools.dbffile.DbfFile;
 import org.openjump.core.apitools.IOTools;
-import org.openjump.core.geomutils.GeoUtils;
 import org.openjump.core.rasterimage.GeoTiffConstants;
 import org.openjump.core.rasterimage.GridAscii;
 import org.openjump.core.rasterimage.GridFloat;
@@ -32,6 +30,7 @@ import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
 import com.vividsolutions.jump.feature.FeatureDataset;
 import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
+import com.vividsolutions.jump.workbench.imagery.ReferencedImageStyle;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.model.Layerable;
@@ -75,21 +74,28 @@ public class OpenJUMPInputFactory extends AbstractInputFactory {
             final Layerable layerable = (Layerable) layerables.get(i);
 
             if (layerable instanceof Layer) {
-                // [Giuseppe Aruta oct 2016] if all the geometries of a layer
-                // are empty. In this case that layer is loaded as a table
-                if (nullGeometryType((Layer) layerable)) {
+                // [Giuseppe Aruta Oct 2016] - Table
+                // if a layer has null geometries,
+                // but featureclooection is not empty
+                // than is loaded into Sextante as table
+                FeatureCollection feat = ((Layer) layerable)
+                        .getFeatureCollectionWrapper().getUltimateWrappee();
+                if (isTable((Layer) layerable)) {
                     obj = new OpenJUMPTable();
-                    FeatureCollection feat = ((Layer) layerable)
-                            .getFeatureCollectionWrapper().getUltimateWrappee();
-
                     ((OpenJUMPTable) obj).create((FeatureCollection) feat);
                     ((OpenJUMPTable) obj).setName(layerable.getName());
                     layers.add(obj);
                 } else {
-                    obj = new OpenJUMPVectorLayer();
-                    ((OpenJUMPVectorLayer) obj).create((Layer) layerable);
-                    layers.add(obj);
+                    // [Giuseppe Aruta Oct 2016] - Vector
+                    // We exclude image files loaded
+                    // via Layer.class
+                    if (!feat.isEmpty() && !isImageLayer((Layer) layerable)) {
+                        obj = new OpenJUMPVectorLayer();
+                        ((OpenJUMPVectorLayer) obj).create((Layer) layerable);
+                        layers.add(obj);
+                    }
                 }
+                // [Giuseppe Aruta Oct 2016] - Raster
             } else if (layerable instanceof RasterImageLayer) {
                 try {
                     obj = new OpenJUMPRasterLayer();
@@ -393,28 +399,41 @@ public class OpenJUMPInputFactory extends AbstractInputFactory {
         return env;
     }
 
-    // boolean to check if all the geometries of a layer are empty
-    public static boolean nullGeometryType(Layer layer) {
+    /**
+     * Boolean (Layer.class). True if all the layer geometries are empty
+     * (Geometrycollection empty) but a feature colection is not empty.
+     * Workaround to decode .csv files and to load in Sextante as table
+     * 
+     * @return
+     */
+
+    public static boolean isTable(Layer layer) {
         FeatureCollectionWrapper featureCollection = layer
                 .getFeatureCollectionWrapper();
-        @SuppressWarnings("rawtypes")
         List featureList = featureCollection.getFeatures();
-        BitSet layerBit = new BitSet();
-        BitSet currFeatureBit = new BitSet();
-        if (featureList.size() > 0) {
-            Geometry firstGeo = ((Feature) featureList.iterator().next())
-                    .getGeometry();
-            layerBit = GeoUtils.setBit(layerBit, firstGeo); // this is the layer
-                                                            // type
-        }
+        Geometry nextGeo = null;
         for (@SuppressWarnings("unchecked")
         Iterator<FeatureCollectionWrapper> i = featureList.iterator(); i
                 .hasNext();) {
             Feature feature = (Feature) i.next();
-            Geometry geo = feature.getGeometry();
-            currFeatureBit = GeoUtils.setBit(currFeatureBit, geo);
+            nextGeo = feature.getGeometry();
         }
-        if ((layerBit.get(GeoUtils.emptyBit))) {
+        if (!featureCollection.isEmpty() && nextGeo.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Layer.class
+     * 
+     * @return true if the layer (Layer.class) belongs form an image file (eg.
+     *         JPG, TIF, ECW)
+     */
+    public static boolean isImageLayer(Layer layer) {
+        if (layer.getStyle(ReferencedImageStyle.class) != null) {
+
             return true;
         } else {
             return false;
