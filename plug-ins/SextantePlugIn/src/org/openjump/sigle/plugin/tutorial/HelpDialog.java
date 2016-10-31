@@ -14,15 +14,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
 import es.unex.sextante.core.Sextante;
+import es.unex.sextante.gui.core.SextanteGUI;
+import es.unex.sextante.openjump.language.I18NPlug;
 
 public class HelpDialog extends JPanel implements TreeSelectionListener {
     /**
@@ -32,41 +35,49 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
     private static final long serialVersionUID = 1L;
     private JEditorPane htmlPane;
     private JTree tree;
+    private JTree jTree;
     private URL helpURL;
     private static boolean DEBUG = false;
-    private static boolean playWithLineStyle = false;
-    private static String lineStyle = "Horizontal";
-    ImageIcon ICON = IconLoader.icon("disk.png");
+    private static String help = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteHelpPlugin.help");
 
     public HelpDialog() {
         super(new GridLayout(1, 0));
 
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Sextante");
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode(
+                Sextante.getText("Help"));
         createNodes(top);
         this.tree = new JTree(top);
         this.tree.getSelectionModel().setSelectionMode(1);
         this.tree.addTreeSelectionListener(this);
-        if (playWithLineStyle) {
-            System.out.println("line style = " + lineStyle);
-            this.tree.putClientProperty("JTree.lineStyle", lineStyle);
-        }
-        JScrollPane treeView = new JScrollPane(this.tree);
+        DefaultTreeCellRenderer renderer2 = new DefaultTreeCellRenderer();
+        renderer2.setOpenIcon(null);
+        renderer2.setClosedIcon(null);
+        renderer2.setLeafIcon(null);
+        tree.setCellRenderer(renderer2);
+        final BorderLayout thisLayout = new BorderLayout();
+        this.setLayout(thisLayout);
+        this.setPreferredSize(new java.awt.Dimension(800, 400));
+        this.setSize(new java.awt.Dimension(800, 400));
+        JScrollPane treeViewPane = new JScrollPane(this.tree,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        treeViewPane.setPreferredSize(new Dimension(300, 450));
+        treeViewPane.setMinimumSize(new Dimension(300, 450));
         this.htmlPane = new JEditorPane();
         this.htmlPane.setEditable(false);
-        // initHelp();
-        JScrollPane htmlView = new JScrollPane(this.htmlPane);
-
+        this.htmlPane.getDocument().putProperty("IgnoreCharsetDirective",
+                Boolean.TRUE);
+        JScrollPane htmlViewPane = new JScrollPane(this.htmlPane,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        htmlViewPane.setPreferredSize(new Dimension(300, 450));
+        htmlViewPane.setMinimumSize(new Dimension(300, 450));
         JSplitPane splitPaneHTML = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                treeView, htmlView);
-        Dimension minimumSize = new Dimension(100, 50);
-        htmlView.setMinimumSize(minimumSize);
-        treeView.setMinimumSize(minimumSize);
-        splitPaneHTML.setDividerLocation(100);
-        splitPaneHTML.setPreferredSize(new Dimension(500, 300));
+                treeViewPane, htmlViewPane);
 
         add(splitPaneHTML, BorderLayout.CENTER);
 
-        // add(southPanel, BorderLayout.PAGE_END);
     }
 
     public void valueChanged(TreeSelectionEvent e) {
@@ -90,10 +101,9 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
         }
     }
 
-    private class BookInfo {
+    public class BookInfo {
         public String bookName;
         public URL bookURL;
-        public Icon bookicon;
 
         public BookInfo(String book, String filename) {
             this.bookName = book;
@@ -107,17 +117,6 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
             return this.bookName;
         }
 
-    }
-
-    private void initHelp() {
-        String s = "welcome.html";
-        this.helpURL = ClassLoader.getSystemResource(s);
-        if (this.helpURL == null) {
-            System.err.println("Couldn't open help file: " + s);
-        } else if (DEBUG) {
-            System.out.println("Help URL is " + this.helpURL);
-        }
-        displayURL(this.helpURL);
     }
 
     private void displayURL(URL url) {
@@ -135,50 +134,86 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
         }
     }
 
+    String toolbox = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteToolboxPlugin.Sextante-toolbox");
+    String results = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteResultsPlugin.Results");
+    String history = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteHistoryPlugin.History");
+    String modeler = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteModelerPlugin.Modeler");
+    String command_line = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteCommandLinePlugin.Command-line");
+    String data_explorer = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteDataExplorerPlugin.dataexplorer");
+    String coordinates = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextantePickCooridnates.pick-coordinates");
+
     private void createNodes(DefaultMutableTreeNode top) {
 
         DefaultMutableTreeNode basic_concept = new DefaultMutableTreeNode(
                 Sextante.getText("Basic_concepts"));
 
+        DefaultMutableTreeNode tools = new DefaultMutableTreeNode(
+                Sextante.getText("Tools"));
+        DefaultMutableTreeNode additional_information = new DefaultMutableTreeNode(
+                Sextante.getText("Additional_information"));
+        DefaultMutableTreeNode Sextante_Serial = new DefaultMutableTreeNode(
+                "Sextante Serial number:" + Sextante.getVersionNumber());
+
         DefaultMutableTreeNode algorithms = new DefaultMutableTreeNode(
                 Sextante.getText("Algorithms"));
-        DefaultMutableTreeNode child;
-        DefaultMutableTreeNode node;
+
         basic_concept.add(new DefaultMutableTreeNode(new BookInfo(
                 "About Sextante", "/sextante_help/en/general/about.htm")));
         basic_concept.add(new DefaultMutableTreeNode(new BookInfo(
                 "Introduction", "/sextante_help/en/general/intro.html")));
-        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
-                .getText("SEXTANTE_toolbox"),
+        // Sextante_Toolbox
+        tools.add(new DefaultMutableTreeNode(new BookInfo(toolbox,
                 "/sextante_help/en/general/toolbox.html")));
-        basic_concept
-                .add(new DefaultMutableTreeNode(new BookInfo(Sextante
-                        .getText("History"),
-                        "/sextante_help/en/general/history.html")));
-        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
-                .getText("Models"), "/sextante_help/en/general/modeler.html")));
-        basic_concept
-                .add(new DefaultMutableTreeNode(new BookInfo(Sextante
-                        .getText("Command_line"),
-                        "/sextante_help/en/general/cmd.html")));
-        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
-                .getText("Batch_processing"),
+        // AA Results
+        tools.add(new DefaultMutableTreeNode(new BookInfo(results,
+                "/sextante_help/en/general/results.html")));
+
+        // Sextante History
+        tools.add(new DefaultMutableTreeNode(new BookInfo(history,
+                "/sextante_help/en/general/history.html")));
+
+        // Sextante Modeler
+        tools.add(new DefaultMutableTreeNode(new BookInfo(modeler,
+                "/sextante_help/en/general/modeler.html")));
+
+        // Sextante Command Line
+        tools.add(new DefaultMutableTreeNode(new BookInfo(command_line,
+                "/sextante_help/en/general/cmd.html")));
+        // AA Explorer
+        tools.add(new DefaultMutableTreeNode(new BookInfo(data_explorer,
+                "/sextante_help/en/general/explorer.html")));
+        // AA Pick coordinates
+        tools.add(new DefaultMutableTreeNode(new BookInfo(coordinates,
+                "/sextante_help/en/general/coordinates.html")));
+
+        additional_information.add(new DefaultMutableTreeNode(new BookInfo(
+                Sextante.getText("Batch_processing"),
                 "/sextante_help/en/general/batch.html")));
-        basic_concept.add(new DefaultMutableTreeNode(new BookInfo(Sextante
-                .getText("ConfiguringProviders"),
+        additional_information.add(new DefaultMutableTreeNode(new BookInfo(
+                Sextante.getText("ConfiguringProviders"),
                 "/sextante_help/en/general/providers.html")));
+
         algorithms.add(new DefaultMutableTreeNode(new BookInfo(
                 "List of algotithms",
                 "/sextante_help/en/general/sextante_algo.html")));
 
         top.add(basic_concept);
+        top.add(tools);
         top.add(algorithms);
+        top.add(Sextante_Serial);
 
     }
 
     public static void createAndShowGUI(PlugInContext context) {
 
-        JFrame frame = new JFrame("Help Sextante");
+        JFrame frame = new JFrame(help);
 
         HelpDialog newContentPane = new HelpDialog();
         newContentPane.setOpaque(true);
@@ -198,6 +233,13 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
     }
 
     public void setAlwaysOnTop(boolean b) {
+    }
+
+    public static Icon getIcon() {
+
+        return new ImageIcon(SextanteGUI.class.getClassLoader().getResource(
+                "images/sextante.gif"));
+
     }
 
 }
