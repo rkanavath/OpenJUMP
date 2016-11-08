@@ -1,15 +1,24 @@
-package org.openjump.sigle.plugin.tutorial;
+package org.openjump.core.ui.plugin.sextante.dialog;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -27,6 +36,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.openjump.core.ui.swing.DetachableInternalFrame;
 
@@ -37,26 +47,30 @@ import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 
+import es.unex.sextante.core.GeoAlgorithm;
+import es.unex.sextante.core.ObjectAndDescription;
 import es.unex.sextante.core.Sextante;
+import es.unex.sextante.gui.core.IAlgorithmProvider;
 import es.unex.sextante.gui.core.SextanteGUI;
 import es.unex.sextante.gui.help.AlgorithmTreeCellRenderer;
+import es.unex.sextante.gui.help.HelpIO;
+import es.unex.sextante.openjump.extensions.SextanteToolboxPlugin;
 import es.unex.sextante.openjump.language.I18NPlug;
 
-public class HelpDialog extends JPanel implements TreeSelectionListener {
+public class SextanteHelpDialog extends JPanel implements TreeSelectionListener {
     /**
      * Class adapted from HelpOJPlugIn.class from SIGLE OpenJump Viatoris
-     * 2015-02-22. Giuseppe Aruta. version 01 2016-11-02. Giuseppe Aruta.
-     * version 02
      */
     private static final long serialVersionUID = 1L;
     private JEditorPane htmlPane;
+    private TreePath m_Path;
     private JTree tree;
     private URL helpURL;
     private static boolean DEBUG = false;
     private static String help = I18NPlug
             .getI18N("es.unex.sextante.kosmo.extensions.SextanteHelpPlugin.help");
 
-    public HelpDialog() {
+    public SextanteHelpDialog() {
         // super(new GridLayout(1, 0));
 
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(
@@ -66,6 +80,33 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
         this.tree.getSelectionModel().setSelectionMode(1);
         this.tree.addTreeSelectionListener(this);
         tree.setCellRenderer(new AlgorithmTreeCellRenderer());
+        MouseAdapter local1 = new MouseAdapter() {
+            public void mousePressed(MouseEvent paramAnonymousMouseEvent) {
+                m_Path = tree.getPathForLocation(
+                        paramAnonymousMouseEvent.getX(),
+                        paramAnonymousMouseEvent.getY());
+                showHelp(m_Path);
+                tree.setSelectionPath(m_Path);
+
+            }
+        };
+        tree.addMouseListener(local1);
+        tree.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(
+                    TreeSelectionEvent paramAnonymousTreeSelectionEvent) {
+                m_Path = paramAnonymousTreeSelectionEvent.getPath();
+                if (m_Path != null) {
+                    showHelp(m_Path);
+                }
+                DefaultMutableTreeNode localDefaultMutableTreeNode = (DefaultMutableTreeNode) m_Path
+                        .getLastPathComponent();
+                Object localObject = localDefaultMutableTreeNode
+                        .getUserObject();
+                if ((localObject instanceof GeoAlgorithm)) {
+                }
+            }
+        });
+
         final BorderLayout thisLayout = new BorderLayout();
         this.setLayout(thisLayout);
         this.setPreferredSize(new java.awt.Dimension(800, 500));
@@ -103,6 +144,95 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
 
     }
 
+    protected void showHelp(final TreePath path) {
+
+        if (path != null) {
+            try {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
+                        .getLastPathComponent();
+                Object ob = node.getUserObject();
+                htmlPane.setContentType("text/html");
+                if (ob instanceof GeoAlgorithm) {
+                    // Removed as it doens't work
+                    // Used modified code from SextanteGUI.class below
+                    // Object help = SextanteGUI
+                    // .getAlgorithmHelp((GeoAlgorithm) ob);
+                    Object help = getAlgorithmHelp((GeoAlgorithm) ob);
+                    if (help instanceof String) {
+                        htmlPane.setText((String) help);
+                    } else if (help instanceof URL) {
+                        htmlPane.setPage((URL) help);
+                    }
+                } else if (ob instanceof ObjectAndDescription) {
+                    ObjectAndDescription oad = (ObjectAndDescription) ob;
+                    String sHtmlFile = (String) oad.getObject();
+                    try {
+                        final URL url = new URL("file:///" + sHtmlFile);
+                        htmlPane.setPage(url);
+                    } catch (final Exception e) {
+                        // will show a blank page
+                    }
+                }
+                htmlPane.setCaretPosition(0);
+            } catch (final Exception e) {
+                // Sextante.addErrorToLog(e);
+            }
+
+        }
+
+    }
+
+    // /////////////////////////////////////////////////////////////////////////////
+
+    // The following code comes form SextanteGUI and has been modified in order
+    // to work with OpenJUMP
+    private final static ArrayList<IAlgorithmProvider> m_AlgorithmProviders = new ArrayList<IAlgorithmProvider>();
+
+    public static Object getAlgorithmHelp(final GeoAlgorithm alg) {
+        final String sName = Sextante.getAlgorithmProviderName(alg);
+        for (int i = 0; i < m_AlgorithmProviders.size(); i++) {
+            if (m_AlgorithmProviders.get(i).getName().equals(sName)) {
+                return m_AlgorithmProviders.get(i).getAlgorithmHelp(alg);
+            }
+        }
+        String sFilename;
+        String sPath;
+        if (sName.equals("SEXTANTE")) {
+            sFilename = alg.getCommandLineName() + ".xml";
+            // Get help folder path
+            sPath = getHelpPath(alg, false);
+            // /Method to convert .xml to .html
+            return HelpIO.getHelpAsHTMLCode(alg, sPath + File.separator
+                    + sFilename);
+        } else {
+            return ""; // TODO:create default help page
+        }
+    }
+
+    // /Modified from SExtanteGUI
+    // / Get Help folder path
+    // / Forcing locale
+    public static String getHelpPath(final GeoAlgorithm alg,
+            final boolean bForceLocale) {
+        String sPackage = alg.getClass().getPackage().toString();
+        sPackage = sPackage.substring(8);
+        final String help_Path = System.getProperty("user.dir")
+                .concat(File.separator).concat("lib").concat(File.separator)
+                .concat("ext").concat(File.separator).concat("sextante_help")
+                .concat(File.separator);
+        String sPath = help_Path + File.separator
+                + Locale.getDefault().getLanguage() + File.separator + sPackage;
+
+        final File dir = new File(sPath);
+        if (!dir.exists() && !bForceLocale) {
+            sPath = help_Path + File.separator + Locale.ENGLISH.getLanguage()
+                    + File.separator + sPackage;
+        }
+        return sPath;
+
+    }
+
+    // ////////////////////////////////////////////////////////////////
     protected void printButton_actionPerformed(ActionEvent e) {
         try {
             htmlPane.setContentType("text/html");
@@ -210,7 +340,7 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
 
         public BookInfo(String book, String filename) {
             this.bookName = book;
-            this.bookURL = HelpDialog.class.getResource(filename);
+            this.bookURL = SextanteHelpDialog.class.getResource(filename);
             if (this.bookURL == null) {
                 System.err.println("Couldn't find file: " + filename);
             }
@@ -263,6 +393,7 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
                 Sextante.getText("Additional_information"));
         DefaultMutableTreeNode Sextante_Serial = new DefaultMutableTreeNode(
                 "Sextante Serial number:" + Sextante.getVersionNumber());
+        SextanteToolboxPlugin sx = new SextanteToolboxPlugin();
 
         DefaultMutableTreeNode algorithms = new DefaultMutableTreeNode(
                 Sextante.getText("Algorithms"));
@@ -316,6 +447,63 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
         top.add(algorithms);
         top.add(Sextante_Serial);
 
+        DefaultMutableTreeNode node;
+        DefaultMutableTreeNode child;
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+        final HashMap<String, HashMap<String, GeoAlgorithm>> algs = Sextante
+                .getAlgorithms();
+        final Set<String> groupKeys = algs.keySet();
+        final Iterator<String> groupIter = groupKeys.iterator();
+        while (groupIter.hasNext()) {
+            final HashMap<String, DefaultMutableTreeNode> baseGroups = new HashMap<String, DefaultMutableTreeNode>();
+            final String groupKey = groupIter.next();
+            final DefaultMutableTreeNode toolsNode = new DefaultMutableTreeNode(
+                    groupKey);
+            algorithms.add(toolsNode);
+            final HashMap<String, GeoAlgorithm> groupAlgs = algs.get(groupKey);
+            final Set keys = groupAlgs.keySet();
+            final Iterator iter = keys.iterator();
+            while (iter.hasNext()) {
+                final GeoAlgorithm alg = groupAlgs.get(iter.next());
+                child = new DefaultMutableTreeNode(alg);
+                node = baseGroups.get(alg.getGroup());
+                if (node == null) {
+                    node = new DefaultMutableTreeNode(alg.getGroup());
+                    baseGroups.put(alg.getGroup(), node);
+                    addNodeInSortedOrder(toolsNode, node);
+                }
+                addNodeInSortedOrder(node, child);
+            }
+
+        }
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+        top.add(algorithms);
+
+    }
+
+    private void addNodeInSortedOrder(DefaultMutableTreeNode parent,
+            DefaultMutableTreeNode child) {
+        int n = parent.getChildCount();
+        if (n == 0) {
+            parent.add(child);
+            return;
+        }
+        Collator collator = Collator.getInstance();
+        collator.setStrength(0);
+        DefaultMutableTreeNode node = null;
+        for (int i = 0; i < n; i++) {
+            node = (DefaultMutableTreeNode) parent.getChildAt(i);
+            try {
+                if (collator.compare(node.toString(), child.toString()) > 0) {
+                    parent.insert(child, i);
+                    return;
+                }
+            } catch (Exception localException) {
+            }
+        }
+        parent.add(child);
     }
 
     public static void createAndShowGUI(PlugInContext context) {
@@ -343,7 +531,7 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
 
         public SextanteHelpFrame(final PlugInContext context) {
             context.getLayerManager();
-            HelpDialog newContentPane = new HelpDialog();
+            SextanteHelpDialog newContentPane = new SextanteHelpDialog();
 
             add(newContentPane, BorderLayout.CENTER);
             setResizable(true);
@@ -364,10 +552,6 @@ public class HelpDialog extends JPanel implements TreeSelectionListener {
             }
         });
     }
-
-    /*
-     * public void setAlwaysOnTop(boolean b) { }
-     */
 
     public static Icon getIcon() {
 

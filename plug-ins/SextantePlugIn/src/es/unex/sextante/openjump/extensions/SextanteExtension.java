@@ -1,10 +1,7 @@
 package es.unex.sextante.openjump.extensions;
 
-import org.openjump.sigle.plugin.tutorial.HelpPlugIn;
-
-import sun.security.x509.Extension;
-
 import com.vividsolutions.jump.workbench.WorkbenchContext;
+import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 
@@ -46,7 +43,7 @@ public class SextanteExtension extends Extension {
         featureInstaller.addMenuSeparator(new String[] { "Sextante" });
         new SextanteSettingsPlugin().initialize(context);
         featureInstaller.addMenuSeparator(new String[] { "Sextante" });
-        new HelpPlugIn().initialize(context);
+        new SextanteHelpPlugIn().initialize(context);
 
     }
 

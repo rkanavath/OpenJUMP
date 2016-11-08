@@ -4,7 +4,6 @@ import javax.swing.ImageIcon;
 
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.ui.WorkbenchToolBar;
 
 import es.unex.sextante.gui.core.SextanteGUI;
 import es.unex.sextante.openjump.language.I18NPlug;
@@ -39,11 +38,7 @@ public class SextanteDataExplorerPlugin implements PlugIn {
 
         context.getFeatureInstaller().addMainMenuPlugin(this,
                 new String[] { "Sextante" }, getName(), false, getIcon(), null);
-        WorkbenchToolBar localWorkbenchToolBar = context.getWorkbenchFrame()
-                .getToolBar();
 
-        localWorkbenchToolBar.addPlugIn(getIcon(), this, null,
-                context.getWorkbenchContext());
     }
 
 }
