@@ -5,13 +5,13 @@ import javax.swing.ImageIcon;
 import org.openjump.core.ui.plugin.sextante.dialog.SextanteHelpDialog;
 
 import com.vividsolutions.jump.task.TaskMonitor;
+import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedPlugIn;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
 import es.unex.sextante.openjump.language.I18NPlug;
 
-public class SextanteHelpPlugIn implements ThreadedPlugIn {
+public class SextanteHelpPlugIn implements PlugIn {
     public static final ImageIcon ICON = IconLoader
             .icon("information_16x16.png");
 
