@@ -4,11 +4,13 @@ import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.geotools.dbffile.DbfFile;
 import org.openjump.core.apitools.IOTools;
+import org.openjump.core.geomutils.GeoUtils;
 import org.openjump.core.rasterimage.GeoTiffConstants;
 import org.openjump.core.rasterimage.GridAscii;
 import org.openjump.core.rasterimage.GridFloat;
@@ -89,7 +91,10 @@ public class OpenJUMPInputFactory extends AbstractInputFactory {
                     // [Giuseppe Aruta Oct 2016] - Vector
                     // We exclude image files loaded
                     // via Layer.class
-                    if (!feat.isEmpty() && !isImageLayer((Layer) layerable)) {
+                    // Also we exclude mixed geometries: Sextante doesn't decode
+                    // them anyhow for vector analysis
+                    if (!feat.isEmpty() && !isImageLayer((Layer) layerable)
+                            && !isMixedGeometryType((Layer) layerable)) {
                         obj = new OpenJUMPVectorLayer();
                         ((OpenJUMPVectorLayer) obj).create((Layer) layerable);
                         layers.add(obj);
@@ -113,6 +118,77 @@ public class OpenJUMPInputFactory extends AbstractInputFactory {
             m_Objects[i] = (IDataObject) layers.get(i);
         }
 
+    }
+
+    /**
+     * Layer.class
+     * 
+     * @return true if the layer (Layer.class) belongs form an image file (eg.
+     *         JPG, TIF, ECW)
+     */
+    public static boolean isImageLayer(Layer layer) {
+        if (layer.getStyle(ReferencedImageStyle.class) != null) {
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isMixedGeometryType(Layer layer) {
+        FeatureCollectionWrapper featureCollection = layer
+                .getFeatureCollectionWrapper();
+        @SuppressWarnings("unchecked")
+        List<Feature> featureList = featureCollection.getFeatures();
+        BitSet layerBit = new BitSet();
+        BitSet currFeatureBit = new BitSet();
+        if (featureList.size() > 0) {
+            Geometry firstGeo = ((Feature) featureList.iterator().next())
+                    .getGeometry();
+            layerBit = GeoUtils.setBit(layerBit, firstGeo); // this is the layer
+                                                            // type
+        }
+        for (Iterator<Feature> i = featureList.iterator(); i.hasNext();) {
+            Feature feature = (Feature) i.next();
+            Geometry geo = feature.getGeometry();
+            currFeatureBit = GeoUtils.setBit(currFeatureBit, geo);
+        }
+        if ((layerBit.get(GeoUtils.pointBit) && currFeatureBit
+                .get(GeoUtils.lineBit))
+                || (layerBit.get(GeoUtils.polyBit) && currFeatureBit
+                        .get(GeoUtils.lineBit))
+                || (layerBit.get(GeoUtils.pointBit) && currFeatureBit
+                        .get(GeoUtils.polyBit))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Boolean (Layer.class). True if all the layer geometries are empty
+     * (Geometrycollection empty). Workaround to decode .csv files and to load
+     * in Sextante as table
+     * 
+     * @return
+     */
+
+    public static boolean isTable(Layer layer) {
+        FeatureCollectionWrapper featureCollection = layer
+                .getFeatureCollectionWrapper();
+        List featureList = featureCollection.getFeatures();
+        Geometry nextGeo = null;
+        for (@SuppressWarnings("unchecked")
+        Iterator<FeatureCollectionWrapper> i = featureList.iterator(); i
+                .hasNext();) {
+            Feature feature = (Feature) i.next();
+            nextGeo = feature.getGeometry();
+        }
+        if (!featureCollection.isEmpty() && nextGeo.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public NamedExtent[] getPredefinedExtents() {
@@ -399,44 +475,4 @@ public class OpenJUMPInputFactory extends AbstractInputFactory {
         return env;
     }
 
-    /**
-     * Boolean (Layer.class). True if all the layer geometries are empty
-     * (Geometrycollection empty) but a feature colection is not empty.
-     * Workaround to decode .csv files and to load in Sextante as table
-     * 
-     * @return
-     */
-
-    public static boolean isTable(Layer layer) {
-        FeatureCollectionWrapper featureCollection = layer
-                .getFeatureCollectionWrapper();
-        List featureList = featureCollection.getFeatures();
-        Geometry nextGeo = null;
-        for (@SuppressWarnings("unchecked")
-        Iterator<FeatureCollectionWrapper> i = featureList.iterator(); i
-                .hasNext();) {
-            Feature feature = (Feature) i.next();
-            nextGeo = feature.getGeometry();
-        }
-        if (!featureCollection.isEmpty() && nextGeo.isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Layer.class
-     * 
-     * @return true if the layer (Layer.class) belongs form an image file (eg.
-     *         JPG, TIF, ECW)
-     */
-    public static boolean isImageLayer(Layer layer) {
-        if (layer.getStyle(ReferencedImageStyle.class) != null) {
-
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
