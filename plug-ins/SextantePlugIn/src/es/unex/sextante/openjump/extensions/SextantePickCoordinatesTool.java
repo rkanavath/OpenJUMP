@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jump.geom.CoordUtil;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.cursortool.CoordinateListMetrics;
 import com.vividsolutions.jump.workbench.ui.cursortool.NClickTool;
@@ -28,7 +29,7 @@ public class SextantePickCoordinatesTool extends NClickTool {
      *               (http://sextantegis.blogspot.it/2009
      *               /05/herramientas-para-usuarios-gvsig.html) this
      *               functionality allows to interactive get coordinates of
-     *               points from a view. Thos points can be used later on
+     *               points from a view. Thus points can be used later on
      *               Sextante Algorithms,
      * 
      * @author Giuseppe Aruta oct 2016
@@ -64,18 +65,20 @@ public class SextantePickCoordinatesTool extends NClickTool {
     @Override
     protected void gestureFinished() throws Exception {
         reportNothingToUndoYet();
-        final Point2D wcPoint = getPanel().getViewport().toViewPoint(
-                getPoint().getCoordinate());
-        final String sPointName = JOptionPane.showInputDialog(
-                null,
+        Coordinate coordinate = (Coordinate) getCoordinates().get(0);
+        Point2D wcPoint = CoordUtil.toPoint2D(coordinate);
+
+        String sPointName = JOptionPane.showInputDialog(
+                panel,
                 "X: " + Double.toString(wcPoint.getX()) + "\n" + "Y: "
-                        + Double.toString(wcPoint.getY()),
+                        + Double.toString(wcPoint.getY()) + "\n"
+                        + Sextante.getText("point_selector"),
                 Sextante.getText("New point"));
+
         if (sPointName != null) {
-            final NamedPoint namedPoint = new NamedPoint(sPointName, wcPoint);
+            NamedPoint namedPoint = new NamedPoint(sPointName, wcPoint);
             SextanteGUI.getGUIFactory().getCoordinatesList().add(namedPoint);
         }
 
     }
-
 }
