@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Michaël on 22/05/14.
+ * A geometry element representing a single segment of the geometry.
  */
 public class SegmentElement extends GeometryElement {
 
@@ -48,12 +48,10 @@ public class SegmentElement extends GeometryElement {
         if (projections != null) {
             Collections.sort(projections, this);
             for (Projection projection : projections) {
-                //if (!projection.getCoord().equals(p0)) {
-                    cl.add(projection.getCoord(), false);
-                    cl = new CoordinateList();
-                    list.add(cl);
-                    cl.add(projection.getCoord(), false);
-                //}
+                cl.add(projection.getCoord(), false);
+                cl = new CoordinateList();
+                list.add(cl);
+                cl.add(projection.getCoord(), false);
             }
         }
         cl.add(p1, false);

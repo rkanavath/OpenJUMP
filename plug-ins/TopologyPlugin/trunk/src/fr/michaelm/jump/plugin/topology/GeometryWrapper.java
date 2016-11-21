@@ -16,8 +16,9 @@ import java.util.List;
  * spatial index.
  */
 public abstract class GeometryWrapper {
+
     Feature feature;
-    boolean geometryChanged;
+    protected boolean geometryChanged;
 
     private GeometryWrapper(Feature feature, STRtree index) {
         this.feature = feature;
@@ -36,7 +37,7 @@ public abstract class GeometryWrapper {
 
     public void split() {}
 
-    public static GeometryWrapper createWrapper(Feature feature, STRtree index) {
+    static GeometryWrapper createWrapper(Feature feature, STRtree index) {
         Geometry geometry = feature.getGeometry();
         if (geometry instanceof Point) {
             return new WPoint(feature, index);
@@ -55,9 +56,9 @@ public abstract class GeometryWrapper {
         }
     }
 
-    public static class WPoint extends GeometryWrapper {
+    static class WPoint extends GeometryWrapper {
         GeometryElement element;
-        public WPoint(Feature feature, STRtree index) {
+        WPoint(Feature feature, STRtree index) {
             super(feature, index);
         }
         protected void index(STRtree index) {
@@ -65,9 +66,9 @@ public abstract class GeometryWrapper {
         }
     }
 
-    public static class WLineString extends GeometryWrapper {
+    static class WLineString extends GeometryWrapper {
         List<GeometryElement> elements;
-        public WLineString(Feature feature, STRtree index) {
+        WLineString(Feature feature, STRtree index) {
             super(feature, index);
         }
         protected void index(STRtree index) {
@@ -87,9 +88,9 @@ public abstract class GeometryWrapper {
         }
     }
 
-    public static class WPolygon extends GeometryWrapper {
+    static class WPolygon extends GeometryWrapper {
         List<List<GeometryElement>> elements;
-        public WPolygon(Feature feature, STRtree index) {
+        WPolygon(Feature feature, STRtree index) {
             super(feature, index);
         }
         protected void index(STRtree index) {
@@ -110,14 +111,14 @@ public abstract class GeometryWrapper {
         }
     }
 
-    public static class WMultiPoint extends GeometryWrapper {
+    static class WMultiPoint extends GeometryWrapper {
         List<GeometryElement> elements;
-        public WMultiPoint(Feature feature, STRtree index) {
+        WMultiPoint(Feature feature, STRtree index) {
             super(feature, index);
         }
         protected void index(STRtree index) {
             int numComponents = feature.getGeometry().getNumGeometries();
-            elements = new ArrayList<GeometryElement>(numComponents);
+            elements = new ArrayList<>(numComponents);
             for (int i = 0 ; i < numComponents ; i++) {
                 elements.add(getElements(this, (Point)feature.getGeometry().getGeometryN(i), index));
             }
@@ -126,14 +127,14 @@ public abstract class GeometryWrapper {
         public void split() {}
     }
 
-    public static class WMultiLineString extends GeometryWrapper {
+    static class WMultiLineString extends GeometryWrapper {
         List<List<GeometryElement>> elements;
-        public WMultiLineString(Feature feature, STRtree index) {
+        WMultiLineString(Feature feature, STRtree index) {
             super(feature, index);
         }
         protected void index(STRtree index) {
             int numComponents = feature.getGeometry().getNumGeometries();
-            elements = new ArrayList<List<GeometryElement>>(numComponents);
+            elements = new ArrayList<>(numComponents);
             for (int i = 0 ; i < numComponents ; i++) {
                 elements.add(getElements(this, (LineString)feature.getGeometry().getGeometryN(i), index));
             }
@@ -149,7 +150,7 @@ public abstract class GeometryWrapper {
         }
         public void split() {
             if (geometryChanged) return;
-            List<LineString> lineStrings = new ArrayList<LineString>(elements.size());
+            List<LineString> lineStrings = new ArrayList<>(elements.size());
             for (int i = 0 ; i < elements.size() ; i++) {
                 MultiLineString mls = split(feature.getGeometry().getFactory(), elements.get(i));
                 for (int j = 0 ; j < mls.getNumGeometries() ; j++) {
@@ -162,14 +163,14 @@ public abstract class GeometryWrapper {
         }
     }
 
-    public static class WMultiPolygon extends GeometryWrapper {
+    static class WMultiPolygon extends GeometryWrapper {
         List<List<List<GeometryElement>>> elements;
-        public WMultiPolygon(Feature feature, STRtree index) {
+        WMultiPolygon(Feature feature, STRtree index) {
             super(feature, index);
         }
         protected void index(STRtree index) {
             int numComponents = feature.getGeometry().getNumGeometries();
-            elements = new ArrayList<List<List<GeometryElement>>>(numComponents);
+            elements = new ArrayList<>(numComponents);
             for (int i = 0 ; i < numComponents ; i++) {
                 elements.add(getElements(this, (Polygon)feature.getGeometry().getGeometryN(i), index));
             }
@@ -194,14 +195,16 @@ public abstract class GeometryWrapper {
         }
     }
 
-    public static class WGeometryCollection extends GeometryWrapper {
+    static class WGeometryCollection extends GeometryWrapper {
         List<Object> elements;
-        public WGeometryCollection(Feature feature, STRtree index) {
+
+        WGeometryCollection(Feature feature, STRtree index) {
             super(feature, index);
         }
+
         protected void index(STRtree index) {
             int numComponents = feature.getGeometry().getNumGeometries();
-            elements = new ArrayList<Object>(numComponents);
+            elements = new ArrayList<>(numComponents);
             for (int i = 0 ; i < numComponents ; i++) {
                 Geometry geom = feature.getGeometry().getGeometryN(i);
                 if (geom instanceof Point) {
@@ -215,18 +218,18 @@ public abstract class GeometryWrapper {
         }
     }
 
-    protected static LineString insertInLineString(GeometryFactory factory, List<GeometryElement> elements) {
+    private static LineString insertInLineString(GeometryFactory factory, List<GeometryElement> elements) {
         if (elements.size() == 0) return factory.createLineString(new Coordinate[0]);
-        List<CoordinateList> list = new ArrayList<CoordinateList>(1);
+        List<CoordinateList> list = new ArrayList<>(1);
         for (GeometryElement element : elements) {
             element.insert(list);
         }
         return factory.createLineString(list.get(0).toCoordinateArray());
     }
 
-    protected static LinearRing insertInLinearRing(GeometryFactory factory, List<GeometryElement> elements) {
+    private static LinearRing insertInLinearRing(GeometryFactory factory, List<GeometryElement> elements) {
         if (elements.size() == 0) return factory.createLinearRing(new Coordinate[0]);
-        List<CoordinateList> list = new ArrayList<CoordinateList>(1);
+        List<CoordinateList> list = new ArrayList<>(1);
         for (GeometryElement element : elements) {
             element.insert(list);
         }
@@ -235,23 +238,23 @@ public abstract class GeometryWrapper {
     }
 
 
-    protected static MultiLineString split(GeometryFactory factory, List<GeometryElement> elements) {
+    static MultiLineString split(GeometryFactory factory, List<GeometryElement> elements) {
         if (elements.size() == 0) return factory.createMultiLineString(new LineString[0]);
-        List<CoordinateList> list = new ArrayList<CoordinateList>();
+        List<CoordinateList> coordLists = new ArrayList<>();
         for (GeometryElement element : elements) {
-            element.split(list);
+            element.split(coordLists);
         }
-        List<LineString> lineStrings = new ArrayList<LineString>(list.size());
-        for (int i = 0 ; i < list.size() ; i++) {
-            if (list.get(i).size() < 2) continue;
-            lineStrings.add(factory.createLineString(list.get(i).toCoordinateArray()));
+        List<LineString> lineStrings = new ArrayList<>(coordLists.size());
+        for (CoordinateList coordList : coordLists) {
+            if (coordList.size() < 2) continue;
+            lineStrings.add(factory.createLineString(coordList.toCoordinateArray()));
         }
         return factory.createMultiLineString(lineStrings.toArray(new LineString[lineStrings.size()]));
     }
 
 
     private static List<List<GeometryElement>> getElements(GeometryWrapper geom, Polygon poly, STRtree index) {
-        List<List<GeometryElement>> elements = new ArrayList<List<GeometryElement>>(poly.getNumInteriorRing()+1);
+        List<List<GeometryElement>> elements = new ArrayList<>(poly.getNumInteriorRing()+1);
         elements.add(getElements(geom, poly.getExteriorRing(), index));
         for (int i = 0 ; i < poly.getNumInteriorRing() ; i++) {
             elements.add(getElements(geom, poly.getInteriorRingN(i), index));
@@ -261,7 +264,7 @@ public abstract class GeometryWrapper {
 
     private static List<GeometryElement> getElements(GeometryWrapper geom, LineString line, STRtree index) {
         Coordinate[] cc = line.getCoordinates();
-        List<GeometryElement> elements = new ArrayList<GeometryElement>(cc.length-1);
+        List<GeometryElement> elements = new ArrayList<>(cc.length-1);
         for (int i = 0 ; i < cc.length - 1 ; i++) {
             GeometryElement element = new SegmentElement(geom, cc[i], cc[i+1]);
             elements.add(element);

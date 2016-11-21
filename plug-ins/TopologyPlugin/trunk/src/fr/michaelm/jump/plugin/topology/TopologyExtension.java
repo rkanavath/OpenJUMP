@@ -34,6 +34,9 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 // History
+// 0.9.1 (2016-11-21) : remove RemoveMicroSegmentsPlugIn, replaced by
+//                      com.vividsolutions.jump.workbench.ui.plugin.analysis.RemoveSmallSegments
+//                      included in the core of OpenJUMP
 // 0.9.0 (2016-06-18) : add an option to interpolate z in CoverageCleanerPlugIn
 // 0.8.2 (2016-06-12) : fix two bugs in CoverageCleanerPlugIn (angle between
 //                      - angle between segments was not computed correctly
@@ -71,7 +74,7 @@ public class TopologyExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.9.0 (2016-06-18)";
+        return "0.9.1 (2016-06-18)";
     }
 
     public void configure(PlugInContext context) throws Exception {
@@ -82,7 +85,7 @@ public class TopologyExtension extends Extension {
         new CoverageOverlapFinderPlugIn().initialize(context);
         new CloseVertexFinderPlugIn().initialize(context);
         //new OffsetBoundaryCornerFinderPlugIn().initialize(context);        
-        new RemoveMicroSegmentsPlugIn().initialize(context);
+        //new RemoveMicroSegmentsPlugIn().initialize(context);
         new NetworkTopologyCleaningPlugIn().initialize(context);
         new ProjectPointsOnLinesPlugIn().initialize(context);
         new CoverageCleanerPlugIn().initialize(context);

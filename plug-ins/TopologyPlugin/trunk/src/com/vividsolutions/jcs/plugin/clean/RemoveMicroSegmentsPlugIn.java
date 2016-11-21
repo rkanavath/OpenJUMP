@@ -33,7 +33,6 @@
 package com.vividsolutions.jcs.plugin.clean;
 
 import com.vividsolutions.jcs.conflate.coverage.MicroSegmentRemover;
-//import com.vividsolutions.jcs.plugin.I18NPlug;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -48,16 +47,20 @@ import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
 
-//import com.vividsolutions.jump.I18N;
 import fr.michaelm.jump.plugin.topology.I18NPlug;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.swing.JComboBox;
 
+/**
+ * Plugin to remove smallest segments of a geometry.
+ * @deprecated replaced and improved in
+ * com.vividsolutions.jump.workbench.ui.plugin.analysis.RemoveSmallSegments
+ * added to the core library in November 2016
+ */
+@Deprecated
 public class RemoveMicroSegmentsPlugIn extends ThreadedBasePlugIn {
 
-    private static String TOPOLOGY;
     private static String LAYER;
     private static String TOLERANCE;
     private static String WORK_ON_COPY;
@@ -80,9 +83,9 @@ public class RemoveMicroSegmentsPlugIn extends ThreadedBasePlugIn {
     }
 
     public void initialize(PlugInContext context) throws Exception {
-        TOPOLOGY = I18NPlug.getI18N("Topology");
-        context.getFeatureInstaller().addMainMenuItem(
-            this, new String[]{MenuNames.PLUGINS, TOPOLOGY},
+        String topology = I18NPlug.getI18N("Topology");
+        context.getFeatureInstaller().addMainMenuPlugin(
+            this, new String[]{MenuNames.PLUGINS, topology},
             I18NPlug.getI18N("qa.RemoveMicroSegmentsPlugIn.remove-micro-segments") + "...",
             false, null, new MultiEnableCheck()
                 .add(context.getCheckFactory().createTaskWindowMustBeActiveCheck())
@@ -98,14 +101,13 @@ public class RemoveMicroSegmentsPlugIn extends ThreadedBasePlugIn {
             context.getWorkbenchFrame(),
             I18NPlug.getI18N("qa.RemoveMicroSegmentsPlugIn.remove-micro-segments"),
             true);
-        //setDialogValues(dialog, context);
-        
+
         dialog.setSideBarDescription(
           I18NPlug.getI18N("qa.RemoveMicroSegmentsPlugIn.description")
         );
         
         String fieldName = LAYER;
-        JComboBox addLayerComboBox = dialog.addLayerComboBox(fieldName, context.getCandidateLayer(0), null, context.getLayerManager());
+        dialog.addLayerComboBox(fieldName, context.getCandidateLayer(0), null, context.getLayerManager());
         
         dialog.addDoubleField(TOLERANCE, tolerance, 8, I18NPlug.getI18N("dist-tolerance"));
         dialog.addCheckBox(WORK_ON_COPY, workOnCopy, I18NPlug.getI18N("work-on-copy"));
@@ -148,7 +150,7 @@ public class RemoveMicroSegmentsPlugIn extends ThreadedBasePlugIn {
                 monitor.report(count, layer.getFeatureCollectionWrapper().size(), I18NPlug.getI18N("features"));
             }
             if (workOnCopy) {
-                Feature nf = (Feature)f.clone();
+                Feature nf = f.clone(true);
                 nf.setGeometry(msr.getResultingGeometry());
                 newDataset.add(nf);
             }
@@ -169,78 +171,5 @@ public class RemoveMicroSegmentsPlugIn extends ThreadedBasePlugIn {
                          newDataset);
         }
     }
-
-    /*
-    private void createLayers(PlugInContext context, CoverageCleaner cleaner)
-                                                              throws Exception {
-        context.addLayer(
-            StandardCategoryNames.RESULT_SUBJECT,
-            layer.getName(),
-            cleaner.getUpdatedFeatures());
-
-        FeatureCollection adjustedFC = cleaner.getAdjustedFeatures();
-        Layer lyr = context.addLayer(
-            StandardCategoryNames.QA,
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.adjusted") + "-" + layer.getName(),
-            adjustedFC);
-        lyr.setDescription(
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.adjusted-features-for") +
-            " " + layer.getName() + " (" +
-            I18NPlug.getI18N("dist-tolerance") + " = " + param.distanceTolerance + ")");
-
-        FeatureCollection adjustmentIndFC = cleaner.getAdjustmentIndicators();
-        Layer lyr2 = context.addLayer(
-            StandardCategoryNames.QA,
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.adjustements") + "-" + layer.getName(),
-            adjustmentIndFC);
-        LayerStyleUtil.setLinearStyle(lyr2, Color.blue, 2, 4);
-        lyr2.fireAppearanceChanged();
-        lyr2.setDescription(
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.adjustement-size-indicator-for") + " " +
-            layer.getName() + " (" +
-            I18NPlug.getI18N("dist-tolerance") + " = " + param.distanceTolerance + ")");
-
-        createOutput(context, adjustedFC, adjustmentIndFC);
-
-    }
-
-    private void createOutput(PlugInContext context,
-                              FeatureCollection adjustedFC,
-                              FeatureCollection adjustmentIndFC) {
-        context.getOutputFrame().createNewDocument();
-        context.getOutputFrame().addHeader(1,
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.coverage-cleaner"));
-        context.getOutputFrame().addField(I18NPlug.getI18N("layer") + ": ", layer.getName() );
-        context.getOutputFrame().addField(I18NPlug.getI18N("dist-tolerance") + ": ", "" + param.distanceTolerance);
-        context.getOutputFrame().addField(I18NPlug.getI18N("angle-tolerance") + ": ", "" + param.angleTolerance);
-        
-        context.getOutputFrame().addHeader(2,
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.adjustements"));
-        context.getOutputFrame().addField(
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.number-of-features-adjusted"), "" + adjustedFC.size());
-        context.getOutputFrame().addField(
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.number-of-vertices-adjusted"), "" + adjustmentIndFC.size());
-        
-        double[] minMax = FeatureStatistics.minMaxValue(adjustmentIndFC, "LENGTH");
-        context.getOutputFrame().addField(
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.min-adjustment-size"), "" + minMax[0]);
-        context.getOutputFrame().addField(
-            I18NPlug.getI18N("qa.CoverageCleanerPlugIn.max-adjustment-size"), "" + minMax[1]);
-    }
-
-    private void setDialogValues(MultiInputDialog dialog, PlugInContext context) {
-      dialog.setSideBarDescription(
-          I18NPlug.getI18N("qa.CoverageCleanerPlugIn.description")
-      );
-      String fieldName = LAYER;
-      JComboBox addLayerComboBox = dialog.addLayerComboBox(fieldName, context.getCandidateLayer(0), null, context.getLayerManager());
-      dialog.addDoubleField(DIST_TOL, param.distanceTolerance, 8,
-          I18NPlug.getI18N("qa.CoverageCleanerPlugIn.dist-tolerance-definition"));
-      dialog.addDoubleField(ANGLE_TOL, param.angleTolerance, 4,
-          I18NPlug.getI18N("qa.CoverageCleanerPlugIn.angle-tolerance-definition"));
-      dialog.addCheckBox(USE_FENCE, false,
-          I18NPlug.getI18N("qa.CoverageCleanerPlugIn.process-segments-in-fence-only"));
-    }
-    */
 
 }
