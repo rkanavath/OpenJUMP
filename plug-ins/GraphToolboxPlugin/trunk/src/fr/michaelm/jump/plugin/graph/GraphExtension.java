@@ -35,8 +35,9 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
  * <li>CycleFinderPlugIn : computes a graph from a linear network and find base cycles</li>
  * </ul>
  * @author Micha&euml;l Michaud
- * @version 0.3.0 (2016-10-23)
+ * @version 0.3.1 (2016-11-24)
  */
+//version 0.3.1 (2016-11-24) fix a severe regression on StrahlerNumberPlugIn
 //version 0.3.0 (2016-10-23) upgrade jgrapht to 0.9, add SkeletonPlugIn
 //version 0.2.0 (2014-07-15) add Strahler number computation on hydrographic networks
 //version 0.1.4 (2013-01-15) fix CycleFinding (did not always find cycle with duplicate lines) 
@@ -51,7 +52,7 @@ public class GraphExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.3.0 (2016-10-15)";
+        return "0.3.1 (2016-11-24)";
     }
 
     public void configure(PlugInContext context) throws Exception {

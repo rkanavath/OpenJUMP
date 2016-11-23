@@ -28,6 +28,7 @@ import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.event.EdgeTraversalEvent;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.DirectedWeightedPseudograph;
 import org.jgrapht.graph.WeightedPseudograph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
@@ -106,8 +107,8 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
             bf.setGeometry((Geometry)f.getGeometry().clone());
             resultFC.add(bf);
         }
-        DirectedWeightedMultigraph<INode,FeatureAsEdge> graph = (DirectedWeightedMultigraph)GraphFactory
-                .createDirectedGraph(resultFC.getFeatures(), false);
+        DirectedWeightedPseudograph<INode,FeatureAsEdge> graph = (DirectedWeightedPseudograph)GraphFactory
+                .createDirectedPseudograph(resultFC.getFeatures(), false);
         //HTMLFrame htmlFrame = context.getOutputFrame();
         //htmlFrame.createNewDocument();
         Map<Integer,Set<Integer>> ancestorMap = new HashMap<Integer,Set<Integer>>();
@@ -124,7 +125,7 @@ public class StrahlerNumberPlugIn extends ThreadedBasePlugIn {
         resultLayer.addStyle(getColorThemingStyle());
     }
 
-    private void computeStreamOrder(DirectedWeightedMultigraph<INode,FeatureAsEdge> graph,
+    private void computeStreamOrder(DirectedWeightedPseudograph<INode,FeatureAsEdge> graph,
                                     FeatureAsEdge arc, Map<Integer,Set<Integer>> ancestorMap) {
         Set<Integer> ancestors = ancestorMap.get(arc.getID());
         if (ancestors == null) {
