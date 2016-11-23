@@ -53,7 +53,9 @@ public class GraphFactory {
     }
     
    /**
-    * Create a directed graph from a collection of features
+    * Create a directed graph from a collection of features.
+    * Creates a non simple directed graph where no loops are permitted,
+    * but multiple edges between any two vertices are.
     * @param features a collection of features.
     * @param dim3 true means that nodes are evaluated equals when x,y,z are equals
     * @return a WeightedMultigraph or a DirectedWeightedMultigraph
@@ -61,6 +63,19 @@ public class GraphFactory {
     public static WeightedGraph<INode,FeatureAsEdge>
         createDirectedGraph(Collection features, boolean dim3) {
         WeightedGraph<INode,FeatureAsEdge> graph = new DirectedWeightedMultigraph(FeatureAsEdge.class);
+        return add(graph, features, dim3);
+    }
+
+    /**
+     * Create a directed pseudo-graph from a collection of features
+     * Creates a non-simple directed graph in which both graph loops and multiple edges are permitted.
+     * @param features a collection of features.
+     * @param dim3 true means that nodes are evaluated equals when x,y,z are equals
+     * @return a WeightedMultigraph or a DirectedWeightedMultigraph
+     */
+    public static WeightedGraph<INode,FeatureAsEdge>
+    createDirectedPseudograph(Collection features, boolean dim3) {
+        WeightedGraph<INode,FeatureAsEdge> graph = new DirectedWeightedPseudograph(FeatureAsEdge.class);
         return add(graph, features, dim3);
     }
     
