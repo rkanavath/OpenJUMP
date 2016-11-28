@@ -22,7 +22,7 @@ public class SextanteDataExplorerPlugin implements PlugIn {
     public ImageIcon getIcon() {
 
         return new ImageIcon(SextanteGUI.class.getClassLoader().getResource(
-                "images/layers.gif"));
+                "images/documenter.gif"));
 
     }
 

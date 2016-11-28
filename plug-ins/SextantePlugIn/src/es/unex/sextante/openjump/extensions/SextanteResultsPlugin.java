@@ -12,44 +12,54 @@ import es.unex.sextante.gui.additionalResults.AdditionalResults;
 import es.unex.sextante.gui.core.SextanteGUI;
 import es.unex.sextante.openjump.language.I18NPlug;
 
-public class SextanteResultsPlugin
-         extends
-            AbstractUiPlugIn {
+public class SextanteResultsPlugin extends AbstractUiPlugIn {
 
-   @Override
-   public boolean execute(final PlugInContext context) throws Exception {
+    public String NO_RESULTS = I18NPlug
+            .getI18N("es.unex.sextante.kosmo.extensions.SextanteResultsPlugin.Results.no_results");
 
-      final ArrayList results = AdditionalResults.getComponents();
-      if (results.size() != 0) {
-         SextanteGUI.getGUIFactory().showAdditionalResultsDialog(results);
-      }
+    @Override
+    public boolean execute(final PlugInContext context) throws Exception {
 
-      return true;
+        final ArrayList<?> results = AdditionalResults.getComponents();
+        if (results.size() != 0) {
+            SextanteGUI.getGUIFactory().showAdditionalResultsDialog(results);
+        }
 
-   }
+        // else {
+        // JOptionPane.showMessageDialog(null, NO_RESULTS,
+        // Sextante.getText("Warning"), JOptionPane.WARNING_MESSAGE);
+        // }
 
+        return true;
 
-   @Override
-   public String getName() {//Giuseppe Aruta - PlugIn Internationalized 2013_05_25//
+    }
 
-     return   I18NPlug.getI18N("es.unex.sextante.kosmo.extensions.SextanteResultsPlugin.Results");
+    @Override
+    public String getName() {// Giuseppe Aruta - PlugIn Internationalized
+                             // 2013_05_25//
 
-   }
+        return I18NPlug
+                .getI18N("es.unex.sextante.kosmo.extensions.SextanteResultsPlugin.Results");
 
+    }
 
-   @Override
-   public ImageIcon getIcon() {
+    public ImageIcon getIcon() {
 
-      return new ImageIcon(SextanteGUI.class.getClassLoader().getResource("images/grass.png"));
+        return new ImageIcon(SextanteGUI.class.getClassLoader().getResource(
+                "images/chart.gif"));
 
-   }
+    }
 
+    /*
+     * public ImageIcon getIcon() { return new
+     * ImageIcon(getClass().getResource("reports.png")); }
+     */
 
-   @Override
-   public void initialize(final PlugInContext context) throws Exception {
+    public void initialize(final PlugInContext context) throws Exception {
 
-	   context.getFeatureInstaller().addMainMenuPlugin(this, new String[] { "Sextante" }, getName(), false,  getIcon(), null); 
+        context.getFeatureInstaller().addMainMenuPlugin(this,
+                new String[] { "Sextante" }, getName(), false, getIcon(), null);
 
-   }
+    }
 
 }

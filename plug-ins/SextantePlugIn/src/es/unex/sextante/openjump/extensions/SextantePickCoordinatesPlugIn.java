@@ -37,7 +37,7 @@ public class SextantePickCoordinatesPlugIn extends AbstractPlugIn {
     }
 
     public ImageIcon getIcon() {
-        return new ImageIcon(getClass().getResource("pick_coordinates.png"));
+        return new ImageIcon(getClass().getResource("bullseye.png"));
     }
 
     @Override

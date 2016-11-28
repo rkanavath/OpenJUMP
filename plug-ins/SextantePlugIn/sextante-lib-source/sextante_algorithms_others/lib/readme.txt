@@ -1,1 +1,0 @@
-See libs into sextante_algorithms/lib folder

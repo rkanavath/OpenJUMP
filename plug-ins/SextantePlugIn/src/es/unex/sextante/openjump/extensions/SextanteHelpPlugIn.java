@@ -2,16 +2,16 @@ package es.unex.sextante.openjump.extensions;
 
 import javax.swing.ImageIcon;
 
-import org.openjump.core.ui.plugin.sextante.dialog.SextanteHelpDialog;
-
 import com.vividsolutions.jump.task.TaskMonitor;
-import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import com.vividsolutions.jump.workbench.plugin.ThreadedPlugIn;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
+import es.unex.sextante.gui.core.SextanteGUI;
+import es.unex.sextante.gui.help.SextanteHelpWindow;
 import es.unex.sextante.openjump.language.I18NPlug;
 
-public class SextanteHelpPlugIn implements PlugIn {
+public class SextanteHelpPlugIn implements ThreadedPlugIn {
     public static final ImageIcon ICON = IconLoader
             .icon("information_16x16.png");
 
@@ -32,11 +32,39 @@ public class SextanteHelpPlugIn implements PlugIn {
 
     }
 
-    public boolean execute(PlugInContext context) throws Exception {
+    public void execute(String actionCommand) {
+        if (actionCommand.compareTo("ACTION_PROCESSING_SEXTANTE_HELP") == 0) {
+            SextanteGUI.getGUIFactory().showHelpWindow();
+        }
+    }
 
-        SextanteHelpDialog.createAndShowGUI(context);
+    public boolean execute(PlugInContext context) throws Exception {
+        final SextanteHelpWindow window = new SextanteHelpWindow();
+        // window.setExtendedState(window.getExtendedState()
+        // | JFrame.MAXIMIZED_BOTH);
+
+        window.pack();
+        window.setAlwaysOnTop(true);
+        window.setVisible(true);
+
+        // SextanteGUI.getGUIFactory().showHelpWindow();
 
         return true;
+    }
+
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public boolean isVisible() {
+        return true;
+    }
+
+    public ImageIcon getIcon() {
+
+        return new ImageIcon(SextanteGUI.class.getClassLoader().getResource(
+                "images/info.gif"));
+
     }
 
 }

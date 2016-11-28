@@ -2,6 +2,7 @@ package es.unex.sextante.openjump.extensions;
 
 import java.awt.BasicStroke;
 import java.awt.Cursor;
+import java.awt.event.MouseEvent;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
@@ -36,7 +37,7 @@ public class SextantePickCoordinatesTool extends NClickTool {
      *
      **/
     PlugInContext context;
-    public static final String LAYER_NAME = I18NPlug
+    public static final String NAME = I18NPlug
             .getI18N("es.unex.sextante.kosmo.extensions.SextantePickCooridnates.pick-coordinates");
 
     public SextantePickCoordinatesTool(PlugInContext context) {
@@ -54,7 +55,7 @@ public class SextantePickCoordinatesTool extends NClickTool {
 
     @Override
     public Icon getIcon() {
-        return new ImageIcon(getClass().getResource("pick_coordinates.png"));
+        return new ImageIcon(getClass().getResource("bullseye.png"));
     }
 
     public Cursor getCursor() {
@@ -71,14 +72,32 @@ public class SextantePickCoordinatesTool extends NClickTool {
         String sPointName = JOptionPane.showInputDialog(
                 panel,
                 "X: " + Double.toString(wcPoint.getX()) + "\n" + "Y: "
-                        + Double.toString(wcPoint.getY()) + "\n"
-                        + Sextante.getText("point_selector"),
-                Sextante.getText("New point"));
+                        + Double.toString(wcPoint.getY()) + "\n" + NAME + ":",
+                "[" + Sextante.getText("Name") + "]");
 
         if (sPointName != null) {
             NamedPoint namedPoint = new NamedPoint(sPointName, wcPoint);
             SextanteGUI.getGUIFactory().getCoordinatesList().add(namedPoint);
         }
+
+    }
+
+    public void mouseMoved(MouseEvent me) {
+
+        String text = "";
+
+        try {
+            Coordinate coordinate = getPanel().getViewport().toModelCoordinate(
+                    me.getPoint());
+
+            text = Sextante.getText("Coordinate") + "= X: " + coordinate.x
+                    + "   Y: " + coordinate.y;
+
+        } catch (Exception ex) {
+            text = "???";
+        }
+
+        getPanel().getContext().setStatusMessage(text);
 
     }
 }
