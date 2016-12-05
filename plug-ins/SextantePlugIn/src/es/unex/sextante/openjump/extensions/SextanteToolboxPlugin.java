@@ -17,6 +17,7 @@ import es.unex.sextante.openjump.core.OpenJUMPOutputFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPGUIFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPInputFactory;
 import es.unex.sextante.openjump.gui.OpenJUMPPostProcessTaskFactory;
+import es.unex.sextante.openjump.init.OJSextanteApiInitialiser;
 import es.unex.sextante.openjump.language.I18NPlug;
 
 public class SextanteToolboxPlugin implements PlugIn {
@@ -49,12 +50,11 @@ public class SextanteToolboxPlugin implements PlugIn {
     }
 
     public void initialize(PlugInContext context) throws Exception {
+        System.out.println("starting Sextante initialization >>");
         // [Giuseppe Aruta] This part activates GRASS/SAGA/R panels on Setting
         // Frame
         // Those part of Sextante has not been implemented in OpenJUMP so it is
         // deactivated for now
-        //
-        //
         // HashMap<String, String> map = new HashMap();
         // map.put("isFirstTimeUsingSextante" + Sextante.getVersionNumber(),
         // Boolean.FALSE.toString());
@@ -65,37 +65,80 @@ public class SextanteToolboxPlugin implements PlugIn {
         // SextanteGUI.addAlgorithmProvider(new RAlgorithmProvider());
         // map.put("RActivate", Boolean.TRUE.toString());
         // SextanteGUI.setCustomDefaultSettings(map);
-        Sextante.initialize(getJarsFolder());
-        SextanteGUI.setSextantePath(getJarsFolder());
-        SextanteGUI.initialize(getJarsFolder());
-        SextanteGUI.setMainFrame(context.getWorkbenchFrame());
-        SextanteGUI.setOutputFactory(new OpenJUMPOutputFactory(context
-                .getWorkbenchContext()));
-        SextanteGUI.setGUIFactory(new OpenJUMPGUIFactory());
-        SextanteGUI.setInputFactory(new OpenJUMPInputFactory(context
-                .getWorkbenchContext()));
-        SextanteGUI
-                .setPostProcessTaskFactory(new OpenJUMPPostProcessTaskFactory());
+        try {
+            Sextante.initialize(jarsFolder());
+            SextanteGUI.setSextantePath(jarsFolder());
+            SextanteGUI.initialize(jarsFolder());
+            SextanteGUI.setMainFrame(context.getWorkbenchFrame());
+            SextanteGUI.setOutputFactory(new OpenJUMPOutputFactory(context
+                    .getWorkbenchContext()));
+            SextanteGUI.setGUIFactory(new OpenJUMPGUIFactory());
+            SextanteGUI.setInputFactory(new OpenJUMPInputFactory(context
+                    .getWorkbenchContext()));
+            SextanteGUI
+                    .setPostProcessTaskFactory(new OpenJUMPPostProcessTaskFactory());
+            OJSextanteApiInitialiser.isInitialized = true;
+            context.getFeatureInstaller().addMainMenuPlugin(this,
+                    new String[] { "Sextante" }, getName(), false, getIcon(),
+                    null);
+        } catch (Exception e) {// this is most likely thrown while Debugging
+            // with the eclipse IDE.
+            System.out.println("Sextante not initialized!");
+            System.out
+                    .println("Check for problems with Sextante initialization, path for libs and resources: "
+                            + jarsFolder());
+            System.out.println("Check if image 'terminal.png' exist");
+            System.out.println("Check also for Sextante help classes path: "
+                    + jarsFolder() + "/help");
+            System.out.println("=> Will do 2nd try with OJ-IDE-Dev settings: ");
 
-        LOGGER.info(I18NPlug
-                .getI18N("es.unex.sextante.kosmo.extensions.SextanteToolboxPlugin.Help-files-placed-on")
-                + ": " + SextanteGUI.getSextantePath() + "/help");
-
-        context.getFeatureInstaller().addMainMenuPlugin(this,
-                new String[] { "Sextante" }, getName(), false, getIcon(), null);
-
+            // == do a second trial ==
+            String idePath = System.getProperty("user.dir")
+                    .concat(File.separator).concat("lib")
+                    .concat(File.separator).concat("plus")
+                    .concat(File.separator).concat("sextante");
+            SextanteGUI.setSextantePath(idePath);
+            System.out.println("=> looking for algorithms and image in: "
+                    + idePath);
+            try {
+                Sextante.initialize(idePath);
+                SextanteGUI.setSextantePath(idePath);
+                SextanteGUI.initialize(idePath);
+                SextanteGUI.setMainFrame(context.getWorkbenchFrame());
+                SextanteGUI.setOutputFactory(new OpenJUMPOutputFactory(context
+                        .getWorkbenchContext()));
+                SextanteGUI.setGUIFactory(new OpenJUMPGUIFactory());
+                SextanteGUI.setInputFactory(new OpenJUMPInputFactory(context
+                        .getWorkbenchContext()));
+                SextanteGUI
+                        .setPostProcessTaskFactory(new OpenJUMPPostProcessTaskFactory());
+                OJSextanteApiInitialiser.isInitialized = true;
+                context.getFeatureInstaller().addMainMenuPlugin(this,
+                        new String[] { "Sextante" }, getName(), false,
+                        getIcon(), null);
+            } catch (Exception e1) {// this is most likely thrown while
+                // Debugging with the eclipse IDE.
+                System.out
+                        .println("No success with Sextante initialization - printing error log:");
+                e1.printStackTrace();
+            }
+        }
     }
 
-    private String getJarsFolder() {
-
+    private String jarsFolder() {
         final String sPath = System.getProperty("user.dir")
                 .concat(File.separator).concat("lib").concat(File.separator)
                 .concat("ext").concat(File.separator).concat("sextante");
-
-        LOGGER.info("Sextante jar folder: " + sPath);
-
         return sPath;
 
+    }
+
+    private String ideJarsFolder() {
+        final String sPath = System.getProperty("user.dir")
+                .concat(File.separator).concat("lib").concat(File.separator)
+                .concat("plus").concat(File.separator).concat("sextante");
+
+        return sPath;
     }
 
     private static final Logger LOGGER = Logger
