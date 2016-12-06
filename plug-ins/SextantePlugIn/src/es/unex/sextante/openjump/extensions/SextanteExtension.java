@@ -31,7 +31,7 @@ public class SextanteExtension extends Extension {
      */
 
     private static final String NAME = "Sextante 1.0";
-    private static final String VERSION = "OpenJUMP binding 2016-11-28";
+    private static final String VERSION = "OpenJUMP binding 2016-12-06";
 
     public String getName() {
         return NAME;

@@ -2,13 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-20161124-r5221-PLUS/lib/jai_codec-1.1.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-20161124-r5221-PLUS/lib/jai_core-1.1.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-20161124-r5221-PLUS/lib/jts-core-1.14.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-20161124-r5221-PLUS/lib/jts-io-1.14.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-20161124-r5221-PLUS/lib/OpenJUMP-1.9.1-r4840-nosrc.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-20161124-r5221-PLUS/lib/ext/sextante/sextante_gui.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-20161124-r5221-PLUS/lib/ext/sextante/sextante.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenJUMP_libraries"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-Portable-20161128-r5230-PLUS/OpenJUMP-20161128-r5230-PLUS/lib/ext/sextante/sextante.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-Portable-20161128-r5230-PLUS/OpenJUMP-20161128-r5230-PLUS/lib/ext/sextante/sextante_gui.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-Portable-20161128-r5230-PLUS/OpenJUMP-20161128-r5230-PLUS/lib/jai_codec-1.1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-Portable-20161128-r5230-PLUS/OpenJUMP-20161128-r5230-PLUS/lib/jai_core-1.1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-Portable-20161128-r5230-PLUS/OpenJUMP-20161128-r5230-PLUS/lib/jts-core-1.14.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-Portable-20161128-r5230-PLUS/OpenJUMP-20161128-r5230-PLUS/lib/jts-io-1.14.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Beppe/Desktop/OpenJUM/OpenJUMP-Portable-20161128-r5230-PLUS/OpenJUMP-20161128-r5230-PLUS/lib/OpenJUMP-20161128-r5230-nolang.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
