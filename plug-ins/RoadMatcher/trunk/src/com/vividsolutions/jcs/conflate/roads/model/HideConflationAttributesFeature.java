@@ -83,7 +83,7 @@ public class HideConflationAttributesFeature implements Feature, Serializable {
 		return schema;
 	}
 
-	public Object clone() {
+	public Feature clone() {
 		throw new UnsupportedOperationException();
 	}
 

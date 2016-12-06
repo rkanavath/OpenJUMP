@@ -13,13 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-
 import com.vividsolutions.jts.util.Assert;
 import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.util.java2xml.XML2Java;
 import com.vividsolutions.jump.util.java2xml.XMLBinder;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 
 public class FUTURE_XML2Java extends XML2Java {
 	private interface Block {

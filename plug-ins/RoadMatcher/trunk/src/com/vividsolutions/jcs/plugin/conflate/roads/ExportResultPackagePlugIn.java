@@ -12,7 +12,7 @@ import com.vividsolutions.jcs.conflate.roads.model.SourceFeature;
 import com.vividsolutions.jcs.conflate.roads.vertextransfer.VertexTransferStatistics;
 import com.vividsolutions.jcs.jump.FUTURE_CollectionUtil;
 import com.vividsolutions.jcs.jump.FUTURE_FileUtil;
-import com.vividsolutions.jcs.jump.FUTURE_StandardReaderWriterFileDataSource;
+//import com.vividsolutions.jcs.jump.FUTURE_StandardReaderWriterFileDataSource;
 import com.vividsolutions.jcs.plugin.issuelog.IssueLog;
 import com.vividsolutions.jump.feature.FeatureCollection;
 import com.vividsolutions.jump.feature.FeatureDataset;

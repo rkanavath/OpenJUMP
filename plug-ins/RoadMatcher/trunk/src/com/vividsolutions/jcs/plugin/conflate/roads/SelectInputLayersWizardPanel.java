@@ -370,7 +370,7 @@ public class SelectInputLayersWizardPanel extends FUTURE_AbstractWizardPanel {
 	}
 
 	public String getInstructions() {
-		return "Choose the two input layers to conflate.\n\nThe Reference Dataset choice is only used when a Match Precedence Rule of “Reference Dataset” is selected.";
+		return "Choose the two input layers to conflate.\n\nThe Reference Dataset choice is only used when a Match Precedence Rule of Reference Dataset is selected.";
 	}
 
 	public boolean isInputValid() {

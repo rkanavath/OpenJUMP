@@ -183,7 +183,7 @@ public class ResultPackageSourceFeatureCollection implements FeatureCollection {
 			return featureSchema;
 		}
 
-		public Object clone() {
+		public Feature clone() {
 			throw new UnsupportedOperationException();
 		}
 

@@ -21,13 +21,13 @@ public class Transaction {
 
 	private LayerManager layerManager;
 
-	private CollectionMap networkToAddedRoadSegmentsMap = new CollectionMap(
+	private CollectionMap<RoadNetwork,RoadSegment> networkToAddedRoadSegmentsMap = new CollectionMap<>(
 			HashMap.class, HashSet.class);
 
-	private CollectionMap networkToModifiedRoadSegmentsMap = new CollectionMap(
+	private CollectionMap<RoadNetwork,RoadSegment> networkToModifiedRoadSegmentsMap = new CollectionMap<>(
 			HashMap.class, HashSet.class);
 
-	private CollectionMap networkToRemovedRoadSegmentsMap = new CollectionMap(
+	private CollectionMap<RoadNetwork,RoadSegment> networkToRemovedRoadSegmentsMap = new CollectionMap<>(
 			HashMap.class, HashSet.class);
 
 	private List operations = new ArrayList();
@@ -274,7 +274,7 @@ public class Transaction {
 
 	private Collection updateResultStates() {
 		return updateAffectedSegments(CollectionUtil.concatenate(Arrays
-				.asList(new Collection[] {
+				.asList(
 						CollectionUtil
 								.concatenate(networkToAddedRoadSegmentsMap
 										.values()),
@@ -283,7 +283,7 @@ public class Transaction {
 										.values()),
 						CollectionUtil
 								.concatenate(networkToModifiedRoadSegmentsMap
-										.values()) })), toolboxModel
+										.values()) )), toolboxModel
 				.getSession(), monitor);
 	}
 

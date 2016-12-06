@@ -35,7 +35,6 @@
 package com.vividsolutions.jcs.conflate.boundarymatch;
 
 import com.vividsolutions.jump.feature.Feature;
-import com.vividsolutions.jump.util.CoordinateArrays;
 import com.vividsolutions.jts.algorithm.RobustCGAlgorithms;
 import com.vividsolutions.jts.geom.*;
 import java.util.*;
@@ -139,12 +138,12 @@ public class BoundaryFeature {
   public List getAdjustedVertexIndicators()
   {
     MatchedShell ms = getMatchedShell();
-    List coordArrays = null;
+    List<Coordinate[]> coordArrays = null;
     coordArrays = ms.computeAdjustedVertexIndicators();
 
     Geometry g = (Geometry) feature.getGeometry();
     GeometryFactory fact = new GeometryFactory(g.getPrecisionModel(), g.getSRID());
-    return CoordinateArrays.fromCoordinateArrays(coordArrays, fact);
+    return com.vividsolutions.jump.util.CoordinateArrays.fromCoordinateArrays(coordArrays, fact);
   }
 
   public List getAdjustedEdgeIndicators()
@@ -155,7 +154,7 @@ public class BoundaryFeature {
 
     Geometry g = (Geometry) feature.getGeometry();
     GeometryFactory fact = new GeometryFactory(g.getPrecisionModel(), g.getSRID());
-    return CoordinateArrays.fromCoordinateArrays(coordArrays, fact);
+    return com.vividsolutions.jump.util.CoordinateArrays.fromCoordinateArrays(coordArrays, fact);
   }
 
   public boolean isAdjusted()
@@ -223,7 +222,7 @@ public class BoundaryFeature {
     shellPts = (Coordinate[]) coord.clone();
     RobustCGAlgorithms cga = new RobustCGAlgorithms();
     if (cga.isCCW(shellPts)) {
-      CoordinateArrays.reverse(shellPts);
+      com.vividsolutions.jts.geom.CoordinateArrays.reverse(shellPts);
     }
   }
 
@@ -232,7 +231,6 @@ public class BoundaryFeature {
    * it with all neighbour features.  (If a neighbour feature
    * is flagged as overlapping, however, it is skipped)
    *
-   * @param sm the SegmentMatcher used to check for matches
    */
   public void computeVertexMatches(double distanceTolerance) {
     MatchedShell shell = getMatchedShell();

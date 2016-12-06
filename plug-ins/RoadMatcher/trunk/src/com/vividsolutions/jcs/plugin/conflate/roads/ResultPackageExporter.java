@@ -13,7 +13,7 @@ import com.vividsolutions.jcs.conflate.roads.vertextransfer.VertexTransferStatis
 import com.vividsolutions.jcs.jump.FUTURE_CollectionUtil;
 import com.vividsolutions.jcs.jump.FUTURE_FeatureCollectionUtil;
 import com.vividsolutions.jcs.jump.FUTURE_FileUtil;
-import com.vividsolutions.jcs.jump.FUTURE_StandardReaderWriterFileDataSource;
+//import com.vividsolutions.jcs.jump.FUTURE_StandardReaderWriterFileDataSource;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jump.feature.Feature;
@@ -23,6 +23,7 @@ import com.vividsolutions.jump.feature.FeatureDataset;
 import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.io.datasource.Connection;
 import com.vividsolutions.jump.io.datasource.DataSource;
+import com.vividsolutions.jump.io.datasource.StandardReaderWriterFileDataSource;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.util.Block;
 import com.vividsolutions.jump.util.CollectionUtil;
@@ -50,9 +51,10 @@ public class ResultPackageExporter {
 
 	private void saveShapefile(FeatureCollection featureCollection, File file,
 			TaskMonitor monitor) throws Exception {
-		DataSource dataSource = new FUTURE_StandardReaderWriterFileDataSource.Shapefile();
+		//DataSource dataSource = new FUTURE_StandardReaderWriterFileDataSource.Shapefile();
+		DataSource dataSource = new StandardReaderWriterFileDataSource.Shapefile();
 		dataSource.setProperties(Collections.singletonMap(DataSource.FILE_KEY,
-				file.getPath()));
+				(Object)file.getPath()));
 		final FeatureSchema schema = uppercaseSchema(featureCollection
 				.getFeatureSchema());
 		Connection connection = dataSource.getConnection();

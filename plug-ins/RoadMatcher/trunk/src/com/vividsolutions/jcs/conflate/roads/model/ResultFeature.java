@@ -67,7 +67,7 @@ public class ResultFeature implements Feature {
         return (FUTURE_AttributeMapping.CombinedSchema) roadSegment
                 .getNetwork().getFeatureCollection().getFeatureSchema();
     }
-    public Object clone() {
+    public Feature clone() {
         return clone(true);
     }
     public Object[] getAttributes() {

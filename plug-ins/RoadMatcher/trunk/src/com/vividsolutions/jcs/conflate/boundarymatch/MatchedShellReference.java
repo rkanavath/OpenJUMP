@@ -34,9 +34,6 @@
 
 package com.vividsolutions.jcs.conflate.boundarymatch;
 
-import com.vividsolutions.jump.geom.CoordinateList;
-import com.vividsolutions.jts.util.Assert;
-import com.vividsolutions.jump.util.CoordinateArrays;
 import com.vividsolutions.jts.geom.*;
 import java.util.*;
 

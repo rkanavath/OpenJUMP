@@ -22,19 +22,19 @@ public class FUTURE_StandardReaderWriterFileDataSource {
             this.extensions = extensions;
         }
     }
-    public static class Shapefile extends ClassicReaderWriterFileDataSource {
-        public Shapefile() {
-            super(new ShapefileReader(), new ShapefileWriter() {
-                public GeometryCollection makeSHAPEGeometryCollection(
-                        FeatureCollection fc) throws Exception {
-                    //Avoid "Could not determine shapefile type - data is
-                    //either all GeometryCollections or empty" exception
-                    //[Jon Aquino 2004-05-04]
-                    return fc.isEmpty() ? new GeometryFactory()
-                            .createGeometryCollection(new Geometry[]{}) : super
-                            .makeSHAPEGeometryCollection(fc);
-                }
-            }, new String[]{"shp"});
-        }
-    }
+    //public static class Shapefile extends ClassicReaderWriterFileDataSource {
+    //    public Shapefile() {
+    //        super(new ShapefileReader(), new ShapefileWriter() {
+    //            public GeometryCollection makeSHAPEGeometryCollection(
+    //                    FeatureCollection fc) throws Exception {
+    //                //Avoid "Could not determine shapefile type - data is
+    //                //either all GeometryCollections or empty" exception
+    //                //[Jon Aquino 2004-05-04]
+    //                return fc.isEmpty() ? new GeometryFactory()
+    //                        .createGeometryCollection(new Geometry[]{}) : super
+    //                        .makeSHAPEGeometryCollection(fc);
+    //            }
+    //        }, new String[]{"shp"});
+    //    }
+    //}
 }

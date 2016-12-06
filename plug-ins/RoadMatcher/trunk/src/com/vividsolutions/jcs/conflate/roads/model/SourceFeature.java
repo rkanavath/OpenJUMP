@@ -58,7 +58,7 @@ public class SourceFeature implements Feature, Serializable {
 		this.roadSegment = roadSegment;
 	}
 
-	public Object clone() {
+	public Feature clone() {
 		return clone(true);
 	}
 

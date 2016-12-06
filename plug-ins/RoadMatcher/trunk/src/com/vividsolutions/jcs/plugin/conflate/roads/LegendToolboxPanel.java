@@ -20,12 +20,12 @@ import com.vividsolutions.jump.io.WKTReader;
 import com.vividsolutions.jump.task.DummyTaskMonitor;
 import com.vividsolutions.jump.util.Blackboard;
 import com.vividsolutions.jump.util.StringUtil;
+import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.model.LayerManagerProxy;
-import com.vividsolutions.jump.workbench.ui.ErrorHandler;
-import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
-import com.vividsolutions.jump.workbench.ui.LayerViewPanelContext;
+import com.vividsolutions.jump.workbench.ui.*;
+
 import javax.swing.*;
 
 public class LegendToolboxPanel extends JPanel {
@@ -661,12 +661,30 @@ public class LegendToolboxPanel extends JPanel {
 						return blackboard;
 					}
 
-					public ErrorHandler getErrorHandler() {
-						return new ErrorHandler() {
+					public ErrorHandlerV2 getErrorHandler() {
+						return new ErrorHandlerV2() {
 							public void handleThrowable(Throwable t) {
 								t.printStackTrace(System.err);
 							}
+							public void handleThrowable(Throwable t, Component c) {
+								t.printStackTrace(System.err);
+							}
 						};
+					}
+
+					public LayerNamePanel getLayerNamePanel() {
+						// Not implemented
+						return null;
+					}
+
+					public LayerableNamePanel getLayerableNamePanel() {
+						// Not implemented
+						return null;
+					}
+
+					public JUMPWorkbench getWorkbench() {
+						// Not implemented
+						return JUMPWorkbench.getInstance();
 					}
 				}));
 		frame.pack();

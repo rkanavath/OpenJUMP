@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.vividsolutions.jcs.jump.FUTURE_Assert;
-import com.vividsolutions.jcs.jump.FUTURE_StandardReaderWriterFileDataSource;
+//import com.vividsolutions.jcs.jump.FUTURE_StandardReaderWriterFileDataSource;
 import com.vividsolutions.jcs.jump.FUTURE_StringUtil;
 import com.vividsolutions.jump.io.datasource.DataSource;
 import com.vividsolutions.jump.io.datasource.StandardReaderWriterFileDataSource;
@@ -107,7 +107,8 @@ public class SourcePackageManifest {
 		private static Map FORMAT_TO_DATA_SOURCE_CLASS_MAP = CollectionUtil
 				.createMap(new Object[] {
 						"shape",
-						FUTURE_StandardReaderWriterFileDataSource.Shapefile.class,
+						//FUTURE_StandardReaderWriterFileDataSource.Shapefile.class,
+						StandardReaderWriterFileDataSource.Shapefile.class,
 						"wkt", StandardReaderWriterFileDataSource.WKT.class,
 						"jml", StandardReaderWriterFileDataSource.JML.class,
 						"fmegml",
@@ -129,7 +130,7 @@ public class SourcePackageManifest {
 				DataSource dataSource = (DataSource) ((Class) FORMAT_TO_DATA_SOURCE_CLASS_MAP
 						.get(getFormat().toLowerCase())).newInstance();
 				dataSource.setProperties(Collections.singletonMap(
-						DataSource.FILE_KEY, new File(directory, getFileName())
+						DataSource.FILE_KEY, (Object)new File(directory, getFileName())
 								.getPath()));
 				return dataSource;
 			} catch (InstantiationException e) {

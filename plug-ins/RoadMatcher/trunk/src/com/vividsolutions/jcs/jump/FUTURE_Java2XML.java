@@ -7,19 +7,20 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import com.vividsolutions.jts.util.Assert;
 import com.vividsolutions.jump.util.LangUtil;
 import com.vividsolutions.jump.util.java2xml.Java2XML;
 import com.vividsolutions.jump.util.java2xml.XMLBinder;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+
 /**
  * Fixes #specResourceStream.
  */
 public class FUTURE_Java2XML extends Java2XML {
     protected List specElements(Class c) throws XMLBinderException,
-            JDOMException, IOException {
+            IOException {
         InputStream stream = specResourceStream(c);
         if (stream == null) {
             throw new XMLBinderException("Could not find java2xml file for "
@@ -27,6 +28,7 @@ public class FUTURE_Java2XML extends Java2XML {
         }
         try {
             Element root = new SAXBuilder().build(stream).getRootElement();
+
             if (!root.getAttributes().isEmpty()) {
                 throw new XMLBinderException("Root element of "
                         + _specFilename(c) + " should not have attributes");
@@ -36,6 +38,8 @@ public class FUTURE_Java2XML extends Java2XML {
                         + _specFilename(c) + " should be named 'root'");
             }
             return root.getChildren();
+        } catch(JDOMException e) {
+            throw new XMLBinderException(e.getMessage());
         } finally {
             stream.close();
         }
