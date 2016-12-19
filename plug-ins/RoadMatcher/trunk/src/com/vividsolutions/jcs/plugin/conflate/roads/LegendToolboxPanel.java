@@ -661,8 +661,8 @@ public class LegendToolboxPanel extends JPanel {
 						return blackboard;
 					}
 
-					public ErrorHandlerV2 getErrorHandler() {
-						return new ErrorHandlerV2() {
+					public ErrorHandler getErrorHandler() {
+						return new ErrorHandler() {
 							public void handleThrowable(Throwable t) {
 								t.printStackTrace(System.err);
 							}
