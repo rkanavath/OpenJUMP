@@ -1,0 +1,5 @@
+<workbench>
+  <extension>
+    es.unex.sextante.openjump.extensions.SextanteExtension
+  </extension>
+</workbench>
