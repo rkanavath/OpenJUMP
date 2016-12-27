@@ -83,8 +83,10 @@ public class SextanteExtension extends Extension {
       return;
     }
 
-    Logger.debug("found sextante folder " + sextDir);
-    String sextDirString = sextDir.toString();
+    // sextante folder needs to be absolute so Help shows pictures properly
+    String sextDirString = sextDir.getAbsolutePath();
+    Logger.debug("found sextante folder " + sextDirString);
+
     // String sextHelpDirString = new File(sextDir, "help").toString();
 
     Sextante.initialize(sextDirString);
