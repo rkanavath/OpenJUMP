@@ -1,6 +1,7 @@
 package es.unex.sextante.openjump.extensions;
 
 import java.io.File;
+import java.net.JarURLConnection;
 import java.net.URL;
 
 import com.vividsolutions.jump.workbench.Logger;
@@ -57,19 +58,26 @@ public class SextanteExtension extends Extension {
     URL sextGUIJarUrl = SextanteGUI.class.getProtectionDomain().getCodeSource()
         .getLocation();
     Logger.debug("SextanteGUI claims to be in " + sextGUIJarUrl);
-    File sextDir = null;
+
     if (sextGUIJarUrl == null) {
       Logger.error("Location of SextanteGUI is null.");
       return;
     }
 
-    File sextGUIJarFile = new File(sextGUIJarUrl.getFile());
+    // strip possible "jar:<file:\path\to\sextante_gui.jar>!.." wrapping
+    if (sextGUIJarUrl.getProtocol().equalsIgnoreCase("jar")){
+      JarURLConnection connection =
+          (JarURLConnection) sextGUIJarUrl.openConnection();
+      sextGUIJarUrl = connection.getJarFileURL();
+    }
+
+    File sextGUIJarFile = new File(sextGUIJarUrl.getPath());
     if (!sextGUIJarFile.isFile()) {
       Logger.error(sextGUIJarFile + " is not a file!");
       return;
     }
 
-    sextDir = sextGUIJarFile.getParentFile();
+    File sextDir = sextGUIJarFile.getParentFile();
     if (!sextDir.isDirectory()) {
       Logger.error("Sextante folder " + sextDir + " is not a folder!");
       return;
