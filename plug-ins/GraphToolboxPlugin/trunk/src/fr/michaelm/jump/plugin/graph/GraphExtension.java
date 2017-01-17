@@ -37,6 +37,7 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
  * @author Micha&euml;l Michaud
  * @version 0.3.1 (2016-11-24)
  */
+//version 0.4.0 (2017-01-12) add DirectedGraph option in GraphNodesPlugIn
 //version 0.3.1 (2016-11-24) fix a severe regression on StrahlerNumberPlugIn
 //version 0.3.0 (2016-10-23) upgrade jgrapht to 0.9, add SkeletonPlugIn
 //version 0.2.0 (2014-07-15) add Strahler number computation on hydrographic networks
@@ -52,7 +53,7 @@ public class GraphExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.3.1 (2016-11-24)";
+        return "0.4.0 (2017-01-17)";
     }
 
     public void configure(PlugInContext context) throws Exception {
