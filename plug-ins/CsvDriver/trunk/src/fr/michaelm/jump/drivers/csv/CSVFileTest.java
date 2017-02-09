@@ -1,7 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Micha�l MICHAUD
- * michael.michaud@free.fr
+ * Copyright (C) 2017 Michaël MICHAUD
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,6 +22,7 @@ package fr.michaelm.jump.drivers.csv;
 import com.vividsolutions.jump.feature.Feature;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 
@@ -39,7 +39,7 @@ public class CSVFileTest {
     
     public static void main(String[] args) {
         try {
-            String dir = "C:\\Users\\Michaël\\DATA\\TESTS\\TestTextFormat\\";
+            String dir = "./test/resources";
             testDir(dir);
             //testPirolCSVFile(dir + "tab_wkt.pirol");
         } catch (IOException ioe) {
@@ -48,6 +48,7 @@ public class CSVFileTest {
     }
     
     private static void testDir(String dir) throws IOException {
+        System.out.println(new File(dir).getAbsolutePath());
         for (File file : new File(dir).listFiles()) {
             if (file.isDirectory()) continue;
             //if (file.getPath().endsWith("xyz") ||

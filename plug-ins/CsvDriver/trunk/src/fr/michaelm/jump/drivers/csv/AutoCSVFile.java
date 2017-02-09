@@ -1,7 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Micha�l MICHAUD
- * michael.michaud@free.fr
+ * Copyright (C) 2017 Michaël MICHAUD
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,12 +38,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
  * An extension of CSVFile with methods to guess the internal structure of the
  * file to parse.
  * @author Micha&euml;l MICHAUD
- * @version 0.9.2 (2014-07-17)
  */
 public class AutoCSVFile extends CSVFile {
 
-    private static final Logger LOG = Logger.getLogger("fr.michaelm.jump.drivers.csv.AutoCSVFile");
-    
     // Pattern to differenciate a comment line Pattern starting with #
     // from a header line Pattern starting with #FID or #X (old xyz format)
     private final static Pattern SHARP_PATTERN = Pattern.compile("^#(?!(FID|X)[\t,;\\| ])");

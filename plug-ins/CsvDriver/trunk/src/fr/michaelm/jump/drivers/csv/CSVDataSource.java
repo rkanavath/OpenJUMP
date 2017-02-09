@@ -1,7 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Micha�l MICHAUD
- * michael.michaud@free.fr
+ * Copyright (C) 2017 Michaël MICHAUD
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,16 +19,12 @@
 
 package fr.michaelm.jump.drivers.csv;
 
-import java.io.BufferedWriter;
-import java.io.Writer;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import com.vividsolutions.jump.coordsys.CoordinateSystem;
@@ -42,27 +37,20 @@ import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.io.datasource.Connection;
 import com.vividsolutions.jump.io.datasource.DataSource;
 import com.vividsolutions.jump.task.TaskMonitor;
+import com.vividsolutions.jump.workbench.Logger;
 
 /**
  * A file containing geographic information in a character delimited format
  * (csv like).</p>
  * Replace the previous XYZDataSource
  * @author Micha&euml;l MICHAUD
- * @version 0.9.2 (2014-07-17)
  */
- // 0.9.2 (2014-07-17) abandon the guess encoding method of CSV (auto)
- // 0.9.0 (2014-05-14) handle csv resources included in a compressed file
- // 0.8.0 (2013-11-07) resolve a problem of persistence in Project file
- //       + several bugs
- //       a layer save as csv will be persisted as an AutoCSVFile
- // 0.6   complete rewrite of the txt driver, becoming the csv driver
- //       XYZDatSource driver (replaced by CSVDataSource)
- // 0.5   (2012-03-04)
- // 0.2   (2009-10-07) use split(String,-1) instead of split(String)
- // 0.1   (2009-09-06)
+// 0.6   complete rewrite of the txt driver, becoming the csv driver
+//       XYZDatSource driver (replaced by CSVDataSource)
+// 0.5   (2012-03-04)
+// 0.2   (2009-10-07) use split(String,-1) instead of split(String)
+// 0.1   (2009-09-06)
 public class CSVDataSource extends DataSource {
-
-    private static final Logger LOG = Logger.getLogger("fr.michaelm.jump.drivers.csv.CSVDataSource");
 
     public static final String CHARSET              = "Charset";
     public static final String COMMENT_LINE_PATTERN = "Comment Line Pattern";
@@ -126,7 +114,7 @@ public class CSVDataSource extends DataSource {
         }
         catch(Exception e) {
             e.printStackTrace();
-            LOG.throwing("CSVDataSource", "init", e);
+            Logger.error("CSVDataSource#init()", e);
         }
     }
 
@@ -182,7 +170,7 @@ public class CSVDataSource extends DataSource {
                     if (dataTypeLine != null) csv.setDataTypeLine(dataTypeLine);
                     
                     File output = new File((String)getProperties().get(FILE_KEY));
-                    Writer writer = new BufferedWriter(new FileWriter(output));
+                    Writer writer = new OutputStreamWriter(new FileOutputStream(output), csv.getCharset());
                     FeatureSchema fs = featureCollection.getFeatureSchema();
                     String[] columns;
                     AttributeType[] types;
@@ -245,7 +233,7 @@ public class CSVDataSource extends DataSource {
             };
         }
         catch(Exception e) {
-            LOG.throwing("TextDataSource", "getConnection", e);
+            Logger.error("CSVDataSource#getConnection()", e);
             return null;
         }
     }

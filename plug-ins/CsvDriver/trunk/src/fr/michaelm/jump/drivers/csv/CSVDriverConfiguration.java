@@ -1,6 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Micha�l MICHAUD
+ * Copyright (C) 2017 Michaël MICHAUD
  * michael.michaud@free.fr
  *
  * This program is free software; you can redistribute it and/or
@@ -43,8 +43,11 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 0.9.2 (2014-07-17)
+ * @version 1.0.0 (2017-02-09)
  */
+// 1.0.0 (2017-02-09) writer : add encoding option
+//                    reader : do not keep columns used to make the feature geometry
+//                    writer : write WKT with Z values
 // 0.9.2 (2014-07-17) abandon the guess encoding method of CSV (auto)
 // 0.9.1 (2014-06-16) fix a bug preventing to choose charset and field separator n save as csv
 // 0.9.0 (2014-05-14) handle csv resources included in a compressed file
@@ -72,7 +75,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "0.9.1 (2014-06-16)";
+        return "1.0.0 (2017-02-09)";
     }
 
     public void configure(PlugInContext context) throws Exception {
@@ -244,7 +247,7 @@ public class CSVDriverConfiguration extends Extension {
 
             protected Map<String,Object> toProperties(URI uri, Map<String,Object> options) {
 
-                Map<String,Object> properties = super.toProperties(uri, /*toProperties(options)*/ new HashMap<String, Object>());
+                Map<String,Object> properties = super.toProperties(uri, new HashMap<String, Object>());
                 try {
                     final CSVFile csvFile = new AutoCSVFile((String)properties.get(DataSource.FILE_KEY), (String)properties.get("CompressedFile"));
                     properties.put("CSV_FILE", csvFile);
@@ -275,7 +278,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     
-    private Charset[] createCommonCharsetArray() {
+    public static Charset[] createCommonCharsetArray() {
         // http://stackoverflow.com/questions/8509339/what-is-the-most-common-encoding-of-each-language
         // http://www.w3.org/International/O-charset-lang.html
         SortedMap<String,Charset> availableCharsets = Charset.availableCharsets();

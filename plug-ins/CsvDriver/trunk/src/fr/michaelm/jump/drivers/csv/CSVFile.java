@@ -1,7 +1,6 @@
 /*
  * Library offering read and write capabilities for dsv formats
- * Copyright (C) 2012 Micha�l MICHAUD
- * michael.michaud@free.fr
+ * Copyright (C) 2017 Michaël MICHAUD
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -38,7 +37,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,8 +57,6 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.COMMA;
 //     the future
 public class CSVFile {
 
-    private static final Logger LOG = Logger.getLogger("fr.michaelm.jump.drivers.csv.CSVFile");
-    
     private static final WKTReader WKT_READER = new WKTReader();
     private static final WKTWriter WKT_WRITER = new WKTWriter();
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
@@ -342,27 +338,32 @@ public class CSVFile {
                 if (line.trim().length() == 0) continue;
                 if (commentLinePattern.matcher(line).find()) continue;
                 count++;
-                if (count == 1) line1 = line;
-                else if (count == 2 && dataTypeLine) line2 = line;
+                if (count == 1) {
+                    line1 = line;
+                    if (!dataTypeLine) break;
+                }
+                else if (count == 2 && dataTypeLine) {
+                    line2 = line;
+                    break;
+                }
                 else break; // count > 2
             }
             if (line1 == null) {
-                if (br != null) br.close();
                 throw new CSVFileException(CSVFileException.NO_DATA_FOUND, this);
             }
             setColumns(line1);
             setAttributeTypes(line2);
             schema = new FeatureSchema();
-            //String[] data = line != null ? tokenize(line) : null;
+            List<Integer> gclist = new ArrayList<>();
+            for (int i : geometryColumns) gclist.add(i);
             for (int i = 0 ; i < columns.length ; i++) {
-                if (geometryColumns.length == 1 && geometryColumns[0] == i) {
-                    schema.addAttribute(columns[i], AttributeType.GEOMETRY);
-                }
-                else if (geometryColumns.length == 2 &&
-                         (geometryColumns[0] == i || geometryColumns[1] == i)) {
-                    if (schema.getGeometryIndex() == -1) schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
-                }
-                else if (geometryColumns.length == 3 && geometryColumns[2] == i) {
+                if (gclist.contains(i)) {
+                    if (geometryColumns.length == 1) {
+                        schema.addAttribute(columns[i], AttributeType.GEOMETRY);
+                    }
+                    else if (schema.getGeometryIndex() == -1) {
+                        schema.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
+                    }
                 }
                 else {
                     AttributeType type = (dataTypes != null && dataTypes.length > i) ? dataTypes[i] : AttributeType.STRING;
@@ -548,7 +549,7 @@ public class CSVFile {
     }
     
 
-    /** Get the Geometry from an array of String, using the geometryColumn attribute of this CSVFile.*/
+    /** Get the Geometry from an array of String, using the geometryColumns attribute of this CSVFile.*/
     private Geometry getGeometry(String[] fields) throws com.vividsolutions.jts.io.ParseException, NumberFormatException, ArrayIndexOutOfBoundsException {
         if (geometryColumns.length == 1) {
             if (fields.length <= geometryColumns[0])
@@ -630,6 +631,7 @@ public class CSVFile {
      * @throws IOException
      */
     public void writeFeature(Writer writer, Feature feature) throws IOException {
+        WKTWriter wktw = new WKTWriter(3);
         if (writer != null) {
             for (int i = 0 ; i < columns.length ; i++) {
                 if (columns[i].equals("X")) {
@@ -642,12 +644,17 @@ public class CSVFile {
                     writer.write("" + feature.getGeometry().getCoordinate().z);
                 }
                 else {
-                    String value = feature.getString(columns[i]);
-                    // if the field name contains a quote or a fieldSeparator
-                    boolean quote = value.contains("\"") ||
-                        value.indexOf(fieldSeparator.getSeparator()) > -1;
-                    // -> field name is written between double quotes
-                    if (quote) value = "\"" + value.replaceAll("\"","\"\"") + "\"";
+                    String value = null;
+                    if (feature.getSchema().getAttributeType(columns[i]) == AttributeType.GEOMETRY) {
+                        value = wktw.write(feature.getGeometry());
+                    } else {
+                        value = feature.getString(columns[i]);
+                        // if the field name contains a quote or a fieldSeparator
+                        boolean quote = value.contains("\"") ||
+                                value.indexOf(fieldSeparator.getSeparator()) > -1;
+                        // -> field name is written between double quotes
+                        if (quote) value = "\"" + value.replaceAll("\"","\"\"") + "\"";
+                    }
                     writer.write(value);
                 }
                 if (i < columns.length-1) writer.write(fieldSeparator.getSeparator());
