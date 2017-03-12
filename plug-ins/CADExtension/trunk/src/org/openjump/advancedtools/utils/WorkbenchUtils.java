@@ -99,11 +99,13 @@ import com.vividsolutions.jump.workbench.ui.zoom.ZoomTool;
 
 /**
  * <p>
- * Helps to manage Kosmo Desktop actions
+ * Helps to manage OpenJUMP Desktop actions
  * </p>
  * 
  * @author Gabriel Bellido Perez
  * @since Kosmo 1.0.0
+ * @author Giuseppe Aruta
+ * @since OpenJUMP 1.10
  */
 public class WorkbenchUtils {
     @SuppressWarnings("unused")
