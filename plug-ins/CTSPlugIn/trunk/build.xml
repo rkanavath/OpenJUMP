@@ -14,7 +14,7 @@ build.properties file too.
     <property name="jar.filename" value="${build.targetpath}/CTSPlugIn-${version.number}.jar" />
 
     <path id="classpath">
-        <fileset dir="${openjump.svn}/lib" includes="**/*.jar" />
+        <!--fileset dir="${openjump.svn}/lib" includes="**/*.jar" /-->
         <!--fileset dir="${openjump.svn}/lib/ext" includes="*.jar" />
         <fileset dir="${openjump.svn}/lib/plus" includes="*.jar" />
         <fileset dir="${openjump.svn}/lib/native" includes="*.jar" />

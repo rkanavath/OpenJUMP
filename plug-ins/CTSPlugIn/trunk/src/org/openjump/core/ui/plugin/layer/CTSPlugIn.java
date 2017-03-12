@@ -18,6 +18,7 @@ import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.HTMLFrame;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
 import com.vividsolutions.jump.workbench.ui.MultiInputDialog;
+import com.vividsolutions.jump.workbench.ui.SuggestTreeComboBox;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 import org.cts.CRSFactory;
@@ -30,7 +31,6 @@ import org.cts.op.*;
 import org.cts.registry.*;
 import org.openjump.core.ccordsys.srid.SRIDStyle;
 import org.openjump.core.rasterimage.RasterImageLayer;
-import org.openjump.swing.SuggestTreeComboBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,17 +48,17 @@ public class CTSPlugIn extends ThreadedBasePlugIn implements Iconified, EnableCh
 
     I18N I18N_ = I18N.getInstance("cts_plugin");
 
-    private final String REGISTRY       = I18N_.getText("cts_plugin","CTSPlugIn.registry");
-    private final String SOURCE         = "source";
-    private final String SOURCE_LABEL   = I18N_.getText("cts_plugin","CTSPlugIn.srcCRS");
-    private final String TARGET         = "target";
-    private final String TARGET_LABEL   = I18N_.getText("cts_plugin","CTSPlugIn.tgtCRS");
-    private final String OP_NOT_FOUND   = I18N_.getText("cts_plugin","CTSPlugIn.op-not-found");
-    private final String HETEROGEN_SRC  = I18N_.getText("cts_plugin","CTSPlugIn.heterogeneous-sources");
-    private final String TRANSFORM      = I18N_.getText("cts_plugin","CTSPlugIn.transform");
-    private final String REPLACE        = I18N_.getText("cts_plugin","CTSPlugIn.replace");
-    private final String SOURCE_DATUM   = I18N_.getText("cts_plugin","CTSPlugIn.srcDatum");
-    private final String TARGET_DATUM   = I18N_.getText("cts_plugin","CTSPlugIn.tgtDatum");
+    private final String REGISTRY           = I18N_.getText("cts_plugin","CTSPlugIn.registry");
+    private final String SOURCE             = "source";
+    private final String SOURCE_LABEL       = I18N_.getText("cts_plugin","CTSPlugIn.srcCRS");
+    private final String TARGET             = "target";
+    private final String TARGET_LABEL       = I18N_.getText("cts_plugin","CTSPlugIn.tgtCRS");
+    private final String OP_NOT_FOUND       = I18N_.getText("cts_plugin","CTSPlugIn.op-not-found");
+    private final String HETEROGEN_SRC      = I18N_.getText("cts_plugin","CTSPlugIn.heterogeneous-sources");
+    private final String TRANSFORM          = I18N_.getText("cts_plugin","CTSPlugIn.transform");
+    private final String REPLACE            = I18N_.getText("cts_plugin","CTSPlugIn.replace");
+    private final String SOURCE_DATUM       = I18N_.getText("cts_plugin","CTSPlugIn.srcDatum");
+    private final String TARGET_DATUM       = I18N_.getText("cts_plugin","CTSPlugIn.tgtDatum");
     private final String SOURCE_SPHEROID    = I18N_.getText("cts_plugin","CTSPlugIn.srcSpheroid");
     private final String TARGET_SPHEROID    = I18N_.getText("cts_plugin","CTSPlugIn.tgtSpheroid");
     private final String SOURCE_TOWGS84     = I18N_.getText("cts_plugin","CTSPlugIn.srcToWgs84");

@@ -19,7 +19,7 @@
     <!-- plugins -->
     <!-- drivers -->
     <property name="view-manager" value="ViewManager" />
-    <property name="view-manager-version" value="0.3.3" />
+    <property name="view-manager-version" value="0.3.4" />
 
 
     <!-- =================================================================== -->
@@ -75,8 +75,8 @@
         <!--copy todir="${dist}">
             <fileset dir="${resources}" />
         </copy-->
-        <copy file="${dist}/${view-manager}-${view-manager-version}.jar"
-              todir="D:/LOGICIELS/OpenJUMP-Portable-20150328-r4357-PLUS/OpenJUMP-20150328-r4357-PLUS/lib/ext" />
+        <!--copy file="${dist}/${view-manager}-${view-manager-version}.jar"
+              todir="D:/LOGICIELS/OpenJUMP-Portable-20150328-r4357-PLUS/OpenJUMP-20150328-r4357-PLUS/lib/ext" /-->
     </target>
 
     <target name="zip-ViewManager-src" id="zip-ViewManager-src" depends="jar-ViewManager">

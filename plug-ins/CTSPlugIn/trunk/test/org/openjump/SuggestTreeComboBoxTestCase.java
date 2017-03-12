@@ -1,12 +1,13 @@
 package org.openjump;
 
-import org.openjump.swing.SuggestTreeComboBox;
-import org.openjump.util.SuggestTree;
+import com.vividsolutions.jump.util.SuggestTree;
+import com.vividsolutions.jump.workbench.ui.SuggestTreeComboBox;
+
 
 import javax.swing.*;
 
 /**
- * Created by Micha�l on 24/11/14.
+ * Created by Michaël on 24/11/14.
  */
 public class SuggestTreeComboBoxTestCase {
 
@@ -17,7 +18,7 @@ public class SuggestTreeComboBoxTestCase {
     public static void test1() {
         String[] array = new String[]{
                 "Lambert93",
-                "Lambert 2 �tendu",
+                "Lambert 2 étendu",
                 "Lambert zone 1 NTF",
                 "Lambert zone 2 NTF",
                 "Lambert zone 3 NTF",

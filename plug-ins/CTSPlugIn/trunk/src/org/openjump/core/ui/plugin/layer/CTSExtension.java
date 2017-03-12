@@ -6,6 +6,10 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 /**
  * Created by Michaël on 30/11/14.
  */
+// 0.1.3 (2017-01-21) suggesttree moved to OpenJUMP, CTSPlugIn 0.1.3 needs OJ 1.10+
+// 0.1.2
+// 0.1.1
+// 0.1.0 (2014-12-06) initial version
 public class CTSExtension extends Extension {
 
     public String getName() {
@@ -13,7 +17,7 @@ public class CTSExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.1.2 (2016-04-01)";
+        return "0.1.3 (2017-01-21)";
     }
 
     public void configure(PlugInContext context) throws Exception {
