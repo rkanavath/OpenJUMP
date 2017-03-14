@@ -16,7 +16,7 @@ import com.vividsolutions.jts.index.strtree.STRtree;
  * This utility class offers static methods to build graphs from feature
  * collections.
  * @author Michael Michaud
- * @version 0.1 (2007-04-20)
+ * @version 0.7.1 (2017-03-14)
  */
 
 public class GraphFactory {
@@ -24,7 +24,7 @@ public class GraphFactory {
     /**
      * Relation used to connect features.
      */
-    protected static enum Relation
+    protected enum Relation
     {
         /**
          * Two FeatureAsNode are connected if they intersect .
@@ -38,7 +38,7 @@ public class GraphFactory {
          * Two FeatureAsNode are near from each other.
          */
         ISWITHIN
-    };
+    }
     
    /**
     * Create an undirected graph from a collection of features
@@ -47,7 +47,7 @@ public class GraphFactory {
     * @return a WeightedMultigraph or a DirectedWeightedMultigraph
     */
     public static WeightedGraph<INode,FeatureAsEdge>
-        createGraph(Collection features, boolean dim3) {
+        createGraph(Collection<Feature> features, boolean dim3) {
         WeightedGraph<INode,FeatureAsEdge> graph = new WeightedPseudograph(FeatureAsEdge.class);
         return add(graph, features, dim3);
     }
@@ -61,7 +61,7 @@ public class GraphFactory {
     * @return a WeightedMultigraph or a DirectedWeightedMultigraph
     */
     public static WeightedGraph<INode,FeatureAsEdge>
-        createDirectedGraph(Collection features, boolean dim3) {
+        createDirectedGraph(Collection<Feature> features, boolean dim3) {
         WeightedGraph<INode,FeatureAsEdge> graph = new DirectedWeightedMultigraph(FeatureAsEdge.class);
         return add(graph, features, dim3);
     }
@@ -73,9 +73,11 @@ public class GraphFactory {
      * @param dim3 true means that nodes are evaluated equals when x,y,z are equals
      * @return a WeightedMultigraph or a DirectedWeightedMultigraph
      */
-    public static WeightedGraph<INode,FeatureAsEdge>
-    createDirectedPseudograph(Collection features, boolean dim3) {
-        WeightedGraph<INode,FeatureAsEdge> graph = new DirectedWeightedPseudograph(FeatureAsEdge.class);
+    public static WeightedGraph<INode,FeatureAsEdge> createDirectedPseudograph(
+            Collection<Feature> features,
+            boolean dim3) {
+        WeightedGraph<INode,FeatureAsEdge> graph =
+                new DirectedWeightedPseudograph(FeatureAsEdge.class);
         return add(graph, features, dim3);
     }
     
@@ -86,9 +88,11 @@ public class GraphFactory {
     * @param relation the relation defining edges
     * @return a WeightedMultigraph with Features as nodes and relation as edges
     */
-    public static WeightedGraph<FeatureAsNode,FeatureRelation>
-        createGraph(Collection features, Relation relation) {
-        WeightedGraph<FeatureAsNode,FeatureRelation> graph = new WeightedMultigraph(FeatureRelation.class);
+    public static WeightedGraph<FeatureAsNode,FeatureRelation> createGraph(
+            Collection<Feature> features,
+            Relation relation) {
+        WeightedGraph<FeatureAsNode,FeatureRelation> graph =
+                new WeightedMultigraph(FeatureRelation.class);
         return add(graph, features, relation, 0);
     }
     
@@ -99,9 +103,11 @@ public class GraphFactory {
     * @param maxdist the maxim distance to consider two features as connected
     * @return a WeightedMultigraph with Features as nodes and relation as edges
     */
-    public static WeightedGraph<FeatureAsNode,FeatureRelation>
-        createGraph(Collection features, double maxdist) {
-        WeightedGraph<FeatureAsNode,FeatureRelation> graph = new WeightedMultigraph(FeatureRelation.class);
+    public static WeightedGraph<FeatureAsNode,FeatureRelation> createGraph(
+            Collection<Feature> features,
+            double maxdist) {
+        WeightedGraph<FeatureAsNode,FeatureRelation> graph =
+                new WeightedMultigraph(FeatureRelation.class);
         return add(graph, features, Relation.ISWITHIN, maxdist);
     }
     
@@ -115,21 +121,24 @@ public class GraphFactory {
     * @param dim3 true means that nodes are evaluated equals when x,y,z are equals
     * @return a WeightedMultigraph or a DirectedWeightedMultigraph
     */
-    public static WeightedGraph<INode,FeatureAsEdge> createGraph(Collection features,
-                                                                 String direct_weight,
-                                                                 String inverse_weight,
-                                                                 boolean dim3) {
+    public static WeightedGraph<INode,FeatureAsEdge> createGraph(
+            Collection<Feature> features,
+            String direct_weight,
+            String inverse_weight,
+            boolean dim3) {
         DirectedWeightedMultigraph<INode,FeatureAsEdge> graph =
-            new DirectedWeightedMultigraph(FeatureAsEdge.class);
+                new DirectedWeightedMultigraph(FeatureAsEdge.class);
         return add(graph, features, direct_weight, inverse_weight, dim3);
     }
     
-    private static WeightedGraph<INode,FeatureAsEdge>
-        add(WeightedGraph<INode,FeatureAsEdge> graph, Collection features, boolean dim3) {
+    private static WeightedGraph<INode,FeatureAsEdge> add(
+            WeightedGraph<INode,FeatureAsEdge> graph,
+            Collection<Feature> features,
+            boolean dim3) {
         Coordinate[] cc;
-        for (Iterator it = features.iterator() ; it.hasNext() ; ) {
-            Feature f = (Feature)it.next();
+        for (Feature f : features) {
             Geometry g = f.getGeometry();
+            if (g.isEmpty()) continue;
             cc = f.getGeometry().getCoordinates();
             INode node1 = dim3? new Node3D(cc[0]) : new Node2D(cc[0]);
             graph.addVertex(node1);
@@ -144,19 +153,22 @@ public class GraphFactory {
     }
     
     
-    private static WeightedGraph<FeatureAsNode,FeatureRelation>
-        add(WeightedGraph<FeatureAsNode,FeatureRelation> graph, Collection features,
-            Relation relation, double maxdist) {
-        //Coordinate[] cc;
+    private static WeightedGraph<FeatureAsNode,FeatureRelation> add(
+            WeightedGraph<FeatureAsNode,FeatureRelation> graph,
+            Collection<Feature> features,
+            Relation relation,
+            double maxdist) {
+
         Collection<FeatureAsNode> featureAsNodes = new ArrayList<FeatureAsNode>();
         STRtree index = new STRtree();
-        for (Iterator it = features.iterator() ; it.hasNext() ; ) {
-            FeatureAsNode f = new FeatureAsNode((Feature)it.next());
+        for (Feature feature : features) {
+            FeatureAsNode f = new FeatureAsNode(feature);
+            if (f.getGeometry().isEmpty()) continue;
             index.insert(f.getGeometry().getEnvelopeInternal(), f);
             featureAsNodes.add(f);
         }
-        for (Iterator<FeatureAsNode> it = featureAsNodes.iterator() ; it.hasNext() ; ) {
-            FeatureAsNode f = it.next();
+        for (FeatureAsNode f : featureAsNodes) {
+            if (f.getGeometry().isEmpty()) continue;
             Envelope env = f.getGeometry().getEnvelopeInternal();
             env.expandBy(maxdist);
             List<FeatureAsNode> list = (List<FeatureAsNode>)index.query(env);
@@ -190,16 +202,16 @@ public class GraphFactory {
     }
 
 
-    private static WeightedGraph<INode,FeatureAsEdge>
-        add(DirectedWeightedMultigraph<INode,FeatureAsEdge> graph,
-            Collection features,
+    private static WeightedGraph<INode,FeatureAsEdge> add(
+            DirectedWeightedMultigraph<INode,FeatureAsEdge> graph,
+            Collection<Feature> features,
             String direct_weight,
             String inverse_weight,
             boolean dim3) {
         Coordinate[] cc;
-        for (Iterator it = features.iterator() ; it.hasNext() ; ) {
-            Feature f = (Feature)it.next();
+        for (Feature f : features) {
             Geometry g = f.getGeometry();
+            if (g.isEmpty()) continue;
             cc = f.getGeometry().getCoordinates();
             INode node1 = dim3? new Node3D(cc[0]) : new Node2D(cc[0]);
             graph.addVertex(node1);
