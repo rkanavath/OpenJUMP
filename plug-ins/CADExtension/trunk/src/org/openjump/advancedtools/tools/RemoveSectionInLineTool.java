@@ -124,12 +124,14 @@ public class RemoveSectionInLineTool extends NClickTool {
     @Override
     protected void gestureFinished() throws Exception {
         reportNothingToUndoYet();
-        if (!WorkbenchUtils.check(checkFactory
-                .createTaskWindowMustBeActiveCheck())) {
+        if (!check(checkFactory.createTaskWindowMustBeActiveCheck())) {
             return;
         }
-        if (!WorkbenchUtils.check(checkFactory
-                .createWindowWithLayerManagerMustBeActiveCheck())) {
+
+        if (!check(checkFactory.createWindowWithLayerManagerMustBeActiveCheck())) {
+            return;
+        }
+        if (!check(checkFactory.createSelectedItemsLayersMustBeEditableCheck())) {
             return;
         }
         // Check only for LineString and MultiLineString. Excluding other

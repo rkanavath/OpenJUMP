@@ -179,9 +179,7 @@ public class MirrorToDrawSegmentTool extends DragTool {
         if (!check(checkFactory.createAtLeastNLayersMustBeEditableCheck(1))) {
             return;
         }
-        if (!check(checkFactory.createAtLeastNFeaturesMustBeSelectedCheck(1))) {
-            return;
-        }
+       
         for (Iterator<?> i = getPanel().getSelectionManager()
                 .getLayersWithSelectedItems().iterator(); i.hasNext();) {
             Layer layerWithSelectedItems = (Layer) i.next();
