@@ -97,7 +97,7 @@ public class CirclePlugIn extends AbstractPlugIn {
 
     /** Plugin name */
     public final static String NAME = I18NPlug
-            .getI18N("org.openjump.core.ui.plugins.Circle-ellipse");
+            .getI18N("org.openjump.core.ui.plugins.Circle");
 
     /** Plugin name */
     public final static String NAME2 = I18NPlug
