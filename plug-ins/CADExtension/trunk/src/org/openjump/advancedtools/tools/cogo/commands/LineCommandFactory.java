@@ -36,7 +36,7 @@
  */
 package org.openjump.advancedtools.tools.cogo.commands;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Factoria de comandos para dibujar lineas </p>

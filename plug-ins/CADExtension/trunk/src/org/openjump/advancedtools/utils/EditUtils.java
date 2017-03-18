@@ -48,7 +48,7 @@ import java.util.Set;
 //import javax.vecmath.Point2d;
 //import org.apache.commons.collections.CollectionUtils;
 //import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 //import org.cresques.cts.IProjection;
 
