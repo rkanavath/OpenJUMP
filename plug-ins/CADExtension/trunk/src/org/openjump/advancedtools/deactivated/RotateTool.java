@@ -34,7 +34,7 @@
  * info@saig.es
  *
  */
-package org.openjump.advancedtool.deactivated;
+package org.openjump.advancedtools.deactivated;
 
 import java.awt.Cursor;
 import java.awt.Graphics2D;

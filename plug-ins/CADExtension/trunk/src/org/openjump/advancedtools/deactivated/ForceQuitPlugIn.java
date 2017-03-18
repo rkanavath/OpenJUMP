@@ -1,4 +1,4 @@
-package org.openjump.advancedtool.deactivated;
+package org.openjump.advancedtools.deactivated;
 
 import javax.swing.ImageIcon;
 
