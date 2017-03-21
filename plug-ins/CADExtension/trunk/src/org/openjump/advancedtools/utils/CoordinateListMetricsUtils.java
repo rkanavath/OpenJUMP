@@ -1,5 +1,7 @@
 package org.openjump.advancedtools.utils;
 
+import java.text.DecimalFormat;
+
 import org.openjump.advancedtools.language.I18NPlug;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -28,27 +30,25 @@ public class CoordinateListMetricsUtils {
     public static final String Measure = I18NPlug
             .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.Measure");
 
-    // public static DecimalFormat df2 = new DecimalFormat("##0.0##");
-
-    public static double format(double d) {
-        return new Double(new Long(Math.round(d * 100)).doubleValue() / 100.0D);
-
-    }
+    public static DecimalFormat df2 = new DecimalFormat("##0.0##");
+    public static DecimalFormat df1 = new DecimalFormat("##0.#");
 
     public static String circleString(double a, double b, Coordinate start,
             Coordinate target) {
-        String all = Coordinates + " [" + Center + start.x + ";" + start.y
-                + " - " + Target + target.x + ";" + target.y + "]  " + Radius
-                + format(a) + "  " + Circum + format(b);
+        String all = Coordinates + " [" + Center + df1.format(start.x) + " ; "
+                + df1.format(start.y) + " - " + Target + df1.format(target.x)
+                + " ; " + df1.format(target.y) + "]  " + Radius + df2.format(a)
+                + "  " + Circum + df2.format(b);
         return all;
 
     }
 
     public static void setCircleMessage(double a, double b, Coordinate start,
             Coordinate target) {
-        String all = Coordinates + " [" + Center + start.x + ";" + start.y
-                + " - " + Target + target.x + ";" + target.y + "]  " + Radius
-                + format(a) + "  " + Circum + format(b);
+        String all = Coordinates + " [" + Center + df1.format(start.x) + " ; "
+                + df1.format(start.y) + " - " + Target + df1.format(target.x)
+                + " ; " + df1.format(target.y) + "]  " + Radius + df2.format(a)
+                + "  " + Circum + df2.format(b);
         JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
                 .getContext().setStatusMessage(all);
     }
@@ -60,14 +60,18 @@ public class CoordinateListMetricsUtils {
         out.createNewDocument();
         out.addHeader(1, Measure);
         out.addHeader(2, Circle);
-        out.addHeader(3, Coordinates + " [" + Center + start.x + ";" + start.y
-                + " - " + Target + target.x + ";" + target.y + "]  ");
-        out.addHeader(3, Radius + format(a));
-        out.addHeader(3, Circum + format(b));
+        out.addHeader(
+                3,
+                Coordinates + " [" + Center + df2.format(start.x) + ";"
+                        + df2.format(start.y) + " - " + Target
+                        + df2.format(target.x) + ";" + df2.format(target.y)
+                        + "]  ");
+        out.addHeader(3, Radius + df2.format(a));
+        out.addHeader(3, Circum + df2.format(b));
     }
 
     public static void setMessage(String aString, double a) {
-        String all = aString + format(a);
+        String all = aString + df2.format(a);
         JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
                 .getContext().setStatusMessage(all);
     }
