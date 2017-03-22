@@ -16,7 +16,7 @@ public class CoordinateListMetricsUtils {
             .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.circumference")
             + ": ";
     public static final String Center = I18NPlug
-            .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.center")
+            .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.source")
             + ": ";
     public static final String Target = I18NPlug
             .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.target")
