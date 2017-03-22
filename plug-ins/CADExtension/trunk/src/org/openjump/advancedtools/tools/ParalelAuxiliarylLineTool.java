@@ -238,7 +238,7 @@ public class ParalelAuxiliarylLineTool extends DragTool {
             }
 
             if (!check(CADEnableCheckFactory
-                    .createGeometryTypeOnSelectedFeaturesCheck(
+                    .createExactlyNFeaturesWithGeometryTypeMustBeSelectedCheck(
                             new int[] {
                                     CADEnableCheckFactory.FEATURE_SCHEMA_LINESTRING,
                                     CADEnableCheckFactory.FEATURE_SCHEMA_POLYGON,
@@ -251,11 +251,11 @@ public class ParalelAuxiliarylLineTool extends DragTool {
                                     CADEnableCheckFactory.FEATURE_SCHEMA_MULTIPOINT,
                                     CADEnableCheckFactory.FEATURE_SCHEMA_POINT,
                                     CADEnableCheckFactory.FEATURE_SCHEMA_MULTILINESTRING,
-                                    CADEnableCheckFactory.FEATURE_SCHEMA_MULTIPOLYGON }))) {
+                                    CADEnableCheckFactory.FEATURE_SCHEMA_MULTIPOLYGON },
+                            1))) {
 
                 return;
             }
-
             super.mousePressed(e);
         } catch (Throwable t) {
             getPanel().getContext().handleThrowable(t);
