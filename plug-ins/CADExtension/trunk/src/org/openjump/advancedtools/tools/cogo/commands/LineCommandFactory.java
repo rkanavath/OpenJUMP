@@ -1,5 +1,5 @@
 /* 
- * Kosmo - Sistema Abierto de Información Geográfica
+ * Kosmo - Sistema Abierto de Informaciï¿½n Geogrï¿½fica
  * Kosmo - Open Geographical Information System
  *
  * http://www.saig.es
@@ -21,16 +21,16 @@
  *
  * For more information, contact:
  * 
- * Sistemas Abiertos de Información Geográfica, S.L.
- * Avnda. República Argentina, 28
- * Edificio Domocenter Planta 2ª Oficina 7
+ * Sistemas Abiertos de Informaciï¿½n Geogrï¿½fica, S.L.
+ * Avnda. Repï¿½blica Argentina, 28
+ * Edificio Domocenter Planta 2ï¿½ Oficina 7
  * C.P.: 41930 - Bormujos (Sevilla)
- * España / Spain
+ * Espaï¿½a / Spain
  *
- * Teléfono / Phone Number
+ * Telï¿½fono / Phone Number
  * +34 954 788876
  * 
- * Correo electrónico / Email
+ * Correo electrï¿½nico / Email
  * info@saig.es
  *
  */

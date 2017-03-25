@@ -1,5 +1,5 @@
 /* 
- * Kosmo - Sistema Abierto de Información Geográfica
+ * Kosmo - Sistema Abierto de Informaciï¿½n Geogrï¿½fica
  * Kosmo - Open Geographical Information System
  *
  * http://www.saig.es
@@ -21,16 +21,16 @@
  *
  * For more information, contact:
  * 
- * Sistemas Abiertos de Información Geográfica, S.L.
- * Avnda. República Argentina, 28
- * Edificio Domocenter Planta 2ª Oficina 7
+ * Sistemas Abiertos de Informaciï¿½n Geogrï¿½fica, S.L.
+ * Avnda. Repï¿½blica Argentina, 28
+ * Edificio Domocenter Planta 2ï¿½ Oficina 7
  * C.P.: 41930 - Bormujos (Sevilla)
- * España / Spain
+ * Espaï¿½a / Spain
  *
- * Teléfono / Phone Number
+ * Telï¿½fono / Phone Number
  * +34 954 788876
  * 
- * Correo electrónico / Email
+ * Correo electrï¿½nico / Email
  * info@saig.es
  *
  */
@@ -99,7 +99,7 @@ import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
  * <p>
  * </p>
  * 
- * @author Sergio Baños Calvo
+ * @author Sergio Baï¿½os Calvo
  * @since Kosmo 1.0.0
  * 
  *        Giuseppe Aruta 2017_22_01 - Adapted for OpenJUMP Utils that requires
@@ -524,7 +524,7 @@ public class EditUtils {
     /**
      * Modified from Kosmo 2.0
      * 
-     * @author Sergio Baños Calvo
+     * @author Sergio Baï¿½os Calvo
      * @since Kosmo 1.0.0
      * 
      *        Add a coordinate to an array of coordinates in the closest segment
@@ -584,8 +584,8 @@ public class EditUtils {
         }
         // Si el indice inicial es el mismo al final
         if (startIndex == endIndex) {
-            // si la geometría es cerrada devuelco una sola linestring del
-            // indice al final + del inicio(+1) al índice+1
+            // si la geometrï¿½a es cerrada devuelco una sola linestring del
+            // indice al final + del inicio(+1) al ï¿½ndice+1
             if (lineString instanceof LinearRing
                     || (lineString instanceof LineString && ((LineString) lineString)
                             .getStartPoint().equalsExact(
@@ -600,7 +600,7 @@ public class EditUtils {
                         .createLineString((Coordinate[]) ArrayUtils.addAll(
                                 startPart, endPart)));
             }
-            // si la geometria NO es cerrada devuelvo lineStringsList vacío
+            // si la geometria NO es cerrada devuelvo lineStringsList vacï¿½o
             return lineStringsList;
         }
         Coordinate[] coordLS = (Coordinate[]) ArrayUtils.subarray(coordinates,
@@ -699,7 +699,7 @@ public class EditUtils {
      * </p>
      * <p>
      * Si se le pasa como parametro un nodeSet distinto de nulo lo rellena con
-     * las coordenadas de los nodos encontrados. Tanto los nuevos añadidos como
+     * las coordenadas de los nodos encontrados. Tanto los nuevos aï¿½adidos como
      * los que ya existian. Se consideran nodos los inicios y finales de lineas
      * cerradas.
      * </p>
@@ -820,13 +820,13 @@ public class EditUtils {
                     .extractLineStringCollection(geometry));
         }
 
-        // Generamos la multiLineString (ya está nodada)
+        // Generamos la multiLineString (ya estï¿½ nodada)
         MultiLineString mls = geomFac.createMultiLineString(lineStringList
                 .toArray(new LineString[] {}));
         Point mlsPt = geomFac.createPoint(mls.getCoordinate());
         Geometry nodedLines = mls.union(mlsPt);
 
-        // Poligonizar usando las líneas nodadas
+        // Poligonizar usando las lï¿½neas nodadas
         Polygonizer polygonizer = new Polygonizer();
         polygonizer.add(nodedLines);
 
@@ -848,7 +848,7 @@ public class EditUtils {
      *            to just don't do presnapping before the noder)
      * @return Object with 4 Geometry collections (valid polygons, dangled
      *         lines, cut edges and invalid rings)
-     * @author Sergio Baños Calvo
+     * @author Sergio Baï¿½os Calvo
      */
     public static Collection[] permanentExactNoderAndPolygonizeCompletely(
             final List<Geometry> geometryList, final Set<Coordinate> nodeSet,
@@ -863,13 +863,13 @@ public class EditUtils {
                     .extractLineStringCollection(geometry));
         }
 
-        // Generamos la multiLineString (ya está nodada)
+        // Generamos la multiLineString (ya estï¿½ nodada)
         MultiLineString mls = geomFac.createMultiLineString(lineStringList
                 .toArray(new LineString[] {}));
         Point mlsPt = geomFac.createPoint(mls.getCoordinate());
         Geometry nodedLines = mls.union(mlsPt);
 
-        // Poligonizar usando las líneas nodadas
+        // Poligonizar usando las lï¿½neas nodadas
         Polygonizer polygonizer = new Polygonizer();
         polygonizer.add(nodedLines);
 
@@ -1011,7 +1011,7 @@ public class EditUtils {
      * polygons and sum the results.
      * 
      * @param coordinates
-     * @return Área.
+     * @return ï¿½rea.
      */
     // public static double returnGeoCArea( List<Coordinate> coordinates ) {
     // double[] lat = new double[coordinates.size()];
@@ -1258,7 +1258,7 @@ public class EditUtils {
      * 'tolerance' to the coordinate 'coordinate'
      * 
      * @param geometry
-     *            - la geometría
+     *            - la geometrï¿½a
      * @param target
      *            - la coordenada
      * @return
@@ -1404,7 +1404,7 @@ public class EditUtils {
      * <p>
      * </p>
      * 
-     * @author Sergio Baños Calvo - sbc@saig.es
+     * @author Sergio Baï¿½os Calvo - sbc@saig.es
      * @since 2.0
      */
     public static class LineSegmentInRangeInsertVertexOperation implements
@@ -1485,7 +1485,7 @@ public class EditUtils {
      * <p>
      * </p>
      * 
-     * @author Sergio Baños Calvo - sbc@saig.es
+     * @author Sergio Baï¿½os Calvo - sbc@saig.es
      * @since 2.0
      */
     public static class RemoveConsecutivePointsInToleranceOperation implements

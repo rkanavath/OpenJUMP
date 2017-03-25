@@ -1,5 +1,5 @@
 /* 
- * Kosmo - Sistema Abierto de Información Geográfica
+ * Kosmo - Sistema Abierto de Informaciï¿½n Geogrï¿½fica
  * Kosmo - Open Geographical Information System
  *
  * http://www.saig.es
@@ -21,16 +21,16 @@
  *
  * For more information, contact:
  * 
- * Sistemas Abiertos de Información Geográfica, S.L.
- * Avnda. República Argentina, 28
- * Edificio Domocenter Planta 2ª Oficina 7
+ * Sistemas Abiertos de Informaciï¿½n Geogrï¿½fica, S.L.
+ * Avnda. Repï¿½blica Argentina, 28
+ * Edificio Domocenter Planta 2ï¿½ Oficina 7
  * C.P.: 41930 - Bormujos (Sevilla)
- * España / Spain
+ * Espaï¿½a / Spain
  *
- * Teléfono / Phone Number
+ * Telï¿½fono / Phone Number
  * +34 954 788876
  * 
- * Correo electrónico / Email
+ * Correo electrï¿½nico / Email
  * info@saig.es
  *
  */
@@ -39,8 +39,7 @@ package org.openjump.advancedtools.tools.cogo;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 
-import javax.swing.Icon;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -59,7 +58,7 @@ import com.vividsolutions.jump.workbench.ui.cursortool.SelectFeaturesTool;
 import com.vividsolutions.jump.workbench.ui.cursortool.editing.FeatureDrawingUtil;
 
 /**
- * Herramienta para dibujar una linea, con opcion de añadir vetices pinchando en
+ * Herramienta para dibujar una linea, con opcion de aï¿½adir vetices pinchando en
  * ventana, o mediante ventana de comandos
  * <p>
  * </p>
@@ -86,22 +85,16 @@ public class DrawGeometryCommandsTool extends DrawGeometryTool {// DrawLineStrin
     private final static Logger LOGGER = Logger
             .getLogger(DrawGeometryCommandsTool.class);
 
-    // Dialogo de comandos
-    public static DetachableInternalFrame commandDialog;
-
     protected DrawGeometryCommandsTool(FeatureDrawingUtil featureDrawingUtil) {
         super(featureDrawingUtil);
     }
 
-    protected static CursorTool currentCursorTool = JUMPWorkbench.getInstance()
-            .getFrame().getContext().getLayerViewPanel().getCurrentCursorTool();
 
     public static CursorTool create(LayerNamePanelProxy layerNamePanelProxy) {
         FeatureDrawingUtil featureDrawingUtil = new FeatureDrawingUtil(
                 layerNamePanelProxy);
-
-        return featureDrawingUtil.prepare(new DrawGeometryCommandsTool(
-                featureDrawingUtil), true);
+        final DrawGeometryCommandsTool tool = new DrawGeometryCommandsTool(featureDrawingUtil);
+        return featureDrawingUtil.prepare(tool, true);
     }
 
     /**
@@ -132,57 +125,18 @@ public class DrawGeometryCommandsTool extends DrawGeometryTool {// DrawLineStrin
     }
 
     /**
-     * Activa la herramienta, anyadiendole un señalizador de snap
+     * Activa la herramienta, anyadiendole un seï¿½alizador de snap
      */
+    /*
     @Override
     public void activate(LayerViewPanel layerViewPanel) {
         super.activate(layerViewPanel);
-
-        // Creamos el dialogo del comando y lo mostramos
-        if (commandDialog == null || !commandDialog.isShowing()) {
-            commandDialog = new DetachableInternalFrame();
-
-            JPanel commandPanel = new CommandLineStringPanel(this);
-            commandDialog.setContentPane(commandPanel);
-            commandDialog
-                    .setTitle(I18NPlug
-                            .getI18N("org.openjump.core.ui.tools.DrawLineStringCommandsTool.commands"));
-            commandDialog.setIconifiable(true);
-            commandDialog.setFrameIcon(GUIUtil.toSmallIcon(IconLoader
-                    .icon("cadTools.png")));
-            commandDialog.pack();
-            commandDialog.setClosable(true);
-            commandDialog.setResizable(true);
-            commandDialog.setMaximizable(true);
-            commandDialog.toFront();
-
-            commandDialog.addInternalFrameListener(new InternalFrameAdapter() {
-
-                @Override
-                public void internalFrameClosing(InternalFrameEvent e) {
-                    commandDialog.dispose();
-                }
-            });
-
-            JUMPWorkbench.getInstance().getFrame()
-                    .addInternalFrame(commandDialog, true, true);
-        }
     }
+    */
 
     @Override
     public void deactivate() {
         super.deactivate();
-
-    }
-
-    public static void closeAction() {
-        select = new SelectFeaturesTool();
-        JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
-                .getCurrentCursorTool().deactivate();
-
-        DrawGeometryCommandsTool.commandDialog.dispose();
-        JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
-                .setCurrentCursorTool(select);
     }
 
     /**
@@ -191,16 +145,14 @@ public class DrawGeometryCommandsTool extends DrawGeometryTool {// DrawLineStrin
     @Override
     public void gestureFinished() throws Exception {
         super.gestureFinished();
-        commandDialog.setVisible(true);
     }
 
     /**
-     * Termina la ejecución de la herramienta
+     * Termina la ejecuciï¿½n de la herramienta
      */
     public void setGestureFinished() {
         try {
             super.finishGesture();
-            commandDialog.setVisible(false);
         } catch (Exception e) {
             LOGGER.error("", e); //$NON-NLS-1$
         }
@@ -235,7 +187,5 @@ public class DrawGeometryCommandsTool extends DrawGeometryTool {// DrawLineStrin
             LOGGER.error("", e);
         }
     }
-
-    protected static SelectFeaturesTool select = null;
 
 }

@@ -21,15 +21,17 @@ package org.openjump.advancedtools;
  */
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
+import com.vividsolutions.jump.workbench.ui.WorkbenchToolBar;
 import org.openjump.advancedtools.config.CADToolsOptionsPanel;
+import org.openjump.advancedtools.icon.IconLoader;
 import org.openjump.advancedtools.language.I18NPlug;
 import org.openjump.advancedtools.plugins.ArcPlugIn;
 import org.openjump.advancedtools.plugins.CirclePlugIn;
@@ -50,6 +52,8 @@ import org.openjump.advancedtools.tools.ParalelLineTool;
 import org.openjump.advancedtools.tools.PerpendicularLineTool;
 import org.openjump.advancedtools.tools.RemoveSectionInLineTool;
 import org.openjump.advancedtools.tools.SelectEditingFeaturesTool;
+import org.openjump.advancedtools.tools.cogo.CommandLineStringFrame;
+import org.openjump.advancedtools.tools.cogo.CommandLineStringPanel;
 import org.openjump.advancedtools.tools.cogo.DrawGeometryCommandsTool;
 
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
@@ -66,6 +70,7 @@ import com.vividsolutions.jump.workbench.ui.cursortool.QuasimodeTool;
 import com.vividsolutions.jump.workbench.ui.plugin.FeatureInstaller;
 import com.vividsolutions.jump.workbench.ui.toolbox.ToolboxDialog;
 import com.vividsolutions.jump.workbench.ui.toolbox.ToolboxPlugIn;
+import org.openjump.core.ui.swing.DetachableInternalFrame;
 
 /**
  * @author Giuseppe Aruta
@@ -181,8 +186,29 @@ public class EditToolboxCADPlugIn extends ToolboxPlugIn {
         // Draw with commands
         DelegatingTool delLineCommandTool = (DelegatingTool) DrawGeometryCommandsTool
                 .create(toolbox.getContext());
-        toolbox.add(delLineCommandTool);
-
+        WorkbenchToolBar.ToolConfig toolConfig = toolbox.add(delLineCommandTool);
+        final CommandLineStringFrame frame = new CommandLineStringFrame(
+                (DrawGeometryCommandsTool)delLineCommandTool.getDelegate());
+        final JToggleButton cogoCommandButton = toolConfig.getButton();
+        cogoCommandButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                frame.setVisible(cogoCommandButton.isSelected());
+            }
+        });
+        cogoCommandButton.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                frame.setVisible(cogoCommandButton.isSelected());
+            }
+        });
+        //cogoCommandButton.addChangeListener(new ChangeListener() {
+        //    @Override
+        //    public void stateChanged(ChangeEvent e) {
+        //        frame.setVisible(cogoCommandButton.isSelected());
+        //    }
+        //});
         toolbox.addToolBar();
 
         /**
