@@ -81,7 +81,7 @@ public class CommandLineStringPanel extends JPanel {
     private JButton ejecutarButton;
     private String textoInformacion;
     public static JCheckBox polygonCheckBox = new JCheckBox(
-            I18NPlug.getI18N("org.openjump.core.ui.plugins.Dialog.draw-as-filled-polygon"));
+            I18NPlug.getI18N("org.openjump.core.ui.config.CADToolsOptionsPanel.ClosedGeometryOptions.draw-as-filled-polygon"));
 
     public CommandLineStringPanel(
             DrawGeometryCommandsTool drawLineStringCommandsTool) {
