@@ -85,13 +85,13 @@ public class ExtendLinePlugIn extends AbstractPlugIn {
 
     /** Plugin options */
     public static final String NEARBY_OPTION = I18NPlug
-            .getI18N("org.openjump.core.ui.tools.General.Nearby");;
+            .getI18N("org.openjump.core.ui.Nearby");;
     public static final String DRAWN_OPTION = I18NPlug
-            .getI18N("org.openjump.core.ui.tools.General.Drawn");
+            .getI18N("org.openjump.core.ui.Drawn");
     public static final String SELECTED_OPTION = I18NPlug
-            .getI18N("org.openjump.core.ui.tools.General.Selected");
+            .getI18N("org.openjump.core.ui.Selected");
     public static final String CANCEL_OPTION = I18NPlug
-            .getI18N("org.openjump.core.ui.tools.General.Cancel");
+            .getI18N("org.openjump.core.ui.Cancel");
 
     /** Extend Tools */
     protected ExtendRectLineTool elt = null;
