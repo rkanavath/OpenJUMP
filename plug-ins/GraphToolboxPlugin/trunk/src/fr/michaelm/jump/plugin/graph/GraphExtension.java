@@ -81,6 +81,7 @@ public class GraphExtension extends Extension {
         new CycleFinderPlugIn().initialize(context);
         new StrahlerNumberPlugIn().initialize(context);
         new SkeletonPlugIn().initialize(context);
+        new HydrographicNetworkAnalysisPlugIn().initialize(context);
     }
 
 }
