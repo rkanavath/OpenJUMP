@@ -20,6 +20,7 @@
 package fr.michaelm.jump.drivers.csv;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,10 +63,18 @@ public class FieldSeparator {
         if (fieldPattern == null) {
             String fieldSeparatorPattern = Pattern.quote(""+separator);
             fieldPattern = Pattern.compile(
-            "(?<=^|" + fieldSeparatorPattern + ")" +
-            "(?:\"((?:[^\\x00-\\x1F\"]|\"\")*)\"|" +
-            "([^\\x00-\\x1F" + fieldSeparatorPattern + "\"]*))" +
-            "(?:" + fieldSeparatorPattern + "|$)");
+                // A field starts just after the begining of the string or after a separator
+                "(?<=^|" + fieldSeparatorPattern + ")" +
+                // A field excludes non printable characters (except ws and   \t)
+                // It must be quoted if it includes a double quote or a separator
+                // included quotes must be doubled
+                "(?:\"((?:[^\\x00-\\x1F\"]|\"\"|\\s)*+)\"|" +
+                // If a field is not quoted, it can not include double quote
+                "([^\\x00-\\x1F" + fieldSeparatorPattern + "]*))" +
+                // A field ends with a separator (not included between double quotes)
+                // or with the end of the string
+                "(?:" + fieldSeparatorPattern + "|$)"
+            );
         }
         return fieldPattern;
     }
@@ -74,8 +83,9 @@ public class FieldSeparator {
         List<String> tokens = new ArrayList<String>();
         Matcher matcher = getFieldPattern().matcher(line);
         while (!matcher.hitEnd() && matcher.find()) {
-            String token = matcher.group(1)!=null ? matcher.group(1) : 
-                           matcher.group(2).replaceAll("\"\"","\"");
+            String token = matcher.group(1)!=null ?
+                    matcher.group(1).replaceAll("\"\"","\""):
+                    matcher.group(2);
             tokens.add(token);
         }
         return tokens.toArray(new String[tokens.size()]);
@@ -85,6 +95,16 @@ public class FieldSeparator {
         if (separator == '\t') return "{tab}";
         if (separator == ' ')  return "{whitespace}";
         return "" + separator;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new FieldSeparator('\t').getFieldPattern().toString());
+        FieldSeparator fs = new FieldSeparator('\t');
+        System.out.println(Arrays.toString(fs.getFields("toto\ttata\ttiti")));
+        System.out.println(Arrays.toString(fs.getFields("toto 1\ttata 2\ttiti 3")));
+        System.out.println(Arrays.toString(fs.getFields("toto 1\ttata \"2\"\ttiti 3")));
+        System.out.println(Arrays.toString(fs.getFields("toto 1\t\"tata \"\"2\"\"\"\ttiti 3")));
+        System.out.println(Arrays.toString(fs.getFields("toto 1\t\"tata\t2\"\ttiti 3")));
     }
 
 }

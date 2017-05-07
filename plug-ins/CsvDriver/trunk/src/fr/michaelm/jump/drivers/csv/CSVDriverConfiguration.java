@@ -43,8 +43,9 @@ import static fr.michaelm.jump.drivers.csv.FieldSeparator.*;
 /**
  * Extension loading a driver for csv and other character delimited text files
  * @author Micha&euml;l MICHAUD
- * @version 1.0.0 (2017-02-09)
+ * @version 1.0.1 (2017-05-07)
  */
+// 1.0.1 (2017-05-07) fix parser to parse correctly non quoted fields including double quotes
 // 1.0.0 (2017-02-09) writer : add encoding option
 //                    reader : do not keep columns used to make the feature geometry
 //                    writer : write WKT with Z values
