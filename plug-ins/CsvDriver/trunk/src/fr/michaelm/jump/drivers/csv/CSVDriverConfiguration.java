@@ -76,7 +76,7 @@ public class CSVDriverConfiguration extends Extension {
     }
 
     public String getVersion() {
-        return "1.0.0 (2017-02-09)";
+        return "1.0.1 (2017-05-07)";
     }
 
     public void configure(PlugInContext context) throws Exception {
