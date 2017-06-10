@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jump.feature.*;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.workbench.model.Layer;
+import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
@@ -16,22 +17,23 @@ import fr.michaelm.jump.feature.jgrapht.GraphFactory;
 import fr.michaelm.jump.feature.jgrapht.INode;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
+import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.cycle.HawickJamesSimpleCycles;
 import org.jgrapht.graph.DirectedSubgraph;
 import org.jgrapht.graph.EdgeReversedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
-import org.openjump.core.ui.style.decoration.ArrowLineStringMiddlepointStyle;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 
 /**
- * Created by UMichael on 06/04/2017.
+ * PlugIn to detect or repair anomalies in a hydrographic network
  */
 public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
 
@@ -61,6 +63,7 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
     private static String Z_ANOMALY;
     private static String CYCLE_ANOMALY;
     private static String NODE_ANOMALY;
+    private static String REVERSED_EDGES;
 
     private Layer layer;
     private boolean detect      = true;
@@ -101,6 +104,7 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
         Z_ANOMALY        = I18NPlug.getI18N("HydrographicNetworkAnalysisPlugIn.z-anomaly");
         CYCLE_ANOMALY    = I18NPlug.getI18N("HydrographicNetworkAnalysisPlugIn.cycle-anomaly");
         NODE_ANOMALY     = I18NPlug.getI18N("HydrographicNetworkAnalysisPlugIn.node-anomaly");
+        REVERSED_EDGES   = I18NPlug.getI18N("HydrographicNetworkAnalysisPlugIn.reversed-edge");
 
         context.getFeatureInstaller().addMainMenuPlugin(
                 this, new String[]{MenuNames.PLUGINS, GRAPH},
@@ -116,17 +120,26 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
                 context.getWorkbenchFrame(), HYDROGRAPHIC_NETWORK_ANALYSIS, true);
         dialog.setSideBarDescription(I18NPlug.getI18N("HydrographicNetworkAnalysisPlugIn.Description"));
 
-        final JComboBox jcb_layer = dialog.addLayerComboBox(
-                LAYER, context.getCandidateLayer(0), null, context.getLayerManager());
+        dialog.addLayerComboBox(LAYER,
+                context.getCandidateLayer(0), null, context.getLayerManager());
 
-        final JRadioButton jrb_detect = dialog.addRadioButton(DETECT, "action", detect, DETECT);
-        final JRadioButton jrb_repair = dialog.addRadioButton(REPAIR, "action", repair, REPAIR);
+        dialog.addRadioButton(DETECT, "action", detect, DETECT);
+        dialog.addRadioButton(REPAIR, "action", repair, REPAIR);
 
-        final JCheckBox jcb_cycles = dialog.addCheckBox(FIND_CYCLES, findCycles, FIND_CYCLES_TT);
-        final JCheckBox jcb_source = dialog.addCheckBox(FIND_SOURCES, findSources, FIND_SOURCES_TT);
-        final JCheckBox jcb_well   = dialog.addCheckBox(FIND_SINKS, findSinks, FIND_SINKS_TT);
         final JCheckBox jcb_use_z  = dialog.addCheckBox(USE_Z, useZ, USE_Z_TT);
         final JTextField jtf_tol_z = dialog.addDoubleField(TOL_Z, tolZ, 12, TOL_Z_TT);
+        jtf_tol_z.setEnabled(jcb_use_z.isSelected());
+        jcb_use_z.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jtf_tol_z.setEnabled(jcb_use_z.isSelected());
+            }
+        });
+
+        dialog.addCheckBox(FIND_SOURCES, findSources, FIND_SOURCES_TT);
+        dialog.addCheckBox(FIND_SINKS, findSinks, FIND_SINKS_TT);
+        dialog.addCheckBox(FIND_CYCLES, findCycles, FIND_CYCLES_TT);
+
 
 
         GUIUtil.centreOnWindow(dialog);
@@ -150,41 +163,57 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
         monitor.allowCancellationRequests();
         monitor.report(GRAPH_COMPUTATION + "...");
         FeatureCollection fc = layer.getFeatureCollectionWrapper();
-        if (detect && useZ) {
-            Layer lyr = context.getLayerManager().addLayer("Result", layer.getName() + "-" + Z_ANOMALY, getInversedEdges(fc));
-            setInversionStyle(lyr);
-        }
 
         DirectedGraph<INode,FeatureAsEdge> graph =
                 (DirectedGraph<INode,FeatureAsEdge>) GraphFactory.createDirectedPseudograph(fc.getFeatures(), false);
-        if (detect && findCycles) {
-            Layer lyr = context.getLayerManager().addLayer("Result", layer.getName() + "-" + CYCLE_ANOMALY, getCycles(graph));
-            setCycleStyle(lyr);
+
+        if (detect) {
+            if (useZ) {
+                Layer lyr = context.getLayerManager().addLayer(StandardCategoryNames.RESULT,
+                        layer.getName() + "-" + Z_ANOMALY, getInversedEdges(fc));
+                setInversionStyle(lyr);
+            }
+            if (findCycles) {
+                Layer lyr = context.getLayerManager().addLayer(StandardCategoryNames.RESULT,
+                        layer.getName() + "-" + CYCLE_ANOMALY, getCycles(graph));
+                setCycleStyle(lyr);
+            }
+            if (findSources || findSinks) {
+                Layer lyr = context.getLayerManager().addLayer(StandardCategoryNames.RESULT,
+                        layer.getName() + "-" + NODE_ANOMALY, getSourcesAndSinks(graph));
+                setNodeStyle(lyr);
+            }
         }
-        if (detect && (findSources || findSinks)) {
-            Layer lyr = context.getLayerManager().addLayer("Result", layer.getName() + "-" + NODE_ANOMALY, getSourcesAndWells(graph));
-            lyr.getBasicStyle().setFillColor(Color.RED);
-            lyr.addStyle(new MyRingVertexStyle());
-            lyr.getStyle(MyRingVertexStyle.class).setEnabled(true);
-        }
-        Set<Integer> set = new HashSet<Integer>();
-        if (repair && findCycles) {
-            repairCycles(graph, set);
-        }
-        if (repair && findSources) {
-            repairSources(graph, set);
-        }
-        if (repair && findSinks) {
-            repairSinks(graph, set);
-        }
+
         if (repair) {
+            Set<Integer> set = new HashSet<Integer>();
+            if (useZ) {
+                repairDownwardEdges(graph, set);
+            }
+            if (findSources) {
+                repairSources(graph, set);
+            }
+            if (findSinks) {
+                repairSinks(graph, set);
+            }
+            if (findCycles) {
+                repairCycles(graph, set);
+            }
+            FeatureCollection reversedFeatures =
+                    new FeatureDataset(layer.getFeatureCollectionWrapper().getFeatureSchema());
+
             EditTransaction transaction = new EditTransaction(new LinkedHashSet<Feature>(),
-                    "HydrographicNetworkAnalysis", layer, true, true, context.getLayerViewPanel().getContext());
+                    HYDROGRAPHIC_NETWORK_ANALYSIS, layer, true, true, context.getLayerViewPanel().getContext());
             for (Feature feature : fc.getFeatures()) {
                 if (set.contains(feature.getID())) {
+                    reversedFeatures.add(feature.clone(true, true));
                     transaction.modifyFeatureGeometry(feature, feature.getGeometry().reverse());
                 }
             }
+            Layer lyr = context.getLayerManager().addLayer(StandardCategoryNames.RESULT,
+                    layer.getName() + "-" + REVERSED_EDGES, reversedFeatures);
+            setReversedStyle(lyr);
+
             transaction.commit();
         }
     }
@@ -234,7 +263,7 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
         return dataset;
     }
 
-    private FeatureCollection getSourcesAndWells(DirectedGraph<INode,FeatureAsEdge> graph) {
+    private FeatureCollection getSourcesAndSinks(DirectedGraph<INode,FeatureAsEdge> graph) {
         FeatureSchema anomalySchema = getAnomalySchema();
         FeatureCollection dataset = new FeatureDataset(anomalySchema);
 
@@ -244,7 +273,7 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
                 feature.setGeometry(node.getGeometry());
                 feature.setAttribute("type", SOURCE);
                 dataset.add(feature);
-            } else if (findSinks && isWell(graph, node)) {
+            } else if (findSinks && isSink(graph, node)) {
                 Feature feature = new BasicFeature(anomalySchema);
                 feature.setGeometry(node.getGeometry());
                 feature.setAttribute("type", SINK);
@@ -254,16 +283,29 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
         return dataset;
     }
 
-    boolean isSource(DirectedGraph<INode,FeatureAsEdge> graph, INode node) {
+    private boolean isSource(DirectedGraph<INode,FeatureAsEdge> graph, INode node) {
         return graph.inDegreeOf(node) == 0 && graph.outDegreeOf(node) > 1;
     }
 
-    boolean isWell(DirectedGraph<INode,FeatureAsEdge> graph, INode node) {
+    private boolean isSink(DirectedGraph<INode,FeatureAsEdge> graph, INode node) {
         return graph.outDegreeOf(node) == 0 && graph.inDegreeOf(node) > 1;
     }
 
+    private void repairDownwardEdges(DirectedGraph<INode,FeatureAsEdge> graph, Set<Integer> set) {
+        for (FeatureAsEdge edge : new ArrayList<FeatureAsEdge>(graph.edgeSet())) {
+            Geometry geometry = edge.getFeature().getGeometry();
+            if (!geometry.isEmpty() && geometry instanceof LineString) {
+                double z1 = geometry.getCoordinates()[0].z;
+                double z2 = geometry.getCoordinates()[geometry.getNumPoints()-1].z;
+                if (!Double.isNaN(z1) && !Double.isNaN(z2) && (z1-z2) < -tolZ) {
+                    reverseEdge(graph, edge);
+                    set.add(edge.getFeature().getID());
+                }
+            }
+        }
+    }
 
-    private List<Integer> repairCycles(DirectedGraph<INode,FeatureAsEdge> graph, Set<Integer> set) {
+    private void repairCycles(DirectedGraph<INode,FeatureAsEdge> graph, Set<Integer> set) {
         List<List<INode>> cycles = new HawickJamesSimpleCycles<INode,FeatureAsEdge>(graph).findSimpleCycles();
         for (List<INode> cycle : cycles) {
             Set<FeatureAsEdge> edgeSet = new DirectedSubgraph<INode,FeatureAsEdge>(
@@ -282,13 +324,13 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
                 set.add(edgeToReverse.getFeature().getID());
             }
         }
-        return new ArrayList<Integer>();
     }
 
     private void repairSources(DirectedGraph<INode,FeatureAsEdge> graph, Set<Integer> set) {
         for (INode node : graph.vertexSet()) {
             if (findSources && isSource(graph, node)) {
-                BreadthFirstIterator<INode,FeatureAsEdge> it = new BreadthFirstIterator(graph, node);
+                BreadthFirstIterator<INode,FeatureAsEdge> it =
+                        new BreadthFirstIterator<INode,FeatureAsEdge>(graph, node);
                 INode stopNode = null;
                 while (it.hasNext()) {
                     INode n = it.next();
@@ -307,11 +349,29 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
                     }
                 }
                 if (stopNode != null) {
-                    List<FeatureAsEdge> edges = DijkstraShortestPath.findPathBetween(graph, node, stopNode);
-                    for (FeatureAsEdge edge : edges) {
-                        reverseEdge(graph, edge);
-                        set.add(edge.getFeature().getID());
-                    }
+                    reversePath(graph, node, stopNode, set);
+                    // List<FeatureAsEdge> edges = DijkstraShortestPath.findPathBetween(graph, node, stopNode);
+                    // Set<Integer> temp = new HashSet<Integer>();
+                    // for (FeatureAsEdge edge : edges) {
+                    //     reverseEdge(graph, edge);
+                    //     temp.add(edge.getFeature().getID());
+                    // }
+                    // boolean hasCycle = false;
+                    // CycleDetector cycleDetector = new CycleDetector(graph);
+                    // for (FeatureAsEdge edge : edges) {
+                    //     if (cycleDetector.detectCyclesContainingVertex(graph.getEdgeTarget(edge))) {
+                    //         hasCycle = true;
+                    //         break;
+                    //     }
+                    // }
+                    // if (hasCycle) {
+                    //     for (FeatureAsEdge edge : edges) {
+                    //         reverseEdge(graph, edge);
+                    //     }
+                    //     temp.clear();
+                    // } else {
+                    //     set.addAll(temp);
+                    // }
                 }
             }
         }
@@ -319,10 +379,11 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
     }
 
     private void repairSinks(DirectedGraph<INode,FeatureAsEdge> graph, Set<Integer> set) {
-        graph = new EdgeReversedGraph(graph);
+        graph = new EdgeReversedGraph<INode,FeatureAsEdge>(graph);
         for (INode node : graph.vertexSet()) {
             if (findSources && isSource(graph, node)) {
-                BreadthFirstIterator<INode,FeatureAsEdge> it = new BreadthFirstIterator(graph, node);
+                BreadthFirstIterator<INode,FeatureAsEdge> it =
+                        new BreadthFirstIterator<INode,FeatureAsEdge>(graph, node);
                 INode stopNode = null;
                 while (it.hasNext()) {
                     INode n = it.next();
@@ -341,15 +402,64 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
                     }
                 }
                 if (stopNode != null) {
-                    List<FeatureAsEdge> edges = DijkstraShortestPath.findPathBetween(graph, node, stopNode);
-                    for (FeatureAsEdge edge : edges) {
-                        reverseEdge(graph, edge);
-                        set.add(edge.getFeature().getID());
-                    }
+                    reversePath(graph, node, stopNode, set);
+                    // List<FeatureAsEdge> edges = DijkstraShortestPath.findPathBetween(graph, node, stopNode);
+                    // Set<Integer> temp = new HashSet<Integer>();
+                    // for (FeatureAsEdge edge : edges) {
+                    //     reverseEdge(graph, edge);
+                    //     temp.add(edge.getFeature().getID());
+                    // }
+                    // boolean hasCycle = false;
+                    // CycleDetector cycleDetector = new CycleDetector(graph);
+                    // for (FeatureAsEdge edge : edges) {
+                    //     if (cycleDetector.detectCyclesContainingVertex(graph.getEdgeSource(edge))) {
+                    //         hasCycle = true;
+                    //         break;
+                    //     }
+                    // }
+                    // if (hasCycle) {
+                    //     for (FeatureAsEdge edge : edges) {
+                    //         reverseEdge(graph, edge);
+                    //     }
+                    //     temp.clear();
+                    // } else {
+                    //     set.addAll(temp);
+                    // }
                 }
             }
         }
         //return new ArrayList<Integer>();
+    }
+
+    private void reversePath(DirectedGraph<INode,FeatureAsEdge> graph, INode node1, INode node2, Set<Integer> set) {
+        List<FeatureAsEdge> edges = DijkstraShortestPath.findPathBetween(graph, node1, node2);
+        Set<Integer> temp = new HashSet<Integer>();
+        for (FeatureAsEdge edge : edges) {
+            reverseEdge(graph, edge);
+            temp.add(edge.getFeature().getID());
+        }
+        // Before validation, check that we did not introduce cycles
+        boolean hasCycle = false;
+        CycleDetector<INode,FeatureAsEdge> cycleDetector = new CycleDetector<INode,FeatureAsEdge>(graph);
+        if (cycleDetector.detectCyclesContainingVertex(node1)) hasCycle = true;
+        else if (cycleDetector.detectCyclesContainingVertex(node2)) hasCycle = true;
+        else {
+            for (FeatureAsEdge edge : edges) {
+                if (cycleDetector.detectCyclesContainingVertex(graph.getEdgeSource(edge))) {
+                    hasCycle = true;
+                    break;
+                }
+            }
+        }
+        // If a cycle has been found, we reverse the graph back to the previous situation
+        if (hasCycle) {
+            for (FeatureAsEdge edge : edges) {
+                reverseEdge(graph, edge);
+            }
+            temp.clear();
+        } else {
+            set.addAll(temp);
+        }
     }
 
     private void reverseEdge(Graph<INode,FeatureAsEdge> graph, FeatureAsEdge edge) {
@@ -371,8 +481,8 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
         graph.removeEdge(edge);
         graph.addEdge(end, start, edge);
         double result;
-        if (isSource(graph, start) || isWell(graph, start)) result = 0;
-        else if (isSource(graph, end) || isWell(graph, end)) result = 0;
+        if (isSource(graph, start) || isSink(graph, start)) result = 0;
+        else if (isSource(graph, end) || isSink(graph, end)) result = 0;
         else if (useZ) {
             double z0 = ((LineString)edge.getGeometry()).getStartPoint().getCoordinate().z;
             double z1 = ((LineString)edge.getGeometry()).getEndPoint().getCoordinate().z;
@@ -401,7 +511,7 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
         return schema;
     }
 
-    public void setInversionStyle(Layer layer) {
+    private void setInversionStyle(Layer layer) {
         BasicStyle style = layer.getBasicStyle();
         style.setLineColor(Color.ORANGE);
         style.setLineWidth(3);
@@ -410,12 +520,24 @@ public class HydrographicNetworkAnalysisPlugIn extends ThreadedBasePlugIn {
         layer.addStyle(new ArrowLineStringSegmentStyle.Solid());
     }
 
-    public void setCycleStyle(Layer layer) {
-        BasicStyle style = layer.getBasicStyle();
-        style.setLineColor(Color.RED);
-        style.setLineWidth(3);
-        style.setAlpha(200);
-        style.setFillColor(Color.LIGHT_GRAY);
+    private void setCycleStyle(Layer layer) {
+        layer.getBasicStyle().setFillColor(Color.LIGHT_GRAY);
+        layer.getBasicStyle().setLineColor(Color.RED);
+        layer.getBasicStyle().setLineWidth(3);
+        layer.getBasicStyle().setAlpha(200);
+    }
+
+    private void setNodeStyle(Layer layer) {
+        layer.getBasicStyle().setFillColor(Color.RED);
+        layer.addStyle(new MyRingVertexStyle());
+        layer.getStyle(MyRingVertexStyle.class).setEnabled(true);
+    }
+
+    private void setReversedStyle(Layer layer) {
+        layer.getBasicStyle().setFillColor(Color.LIGHT_GRAY);
+        layer.getBasicStyle().setLineColor(Color.BLUE);
+        layer.getBasicStyle().setLineWidth(3);
+        layer.getBasicStyle().setAlpha(200);
     }
 
     private static class MyRingVertexStyle extends RingVertexStyle {
