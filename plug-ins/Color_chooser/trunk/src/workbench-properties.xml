@@ -1,0 +1,4 @@
+<workbench>
+ <!--plug-in> ====== CADTOOLS ===== </plug-in-->
+ <extension> org.openjump.core.ui.plugin.extension.FeatureColorChooserExtension</extension>
+</workbench>
