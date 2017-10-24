@@ -192,9 +192,12 @@ public class CircleByDiameterTool extends ConstrainedMultiClickTool {
             if (getCoordinates().size() > 0) {
                 Coordinate a = (Coordinate) getCoordinates().get(0);
                 Coordinate b = this.tentativeCoordinate;
+                double radius = a.distance(b) / 2;
+                double diameter = getCircleDiameter().getLength();
+                double area = 2 * Math.PI * radius;
 
-                CoordinateListMetricsUtils.setCircleMessage(a.distance(b) / 2,
-                        getCircleDiameter().getLength(), a, b);
+                CoordinateListMetricsUtils.setCircleMessage(radius, diameter,
+                        area, a, b);
 
             }
         } catch (Throwable t) {
