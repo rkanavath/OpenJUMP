@@ -16,7 +16,7 @@ public class CoordinateListMetricsUtils {
     public static final String Circum = I18NPlug
             .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.circumference")
             + ": ";
-    public static final String Center = I18NPlug
+    public static final String Source = I18NPlug
             .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.source")
             + ": ";
     public static final String Target = I18NPlug
@@ -31,6 +31,9 @@ public class CoordinateListMetricsUtils {
     public static final String Measure = I18NPlug
             .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.Measure");
 
+    public static final String Centre = I18NPlug
+            .getI18N("org.openjump.core.ui.utils.CoordinateListMetrics.center-coordinates")
+            + ": ";
     /*
      * From
      * com.vividsolutions.jump.workbench.ui.cursortool.CoordinateListMetrics
@@ -49,7 +52,7 @@ public class CoordinateListMetricsUtils {
 
     public static String circleString(double a, double b, double c,
             Coordinate start, Coordinate target) {
-        String all = Coordinates + " [" + Center + df1.format(start.x) + " ; "
+        String all = Coordinates + " [" + Source + df1.format(start.x) + " ; "
                 + df1.format(start.y) + " - " + Target + df1.format(target.x)
                 + " ; " + df1.format(target.y) + "]  " + Radius + df2.format(a)
                 + "  " + Circum + df2.format(b) + "  " + Area + ": "
@@ -60,7 +63,7 @@ public class CoordinateListMetricsUtils {
 
     public static void setCircleMessage(double radius, double circumference,
             double area, Coordinate start, Coordinate target) {
-        String all = Coordinates + " [" + Center + df1.format(start.x) + " ; "
+        String all = Coordinates + " [" + Source + df1.format(start.x) + " ; "
                 + df1.format(start.y) + " - " + Target + df1.format(target.x)
                 + " ; " + df1.format(target.y) + "]  " + Radius
                 + df2.format(radius) + "  " + Circum
@@ -72,7 +75,7 @@ public class CoordinateListMetricsUtils {
 
     public static void setCircle3PointsMessage(double radius,
             double circumference, double area, Coordinate start) {
-        String all = Coordinates + " [" + Center + df1.format(start.x) + " ; "
+        String all = Coordinates + " [" + Centre + df1.format(start.x) + " ; "
                 + df1.format(start.y) + "]  " + Radius + df2.format(radius)
                 + "  " + Circum + df2.format(circumference) + "  " + Area
                 + ": " + df2.format(area);
@@ -111,7 +114,7 @@ public class CoordinateListMetricsUtils {
         out.addHeader(2, Circle);
         out.addHeader(
                 3,
-                Coordinates + " [" + Center + df2.format(start.x) + ";"
+                Coordinates + " [" + Source + df2.format(start.x) + ";"
                         + df2.format(start.y) + " - " + Target
                         + df2.format(target.x) + ";" + df2.format(target.y)
                         + "]  ");
