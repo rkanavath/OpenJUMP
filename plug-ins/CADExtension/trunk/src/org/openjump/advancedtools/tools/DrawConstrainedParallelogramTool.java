@@ -66,6 +66,7 @@
 package org.openjump.advancedtools.tools;
 
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -76,6 +77,7 @@ import javax.swing.Icon;
 import org.openjump.advancedtools.config.CADToolsOptionsPanel;
 import org.openjump.advancedtools.icon.IconLoader;
 import org.openjump.advancedtools.language.I18NPlug;
+import org.openjump.advancedtools.utils.CoordinateListMetricsUtils;
 import org.openjump.core.geomutils.GeoUtils;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -83,6 +85,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jump.geom.Angle;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.LayerNamePanelProxy;
 import com.vividsolutions.jump.workbench.ui.cursortool.CursorTool;
@@ -242,6 +245,55 @@ public class DrawConstrainedParallelogramTool extends ConstrainedNClickTool {
 
         }
         return null;
+    }
+
+    @Override
+    public void mouseLocationChanged(MouseEvent e) {
+        try {
+            if (isShapeOnScreen()) {
+                redrawShape();
+            }
+            super.mouseLocationChanged(e);
+           
+            if (getCoordinates().size() > 1) {
+
+                Coordinate localCoordinate1 = (Coordinate) this.coordinates
+                        .get(0);
+                Coordinate localCoordinate2 = (Coordinate) this.coordinates
+                        .get(1);
+                Coordinate localCoordinate3 = this.tentativeCoordinate;
+                Coordinate localCoordinate4 = GeoUtils.vectorBetween(
+                        localCoordinate2, localCoordinate1);
+                localCoordinate4 = GeoUtils.vectorAdd(localCoordinate3,
+                        localCoordinate4);
+                ArrayList<Coordinate> localArrayList = new ArrayList();
+                localArrayList.add(new Coordinate((float) localCoordinate1.x,
+                        (float) localCoordinate1.y));
+                localArrayList.add(new Coordinate((float) localCoordinate2.x,
+                        (float) localCoordinate2.y));
+                localArrayList.add(new Coordinate((float) localCoordinate3.x,
+                        (float) localCoordinate3.y));
+                localArrayList.add(new Coordinate((float) localCoordinate4.x,
+                        (float) localCoordinate4.y));
+                localArrayList.add(new Coordinate((float) localCoordinate1.x,
+                        (float) localCoordinate1.y));
+
+                Polygon polygon = new GeometryFactory()
+                        .createPolygon(toArray(localArrayList));
+
+                double distance1 = localCoordinate1.distance(localCoordinate2);
+                double distance2 = localCoordinate2.distance(localCoordinate3);
+                double angle = Math.toDegrees(Angle.angleBetween(
+                        localCoordinate2, localCoordinate1, localCoordinate3));
+                double area = polygon.getArea();
+                double perimeter = polygon.getLength();
+
+                CoordinateListMetricsUtils.setParallelogramMessage(distance1,
+                        distance2, angle, perimeter, area);
+            }
+        } catch (Throwable t) {
+            getPanel().getContext().handleThrowable(t);
+        }
     }
 
     protected boolean goodParallelogram()

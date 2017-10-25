@@ -47,6 +47,9 @@ public class CoordinateListMetricsUtils {
     public static final String Distance = I18N
             .get("ui.cursortool.CoordinateListMetrics.Distance");
 
+    public static final String Perimeter = I18N
+            .get("ui.cursortool.CoordinateListMetrics.Perimeter");
+
     public static DecimalFormat df2 = new DecimalFormat("##0.0##");
     public static DecimalFormat df1 = new DecimalFormat("##0.#");
 
@@ -98,8 +101,9 @@ public class CoordinateListMetricsUtils {
         String all = "";
 
         all = "l1: " + df2.format(length1) + "  l2: " + df2.format(length2)
-                + "  " + Angle + ": " + angle + "  " + Distance
-                + df2.format(perimeter) + "  " + Area + ": " + df2.format(area);
+                + "  " + Angle + ": " + df2.format(angle) + "  " + Perimeter
+                + ": " + df2.format(perimeter) + "  " + Area + ": "
+                + df2.format(area);
 
         JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
                 .getContext().setStatusMessage(all);
