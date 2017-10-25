@@ -163,7 +163,7 @@ public class CircleByTangentTool extends ConstrainedMultiClickTool {
                 Coordinate a = (Coordinate) getCoordinates().get(0);
                 Coordinate b = this.tentativeCoordinate;
                 double radius = a.distance(b);
-                double area = 2 * Math.PI * radius;
+                double area = Math.PI * Math.pow(radius, 2);
 
                 CoordinateListMetricsUtils.setCircleMessage(a.distance(b),
                         getCircleTangent().getLength(), area, a, b);

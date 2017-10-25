@@ -85,8 +85,8 @@ public class EllipseByDraggingTool extends DragTool {
         LineString lineHorizontal = new GeometryFactory()
                 .createLineString(coordWidth);
 
-        double lengthVertical = lineVertical.getLength();
-        double lengthHorizontal = lineHorizontal.getLength();
+        double lengthVertical = lineVertical.getLength()/2;
+        double lengthHorizontal = lineHorizontal.getLength()/2;
         double mean = (lengthVertical + lengthHorizontal) / 2;
         double circumference = 2 * Math.PI * (mean);
         double area = Math.PI * Math.pow(mean, 2);
