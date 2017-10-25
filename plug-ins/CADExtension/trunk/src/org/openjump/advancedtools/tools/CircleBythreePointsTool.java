@@ -6,6 +6,7 @@ package org.openjump.advancedtools.tools;
  */
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
@@ -17,6 +18,7 @@ import javax.swing.Icon;
 
 import org.openjump.advancedtools.config.CADToolsOptionsPanel;
 import org.openjump.advancedtools.language.I18NPlug;
+import org.openjump.advancedtools.utils.CoordinateListMetricsUtils;
 import org.openjump.core.geomutils.Circle;
 import org.openjump.core.ui.plugin.edittoolbox.cursortools.ConstrainedMultiClickTool;
 
@@ -91,6 +93,40 @@ public class CircleBythreePointsTool extends ConstrainedMultiClickTool {
         Coordinate b = (Coordinate) points.get(1);
         Coordinate c = (Coordinate) points.get(2);
         return getCenter3Point(a, b, c);
+    }
+
+    @Override
+    public void mouseLocationChanged(MouseEvent e) {
+        try {
+            if (isShapeOnScreen()) {
+                redrawShape();
+            }
+            super.mouseLocationChanged(e);
+            /*
+             * if (getCoordinates().size() == 2) { Coordinate a = (Coordinate)
+             * getCoordinates().get(0); Coordinate b = this.tentativeCoordinate;
+             * CoordinateListMetricsUtils.setMessage(a.distance(b)); }
+             */
+            if (getCoordinates().size() > 1) {
+                Coordinate a = (Coordinate) getCoordinates().get(0);
+                Coordinate b = (Coordinate) getCoordinates().get(1);
+                Coordinate c = this.tentativeCoordinate;
+
+                Point center = getCenter3Point(a, b, c);
+                LineString circle = getCircle3points(a, b, c);
+                Polygon circleP = getPolygonCircle3points(a, b, c);
+
+                double area = circleP.getArea();
+                double circumference = circle.getLength();
+                double radius = circumference / (2 * Math.PI);
+
+                CoordinateListMetricsUtils.setCircle3PointsMessage(radius,
+                        circumference, area, center.getCoordinate());
+
+            }
+        } catch (Throwable t) {
+            getPanel().getContext().handleThrowable(t);
+        }
     }
 
     protected LineString getCircle() throws NoninvertibleTransformException {

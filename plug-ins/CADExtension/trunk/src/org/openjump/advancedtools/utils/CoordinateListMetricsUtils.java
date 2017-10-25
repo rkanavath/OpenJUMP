@@ -58,13 +58,46 @@ public class CoordinateListMetricsUtils {
 
     }
 
-    public static void setCircleMessage(double a, double b, double c,
-            Coordinate start, Coordinate target) {
+    public static void setCircleMessage(double radius, double circumference,
+            double area, Coordinate start, Coordinate target) {
         String all = Coordinates + " [" + Center + df1.format(start.x) + " ; "
                 + df1.format(start.y) + " - " + Target + df1.format(target.x)
-                + " ; " + df1.format(target.y) + "]  " + Radius + df2.format(a)
-                + "  " + Circum + df2.format(b) + "  " + Area + ": "
-                + df2.format(c);
+                + " ; " + df1.format(target.y) + "]  " + Radius
+                + df2.format(radius) + "  " + Circum
+                + df2.format(circumference) + "  " + Area + ": "
+                + df2.format(area);
+        JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
+                .getContext().setStatusMessage(all);
+    }
+
+    public static void setCircle3PointsMessage(double radius,
+            double circumference, double area, Coordinate start) {
+        String all = Coordinates + " [" + Center + df1.format(start.x) + " ; "
+                + df1.format(start.y) + "]  " + Radius + df2.format(radius)
+                + "  " + Circum + df2.format(circumference) + "  " + Area
+                + ": " + df2.format(area);
+        JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
+                .getContext().setStatusMessage(all);
+    }
+
+    public static void setEllipseMessage(double length1, double length2,
+            double circumference, double area) {
+        String all = "l1: " + df2.format(length1) + "  l2: "
+                + df2.format(length2) + "  " + Circum
+                + df2.format(circumference) + "  " + Area + ": "
+                + df2.format(area);
+        JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
+                .getContext().setStatusMessage(all);
+    }
+
+    public static void setParallelogramMessage(double length1, double length2,
+            double angle, double perimeter, double area) {
+        String all = "";
+
+        all = "l1: " + df2.format(length1) + "  l2: " + df2.format(length2)
+                + "  " + Angle + ": " + angle + "  " + Distance
+                + df2.format(perimeter) + "  " + Area + ": " + df2.format(area);
+
         JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
                 .getContext().setStatusMessage(all);
     }
@@ -87,8 +120,8 @@ public class CoordinateListMetricsUtils {
         out.addHeader(3, Area + ": " + df2.format(c));
     }
 
-    public static void setMessage(String aString, double a) {
-        String all = aString + df2.format(a);
+    public static void setMessage(double a) {
+        String all = Distance + ": " + df2.format(a);
         JUMPWorkbench.getInstance().getFrame().getContext().getLayerViewPanel()
                 .getContext().setStatusMessage(all);
     }
