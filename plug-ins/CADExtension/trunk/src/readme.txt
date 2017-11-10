@@ -3,7 +3,7 @@ CAD Tools
 Source code:
     * ConstrainedNClickTool class from SkyJUMP ver. 2
     * CAD tools from from Kosmo SAIG Cad Tools (version 3.0)
-    * Block and Annotation tools from AdvancedTools (Giuseppe Aruta - GeoArbores Project)
+    * Line decorations, Block and Annotation tools from AdvancedTools (Giuseppe Aruta - GeoArbores Project)
     * Other enhancements have been adapted from OpenJUMP 1.10 source code
 
 All copyright reserved under GNU version 3
