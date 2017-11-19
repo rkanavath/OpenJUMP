@@ -173,24 +173,37 @@ public class OpenJUMPInputFactory extends AbstractInputFactory {
      * @return
      */
 
+//    public static boolean isTable(Layer layer) {
+ //         FeatureCollectionWrapper featureCollection = layer
+ //                 .getFeatureCollectionWrapper();
+ //         List featureList = featureCollection.getFeatures();
+ //        Geometry nextGeo = null;
+ //         for (@SuppressWarnings("unchecked")
+ //        Iterator<FeatureCollectionWrapper> i = featureList.iterator(); i
+ //                .hasNext();) {
+ //            Feature feature = (Feature) i.next();
+ //             nextGeo = feature.getGeometry();
+ //         }
+ //        if (!featureCollection.isEmpty() && nextGeo.isEmpty()) {
+ //            return true;
+ //        } else {
+ //             return false;
+ //        }
+ //    }
+
+    //[Giuseppe Aruta 2017_11_19, got from from Michael's correction bug
+    // #466 Wierd behaviour gettin envelope from a geometry 
+    
     public static boolean isTable(Layer layer) {
-        FeatureCollectionWrapper featureCollection = layer
-                .getFeatureCollectionWrapper();
-        List featureList = featureCollection.getFeatures();
-        Geometry nextGeo = null;
-        for (@SuppressWarnings("unchecked")
-        Iterator<FeatureCollectionWrapper> i = featureList.iterator(); i
-                .hasNext();) {
-            Feature feature = (Feature) i.next();
-            nextGeo = feature.getGeometry();
-        }
-        if (!featureCollection.isEmpty() && nextGeo.isEmpty()) {
+        Envelope env = layer.getFeatureCollectionWrapper().getEnvelope();
+        if (env.isNull()) {
             return true;
         } else {
             return false;
         }
     }
-
+    
+    
     public NamedExtent[] getPredefinedExtents() {
 
         return new NamedExtent[0];
