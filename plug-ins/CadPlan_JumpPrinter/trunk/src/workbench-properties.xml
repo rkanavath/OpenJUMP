@@ -1,0 +1,5 @@
+<workbench>
+  <extension>
+    com.cadplan.jump.PrinterExtension
+  </extension>
+</workbench>
