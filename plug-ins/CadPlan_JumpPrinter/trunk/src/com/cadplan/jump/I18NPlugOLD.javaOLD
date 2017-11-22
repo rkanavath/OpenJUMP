@@ -1,0 +1,195 @@
+/*
+ * The Unified Mapping Platform (JUMP) is an extensible, interactive GUI 
+ * for visualizing and manipulating spatial features with geometry and attributes.
+ *
+ * Copyright (C) 2003 Vivid Solutions
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ * For more information, contact:
+ *
+ * Vivid Solutions
+ * Suite #1A
+ * 2328 Government Street
+ * Victoria BC  V8T 5G5
+ * Canada
+ *
+ * (250)385-6040
+ * www.vividsolutions.com
+ */
+package com.cadplan.jump;
+
+import java.text.MessageFormat;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import com.vividsolutions.jump.I18N;
+import com.vividsolutions.jump.workbench.JUMPWorkbench;
+
+//import org.apache.log4j.Logger;
+
+public final class I18NPlugOLD
+{
+    static boolean debug = false;
+    //private static Logger LOG = Logger.getLogger(I18N.class);
+    private static String TestLocale;
+    public static boolean jumpi18n = true;
+	private static Hashtable plugInResourceBundle = new Hashtable();
+    private String pluginName;
+
+    public I18NPlug(String pluginName, String bundle)
+    {
+        this.pluginName = pluginName;
+        setPlugInRessource(pluginName, bundle); 
+    }
+      /**
+	   * Set plugin I18N resource file
+	   * Tries to use locale set in command line (if set)
+	   * @param pluginName (path + name)
+	   * @param bundle of the bundle file
+	   */
+	  public void setPlugInRessource(String pluginName, String bundle)
+      {
+        //JUMPWorkbench.I18N_SETLOCALE="de_DE"; //"en_AU"; //"de_DE";
+		try
+        {
+			TestLocale = JUMPWorkbench.I18N_SETLOCALE;
+			
+		}
+        catch (java.lang.NoSuchFieldError s)
+        {
+			jumpi18n = false ;
+		}
+		
+		if (jumpi18n == true)
+        {
+			
+	  	   if (JUMPWorkbench.I18N_SETLOCALE == "")
+           {
+                // No locale has been specified at startup: choose default locale
+                I18N.plugInsResourceBundle.put(pluginName, ResourceBundle.getBundle(bundle));
+                //LOG.debug(I18N.plugInsResourceBundle.get(pluginName)+" "+bundle);
+                 if(debug) System.out.println("1 Locale=<"+TestLocale+"> "+"I18N.plugInsResourceBundle.get(pluginName)"+": "+bundle);
+           }
+	  	   else
+           {
+			  String lang = JUMPWorkbench.I18N_SETLOCALE.split("_")[0];
+			  try
+              {
+				 String country = JUMPWorkbench.I18N_SETLOCALE.split("_")[1];
+				 Locale locale = new Locale(lang, country);
+				 I18N.plugInsResourceBundle.put(pluginName, ResourceBundle.getBundle(bundle, locale));
+				 //LOG.debug(I18N.plugInsResourceBundle.get(pluginName)+" "+bundle+" "+locale);
+                  if(debug) System.out.println("2 Locale=<"+TestLocale+"> "+"I18N.plugInsResourceBundle.get(pluginName)"+": "+bundle);
+
+              }
+              catch (java.lang.ArrayIndexOutOfBoundsException e)
+              {
+				 Locale locale = new Locale(lang);		 	  	
+				 I18N.plugInsResourceBundle.put(pluginName, ResourceBundle.getBundle(bundle, locale));
+				 //LOG.debug(I18N.plugInsResourceBundle.get(pluginName)+" "+bundle+" "+locale);
+                  if(debug) System.out.println("3 Locale=<"+TestLocale+"> "+"I18N.plugInsResourceBundle.get(pluginName)"+": "+bundle);
+
+              }
+	  	   }
+		}
+		else
+        {
+			// in this case we use the default .properties file (en)
+			// SIGLE start [obedel]
+		    // dynamically retrieve the location of the default properties file
+		    
+		    I18NPlug.plugInResourceBundle.put(pluginName, ResourceBundle.getBundle(I18NPlug.class.getPackage().getName()+ "." + pluginName));
+		    // SIGLE end
+		    if(debug) System.out.println(I18NPlug.class.getPackage().getName()+ "." + pluginName); 
+			//LOG.debug(I18NPlug.plugInResourceBundle.get(pluginName)+ " " + I18NPlug.class.getPackage().getName());					
+            if(debug) System.out.println("4 Locale=<"+TestLocale+"> "+"I18N.plugInsResourceBundle.get(pluginName)"+": "+bundle);
+
+        }
+	 }
+
+    public String get(String label)
+    {
+        return get(pluginName, label);
+    }
+    /**
+	 * Process text with the locale 'pluginName_<locale>.properties' file
+	 * 
+	 * @param pluginName (path + name)
+	 * @param label
+	 * @return i18n label
+	 */
+	public String get(String pluginName, String label)
+	{
+        try
+        {
+            if (jumpi18n == true)
+            {
+              return ((ResourceBundle)I18N.plugInsResourceBundle
+                          .get(pluginName))
+                          .getString(label);
+            }
+            else
+            {
+              return ((ResourceBundle)I18NPlug.plugInResourceBundle
+                            .get(pluginName))
+                            .getString(label);
+            }
+        }
+        catch (Exception ex)
+        {
+             System.out.println("ERROR Get - Missing language resource: "+label);
+             return "<"+label+">";
+        }
+    }
+	  
+	/**
+	 * Process text with the locale 'pluginName_<locale>.properties' file
+	 * 
+	 * @param pluginName (path + name)
+	 * @param label with argument insertion : {0} 
+	 * @param objects
+	 * @return i18n label
+	 */
+	public  String getMessage(String pluginName, String label, Object[] objects){
+
+        try
+        {
+            if (jumpi18n == true)
+            {
+                MessageFormat mf = new MessageFormat(((ResourceBundle)I18N.plugInsResourceBundle
+                                                  .get(pluginName))
+                                                  .getString(label));
+            return mf.format(objects);
+            }
+            else
+            {
+                MessageFormat mf = new MessageFormat(((ResourceBundle)I18NPlug.plugInResourceBundle
+                                                      .get(pluginName))
+                                                      .getString(label));
+                return mf.format(objects);
+            }
+        }
+        catch (Exception ex)
+        {
+             System.out.println("ERROR Message - Missing language resource: "+label);
+             return "<"+label+">";
+        }
+
+    }
+
+
+}

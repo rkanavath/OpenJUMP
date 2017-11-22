@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<root>
+  <attribute xml-name="enabled" java-name="enabled"/>
+  <attribute xml-name="size" java-name="size"/>
+  <attribute xml-name="name" java-name="name"/>
+  <attribute xml-name="scale" java-name="scale"/>
+  <attribute xml-name="orientation" java-name="orientation"/>
+  <attribute xml-name="attributeName" java-name="attributeName"/>
+  <attribute xml-name="byValue" java-name="byValue"/>
+
+<attribute xml-name="textEnabled" java-name="textEnabled"/>
+<attribute xml-name="textAttributeName" java-name="textAttributeName"/>
+<attribute xml-name="textFontName" java-name="textFontName"/>
+<attribute xml-name="textFontSize" java-name="textFontSize"/>
+<attribute xml-name="textFontStyle" java-name="textFontStyle"/>
+<attribute xml-name="textFontJustification" java-name="textFontJustification"/>
+<attribute xml-name="textPosition" java-name="textPosition"/>
+<attribute xml-name="textOffset" java-name="textOffset"/>
+<attribute xml-name="textOffsetValue" java-name="textOffsetValue"/>
+<attribute xml-name="textScope" java-name="textScope"/>
+<attribute xml-name="textBackgroundColor" java-name="textBackgroundColor"/>
+<attribute xml-name="textForegroundColor" java-name="textForegroundColor"/>
+<attribute xml-name="textFill" java-name="textFill"/>
+<attribute xml-name="textBorder" java-name="textBorder"/>
+<attribute xml-name="textSizeByScale" java-name="sizeByScale"/>
+
+</root>
