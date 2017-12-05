@@ -1,3 +1,12 @@
+Color Chooser Plugin 1.0  (Dicember 2017)
+-------------------------------------- 
+Added recent color submenu
+Changed icon to Fugue icon set
+
+Color Chooser Plugin 0.9  (November 2017)
+-------------------------------------- 
+Fix some bugs
+
 Color Chooser Plugin 0.8  (December 2014)
 -------------------------------------- 
 Added Color picker tool
