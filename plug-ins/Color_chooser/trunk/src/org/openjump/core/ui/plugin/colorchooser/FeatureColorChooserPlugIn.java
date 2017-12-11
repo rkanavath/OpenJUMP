@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -40,6 +41,7 @@ import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.GUIUtil;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
+import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
@@ -131,7 +133,7 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
         final JPopupMenu popup = new JPopupMenu();
         popup.setLayout(new GridLayout(0, 1));
-        mi = new JMenuItem(I18NPlug.getI18N("color-by-attribute"),
+        mi = new JMenuItem(I18NPlug.getI18N("use-layer-style-color"),
                 new ColorIcon(null));
 
         final JMenu recent = new JMenu(I18NPlug.getI18N("recent-color") + "...");
@@ -156,11 +158,12 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
                     String hex = ColorUtils.colorRGBToHex(color);
                     String acad = ColorUtils.getColorFromRegistry(hex);
                     String msg = "Index color: " + acad;
-                    JMenuItem mis = new JMenuItem(msg,
-                            new FeatureColorChooserPlugIn.ColorIcon(color));
+
                     String text = "Hex: " + hex + "   RGB: " + color.getRed()
                             + "," + color.getGreen() + "," + color.getBlue();
-                    mis.setToolTipText(text);
+                    JMenuItem mis = new JMenuItem(text,
+                            new FeatureColorChooserPlugIn.ColorIcon(color));
+                    mis.setToolTipText(msg);
                     mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
                             color));
                     recent.add(mis);
@@ -174,6 +177,43 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
         });
 
         popup.add(cm);
+
+        mi = new JMenuItem(I18NPlug.getI18N("other-color"), getColorIcon_2());
+        mi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent paramAnonymousActionEvent) {
+                new JColorChooser();
+                Color color = JColorChooser.showDialog(context
+                        .getWorkbenchContext().getWorkbench().getFrame(),
+                        I18NPlug.getI18N("choose-color"), new Color(0, 0, 0));
+                if (color != null) {
+                    colorSetbutton.setColor(color);
+                    setFeatureColor(color);
+                    FeatureColorChooserPlugIn.this.colorSetbutton
+                            .setColor(color);
+                    FeatureColorChooserPlugIn.this.setFeatureColor(color);
+                    String hex = ColorUtils.colorRGBToHex(color);
+                    String acad = ColorUtils.getColorFromRegistry(hex);
+
+                    String msg = "Index color: " + acad;
+
+                    String text = "Hex: " + hex + "   RGB: " + color.getRed()
+                            + "," + color.getGreen() + "," + color.getBlue();
+                    JMenuItem mis = new JMenuItem(text,
+                            new FeatureColorChooserPlugIn.ColorIcon(color));
+                    mis.setToolTipText(msg);
+                    mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
+                            color));
+                    recent.add(mis);
+                    FeatureColorChooserPlugIn.this.colorPickerPopup.insert(
+                            recent,
+                            FeatureColorChooserPlugIn.this.customIndex++);
+                    popup.revalidate();
+                    popup.repaint();
+                }
+            }
+        });
+        popup.add(mi);
 
         // popup.addSeparator();
         mi = new JMenuItem(I18NPlug.getI18N("picker-color"), getPickColorIcon());
@@ -213,6 +253,11 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
         return GUIUtil.toSmallIcon(icon);
     }
 
+    public Icon getColorIcon_2() {
+        ImageIcon icon = IconLoader.icon("color_wheel.png");
+        return GUIUtil.toSmallIcon(icon);
+    }
+
     public Icon getPickColorIcon() {
         ImageIcon icon2 = new ImageIcon(getClass().getResource("pipette.png"));
         return GUIUtil.toSmallIcon(icon2);
@@ -242,34 +287,32 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
             FeatureCollectionWrapper fcw = layer.getFeatureCollectionWrapper();
             FeatureSchema schema = fcw.getFeatureSchema();
 
-            if (schema.hasAttribute(R_G_B))
-                continue;
-            schema.addAttribute(R_G_B, AttributeType.STRING);
+            if (!schema.hasAttribute(R_G_B)) {
+                schema.addAttribute(R_G_B, AttributeType.STRING);
 
-            for (Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
-                Feature feature = j.next();
-                Object[] attributes = new Object[schema.getAttributeCount()];
+                for (Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
+                    Feature feature = j.next();
+                    Object[] attributes = new Object[schema.getAttributeCount()];
 
-                for (int k = 0; k < attributes.length - 1; k++) {
-                    attributes[k] = feature.getAttribute(k);
+                    for (int k = 0; k < attributes.length - 1; k++) {
+                        attributes[k] = feature.getAttribute(k);
+                    }
+                    feature.setAttributes(attributes);
                 }
-                feature.setAttributes(attributes);
             }
+            if (!schema.hasAttribute(COLOR)) {
+                schema.addAttribute(COLOR, AttributeType.STRING); // .INTEGER);
+                for (Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
+                    Feature feature = j.next();
+                    Object[] attributes = new Object[schema.getAttributeCount()];
 
-            if (schema.hasAttribute(COLOR))
-                continue;
-            schema.addAttribute(COLOR, AttributeType.STRING); // .INTEGER);
-            for (Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
-                Feature feature = j.next();
-                Object[] attributes = new Object[schema.getAttributeCount()];
-
-                for (int k = 0; k < attributes.length - 1; k++) {
-                    attributes[k] = feature.getAttribute(k);
+                    for (int k = 0; k < attributes.length - 1; k++) {
+                        attributes[k] = feature.getAttribute(k);
+                    }
+                    feature.setAttributes(attributes);
                 }
-                feature.setAttributes(attributes);
             }
         }
-
         Collection<Feature> features = layerViewPanel.getSelectionManager()
                 .getFeaturesWithSelectedItems();
         setRGB(layers, features, ColorUtils.colorRGBToHex(color));
