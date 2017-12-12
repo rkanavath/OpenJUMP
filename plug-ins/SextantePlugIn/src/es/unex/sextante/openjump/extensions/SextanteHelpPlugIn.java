@@ -1,14 +1,20 @@
 package es.unex.sextante.openjump.extensions;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 
 import com.vividsolutions.jump.task.TaskMonitor;
+import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.plugin.ThreadedPlugIn;
+import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
 import es.unex.sextante.gui.core.SextanteGUI;
+import es.unex.sextante.gui.help.SextanteHelpFrame;
 import es.unex.sextante.gui.help.SextanteHelpWindow;
+import es.unex.sextante.gui.toolbox.ToolboxFrame;
 import es.unex.sextante.openjump.language.I18NPlug;
 
 public class SextanteHelpPlugIn implements ThreadedPlugIn {
@@ -37,18 +43,32 @@ public class SextanteHelpPlugIn implements ThreadedPlugIn {
             SextanteGUI.getGUIFactory().showHelpWindow();
         }
     }
-
+    static WorkbenchFrame wFrame = JUMPWorkbench.getInstance().getFrame();
     public boolean execute(PlugInContext context) throws Exception {
-        final SextanteHelpWindow window = new SextanteHelpWindow();
+   //     final SextanteHelpWindow window = new SextanteHelpWindow();
         // window.setExtendedState(window.getExtendedState()
         // | JFrame.MAXIMIZED_BOTH);
 
-        window.pack();
-        window.setAlwaysOnTop(true);
-        window.setVisible(true);
+  //      window.pack();
+  //      window.setAlwaysOnTop(true);
+ //      window.setVisible(true);
 
         // SextanteGUI.getGUIFactory().showHelpWindow();
+      //[Giuseppe Aruta 2017-12-12] open as OJ internal frame
+        final SextanteHelpFrame window = new SextanteHelpFrame();
+        JFrame frame = context.getWorkbenchFrame();
+        for (JInternalFrame iFrame : wFrame.getInternalFrames()) {
+            if (iFrame instanceof ToolboxFrame) {
 
+                iFrame.toFront();
+                return false;
+
+            }
+        }
+
+        wFrame.addInternalFrame(window, true, true);
+
+        return true;
         return true;
     }
 

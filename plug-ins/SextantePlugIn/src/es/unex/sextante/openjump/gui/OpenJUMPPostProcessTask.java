@@ -15,7 +15,8 @@ import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
 
 import es.unex.sextante.core.GeoAlgorithm;
-import es.unex.sextante.core.ObjectAndDescription;
+//import es.unex.sextante.core.ObjectAndDescription;
+import org.openjump.sextante.core.ObjectAndDescription;
 import es.unex.sextante.core.OutputObjectsSet;
 import es.unex.sextante.core.Sextante;
 import es.unex.sextante.dataObjects.IRasterLayer;
@@ -113,8 +114,15 @@ public class OpenJUMPPostProcessTask
          else if (out instanceof OutputTable) {
             try {
                final JScrollPane jScrollPane = TableTools.getScrollableTablePanelFromITable((ITable) object);
-               AdditionalResults.addComponent(new ObjectAndDescription(sDescription, jScrollPane));
-               bShowAdditionalPanel = true;
+            // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP
+               // Internal Frame
+               // AdditionalResults.addComponent(new ObjectAndDescription(
+               // sDescription, jScrollPane));
+               // bShowAdditionalPanel = true;
+
+               org.openjump.sextante.gui.additionalResults.AdditionalResults
+                       .addComponentAndShow(new ObjectAndDescription(
+                               sDescription, jScrollPane));
             }
             catch (final Exception e) {
                Sextante.addErrorToLog(e);
@@ -131,12 +139,22 @@ public class OpenJUMPPostProcessTask
             jScrollPane.setViewportView(jTextPane);
             jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
             jTextPane.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
-            AdditionalResults.addComponent(new ObjectAndDescription(sDescription, jScrollPane));
-            bShowAdditionalPanel = true;
+            // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP Internal
+            // Frame
+            org.openjump.sextante.gui.additionalResults.AdditionalResults
+            .addComponentAndShow(new ObjectAndDescription(
+                    sDescription, jScrollPane));
+         //   AdditionalResults.addComponent(new ObjectAndDescription(sDescription, jScrollPane));
+         //   bShowAdditionalPanel = true;
          }
          else if (object instanceof Component) {
-            AdditionalResults.addComponent(new ObjectAndDescription(sDescription, object));
-            bShowAdditionalPanel = true;
+          // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP Internal
+             // Frame
+             org.openjump.sextante.gui.additionalResults.AdditionalResults
+             .addComponentAndShow(new ObjectAndDescription(
+                     sDescription, object));
+         //   AdditionalResults.addComponent(new ObjectAndDescription(sDescription, object));
+         //   bShowAdditionalPanel = true;
          }
          else if (out instanceof Output3DRasterLayer) {
             JOptionPane.showMessageDialog(SextanteGUI.getMainFrame(), Sextante.getText("3d_not_supported"),

@@ -107,7 +107,8 @@ public class SextanteExtension extends Extension {
     new SextanteModelerPlugin().initialize(context);
     new SextanteHistoryPlugin().initialize(context);
     new SextanteCommandLinePlugin().initialize(context);
-    new SextanteResultsPlugin().initialize(context);
+    //[Giuseppe Aruta 2017-12-12] deactivated as integrated (from OJ 1.12)into OpenJUMP
+    //new SextanteResultsPlugin().initialize(context);
     new SextanteDataExplorerPlugin().initialize(context);
     new SextantePickCoordinatesPlugIn().initialize(context);
     featureInstaller.addMenuSeparator(new String[] { "Sextante" });
