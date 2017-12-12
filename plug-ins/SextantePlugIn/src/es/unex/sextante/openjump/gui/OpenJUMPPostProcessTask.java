@@ -164,7 +164,11 @@ public class OpenJUMPPostProcessTask
       }
 
       if (bShowAdditionalPanel && m_bShowResultsDialog) {
-         AdditionalResults.showPanel();
+          // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP Internal
+          // Frame
+          org.openjump.sextante.gui.additionalResults.AdditionalResults
+                  .showPanel();
+      //   AdditionalResults.showPanel();
       }
 
       return true;
