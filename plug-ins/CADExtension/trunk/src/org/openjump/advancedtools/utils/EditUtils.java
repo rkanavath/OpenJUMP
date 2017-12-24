@@ -176,7 +176,7 @@ public class EditUtils {
     /**
      * It get geometries adjacent to a given one
      * 
-     * @param geometry
+     * @param simplyGeometryToProcess
      * @param layer
      * @return List of adjacent geometries
      * @throws Exception
@@ -405,9 +405,9 @@ public class EditUtils {
     /**
      * It gets the existing geometry at the selected point
      * 
-     * @param Coordinate
-     * @param Layer
-     * @param Scale
+     * @param sc source coordinate
+     * @param l layer
+     * @param scale Scale factor
      * @return Feature
      * @throws Exception
      */
@@ -480,19 +480,17 @@ public class EditUtils {
     /**
      * It divide the lineString from the indicated coordinate
      * 
-     * @param lineString
-     *            lineString to divide
-     * @param Coordinates
-     *            of the point to divide
+     * @param line lineString to divide
+     * @param coord Coordinates of the point to divide
      * @return LineString[] - two fragments of the Linestring
      */
-    public static LineString[] divideLineString(LineString line, Coordinate cord) {
+    public static LineString[] divideLineString(LineString line, Coordinate coord) {
 
         Coordinate[] coordinates = line.getCoordinates();
         int i = 0;
         boolean enc = false;
         while (!enc && i < coordinates.length) {
-            if (coordinates[i].equals(cord))
+            if (coordinates[i].equals(coord))
                 enc = true;
             else
                 i++;
@@ -886,7 +884,6 @@ public class EditUtils {
      * (sobrescribiendo la lista de geometrias con sus versiones nodadas) y
      * devuelve una coleccion de poligonos formados tras la poligonalizacion
      * 
-     * @param nodeSet
      * @param geometryList
      *            lista de geometrias a nodar
      * @return lista de poligonos formados tras la poligonalizacion
@@ -994,13 +991,13 @@ public class EditUtils {
 
             // Try to snap them together and see the result
             snapGeometries(geometries, DEFAULT_SNAP_TOLERANCE);
-            LOGGER.info(geometries);
+            LOGGER.info(geometries.toString());
             geom1 = reader
                     .read("LINESTRING(547272.036 4704746, 547329.389 4704713.573)"); 
-            geom2 = reader.read("POINT(547310.439 4704724.287)"); 
-            LOGGER.info("Distancia = " + geom2.distance(geom1)); 
+            geom2 = reader.read("POINT(547310.439 4704724.287)");
+            LOGGER.info("Distancia = " + geom2.distance(geom1));
         } catch (ParseException e) {
-            LOGGER.error("", e); 
+            LOGGER.error("", e);
         }
 
     }
@@ -1389,7 +1386,7 @@ public class EditUtils {
         }
 
         /**
-         * @param coordinateSequenceMap
+         * @param coordSequenceMap
          *            the coordinateSequenceMap to set
          */
         public void setCoordinateSequenceMap(
@@ -1654,9 +1651,9 @@ public class EditUtils {
      * method is used whenever a collection of features is cloned for further
      * transformation (move, mirror, etc)
      * 
-     * @param a
+     * @param features
      *            collection of features
-     * @param feature
+     * @param targetFeatureSchema
      *            schema from the original layer
      * @return collection with feature schema
      */
@@ -1676,8 +1673,8 @@ public class EditUtils {
      * Transfer a feature schema of a layer to a feature. This method is used
      * whenever feature is cloned for further transformation (move, mirror, etc)
      * 
-     * @param feature
-     * @param feature
+     * @param original
+     * @param targetFeatureSchema
      *            schema from the original layer
      * @return feature with feature schema
      */

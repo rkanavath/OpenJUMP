@@ -49,7 +49,7 @@ public class BlockPanel extends JPanel {
     @SuppressWarnings("rawtypes")
     public static JComboBox chooseBox;
 
-    public static DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+    public static DefaultComboBoxModel model = new DefaultComboBoxModel();
 
     public static JPanel block_panel = new JPanel(new GridLayout(0, 1));
     public static JPanel option_panel = new JPanel(new GridLayout(0, 1));
@@ -79,12 +79,12 @@ public class BlockPanel extends JPanel {
     public static String star = I18N
             .get("deejump.ui.style.RenderingStylePanel.star");
     public static SpinnerModel rotationModel = new SpinnerNumberModel(0, // initial
-                                                                         // value
+            // value
             0, // min
             359, // max
             1);
     public static SpinnerModel dimensionModel = new SpinnerNumberModel(100, // initial
-                                                                            // value
+            // value
             10, // min
             400, // max
             10);
@@ -94,13 +94,13 @@ public class BlockPanel extends JPanel {
 
     private static WorkbenchToolBar toolBar = new WorkbenchToolBar(null) {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1L;
 
         @Override
         public JButton addPlugIn(Icon icon, PlugIn plugIn,
-                EnableCheck enableCheck, WorkbenchContext workbenchContext) {
+                                 EnableCheck enableCheck, WorkbenchContext workbenchContext) {
             return super.addPlugIn(icon, plugIn, enableCheck, workbenchContext);
         }
 
@@ -146,19 +146,19 @@ public class BlockPanel extends JPanel {
     public static List<String> list;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public JPanel chooseBlockPanel(PlugInContext context) {
+    public static  JPanel chooseBlockPanel(PlugInContext context) {
 
         chooseBox = new JComboBox(new Vector(listOfBlockFiles(context)));
 
         Dimension d = new Dimension(125, chooseBox.getPreferredSize().height);
         chooseBox.setPreferredSize(d);
 
-        BlockCellRenderer renderer = new BlockCellRenderer();
+  /*      BlockCellRenderer renderer = new BlockCellRenderer();
         chooseBox.setRenderer(renderer);
         list = listOfBlockFiles(context);
         HashMap<Object, Icon> icons = ListOfBlocksIcons();
         renderer.setTooltips(list);
-        renderer.setIcons(icons);
+        renderer.setIcons(icons);*/
 
         model = (DefaultComboBoxModel) chooseBox.getModel();
         JPanel test_block_panel = new JPanel(new GridBagLayout());
@@ -190,7 +190,7 @@ public class BlockPanel extends JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<String> listOfBlockFiles(PlugInContext context) {
+    public static  List<String> listOfBlockFiles(PlugInContext context) {
         File pluginDir = context.getWorkbenchContext().getWorkbench()
                 .getPlugInManager().getPlugInDirectory();
         String wd = pluginDir.getAbsolutePath();
@@ -312,7 +312,7 @@ public class BlockPanel extends JPanel {
         tooltip += "<DIV style=\"width: 200px; text-justification: justify;\">";
         tooltip += "<b>"
                 + I18NPlug
-                        .getI18N("org.openjump.core.ui.plugins.block.define-dimension")
+                .getI18N("org.openjump.core.ui.plugins.block.define-dimension")
                 + "</b>" + "<br>";
         tooltip += I18NPlug
                 .getI18N("org.openjump.core.ui.plugins.block.define-dimension-description")

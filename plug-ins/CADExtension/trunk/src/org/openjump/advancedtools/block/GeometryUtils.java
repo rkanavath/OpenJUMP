@@ -7,12 +7,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
-import bsh.ParseException;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTFileReader;
+import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jump.geom.CoordUtil;
 
 public class GeometryUtils {
@@ -20,9 +19,8 @@ public class GeometryUtils {
     /**
      * Method to scale a selected geometry of a scale factor
      * 
-     * @param input
-     *            geometry
-     * @param double. Scale factor (50 = half, 100 = no rescale, 200 = scale two
+     * @param geometry input geometry
+     * @param scale Scale factor (50 = half, 100 = no rescale, 200 = scale two
      *        times)
      */
     public static void scaleGeometry(Geometry geometry, final double scale) {
@@ -41,10 +39,8 @@ public class GeometryUtils {
     /**
      * Method to rotate a geometry of a defined angle
      * 
-     * @param input
-     *            geometry
-     * @param angle
-     *            in degree
+     * @param geometry input geometry
+     * @param angle in degree
      */
     public static void rotateGeometry(Geometry geometry, final double angle) {
         final Coordinate center = geometry.getCentroid().getCoordinate();
@@ -69,12 +65,9 @@ public class GeometryUtils {
      * Method to counterclock wise rotate a geometry of a defined angle and
      * setting center of rotation
      * 
-     * @param input
-     *            geometry
-     * @param angle
-     *            in degree
-     * @param coordinate
-     *            center of rotation
+     * @param geometry input geometry
+     * @param angle in degree
+     * @param center coordinate center of rotation
      */
 
     public static void rotateGeometry(Geometry geometry, final double angle,
@@ -111,10 +104,8 @@ public class GeometryUtils {
     /**
      * Method to counterclock wise rotate a geometry of a defined angle
      * 
-     * @param input
-     *            geometry
-     * @param angle
-     *            in degree
+     * @param geometry input geometry
+     * @param angle in degree
      */
     public static void rotate_counterclockwise_Geometry(Geometry geometry,
             final double angle) {
@@ -138,10 +129,8 @@ public class GeometryUtils {
     /**
      * Method to clock wise rotate a geometry of a defined angle
      * 
-     * @param input
-     *            geometry
-     * @param angle
-     *            in degree
+     * @param geometry input geometry
+     * @param angle in degree
      */
     public static void rotate_clockwise_Geometry(Geometry geometry,
             final double angle) {
@@ -166,8 +155,7 @@ public class GeometryUtils {
      * Move a geometry to a defined coordinate
      * 
      * @param geometry
-     * @param coordinate
-     *            to move
+     * @param displacement
      */
     public static void centerGeometry(final Geometry geometry,
             final Coordinate displacement) {
@@ -184,8 +172,7 @@ public class GeometryUtils {
      * Translate a geometry to a defined coordinate
      * 
      * @param geometry
-     * @param coordinate
-     *            to move
+     * @param displacement
      */
 
     protected void translateGeometry(Geometry geometry,
@@ -206,8 +193,6 @@ public class GeometryUtils {
      * Mirror a geometry to a defined coordinate
      * 
      * @param geometry
-     * @param coordinate
-     *            to move
      */
 
     public static void mirrorY(Geometry geometry) {
@@ -225,14 +210,13 @@ public class GeometryUtils {
     /**
      * Reads a WKT file and returns the first geometry.
      * 
-     * @param filenamedir
+     * @param wktpath geometry as a wkt String
      * @return
      * @throws ParseException
      * @throws IOException
      * @throws com.vividsolutions.jts.io.ParseException
      */
-    public static Geometry geom(String wktpath) throws ParseException,
-            IOException, com.vividsolutions.jts.io.ParseException {
+    public static Geometry geom(String wktpath) throws IOException, ParseException {
         com.vividsolutions.jts.io.WKTReader reader = new com.vividsolutions.jts.io.WKTReader();
         WKTFileReader fileReader = new WKTFileReader(wktpath, reader);
         @SuppressWarnings("rawtypes")

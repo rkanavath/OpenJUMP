@@ -3,9 +3,12 @@ package org.openjump.advancedtools.block;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -137,22 +140,22 @@ public class SaveBlockPlugIn extends AbstractPlugIn {
                         geomSelected = featureSelected.getGeometry();
                     }
 
-                    Geometry targetGeom = new GeometryFactory()
-                            .createLineString(new Coordinate[] {
-                                    new Coordinate(0, 0),
-                                    new Coordinate(20, 20) });
-                    double targetLength = targetGeom.getLength();
-                    double scale = 0;
+                    //   Geometry targetGeom = new GeometryFactory()
+                    //           .createLineString(new Coordinate[] {
+                    //                   new Coordinate(0, 0),
+                    //                   new Coordinate(0, 8.49) });
+                    //    double targetLength = targetGeom.getLength();
+                    //   double scale = 0;
 
-                    Envelope envSelected = geomSelected.getEnvelopeInternal();
+                    //    Envelope envSelected = geomSelected.getEnvelopeInternal();
 
-                    Geometry sourceGeom = new GeometryFactory()
-                            .createLineString(new Coordinate[] {
-                                    new Coordinate(envSelected.getMinX(),
-                                            envSelected.getMinY()),
-                                    new Coordinate(envSelected.getMaxY(),
-                                            envSelected.getMaxY()) });
-                    double sourceLength = sourceGeom.getLength();
+                    //     Geometry sourceGeom = new GeometryFactory()
+                    //             .createLineString(new Coordinate[] {
+                    //                     new Coordinate(envSelected.getMinX(),
+                    //                             envSelected.getMinY()),
+                    //                     new Coordinate(envSelected.getMaxY(),
+                    //                             envSelected.getMaxY()) });
+                    //   double sourceLength = sourceGeom.getLength();
 
                     /*
                      * if (sourceLength>22){ scale =
@@ -168,10 +171,10 @@ public class SaveBlockPlugIn extends AbstractPlugIn {
                     Coordinate displacement = CoordUtil.subtract(
                             new Coordinate(0, 0), coord);
 
-                    scale = (targetLength / sourceLength) * 100;
+                    //   scale = (targetLength / sourceLength);
 
                     GeometryUtils.centerGeometry(newGeom, displacement);
-                    GeometryUtils.scaleGeometry(newGeom, scale);
+                    //   GeometryUtils.scaleGeometry(newGeom, scale);
 
                     filenamedir = wd + File.separator + blockFolder
                             + File.separator + filename;
@@ -187,24 +190,50 @@ public class SaveBlockPlugIn extends AbstractPlugIn {
                     }
 
                     context.getWorkbenchFrame().setStatusMessage(Warning2);
-                    File file = new File(filenamedir + ".wkt");
-                    BlockPanel.blocks.add(file.getName());
-                    BlockPanel.model.removeAllElements();
-                    Object name2 = "";
-                    for (Iterator<?> i = BlockPanel.listOfBlockFiles(context)
-                            .iterator(); i.hasNext();) {
-                        name2 = i.next();
+                    //   File file = new File(filenamedir + ".wkt");
+                    //   BlockPanel.blocks.add(file.getName());
 
-                        BlockPanel.model.addElement((String) name2);
+
+                    ///     BlockPanel.model.removeAllElements();
+
+                    ///     BlockPanel.chooseBox.setModel(new DefaultComboBoxModel(BlockPanel.listOfBlockFiles(context).toArray()));
+                    ///      BlockPanel.chooseBlockPanel(context).repaint();
+
+
+                    DefaultComboBoxModel model = (DefaultComboBoxModel) BlockPanel.chooseBox.getModel();
+                    // removing old data
+                    model.removeAllElements();
+
+                    for (String item :  listOfBlockFiles()) {
+                        model.addElement(item);
                     }
 
-                    BlockPanel.chooseBox.revalidate(); // for JFrame up to Java7
-                                                       // is
-                    // there only validate()
-                    BlockPanel.chooseBox.repaint();
-                    Integer index = BlockPanel.model.getIndexOf(name2);
-                    BlockPanel.chooseBox.setSelectedItem(index);
+                    // setting model with new data
+                    BlockPanel.chooseBox.setModel(model);
+                    BlockPanel.chooseBox.revalidate();
+                    //    BlockPanel.chooseBlockPanel(context).repaint();
+
+
+
+
+
+    /*               for (Iterator<?> i = BlockPanel.listOfBlockFiles(context)
+                             .iterator(); i.hasNext();) {
+                       name2 = i.next();
+
+                        BlockPanel.model.addElement((String) name2);
+                   }
+
+                    BlockPanel.chooseBox.revalidate();
+
+
+
+                   BlockPanel.chooseBox.repaint();
+                   Integer index = BlockPanel.model.getIndexOf(name2);
+                BlockPanel.chooseBox.setSelectedItem(index); */
                 }
+
+
             } catch (Exception ex) {
                 WorkbenchUtils.Logger(this.getClass(), ex);
             }
@@ -220,4 +249,59 @@ public class SaveBlockPlugIn extends AbstractPlugIn {
         return jpanel;
     }
 
+
+    @SuppressWarnings("unchecked")
+    public  List<String> listOfBlockFiles() {
+        File pluginDir =JUMPWorkbench.getInstance().getContext().getWorkbench()
+                .getPlugInManager().getPlugInDirectory();
+        String wd = pluginDir.getAbsolutePath();
+        blocks = new ArrayList<String>();
+
+        blocks.add(square);
+        blocks.add(circle);
+        blocks.add(triangle);
+        blocks.add(cross);
+        blocks.add(star);
+        try {
+            String block_folder = wd + File.separator + blockFolder;
+            File directory = new File(block_folder);
+            // get all the files from a directory
+            File[] fList = directory.listFiles();
+            String fileName = null;
+            for (File file : fList) {
+                if (file.isFile()) {
+                    String ext = null;
+                    String s = file.getName();
+                    int i = s.lastIndexOf('.');
+                    if (i > 0 && i < s.length() - 1) {
+                        ext = s.substring(i + 1).toUpperCase();
+                    }
+                    if (ext.equals("WKT"))
+                        fileName = file.getName();
+                    int pos = fileName.lastIndexOf(".");
+                    if (pos > 0) {
+                        fileName = fileName.substring(0, pos);
+                        fileName.substring(pos, fileName.length());
+                    }
+                    blocks.add(fileName);
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return blocks;
+    }
+    public   List blocks;
+    public   String triangle = I18N
+            .get("deejump.ui.style.RenderingStylePanel.triangle");
+    public  String square = I18N
+            .get("deejump.ui.style.RenderingStylePanel.square");
+    public   String hexagon = "hexagon";
+    public   String cross = I18N
+            .get("deejump.ui.style.RenderingStylePanel.cross");
+    public  String star = I18N
+            .get("deejump.ui.style.RenderingStylePanel.star");
+    public String circle = I18N
+            .get("deejump.ui.style.RenderingStylePanel.circle");
 }

@@ -1,0 +1,99 @@
+
+<project name="cad-tools" default="compile" basedir=".">
+   
+    <!--************************************************************************
+    ****************************************************************************
+    **                                 PROPERTIES                             **
+    ****************************************************************************
+    *************************************************************************-->
+
+    <property name="name" value="cad-tools"/>
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"     value="src" />
+    <property name="bin"     value="bin" />
+    <property name="lib"     value="lib" />
+    <property name="build"   value="build" />
+    <property name="dist"    value="dist" />
+    <property name="javadoc" value="javadoc" />
+
+    <!-- Versions
+    0.5 : first version built from ant
+    -->
+    <property name="version" value="0.5" />
+    
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- compile cad-extension                                               -->
+    <!-- =================================================================== -->
+    <target name="compile" id="compile" depends="clean">
+        <mkdir dir="${build}"/>
+        <javac encoding="ISO-8859-1" destdir="${build}" debug="true" deprecation="false" nowarn="true" source="1.7" target="1.7">
+            <src path="${src}"/>
+            <classpath refid="classpath"/>
+            <include name="**/*.java"/>
+            <include name="**/*.properties"/>
+            <include name="**/*.png"/>
+            <include name="**/*.gif"/>
+        </javac>
+        <copy todir="${build}">
+            <fileset dir="${src}">
+                <include name="**/*.png"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.gif"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- jar cad-extension                                                   -->
+    <!-- =================================================================== -->
+    <target name="jar" id="jar" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar basedir="${build}" jarfile="${dist}/${name}-${version}.jar">
+            <include name="es/axios/**/*"/>
+            <include name="es/kosmo/**/*"/>
+            <include name="org/openjump/advancedtools/**/*"/>
+            <include name="org/openjump/core/ui/renderer/style/**/*"/>
+        </jar>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- javadoc cad-extension                                               -->
+    <!-- =================================================================== -->
+    <target name="javadoc" depends="compile">
+        <mkdir dir="${javadoc}"/>
+        <javadoc destdir="${javadoc}" use="true">
+            <classpath refid="classpath"/>
+            <packageset dir="${src}">
+                <include name="es/**"/>
+                <include name="org/**"/>
+            </packageset>
+        </javadoc>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- dist cad-extension                                                  -->
+    <!-- =================================================================== -->
+    <target name="zip-cad-tools" id="zip-cad-tools" depends="jar, javadoc">
+        <zip basedir="." zipfile="${dist}/${name}-${version}.zip">
+             <include name="src/**"/>
+             <include name="javadoc/**"/>
+             <include name="${dist}/${name}-${version}.jar"/>
+             <include name="build.xml"/>
+        </zip>
+    </target>
+
+</project>

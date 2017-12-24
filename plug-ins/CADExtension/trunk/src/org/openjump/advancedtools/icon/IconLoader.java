@@ -78,10 +78,9 @@ public class IconLoader {
         URL urlIcon = IconLoader.class.getResource(filename);
         if (urlIcon == null) {
             if (useDefaultForNull) {
-                LOGGER.warn(I18N
-                        .getMessage(
-                                "com.vividsolutions.jump.workbench.ui.images.IconLoader.The-icon-{0}-has-not-been-found-default-icon-will-be-used",
-                                new Object[] { filename }));
+                LOGGER.warn(I18N.getMessage(
+                        "com.vividsolutions.jump.workbench.ui.images.IconLoader.The-icon-{0}-has-not-been-found-default-icon-will-be-used",
+                        new Object[] { filename }));
                 return DEFAULT_UNKNOW_ICON;
             } else {
                 return null;
