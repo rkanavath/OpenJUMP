@@ -1,6 +1,6 @@
 package org.openjump.advancedtools.block;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 import org.openjump.advancedtools.icon.IconLoader;
 import org.openjump.advancedtools.language.I18NPlug;
@@ -25,6 +25,13 @@ public class DrawBlockPlugIn extends AbstractPlugIn {
     public static final String NAME2 = I18NPlug
             .getI18N("org.openjump.core.ui.plugins.block.DrawblockTool.description");
 
+    BlockPanel blockPanel;
+
+    public DrawBlockPlugIn(BlockPanel blockPanel) {
+        super();
+        this.blockPanel = blockPanel;
+    }
+
     @Override
     public boolean execute(PlugInContext context) throws Exception {
         reportNothingToUndoYet(context);
@@ -40,7 +47,7 @@ public class DrawBlockPlugIn extends AbstractPlugIn {
             try {
                 CursorTool polyTool = DrawBlockTool
                         .create((LayerNamePanelProxy) context
-                                .getActiveInternalFrame());
+                                .getActiveInternalFrame(), blockPanel);
                 context.getLayerViewPanel().setCurrentCursorTool(polyTool);
             } catch (Exception ex) {
                 WorkbenchUtils.Logger(this.getClass(), ex);

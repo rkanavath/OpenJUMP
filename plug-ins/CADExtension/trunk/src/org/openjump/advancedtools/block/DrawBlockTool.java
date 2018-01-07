@@ -34,21 +34,23 @@ public class DrawBlockTool extends NClickTool {
     private ImageIcon ICON = org.openjump.advancedtools.icon.IconLoader
             .icon("textblock/block_ins.png");
 
-    public DrawBlockTool(FeatureDrawingUtil featureDrawingUtil) {
+    final BlockPanel blockPanel;
+
+    public DrawBlockTool(FeatureDrawingUtil featureDrawingUtil, BlockPanel blockPanel) {
         super(1);
         this.featureDrawingUtil = featureDrawingUtil;
         setColor(Color.blue);
         setStroke(new BasicStroke(1.5F));
-
         allowSnapping();
+        this.blockPanel = blockPanel;
     }
 
-    public static CursorTool create(LayerNamePanelProxy layerNamePanelProxy) {
+    public static CursorTool create(LayerNamePanelProxy layerNamePanelProxy, BlockPanel blockPanel) {
         FeatureDrawingUtil featureDrawingUtil = new FeatureDrawingUtil(
                 layerNamePanelProxy);
 
         return featureDrawingUtil.prepare(
-                new DrawBlockTool(featureDrawingUtil), true);
+                new DrawBlockTool(featureDrawingUtil, blockPanel), true);
     }
 
     public void initialize(PlugInContext context) throws Exception {
@@ -69,10 +71,11 @@ public class DrawBlockTool extends NClickTool {
         // Build the geometry at the specific displacement, dimension and
         // rotation
         // Geometry geom2 = BlockUtils.getGeometry(context);
-        Geometry geom2 = BlockUtils.getGeometry();
+        //Geometry geom2 = BlockUtils.getGeometry();
+        Geometry geom2 = blockPanel.getSelection();
 
         // Get the centroid coordinates of the geometry
-        Coordinate coord = geom2.getEnvelope().getCentroid().getCoordinate();
+        Coordinate coord = geom2.getCentroid().getCoordinate();
 
         // Calculate the displacement of the geometry
         Coordinate displacement = CoordUtil.subtract(cursorPt, coord);
@@ -127,14 +130,8 @@ public class DrawBlockTool extends NClickTool {
      */
     @Override
     protected Shape getShape() {
-
         this.setColor(Color.RED.brighter());
-        try {
-            this.calculateShape(this.modelDestination, this.getPanel());
-        } catch (IOException | ParseException e) {
-            WorkbenchUtils.Logger(this.getClass(), e);
-            e.printStackTrace();
-        }
+        this.calculateShape(this.modelDestination, this.getPanel());
         return this.selectedFeaturesShape;
     }
 
@@ -149,16 +146,14 @@ public class DrawBlockTool extends NClickTool {
      * @throws ParseException
      * @throws IOException
      */
-    private void calculateShape(Coordinate middlePoint, LayerViewPanel panel)
-            throws IOException, ParseException {
+    private void calculateShape(Coordinate middlePoint, LayerViewPanel panel) {
         getWorkbench().getContext();
         // Get the click coordinates
         Coordinate cursorPt = this.modelDestination;
-        Geometry geom2 = BlockUtils.getGeometry();
-        // Geometry geom2 = BlockUtils.getGeometry(context);
-
-        // Get the centroid coordinates of the geometry
-        Coordinate coord = geom2.getEnvelope().getCentroid().getCoordinate();
+        // get the geometry of the block
+        Geometry geom2 = blockPanel.getSelection();
+        // Get the centroid of the geometry
+        Coordinate coord = geom2.getCentroid().getCoordinate();
 
         // Calculate the displacement of the geometry
         Coordinate displacement = CoordUtil.subtract(cursorPt, coord);
@@ -169,8 +164,7 @@ public class DrawBlockTool extends NClickTool {
         GeometryUtils.centerGeometry(geom2, displacement);
 
         try {
-            this.selectedFeaturesShape = panel.getJava2DConverter().toShape(
-                    geom2);
+            this.selectedFeaturesShape = panel.getJava2DConverter().toShape(geom2);
         } catch (NoninvertibleTransformException e) {
             System.out.println("DrawCircleWithGivenRadiusTool:Exception " + e);
         }

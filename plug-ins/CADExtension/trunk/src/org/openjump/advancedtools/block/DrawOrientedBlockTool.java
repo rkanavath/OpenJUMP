@@ -33,7 +33,6 @@ import com.vividsolutions.jump.workbench.ui.cursortool.CoordinateListMetrics;
 import com.vividsolutions.jump.workbench.ui.cursortool.CursorTool;
 import com.vividsolutions.jump.workbench.ui.cursortool.editing.FeatureDrawingUtil;
 
-//import org.openjump.core.ui.utils.GeometryUtils;
 
 public class DrawOrientedBlockTool extends ConstrainedNClickTool {
     private FeatureDrawingUtil featureDrawingUtil;
@@ -46,12 +45,15 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
     private ImageIcon ICON = org.openjump.advancedtools.icon.IconLoader
             .icon("textblock/block_drag.png");
 
-    public DrawOrientedBlockTool(FeatureDrawingUtil featureDrawingUtil) {
+    final BlockPanel blockPanel;
+
+    public DrawOrientedBlockTool(FeatureDrawingUtil featureDrawingUtil, BlockPanel blockPanel) {
         super(2);
         this.featureDrawingUtil = featureDrawingUtil;
         setColor(Color.blue);
         setStroke(new BasicStroke(1.5F));
         allowSnapping();
+        this.blockPanel = blockPanel;
     }
 
     double angle;
@@ -74,12 +76,12 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
         return (int) this.angle;
     }
 
-    public static CursorTool create(LayerNamePanelProxy layerNamePanelProxy) {
+    public static CursorTool create(LayerNamePanelProxy layerNamePanelProxy, BlockPanel blockPanel) {
         FeatureDrawingUtil featureDrawingUtil = new FeatureDrawingUtil(
                 layerNamePanelProxy);
 
         return featureDrawingUtil.prepare(new DrawOrientedBlockTool(
-                featureDrawingUtil), true);
+                featureDrawingUtil, blockPanel), true);
     }
 
     public void initialize(PlugInContext context) throws Exception {
@@ -95,6 +97,9 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
     public void gestureFinished() throws Exception {
         getWorkbench().getContext();
 
+        // If the mouse is released before the scond click, do nothing
+        if (getCoordinates().size()==0) return;
+
         // Build the geometry at the specific displacement, dimension and
         // rotation
 
@@ -106,10 +111,11 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
             angle_1 = azimuth(cursorPt, tentativeCoordinate);
         }
 
-        Geometry geom2 = BlockUtils.getGeometry();
+        //Geometry geom2 = BlockUtils.getGeometry();
+        Geometry geom2 = blockPanel.getSelection();
 
         // Get the centroid coordinates of the geometry
-        Coordinate coord = geom2.getEnvelope().getCentroid().getCoordinate();
+        Coordinate coord = geom2.getCentroid().getCoordinate();
         // Calculate the dsplacement of the geometry
         Coordinate displacement = CoordUtil.subtract(cursorPt, coord);
 
@@ -161,7 +167,7 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
                             Azimuth
                                     + ": "
                                     + df2.format(azimuth(cursorPt,
-                                            tentativeCoordinate)) + "°");
+                                            tentativeCoordinate)) + "ï¿½");
         }
     }
 
@@ -173,13 +179,11 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
      * calculates a geometry around the mouse pointer and converts it to a java
      * shape
      * 
-     * @param middlePoint
-     *            coordinates of the circle
+     * @param panel
      * @throws ParseException
      * @throws IOException
      */
-    private void calculateShape(LayerViewPanel panel) throws IOException,
-            ParseException, NoninvertibleTransformException {
+    private void calculateShape(LayerViewPanel panel) {
         Coordinate cursorPt = (Coordinate) getCoordinates().get(0);
         double angle_1;
         if (getCoordinates().size() == 1) {
@@ -189,11 +193,10 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
         }
         getWorkbench().getContext();
 
-        Geometry geom2 = BlockUtils.getGeometry();
-        // Geometry geom2 = BlockUtils.getGeometry(context);
+        Geometry geom2 = blockPanel.getSelection();
 
-        // Get the centroid coordinates of the geometry
-        Coordinate coord = geom2.getEnvelope().getCentroid().getCoordinate();
+        // Get the centroid of the geometry
+        Coordinate coord = geom2.getCentroid().getCoordinate();
 
         // Calculate the displacement of the geometry
         Coordinate displacement = CoordUtil.subtract(cursorPt, coord);
@@ -218,10 +221,11 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
         // Get the click coordinates
         Coordinate cursorPt = this.modelDestination;
         // Geometry geom2 = BlockUtils.getGeometry(context);
-        Geometry geom2 = BlockUtils.getGeometry();
+        //Geometry geom2 = BlockUtils.getGeometry();
+        Geometry geom2 = blockPanel.getSelection();
 
         // Get the centroid coordinates of the geometry
-        Coordinate coord = geom2.getEnvelope().getCentroid().getCoordinate();
+        Coordinate coord = geom2.getCentroid().getCoordinate();
 
         // Calculate the displacement of the geometry
         Coordinate displacement = CoordUtil.subtract(cursorPt, coord);
@@ -231,8 +235,7 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
         GeometryUtils.centerGeometry(geom2, displacement);
 
         try {
-            this.selectedFeaturesShape = panel.getJava2DConverter().toShape(
-                    geom2);
+            this.selectedFeaturesShape = panel.getJava2DConverter().toShape(geom2);
         } catch (NoninvertibleTransformException e) {
             System.out.println("DrawCircleWithGivenRadiusTool:Exception " + e);
         }
@@ -257,12 +260,10 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
             } else if (getCoordinates().size() == 1) {
 
                 Coordinate a = (Coordinate) coordinates.get(0);
-                String Azimuth = df2.format(azimuth(a, this.modelDestination))
-                        + "°";
-                Font f1 = new Font("Arial Black", Font.ITALIC, 20);
-                Shape text = BlockUtils.generateShapeFromText(f1, Azimuth);
+                //String Azimuth = df2.format(azimuth(a, this.modelDestination)) + "ï¿½";
+                //Font f1 = new Font("Arial Black", Font.ITALIC, 20);
+                Shape shape = BlockCell.getShape(blockPanel.getSelection());
 
-                ;
                 this.calculateShape(this.getPanel());
                 // this.calculateShape_0(a, this.getPanel());
                 Point2D firstPoint = getPanel().getViewport().toViewPoint(a);
@@ -285,18 +286,18 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
                 this.calculateShape(this.getPanel());
                 AffineTransform at = new AffineTransform();
                 at.translate(thirdPoint.getX(), thirdPoint.getY());
-                at.createTransformedShape(text);
+                at.createTransformedShape(shape);
                 if (this.wasControlPressed()) {
-                    path.append(at.createTransformedShape(text), false);
+                    path.append(at.createTransformedShape(shape), false);
                 }
                 path.append(this.selectedFeaturesShape, false);
             } else {
 
                 Coordinate a = (Coordinate) coordinates.get(0);
-                String Azimuth = df2.format(azimuth(a, tentativeCoordinate))
-                        + "°";
-                Font f1 = new Font("Arial Black", Font.ITALIC, 20);
-                Shape text = BlockUtils.generateShapeFromText(f1, Azimuth);
+                //String Azimuth = df2.format(azimuth(a, tentativeCoordinate)) + "ï¿½";
+                //Font f1 = new Font("Arial Black", Font.ITALIC, 20);
+
+                Shape text = BlockCell.getShape(blockPanel.getSelection());
 
                 Point2D firstPoint = getPanel().getViewport().toViewPoint(a);
                 path.moveTo((float) firstPoint.getX(),
@@ -338,7 +339,8 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
     /**
      * Computes the angle facing North betwee 2 points
      *
-     * @param coordinates
+     * @param startPt
+     * @param endPt
      * @return the angle in degrees
      */
     public static double azimuth(Coordinate startPt, Coordinate endPt) {
@@ -346,7 +348,7 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
         Coordinate p1 = startPt;
         Coordinate p2 = endPt;
 
-        double d = 0.0D;
+        double d;
         LineSegment ls = new LineSegment(p1, p2);
         d = ls.angle();
         double DEG = 90.0D - d * 57.295779513082323D;

@@ -20,7 +20,7 @@
     <!-- Versions
     0.5 : first version built from ant
     -->
-    <property name="version" value="0.5" />
+    <property name="version" value="0.6" />
     
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->

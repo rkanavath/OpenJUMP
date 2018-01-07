@@ -9,6 +9,7 @@ import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.SwingConstants;
 
+@Deprecated
 public class ImageCellRenderer extends DefaultListCellRenderer {
 
     /**

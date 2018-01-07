@@ -78,8 +78,8 @@ public class TextPanel extends JPanel {
         text_panel_jlabel2 = new JLabel(
                 I18NPlug.getI18N("org.openjump.core.ui.plugins.block.dialog-dimension"));
         text_panel_jlabel2.setToolTipText(gedtDescription());
-        FormUtils.addRowInGBL(text_panel, 1, 0, null, text_panel_jlabel1,
-                textRotationSpinner, text_panel_jlabel2, textDimensionSpinner);
+        //FormUtils.addRowInGBL(text_panel, 1, 0, null, text_panel_jlabel1,
+        //        textRotationSpinner, text_panel_jlabel2, textDimensionSpinner);
         AddTextPlugIn add = new AddTextPlugIn();
         ChangeTextPlugIn change = new ChangeTextPlugIn();
 

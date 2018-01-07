@@ -25,6 +25,13 @@ public class DrawOrientedBlockPlugIn extends AbstractPlugIn {
     public static final String NAME2 = I18NPlug
             .getI18N("org.openjump.core.ui.plugins.block.DrawOrientedBlockTool.description");
 
+    BlockPanel blockPanel;
+
+    public DrawOrientedBlockPlugIn(BlockPanel blockPanel) {
+        super();
+        this.blockPanel = blockPanel;
+    }
+
     @Override
     public boolean execute(PlugInContext context) throws Exception {
         reportNothingToUndoYet(context);
@@ -40,7 +47,7 @@ public class DrawOrientedBlockPlugIn extends AbstractPlugIn {
             try {
                 CursorTool polyTool = DrawOrientedBlockTool
                         .create((LayerNamePanelProxy) context
-                                .getActiveInternalFrame());
+                                .getActiveInternalFrame(), blockPanel);
                 context.getLayerViewPanel().setCurrentCursorTool(polyTool);
             } catch (Exception ex) {
                 WorkbenchUtils.Logger(this.getClass(), ex);

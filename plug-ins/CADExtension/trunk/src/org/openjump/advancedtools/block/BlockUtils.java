@@ -26,6 +26,10 @@ import com.vividsolutions.jump.workbench.JUMPWorkbench;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.plugin.PlugInManager;
 
+/**
+ * @deprecated entirely replaced by the new {@link BlockCell} class.
+ */
+@Deprecated
 public class BlockUtils {
 
     static WorkbenchContext context = JUMPWorkbench.getInstance().getFrame()
@@ -34,6 +38,7 @@ public class BlockUtils {
     // Reads Geometry form a wkt file. Since the files are from VertexFolder and
     // have a difference
     // in wkt syntax, the text before the wkt geometry specification is excluded
+    @Deprecated
     public static Geometry readGeomFromWKT(String filename, String folder)
             throws IOException, com.vividsolutions.jts.io.ParseException {
         PlugInManager manager = context.getWorkbench().getPlugInManager();
@@ -75,6 +80,7 @@ public class BlockUtils {
      */
 
     // Get the geometry
+    @Deprecated
     public static Geometry getGeometry() throws IOException, ParseException {
         Geometry geom2 = null;
         if (BlockPanel.chooseBox.getSelectedItem().toString()
@@ -103,6 +109,7 @@ public class BlockUtils {
     }
 
     // Get the geometry
+    @Deprecated
     public static Shape getShape() throws IOException, ParseException,
             NoninvertibleTransformException {
         Geometry geom2 = null;
@@ -158,6 +165,7 @@ public class BlockUtils {
     /*
      * Use Scanner to read the content of a file
      */
+    @Deprecated
     public static String readFile(String pathname) throws IOException {
 
         File file = new File(pathname);
@@ -178,12 +186,13 @@ public class BlockUtils {
     /*
      * List of embedded geometries
      */
-
+    @Deprecated
     public static Geometry circle() {
         Circle circle = new Circle(new Coordinate(0, 0), 8);
         return circle.getPoly();
     }
 
+  @Deprecated
     public static Geometry triangle() {
         Coordinate[] coords = new Coordinate[] { new Coordinate(0, 0),
                 new Coordinate(16, 0), new Coordinate(8, 13.85),
@@ -193,6 +202,7 @@ public class BlockUtils {
         return geo;
     }
 
+  @Deprecated
     public static Geometry square() {
         Coordinate[] coords = new Coordinate[] { new Coordinate(0, 0),
                 new Coordinate(0, 16), new Coordinate(16, 16),
@@ -202,6 +212,7 @@ public class BlockUtils {
         return geo;
     }
 
+  @Deprecated
     public static Geometry cross() {
         Coordinate[] coords = new Coordinate[] { new Coordinate(5, 0),
                 new Coordinate(10, 0), new Coordinate(10, 5),
@@ -216,6 +227,7 @@ public class BlockUtils {
         return geo;
     }
 
+  @Deprecated
     public static Geometry star() {
         Coordinate[] coords = new Coordinate[] { new Coordinate(4, 6),
                 new Coordinate(1, 6), new Coordinate(3, 4),
@@ -230,6 +242,7 @@ public class BlockUtils {
         return geo;
     }
 
+  @Deprecated
     public static Geometry star_old() {
         Coordinate[] coords = new Coordinate[] { new Coordinate(3.82, 0.0),
                 new Coordinate(5, 6.88), new Coordinate(0.0, 11.76),
@@ -243,6 +256,7 @@ public class BlockUtils {
         return geo;
     }
 
+  @Deprecated
     public static Geometry star_test() {
 
         int s = 10;
@@ -304,6 +318,7 @@ public class BlockUtils {
      * + ".wkt"; geom2 = readGeomFromWKT(context, blockName,
      * BlockPanel.blockFolder); } return geom2; }
      */
+    @Deprecated
     public static ImageIcon createIcon(Shape shape) throws IOException,
             ParseException, NoninvertibleTransformException {
 
@@ -324,6 +339,7 @@ public class BlockUtils {
         return icon;
     }
 
+  @Deprecated
     public ImageIcon creatIconFromShape(Shape s) {
 
         Rectangle r = s.getBounds();
@@ -342,6 +358,7 @@ public class BlockUtils {
         return icon;
     }
 
+  @Deprecated
     public static Shape generateShapeFromText(Font font, String string) {
         BufferedImage img = new BufferedImage(24, 24,
                 BufferedImage.TYPE_INT_ARGB);

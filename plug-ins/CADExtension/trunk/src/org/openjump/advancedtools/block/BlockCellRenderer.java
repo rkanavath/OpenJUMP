@@ -10,6 +10,10 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
+/**
+ * @deprecated now included and inlined in {@link BlockPanel}.
+ */
+@Deprecated
 public class BlockCellRenderer extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
     private List<String> tooltips;
