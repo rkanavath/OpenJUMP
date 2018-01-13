@@ -1,4 +1,4 @@
-package es.unex.sextante.gui.help;
+package es.unex.sextante.openjump.help;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;

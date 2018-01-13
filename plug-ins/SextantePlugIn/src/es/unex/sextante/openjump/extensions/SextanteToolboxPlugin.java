@@ -16,21 +16,22 @@ import es.unex.sextante.openjump.language.I18NPlug;
 public class SextanteToolboxPlugin implements PlugIn {
     static WorkbenchFrame wFrame = JUMPWorkbench.getInstance().getFrame();
   public boolean execute(final PlugInContext context) throws Exception {
-      //[Giuseppe Aruta 2017-12-12] open as OJ internal frame
-      JFrame frame = context.getWorkbenchFrame();
-      for (JInternalFrame iFrame : wFrame.getInternalFrames()) {
-          if (iFrame instanceof ToolboxFrame) {
+    //[Giuseppe Aruta 2017-12-12] open as OJ internal frame
+    // Deactivated to further tests
+    //  JFrame frame = context.getWorkbenchFrame();
+    //  for (JInternalFrame iFrame : wFrame.getInternalFrames()) {
+    //          if (iFrame instanceof ToolboxFrame) {
+    //
+    //           iFrame.toFront();
+    //          return false;
+    //
+    //         }
+    //      }
+    //      ToolboxFrame tframe = new ToolboxFrame(frame);
+    //      wFrame.addInternalFrame(tframe, true, true);
+    //      SextanteGUI.getInputFactory().clearDataObjects();
 
-              iFrame.toFront();
-              return false;
-
-          }
-      }
-      ToolboxFrame tframe = new ToolboxFrame(frame);
-      wFrame.addInternalFrame(tframe, true, true);
-      SextanteGUI.getInputFactory().clearDataObjects();
-
-      // SextanteGUI.getGUIFactory().showToolBoxDialog();
+       SextanteGUI.getGUIFactory().showToolBoxDialog();
 
     return true;
 

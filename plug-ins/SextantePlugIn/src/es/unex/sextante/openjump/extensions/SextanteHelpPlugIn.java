@@ -12,7 +12,7 @@ import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
 import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
 import es.unex.sextante.gui.core.SextanteGUI;
-import es.unex.sextante.gui.help.SextanteHelpFrame;
+//import es.unex.sextante.openjump.help.SextanteHelpFrame;
 import es.unex.sextante.gui.help.SextanteHelpWindow;
 import es.unex.sextante.gui.toolbox.ToolboxFrame;
 import es.unex.sextante.openjump.language.I18NPlug;
