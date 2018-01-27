@@ -16,7 +16,7 @@
     <property name="resources"     value="resources" />
     
     <!-- plugins -->
-    <property name="csv-driver-version"        value="1.0.1" />
+    <property name="csv-driver-version"        value="1.0.2" />
     <!--property name="openjump-ext" value="C:/Users/Micha&#x00EB;l/DEVELOPPEMENTS/OpenJUMP-2012/dist/openjump-1.6.2beta/lib/ext" /-->
     <!--property name="openjump-ext" value="C:\Program Files\OpenJUMP-1.6.3-r3576-CORE\lib\ext" /-->
 
