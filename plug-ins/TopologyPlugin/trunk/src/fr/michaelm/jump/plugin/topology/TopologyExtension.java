@@ -34,6 +34,7 @@ import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
 // History
+// 0.9.2 (2018-01-27) : add finnish translations
 // 0.9.1 (2016-11-21) : remove RemoveMicroSegmentsPlugIn, replaced by
 //                      com.vividsolutions.jump.workbench.ui.plugin.analysis.RemoveSmallSegments
 //                      included in the core of OpenJUMP
@@ -74,7 +75,7 @@ public class TopologyExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.9.1 (2016-06-18)";
+        return "0.9.2 (2018-01-27)";
     }
 
     public void configure(PlugInContext context) throws Exception {

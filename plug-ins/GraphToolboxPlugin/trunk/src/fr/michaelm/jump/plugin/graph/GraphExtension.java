@@ -35,8 +35,9 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
  * <li>CycleFinderPlugIn : computes a graph from a linear network and find base cycles</li>
  * </ul>
  * @author Micha&euml;l Michaud
- * @version 0.5.5 (2017-06-10)
+ * @version 0.5.6 (2018-01-27)
  */
+//version 0.5.6 (2018-01-27) add some translations in finnish
 //version 0.5.5 (2017-06-10) improvement of HydrographicNetworkAnalysis and Skeleton PlugIns
 //version 0.5.0 (2017-04-10) add HydrographicNetworkAnalysisPlugIn
 //version 0.4.1 (2017-02-03) fix a small I18N problem
@@ -56,7 +57,7 @@ public class GraphExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.5.5 (2017-06-10)";
+        return "0.5.6 (2018-01-27)";
     }
 
     public void configure(PlugInContext context) throws Exception {
