@@ -37,4 +37,8 @@ public class VertexSymbolsExtension extends Extension
     {
         new VertexSymbolsPlugIn().initialize(context);
     }
+
+    public String getVersion() {
+        return "0.181 (2018-01-28)";
+    }
 }

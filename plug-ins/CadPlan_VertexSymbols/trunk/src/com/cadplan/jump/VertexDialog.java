@@ -311,7 +311,7 @@ public class VertexDialog extends JDialog implements ActionListener, ItemListene
          VertexParams.showFill = showFillCB.isSelected();
          VertexParams.dotted = dottedCB.isSelected();
          VertexParams.sizeByScale = sizeByScaleCB.isSelected();
-         VertexParams.type = getType();
+         VertexParams.type = getVertexType();
          VertexParams.sides = getSides(VertexParams.type);
         //System.out.println("getSides="+VertexParams.sides);   //***
          VertexParams.selectedImage = imagePanel.getSelectedImage();
@@ -347,7 +347,7 @@ public class VertexDialog extends JDialog implements ActionListener, ItemListene
         return vectorPanel.symbolPanel.sides[2];
     }
 
-    public int getType()
+    public int getVertexType()
     {
 //        for (int i=0; i < vectorPanel.symbolPanel.vertexRB.length; i++)
 //        {

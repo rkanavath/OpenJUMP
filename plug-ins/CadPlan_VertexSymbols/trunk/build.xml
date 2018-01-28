@@ -1,0 +1,95 @@
+<project name="VertexSymbols" default="compile-all" basedir=".">
+
+    <!--*************************************************************************
+    *****************************************************************************
+    **                                  PROPERTIES                             **
+    *****************************************************************************
+    **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"           value="src" />
+    <property name="bin"           value="bin" />
+    <property name="lib"           value="lib" />
+    <property name="build"         value="build" />
+    <property name="dist"          value="dist" />
+    <property name="doc-api"       value="doc-api" />
+    <property name="resources"     value="resources" />
+    <property name="oj-classpath"  value="../../openjump_lib" />
+    
+    <!-- plugins -->
+    <property name="vertex-symbols-version"        value="0.181" />
+
+
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <!--fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset-->
+        <fileset dir="${oj-classpath}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+    </target>
+   
+    <target name="compile-all" id="compile-all" depends="clean">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <javac srcdir="${src}" destdir="${build}" 
+               debug="on"      deprecation="false" verbose="no"
+               includeantruntime="false"
+               encoding="windows-1252"
+               source="1.7"
+               target="1.7">
+             <exclude name="**/clean/*"/>
+             <classpath refid="classpath"/>
+        </javac>
+        <copy todir="${build}" >
+            <fileset dir="${src}" casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.properties" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.html" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.txt" />
+            <fileset dir="${src}" casesensitive="false" includes="**/*.java2xml" />
+            <fileset dir="." casesensitive="false" includes="**/*.gif, **/*.jpg, **/*.png" />
+            <fileset dir="." casesensitive="false" includes="**/*.properties" />
+        </copy>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- csv driver                                                            -->
+    <!-- =================================================================== -->
+    <target name="jar-vertex-symbols" id="jar-vertex-symbols" depends="compile-all">
+        <jar basedir="${build}" jarfile="${dist}/vertex-symbols-${vertex-symbols-version}.jar">
+            <include name="com/cadplan/**/*"/>
+            <include name="**/*.properties"/>
+            <include name="**/*.png"/>
+            <include name="**/*.gif"/>
+            <include name="**/*.jpg"/>
+            <include name="**/*.txt"/>
+            <include name="**/*.java2xml"/>
+            <include name="**/*.html"/>
+        </jar>
+        <!--copy file="${dist}/csv-driver-${csv-driver-version}.jar" todir="${openjump-ext}"/-->
+    </target>
+
+    <target name="zip-vertex-symbols-src" id="zip-vertex-symbols-src" depends="jar-vertex-symbols">
+        <zip basedir="." destfile="${dist}/csv-driver-src-${vertex-symbols-version}.zip">
+            <include name="${dist}/csv-driver-${vertex-symbols-version}.jar"/>
+            <include name="com/cadplan/**/*.java"/>
+            <include name="**/*.properties"/>
+            <include name="**/*.java2xml"/>
+            <include name="**/*.txt"/>
+            <include name="**/*.html"/>
+            <include name="**/*.gif"/>
+            <include name="**/*.jpg"/>
+            <include name="**/*.png"/>
+            <include name="build.xml"/>
+        </zip>
+    </target>
+    
+</project>
