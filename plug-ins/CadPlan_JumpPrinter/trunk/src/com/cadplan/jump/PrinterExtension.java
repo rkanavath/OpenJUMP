@@ -38,4 +38,8 @@ public class PrinterExtension extends Extension
     {
          new PrinterPlugIn().initialize(context);
     }
+
+    public String getVersion() {
+    return "1.88 (2018-01-28)";
+  }
 }

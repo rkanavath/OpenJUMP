@@ -120,10 +120,10 @@ public class MapImagePrinter extends Component
                     Layerable layer = (Layerable) ijj.next();
                     try
                     {
-                        Class dummy = Class.forName("de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer");
-                        if((AbstractLayerable) layer instanceof de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer)
+                        Class dummy = Class.forName("org.openjump.core.rasterimage.RasterImageLayer");
+                        if((AbstractLayerable) layer instanceof org.openjump.core.rasterimage.RasterImageLayer)
                         {
-                            boolean isVisible = ((de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer)layer).isVisible();
+                            boolean isVisible = ((org.openjump.core.rasterimage.RasterImageLayer)layer).isVisible();
                             if(isVisible) rasterLayers.add(layer);
                             if(debug) System.out.println("Layer:"+layer.getName()+"        Layer is Raster***********  visible:"+isVisible);
                         }
@@ -172,11 +172,11 @@ public class MapImagePrinter extends Component
                     }
                     else
                     {
-                         bimage = ((de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer)layer).createImage(context.getLayerViewPanel());
-                         imageEnvelope = ((de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer)layer).getEnvelope();
-                         transparencyLevel = ((de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer)layer).getTransparencyLevel();
-                         imageX = ((de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer)layer).getXOffset();
-                         imageY = ((de.fhOsnabrueck.jump.pirol.utilities.RasterImageSupport.RasterImageLayer)layer).getYOffset();
+                         bimage = ((org.openjump.core.rasterimage.RasterImageLayer)layer).createImage(context.getLayerViewPanel());
+                         imageEnvelope = ((org.openjump.core.rasterimage.RasterImageLayer)layer).getWholeImageEnvelope();
+                         transparencyLevel = ((org.openjump.core.rasterimage.RasterImageLayer)layer).getTransparencyLevel();
+                         imageX = ((org.openjump.core.rasterimage.RasterImageLayer)layer).getXOffset();
+                         imageY = ((org.openjump.core.rasterimage.RasterImageLayer)layer).getYOffset();
                     }
 
                         if(debug) System.out.println("View envelope: "+envelope.getMinX()+","+envelope.getMinY()+":"+envelope.getWidth()+","+envelope.getHeight());
@@ -1399,7 +1399,7 @@ public class MapImagePrinter extends Component
         double len = Math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0));
         double bearing = Math.atan2(y1-y0, x1-x0);
 
-        String note = String.valueOf(format(len) +"/"+ String.valueOf(formatAngle(Math.toDegrees(bearing)))+"°");
+        String note = String.valueOf(format(len) +"/"+ String.valueOf(formatAngle(Math.toDegrees(bearing)))+"ï¿½");
         g.drawString(note,x,y);
 
     }

@@ -30,7 +30,7 @@ import javax.swing.border.TitledBorder;
 
 
 import com.cadplan.designer.GridBagDesigner;
-import com.cadplan.fileio.*;
+//import com.cadplan.fileio.*;
 import com.cadplan.fileioA.FileChooser;
 
 public class FurnitureImagePanel extends JPanel implements ActionListener, AdjustmentListener
