@@ -167,7 +167,7 @@ public class DrawOrientedBlockTool extends ConstrainedNClickTool {
                             Azimuth
                                     + ": "
                                     + df2.format(azimuth(cursorPt,
-                                            tentativeCoordinate)) + "�");
+                                            tentativeCoordinate)) + "\u00B0");
         }
     }
 
