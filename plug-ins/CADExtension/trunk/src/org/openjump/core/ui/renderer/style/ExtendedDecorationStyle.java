@@ -42,6 +42,7 @@ import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jump.workbench.ui.Viewport;
 import com.vividsolutions.jump.workbench.ui.renderer.style.ChoosableStyle;
 import com.vividsolutions.jump.workbench.ui.renderer.style.LineStringStyle;
@@ -81,8 +82,12 @@ public abstract class ExtendedDecorationStyle extends LineStringStyle implements
 
             mid = new Coordinate((c0.x + c1.x) / 2, (c0.y + c1.y) / 2);
             // Do not draw symbol if previous symbol for this feature is less
-            // than 30 pixels far
-            if (previous != null && previous.distance(mid) * scale < 30) {
+            // than 30 pixels far.
+            // Do not draw symbols if middle point is outside the original
+            // geometry. This prevent symbols floating outside the geometry.
+            final Point p = new GeometryFactory().createPoint(mid);
+            if (previous != null && previous.distance(mid) * scale < 30
+                    && !p.intersects(lineString)) {
                 continue;
             }
             paint(c0, c1, viewport, graphics);
