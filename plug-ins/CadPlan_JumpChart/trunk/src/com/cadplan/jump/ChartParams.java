@@ -31,7 +31,7 @@ package com.cadplan.jump;
  */
 public class ChartParams
 {
-    public static String version = "0.99";
+    public static String version = "1.00";
     public static final int PIE_EAST = 0;
     public static final int PIE_NORTH = 1;
     public static final int BAR = 2;
