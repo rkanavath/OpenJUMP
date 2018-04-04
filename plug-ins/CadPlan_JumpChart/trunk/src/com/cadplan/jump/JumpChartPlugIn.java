@@ -26,6 +26,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
+import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
+import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
 
@@ -39,14 +41,16 @@ public class JumpChartPlugIn extends AbstractPlugIn {
     public void initialize(PlugInContext context) throws Exception {
         iPlug = new I18NPlug("JumpChart", "language.JumpChartPlugin");
         ChartParams.setNames(iPlug);
-
+        final EnableCheckFactory check = new EnableCheckFactory(
+                context.getWorkbenchContext());
+        final MultiEnableCheck mcheck = new MultiEnableCheck();
         final String menuName = MenuNames.PLUGINS; // iPlug.get("JumpChart.MenuName");
         final String menuItem = iPlug.get("JumpChart.MenuItem");
         context.getFeatureInstaller().addMainMenuPlugin(this,
-                new String[] { menuName }, menuItem, false, getIcon(), null);
+                new String[] { menuName }, menuItem, false, getIcon(), mcheck);
         context.getWorkbenchFrame()
                 .getToolBar()
-                .addPlugIn(getIcon(), this, null, context.getWorkbenchContext());
+                .addPlugIn(getIcon(), mcheck, null, context.getWorkbenchContext());
 
     }
 
