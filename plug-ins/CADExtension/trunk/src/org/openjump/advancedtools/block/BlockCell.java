@@ -146,6 +146,7 @@ public class BlockCell {
     //g.translate(10, 10);
     g.setPaint(Color.red);
     g.draw(shape);
+    g.fill(shape);
     g.dispose();
     return new ImageIcon(image);
   }

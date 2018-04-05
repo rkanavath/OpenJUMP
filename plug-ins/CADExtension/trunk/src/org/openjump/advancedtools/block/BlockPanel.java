@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 import com.vividsolutions.jts.geom.Geometry;
+
+import org.openjump.advancedtools.block.BlockCell;
 import org.openjump.advancedtools.language.I18NPlug;
 
 import com.vividsolutions.jump.I18N;
@@ -69,40 +71,73 @@ public class BlockPanel extends JPanel {
 
     @SuppressWarnings({})
     public JPanel panel_blocks(PlugInContext context) {
-        JPanel mainPanel = new JPanel(new GridBagLayout());
+        final JPanel mainPanel = new JPanel(new GridBagLayout());
 
+        final Dimension d = new Dimension(140, /*
+                                                * chooseBox.getPreferredSize().
+                                                * height
+                                                */28);
+        chooseBox
+                .setToolTipText(I18NPlug
+                        .getI18N("org.openjump.core.ui.plugins.block.dialog.select-block"));
+        chooseBox.setPreferredSize(d);
+
+        chooseBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list,
+                    Object value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+
+                final JLabel label = (JLabel) super
+                        .getListCellRendererComponent(list, value, index,
+                                isSelected, cellHasFocus);
+                if (/*-1 < index && null != value &&*/value instanceof BlockCell) {
+                    label.setIcon(((BlockCell) value).getIcon());
+                }
+                return label;
+            }
+        });
+        initComboBox(context);
         initToolBar(context.getWorkbenchContext());
-        JPanel blockChooserPanel = getBlockChooserPanel(context);
+        // setBlockChooserPanel(context);
 
         dimensionSpinner = new JSpinner(dimensionModel);
-        JLabel labelDimension = new JLabel(
+        final JLabel labelDimension = new JLabel(
                 I18NPlug.getI18N("org.openjump.core.ui.plugins.block.dialog-dimension"));
         labelDimension.setToolTipText(gedDimensionTooltip());
 
         rotationSpinner = new JSpinner(rotationModel);
-        JLabel labelRotation = new JLabel(
+        final JLabel labelRotation = new JLabel(
                 I18NPlug.getI18N("org.openjump.core.ui.plugins.block.dialog-rotation"));
-        labelRotation.setToolTipText(
-                I18NPlug.getI18N("org.openjump.core.ui.plugins.annotation.dialog.font-rotation-message"));
+        labelRotation
+                .setToolTipText(I18NPlug
+                        .getI18N("org.openjump.core.ui.plugins.annotation.dialog.font-rotation-message"));
 
-
-        TitledBorder titledBorder = new TitledBorder(BorderFactory.createEtchedBorder(
-                Color.white, new Color(148, 145, 140)),
+        final TitledBorder titledBorder = new TitledBorder(
+                BorderFactory.createEtchedBorder(Color.white, new Color(148,
+                        145, 140)),
                 I18NPlug.getI18N("org.openjump.core.ui.plugins.block"));
         mainPanel.setBorder(titledBorder);
 
-        GridBagConstraints c = new GridBagConstraints();
+        final GridBagConstraints c = new GridBagConstraints();
         c.anchor = WEST;
-        c.insets = new Insets(2,4,2,4);
-
+        c.insets = new Insets(2, 4, 2, 4);
+        c.gridx = 0;
+        c.gridy = 0;
         c.gridwidth = 4;
-        //FormUtils.addRowInGBL(mainPanel, 0, 0, toolBar);
+        // FormUtils.addRowInGBL(mainPanel, 0, 0, toolBar);
         mainPanel.add(toolBar, c);
 
-        c.gridy = 1;
-        mainPanel.add(blockChooserPanel, c);
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.EAST;
+        mainPanel.add(chooseBox, c);
+        // c.gridy = 1;
+        // mainPanel.add(blockChooserPanel, c);
 
-        c.gridx = 0; c.gridy = 2; c.gridwidth = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
         mainPanel.add(labelDimension, c);
         c.gridx = 1;
         mainPanel.add(dimensionSpinner, c);
@@ -114,7 +149,7 @@ public class BlockPanel extends JPanel {
         return mainPanel;
     }
 
-
+    @Deprecated
     private JPanel getBlockChooserPanel(PlugInContext context) {
 
         Dimension d = new Dimension(125, /*chooseBox.getPreferredSize().height*/ 26);
