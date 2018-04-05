@@ -22,68 +22,76 @@
 
 package com.cadplan.jump;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.EnableCheck;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
-import com.vividsolutions.jump.workbench.ui.WorkbenchToolBar;
-import com.cadplan.fileio.IconLoader;
-
-
-import javax.swing.*;
-import java.awt.*;
-
 
 /**
- * User: geoff
- * Date: 28/04/2007
- * Time: 09:40:22
- * Copyright 2007 Geoffrey G Roy.
+ * User: geoff Date: 28/04/2007 Time: 09:40:22 Copyright 2007 Geoffrey G Roy.
  */
-public class VertexSymbolsPlugIn extends AbstractPlugIn
-{
+public class VertexSymbolsPlugIn extends AbstractPlugIn {
 
     private I18NPlug iPlug;
-    
-    public void initialize(PlugInContext context) throws Exception
-    {
-        iPlug = new I18NPlug("VertexSymbols","language.VertexSymbolsPlugin");
-        EnableCheckFactory check = new EnableCheckFactory(context.getWorkbenchContext());
-        MultiEnableCheck mcheck = new MultiEnableCheck();
+
+    @Override
+    public void initialize(PlugInContext context) throws Exception {
+        iPlug = new I18NPlug("VertexSymbols", "language.VertexSymbolsPlugin");
+        final EnableCheckFactory check = new EnableCheckFactory(
+                context.getWorkbenchContext());
+        final MultiEnableCheck mcheck = new MultiEnableCheck();
         mcheck.add(check.createAtLeastNLayersMustExistCheck(1));
-        mcheck.add(check.createAtLeastNLayersMustBeEditableCheck(1)); 
-        
-        
-        String menuName = MenuNames.PLUGINS; //iPlug.get("VertexSymbols.MenuName");
-        String menuItem = iPlug.get("VertexSymbols.MenuItem");
-        context.getFeatureInstaller().addMainMenuItem(this, new String[] {menuName},
-                     menuItem, false, null, mcheck);
+        mcheck.add(check.createAtLeastNLayersMustBeEditableCheck(1));
 
-        String dirName = context.getWorkbenchContext().getWorkbench().getPlugInManager().getPlugInDirectory().getAbsolutePath();
-        //IconLoader loader = new IconLoader(dirName,"VertexSymbols");
-        //Image image = loader.loadImage("vsicon.gif");
-        //ImageIcon icon = new ImageIcon(image);
-       // System.out.println("Symbols Resource path: "+this.getClass().getResource("/Resources/vsicon.gif"));
-        ImageIcon icon = new ImageIcon(this.getClass().getResource("/Resources/vsicon.gif"));
+        final String menuName = MenuNames.PLUGINS; // iPlug.get("VertexSymbols.MenuName");
+        // final String menuItem = iPlug.get("VertexSymbols.MenuItem");
+        context.getFeatureInstaller().addMainMenuPlugin(this,
+                new String[] { menuName }, getName(), false, getIcon(), mcheck);
+        context.getWorkbenchFrame()
+                .getToolBar()
+                .addPlugIn(getIcon(), this, mcheck,
+                        context.getWorkbenchContext());
 
-        WorkbenchToolBar toolBar = context.getWorkbenchFrame().getToolBar();
-        
-        
-        
-        
-        
-        JButton button = toolBar.addPlugIn(icon,this,mcheck,context.getWorkbenchContext());
-        LoadImages imageLoader = new LoadImages(context);
-        //System.out.println("Initialize plugin");
+        // context.getFeatureInstaller().addMainMenuItem(this, new String[]
+        // {menuName},
+        // menuItem, false, null, mcheck);
+
+        // String dirName =
+        // context.getWorkbenchContext().getWorkbench().getPlugInManager().getPlugInDirectory().getAbsolutePath();
+        // IconLoader loader = new IconLoader(dirName,"VertexSymbols");
+        // Image image = loader.loadImage("vsicon.gif");
+        // ImageIcon icon = new ImageIcon(image);
+        // System.out.println("Symbols Resource path: "+this.getClass().getResource("/Resources/vsicon.gif"));
+        // ImageIcon icon = new
+        // ImageIcon(this.getClass().getResource("/Resources/vsicon.gif"));
+
+        // WorkbenchToolBar toolBar = context.getWorkbenchFrame().getToolBar();
+
+        // JButton button =
+        // toolBar.addPlugIn(icon,this,mcheck,context.getWorkbenchContext());
+        final LoadImages imageLoader = new LoadImages(context);
+        // System.out.println("Initialize plugin");
         VertexParams.context = context.getWorkbenchContext();
 
     }
 
-    public boolean execute(PlugInContext context) throws Exception
-    {
-        VertexSymbols vs = new VertexSymbols(context,iPlug);
+    public Icon getIcon() {
+        return new ImageIcon(getClass().getResource("/Resources/vsicon.gif"));
+    }
+
+    @Override
+    public String getName() {
+        iPlug = new I18NPlug("VertexSymbols", "language.VertexSymbolsPlugin");
+        return iPlug.get("VertexSymbols.MenuItem");
+    }
+
+    @Override
+    public boolean execute(PlugInContext context) throws Exception {
+        final VertexSymbols vs = new VertexSymbols(context, iPlug);
         return true;
     }
 }
