@@ -13,7 +13,7 @@ import java.awt.*;
  */
 public class VertexParams
 {
-    public static String version = "0.180";
+    public static String version = "0.19";
     public static int POLYGON = 0;
     public static int STAR = 1;
     public static int IMAGE = 2;

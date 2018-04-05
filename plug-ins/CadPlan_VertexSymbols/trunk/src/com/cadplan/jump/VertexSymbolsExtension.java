@@ -39,6 +39,6 @@ public class VertexSymbolsExtension extends Extension
     }
 
     public String getVersion() {
-        return "0.181 (2018-01-28)";
+        return "0.19 (2018-04-05)";
     }
 }
