@@ -17,7 +17,7 @@
     <property name="oj-classpath"  value="../../openjump_lib" />
     
     <!-- plugins -->
-    <property name="vertex-symbols-version"        value="0.181" />
+    <property name="vertex-symbols-version"        value="0.19" />
 
 
     <!-- =================================================================== -->
@@ -64,7 +64,7 @@
     <!-- csv driver                                                            -->
     <!-- =================================================================== -->
     <target name="jar-vertex-symbols" id="jar-vertex-symbols" depends="compile-all">
-        <jar basedir="${build}" jarfile="${dist}/vertex-symbols-${vertex-symbols-version}.jar">
+        <jar basedir="${build}" jarfile="${dist}/VertexSymbols-${vertex-symbols-version}.jar">
             <include name="com/cadplan/**/*"/>
             <include name="**/*.properties"/>
             <include name="**/*.png"/>
