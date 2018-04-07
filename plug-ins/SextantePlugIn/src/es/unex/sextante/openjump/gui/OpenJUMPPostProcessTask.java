@@ -9,20 +9,19 @@ import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 
 import org.openjump.core.rasterimage.RasterImageLayer;
-//import org.openjump.sextante.core.ObjectAndDescription;
+import org.openjump.sextante.core.ObjectAndDescription;
 
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
 
 import es.unex.sextante.core.GeoAlgorithm;
-import es.unex.sextante.core.ObjectAndDescription;
+//import es.unex.sextante.core.ObjectAndDescription;
 import es.unex.sextante.core.OutputObjectsSet;
 import es.unex.sextante.core.Sextante;
 import es.unex.sextante.dataObjects.IRasterLayer;
 import es.unex.sextante.dataObjects.ITable;
 import es.unex.sextante.dataObjects.IVectorLayer;
-import es.unex.sextante.gui.additionalResults.AdditionalResults;
 //import es.unex.sextante.gui.additionalResults.AdditionalResults;
 import es.unex.sextante.gui.additionalResults.TableTools;
 import es.unex.sextante.gui.core.SextanteGUI;
@@ -61,7 +60,7 @@ public class OpenJUMPPostProcessTask implements Runnable {
     private boolean addResults() {
 
         String sDescription;
-        boolean bShowAdditionalPanel = false;
+        final boolean bShowAdditionalPanel = false;
         final boolean bUseInternalNames = new Boolean(
                 SextanteGUI
                         .getSettingParameterValue(SextanteGeneralSettings.USE_INTERNAL_NAMES))
@@ -129,13 +128,12 @@ public class OpenJUMPPostProcessTask implements Runnable {
                             .getScrollableTablePanelFromITable((ITable) object);
                     // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP
                     // Internal Frame
-                    AdditionalResults.addComponent(new ObjectAndDescription(
-                            sDescription, jScrollPane));
-                    bShowAdditionalPanel = true;
-
-                    // org.openjump.sextante.gui.additionalResults.AdditionalResults
-                    // .addComponentAndShow(new ObjectAndDescription(
+                    org.openjump.sextante.gui.additionalResults.AdditionalResults
+                            .addComponentAndShow(new ObjectAndDescription(
+                                    sDescription, jScrollPane));
+                    // AdditionalResults.addComponent(new ObjectAndDescription(
                     // sDescription, jScrollPane));
+                    // bShowAdditionalPanel = true;
 
                 } catch (final Exception e) {
                     Sextante.addErrorToLog(e);
@@ -155,27 +153,28 @@ public class OpenJUMPPostProcessTask implements Runnable {
                         .createEtchedBorder(BevelBorder.LOWERED));
                 // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP Internal
                 // Frame
-                // org.openjump.sextante.gui.additionalResults.AdditionalResults
-                // .addComponentAndShow(new ObjectAndDescription(
+                org.openjump.sextante.gui.additionalResults.AdditionalResults
+                        .addComponentAndShow(new ObjectAndDescription(
+                                sDescription, jScrollPane));
+                // AdditionalResults.addComponent(new ObjectAndDescription(
                 // sDescription, jScrollPane));
-                AdditionalResults.addComponent(new ObjectAndDescription(
-                        sDescription, jScrollPane));
                 // org.openjump.core.ui.plugin.additionalResults.AdditionalResults
                 // .addComponent(new ObjectAndDescription(sDescription,
                 // jScrollPane));
-                bShowAdditionalPanel = true;
+                // bShowAdditionalPanel = true;
             } else if (object instanceof Component) {
                 // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP Internal
                 // Frame
-                // org.openjump.sextante.gui.additionalResults.AdditionalResults
-                // .addComponentAndShow(new ObjectAndDescription(
+                org.openjump.sextante.gui.additionalResults.AdditionalResults
+                        .addComponentAndShow(new ObjectAndDescription(
+                                sDescription, object));
+                // AdditionalResults.addComponent(new ObjectAndDescription(
                 // sDescription, object));
-                AdditionalResults.addComponent(new ObjectAndDescription(
-                        sDescription, object));
+                // //
                 // org.openjump.core.ui.plugin.additionalResults.AdditionalResults
                 // .addComponent(new ObjectAndDescription(sDescription,
                 // object));
-                bShowAdditionalPanel = true;
+                // bShowAdditionalPanel = true;
             } else if (out instanceof Output3DRasterLayer) {
                 JOptionPane.showMessageDialog(SextanteGUI.getMainFrame(),
                         Sextante.getText("3d_not_supported"),
@@ -185,13 +184,13 @@ public class OpenJUMPPostProcessTask implements Runnable {
 
         }
 
-        if (bShowAdditionalPanel && m_bShowResultsDialog) {
+     //   if (bShowAdditionalPanel && m_bShowResultsDialog) {
             // [Giuseppe Aruta 2017-12-11] moved output to OpenJUMP Internal
             // Frame
-            // org.openjump.sextante.gui.additionalResults.AdditionalResults
-            // .showPanel();
-            AdditionalResults.showPanel();
-        }
+     //       org.openjump.sextante.gui.additionalResults.AdditionalResults
+     //               .showPanel();
+            // AdditionalResults.showPanel();
+    //    }
 
         return true;
 
