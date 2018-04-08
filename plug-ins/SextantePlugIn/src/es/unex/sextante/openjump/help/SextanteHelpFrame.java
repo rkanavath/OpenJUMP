@@ -58,17 +58,20 @@ import es.unex.sextante.core.Sextante;
 import es.unex.sextante.gui.core.IAlgorithmProvider;
 import es.unex.sextante.gui.core.SextanteGUI;
 import es.unex.sextante.gui.grass.GrassAlgorithm;
+import es.unex.sextante.gui.help.AlgorithmTreeCellRenderer;
+import es.unex.sextante.gui.help.HelpIO;
 
 public class SextanteHelpFrame extends JInternalFrame {
 
-    private String sSave = I18N.get("deejump.plugin.SaveLegendPlugIn.Save");
-    private String sMenu = I18N
+    private final String sSave = I18N
+            .get("deejump.plugin.SaveLegendPlugIn.Save");
+    private final String sMenu = I18N
             .get("org.openjump.core.ui.plugin.additionalResults.AdditionalResultsPlugIn.Menu");
-    private String sSaved = I18N
+    private final String sSaved = I18N
             .get("org.openjump.core.ui.plugin.raster.RasterImageLayerPropertiesPlugIn.file.saved");
-    private String sClose = I18N
+    private final String sClose = I18N
             .get("ui.plugin.imagery.ImageLayerManagerDialog.Close");
-    private String SCouldNotSave = I18N
+    private final String SCouldNotSave = I18N
             .get("org.openjump.core.ui.plugin.additionalResults.AdditionalResultsPlugIn.Could-not-save-selected-result");
     private static String sName = Sextante.getText("Help");
     private JSplitPane jSplitPane;
@@ -82,9 +85,13 @@ public class SextanteHelpFrame extends JInternalFrame {
     private JPopupMenu popupMenuSave;
     private JMenuItem menuItemSave;
     private GeoAlgorithm m_Alg;
-    private JPanel southPanel = new JPanel();
-    private JButton closeButton = new JButton(sClose);
+    private final JPanel southPanel = new JPanel();
+    private final JButton closeButton = new JButton(sClose);
 
+    @Deprecated
+    /**
+     * Deprecated. The frame should be defined at Sextante-GUI.class level
+     */
     public SextanteHelpFrame() {
 
         super(sName);
@@ -102,8 +109,8 @@ public class SextanteHelpFrame extends JInternalFrame {
         try {
             {
                 final BorderLayout thisLayout = new BorderLayout();
-                this.setLayout(thisLayout);
-                this.setPreferredSize(new java.awt.Dimension(800, 500));
+                setLayout(thisLayout);
+                setPreferredSize(new java.awt.Dimension(800, 500));
                 this.setSize(new java.awt.Dimension(800, 500));
                 {
                     jSplitPane = new JSplitPane();
@@ -121,9 +128,9 @@ public class SextanteHelpFrame extends JInternalFrame {
                                 jTree.setSelectionPath(m_Path);
                                 if ((e.getButton() == MouseEvent.BUTTON3)
                                         && (m_Path != null)) {
-                                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) m_Path
+                                    final DefaultMutableTreeNode node = (DefaultMutableTreeNode) m_Path
                                             .getLastPathComponent();
-                                    Object ob = node.getUserObject();
+                                    final Object ob = node.getUserObject();
                                     if (ob instanceof GeoAlgorithm) {
                                         m_Alg = ((GeoAlgorithm) ob);
                                         showPopupMenu(e);
@@ -450,7 +457,7 @@ public class SextanteHelpFrame extends JInternalFrame {
 
     protected void save(String urlStr) throws IOException {
         final JFileChooser fc = new GUIUtil.FileChooserWithOverwritePrompting();
-        File filedir = new File((String) PersistentBlackboardPlugIn.get(
+        final File filedir = new File((String) PersistentBlackboardPlugIn.get(
                 JUMPWorkbench.getInstance().getContext()).get(
                 FILE_CHOOSER_DIRECTORY_KEY));
         final File file;
@@ -461,8 +468,8 @@ public class SextanteHelpFrame extends JInternalFrame {
         } else {
             fc.setCurrentDirectory(filedir);
         }
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("HTML",
-                "html");
+        final FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "HTML", "html");
         fc.setFileFilter(filter);
         fc.addChoosableFileFilter(filter);
         final int returnVal = fc.showSaveDialog(this);
@@ -472,11 +479,11 @@ public class SextanteHelpFrame extends JInternalFrame {
             try {
                 file = new File(fc.getSelectedFile() + ".html");
                 LAST_DIR = file.getParent();
-                URL url = new URL(urlStr);
-                BufferedInputStream bis = new BufferedInputStream(
+                final URL url = new URL(urlStr);
+                final BufferedInputStream bis = new BufferedInputStream(
                         url.openStream());
-                FileOutputStream fis = new FileOutputStream(file);
-                byte[] buffer = new byte[1024];
+                final FileOutputStream fis = new FileOutputStream(file);
+                final byte[] buffer = new byte[1024];
                 int count = 0;
                 while ((count = bis.read(buffer, 0, 1024)) != -1) {
                     fis.write(buffer, 0, count);
@@ -491,7 +498,7 @@ public class SextanteHelpFrame extends JInternalFrame {
     }
 
     public static void Logger(Class<?> plugin, Exception e) {
-        Logger LOG = Logger.getLogger(plugin);
+        final Logger LOG = Logger.getLogger(plugin);
         JUMPWorkbench
                 .getInstance()
                 .getFrame()

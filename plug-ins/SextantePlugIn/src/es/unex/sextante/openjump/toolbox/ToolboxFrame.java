@@ -1,4 +1,4 @@
-package es.unex.sextante.gui.toolbox;
+package es.unex.sextante.openjump.toolbox;
 
 import java.awt.Frame;
 
@@ -8,7 +8,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 
 import es.unex.sextante.core.Sextante;
+import es.unex.sextante.gui.toolbox.IToolboxDialog;
+import es.unex.sextante.gui.toolbox.ToolboxPanel;
 
+@Deprecated
+/**
+ * Deprecated. The frame should be defined at Sextante-GUI.class level
+ */
 public class ToolboxFrame extends JInternalFrame implements IToolboxDialog {
 
     /**
@@ -52,11 +58,11 @@ public class ToolboxFrame extends JInternalFrame implements IToolboxDialog {
         // } else {
         // }
         // [Giuseppe Aruta 2017-12-11] adopted internal Sextante
-        ImageIcon icon = new ImageIcon(getClass().getResource(
+        final ImageIcon icon = new ImageIcon(getClass().getResource(
                 "sextante_toolbox2.gif"));
 
         m_Panel = new ToolboxPanel(this, null, icon);
-        this.setContentPane(m_Panel);
+        setContentPane(m_Panel);
 
         m_Panel.fillTreesWithAllAlgorithms();
 
