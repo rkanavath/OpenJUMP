@@ -106,13 +106,12 @@ public class SextanteToolboxPlugin implements PlugIn {
     }
 
     private String getJarsFolder() {
-        final String sPath = System.getProperty("user.dir")
-                .concat(File.separator).concat("lib").concat(File.separator)
-                .concat("ext").concat(File.separator).concat("sextante");
-        LOGGER.info("Sextante jar folder: " + sPath);
-        return sPath;
-
-    }
+        final String path = JUMPWorkbench.getInstance().getPlugInManager()
+              .getPlugInDirectory().getAbsolutePath();
+     final String sPath = path.concat(File.separator).concat("sextante");
+      LOGGER.info("Sextante jar folder: " + sPath);
+       return sPath;
+  }
 
     // [Giuseppe Aruta 2018-04-08] Activated connection to external providers (Grass, Saga, R...)
     private boolean containsProvider(IAlgorithmProvider provider) {
