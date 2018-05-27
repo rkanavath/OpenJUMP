@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.util.LineStringExtracter;
 import com.vividsolutions.jts.operation.linemerge.LineMerger;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
+import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.feature.*;
 import com.vividsolutions.jump.geom.Angle;
 import com.vividsolutions.jump.task.TaskMonitor;
@@ -49,6 +50,8 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     private static String AUTO_WIDTH_PARAMETER_TT = I18NPlug.getI18N("SkeletonPlugIn.auto-width-parameter-tooltip");
     private static String MIN_WIDTH               = I18NPlug.getI18N("SkeletonPlugIn.min-width");
     private static String MIN_WIDTH_TT            = I18NPlug.getI18N("SkeletonPlugIn.min-width-tooltip");
+    private static String BUFFER_THINER_THAN      = I18NPlug.getI18N("SkeletonPlugIn.buffer-thiner-than");
+    private static String BUFFER_THINER_THAN_TT   = I18NPlug.getI18N("SkeletonPlugIn.buffer-thiner-than-tooltip");
     private static String MIN_FORK_LENGTH_FROM_MEAN_WIDTH    = I18NPlug.getI18N("SkeletonPlugIn.min-fork-length-from-mean-width");
     private static String MIN_FORK_LENGTH_FROM_MEAN_WIDTH_TT = I18NPlug.getI18N("SkeletonPlugIn.min-fork-length-from-mean-width-tooltip");
     private static String MIN_FORK_LENGTH_IN_MAP_UNITS       = I18NPlug.getI18N("SkeletonPlugIn.min-fork-length-in-map-units");
@@ -61,20 +64,24 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     private static String DESCRIPTION             = I18NPlug.getI18N("SkeletonPlugIn.description");
 
     private String  layerName;
-    private boolean autoWidth     = true;
-    private double  minWidth      = 1.0;   // minimum width of the polygon
-    private double  meanWidth     = 2.0;   // mean width of the polygon
-    private int     maxIterations = 8192;  // maximum iteration to eliminate forks
-    private double  forkLengthMul = 2.5;   // minimum length of a fork
-    private double  minForkLength = 10.0;  // minimum length of a fork
-    private boolean fromMeanWidth = true;  // minimum fork length from mean width
-    private boolean fromMapUnits  = false; // minimum fork length in map units
-    private boolean snapEnds = false;      // wheter the skeletton must snap the polygon boundary
+    private boolean autoWidth        = true;
+    private double  minWidth         = 1.0;   // minimum width of the polygon
+    private double  bufferThinerThan = 0.1;   // buffer polygon thiner than a value
+    private double  simplification   = 0.2;   // by default, simplification factor is minWidth/5
+    private double  densification    = 0.5;   // by default, densification factor is minWidth/2
+    private double  meanWidth        = 2.0;   // mean width of the polygon
+    private int     maxIterations    = 8192;  // maximum iteration to eliminate forks
+    private double  forkLengthMul    = 2.5;   // minimum length of a fork
+    private double  minForkLength    = 10.0;  // minimum length of a fork
+    private boolean fromMeanWidth    = true;  // minimum fork length from mean width
+    private boolean fromMapUnits     = false; // minimum fork length in map units
+    private boolean snapEnds         = false; // wheter the skeletton must snap the polygon boundary
+
     private boolean displayVoronoiEdges = false;
 
-    private static Collection debugGeometries = new ArrayList<Geometry>();
+    //private static Collection debugGeometries = new ArrayList<Geometry>();
 
-    public void initialize(PlugInContext context) throws Exception {
+    public void initialize(PlugInContext context) {
 
         workbenchContext = context.getWorkbenchContext();
         FeatureInstaller featureInstaller = new FeatureInstaller(workbenchContext);
@@ -87,13 +94,19 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
                 createEnableCheck(context.getWorkbenchContext()));
     }
 
+    @Override
+    public String getName() {
+        // Otherwise, I18N class looks for SkeletonPlugIn key in the main OpenJUMP resource file
+        return I18NPlug.getI18N("SkeletonPlugIn");
+    }
+
     private static MultiEnableCheck createEnableCheck(WorkbenchContext workbenchContext) {
         EnableCheckFactory checkFactory = new EnableCheckFactory(workbenchContext);
         return new MultiEnableCheck().add(checkFactory.createAtLeastNLayersMustExistCheck(1));
     }
 
 
-    public boolean execute(PlugInContext context) throws Exception{
+    public boolean execute(PlugInContext context) {
         this.reportNothingToUndoYet(context);
 
         MultiInputDialog dialog = new MultiInputDialog(
@@ -114,11 +127,13 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
 
         final JCheckBox autoWidthJcb = dialog.addCheckBox(AUTO_WIDTH_PARAMETER, autoWidth,AUTO_WIDTH_PARAMETER_TT);
         final JTextField minWidthTF = dialog.addDoubleField(MIN_WIDTH, minWidth, 12, MIN_WIDTH_TT);
+        minWidthTF.setEnabled(!autoWidth);
+        final JTextField bufferThinerThanTF = dialog.addDoubleField(BUFFER_THINER_THAN, bufferThinerThan, 12, BUFFER_THINER_THAN_TT);
 
         final JTextField minForkLengthTF = dialog.addDoubleField(MIN_FORK_LENGTH, forkLengthMul, 12, MIN_FORK_LENGTH_TT);
         final JRadioButton mflFromMinWidthJRB = dialog.addRadioButton(MIN_FORK_LENGTH_FROM_MEAN_WIDTH,
                 "fork-length-units", fromMeanWidth, MIN_FORK_LENGTH_FROM_MEAN_WIDTH_TT);
-        final JRadioButton mflFromMapUnitsJRB = dialog.addRadioButton(MIN_FORK_LENGTH_IN_MAP_UNITS,
+        final JRadioButton mflInMapUnitsJRB = dialog.addRadioButton(MIN_FORK_LENGTH_IN_MAP_UNITS,
                 "fork-length-units", fromMapUnits, MIN_FORK_LENGTH_IN_MAP_UNITS_TT);
 
         dialog.addCheckBox(SNAP_TO_BOUNDARY, snapEnds, SNAP_TO_BOUNDARY_TT);
@@ -129,6 +144,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
             @Override
             public void actionPerformed(ActionEvent e) {
                 minWidthTF.setEnabled(!autoWidthJcb.isSelected());
+                bufferThinerThanTF.setEnabled(autoWidthJcb.isSelected());
             }
         });
     }
@@ -137,6 +153,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         layerName = dialog.getLayer(SOURCE_LAYER).getName();
         autoWidth = dialog.getBoolean(AUTO_WIDTH_PARAMETER);
         minWidth = dialog.getDouble(MIN_WIDTH);
+        bufferThinerThan = dialog.getDouble(BUFFER_THINER_THAN);
         forkLengthMul = dialog.getDouble(MIN_FORK_LENGTH);
         fromMeanWidth = dialog.getBoolean(MIN_FORK_LENGTH_FROM_MEAN_WIDTH);
         fromMapUnits = dialog.getBoolean(MIN_FORK_LENGTH_IN_MAP_UNITS);
@@ -153,6 +170,8 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         schema.addAttribute("min_width", AttributeType.DOUBLE);
         schema.addAttribute("min_fork_length", AttributeType.DOUBLE);
         schema.addAttribute("iteration_number", AttributeType.INTEGER);
+        schema.addAttribute("duration_ms", AttributeType.INTEGER);
+        schema.addAttribute("comment", AttributeType.STRING);
         //schema.addAttribute("snap_ends", AttributeType.BOOLEAN);
         FeatureCollection outputFC = new FeatureDataset(schema);
         int count = 0;
@@ -165,6 +184,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
                 if (!geom.isValid()) geom = geom.buffer(0);
                 for (int i = 0 ; i < geom.getNumGeometries() ; i++) {
                     //Feature newFeature = feature.clone(false, false);
+                    long t0 = System.currentTimeMillis();
                     Feature newFeature = new BasicFeature(schema);
                     Object[] objects = new Object[schema.getAttributeCount()];
                     System.arraycopy(feature.getAttributes(), 0, objects, 0, feature.getSchema().getAttributeCount());
@@ -180,7 +200,9 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
                     newFeature.setAttribute("min_fork_length", minForkLength);
                     g = skeletonize(g, edges);
                     newFeature.setGeometry(g);
-                    newFeature.setAttribute("iteration_number", g.getUserData());
+                    newFeature.setAttribute("iteration_number", ((Object[])g.getUserData())[0]);
+                    newFeature.setAttribute("duration_ms", (int)(System.currentTimeMillis()-t0));
+                    newFeature.setAttribute("comment", ((Object[])g.getUserData())[1]);
                     g.setUserData(null);
                     outputFC.add(newFeature);
                 }
@@ -202,7 +224,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     }
 
     // Get minWidth and meanWidth from the geometry
-    private void computeParams(Geometry geometry) throws Exception {
+    private void computeParams(Geometry geometry) {
         meanWidth = getMeanWidth(geometry);
         double SQRT2 = Math.sqrt(2.0);
         if (meanWidth==0) meanWidth = geometry.getLength()/geometry.getNumPoints()/5;
@@ -229,6 +251,8 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         } else if (fromMapUnits) {
             minForkLength = forkLengthMul;
         }
+        simplification = minWidth/5.0;
+        densification = minWidth/2.0;
     }
 
     // Computes the mean width of a polygon
@@ -248,12 +272,20 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     }
 
     // Simplification/densification of input geometry
-    private Geometry preprocess(Geometry geometry) throws Exception {
-        geometry = TopologyPreservingSimplifier.simplify(geometry, minWidth/5);
+    private Geometry preprocess(Geometry geometry) {
+        // 0.5.8 : create a buffer if the min width is very small compared to mean width
+        // to avoid very heavy calculation du to high densification of the outline
+        if (minWidth < bufferThinerThan) {
+            minWidth = bufferThinerThan;
+            geometry = geometry.buffer(minWidth);
+            simplification = minWidth/5.0;
+            densification = minWidth/2.0;
+        }
+        geometry = TopologyPreservingSimplifier.simplify(geometry, simplification);
         if (geometry.isEmpty() || Double.isNaN(minWidth)) {
             return geometry;
         } else {
-            geometry = Densifier.densify(geometry, minWidth/2);
+            geometry = Densifier.densify(geometry, densification);
             return geometry;
         }
     }
@@ -267,13 +299,17 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         voronoiBuilder.setSites(geometry.getFactory().createMultiPoint(geometry.getCoordinates()));
         Envelope env = geometry.getEnvelopeInternal();
         env.expandBy(env.getWidth()/3, env.getHeight()/3);
-        voronoiBuilder.setClipEnvelope(env);
         try {
+            voronoiBuilder.setClipEnvelope(env);
             return voronoiBuilder.getDiagram(geometry.getFactory());
         } catch(Exception e) {
             e.printStackTrace();
-            Geometry newGeometry = preprocess(geometry.buffer(minWidth/10));
-            if (newGeometry.equals(geometry)) throw new Exception("Cannot process " + geometry);
+            simplification = simplification * Math.sqrt(2.0);
+            densification = densification * Math.sqrt(2.0);
+            Geometry newGeometry = preprocess(geometry);
+            //if (newGeometry.equals(geometry)) throw new Exception("Cannot process " + geometry);
+            if (minWidth > Math.sqrt(geometry.getArea())) throw new Exception("Cannot process " + geometry);
+            newGeometry.setUserData("Voronoi calculation problem");
             return getVoronoiDiagram(newGeometry);
         }
     }
@@ -345,10 +381,14 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
 
     private Geometry skeletonize(Geometry geometry, List<Geometry> list) throws Exception {
 
+        Object userData[] = new Object[2];
+
         // 1 - Build voronoi diagram and extract the edges
         long t0 = System.currentTimeMillis();
         Set<LineString> edges = new HashSet<LineString>();
-        getEdges(getVoronoiDiagram(preprocess(geometry)), edges);
+        Geometry voronoi = getVoronoiDiagram(preprocess(geometry));
+        userData[1] = voronoi.getUserData();
+        getEdges(voronoi, edges);
         //System.out.println("voronoi : " + (System.currentTimeMillis()-t0)/1000);
 
         // 2 - Filter voronoi edges strictly included in the geometry
@@ -358,7 +398,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         // 3 - Merge filtered edges
         LineMerger merger = new LineMerger();
         merger.add(edges);
-        edges = new HashSet(merger.getMergedLineStrings());
+        edges = new HashSet<LineString>(merger.getMergedLineStrings());
         //System.out.println("merge : " + (System.currentTimeMillis()-t0)/1000);
 
         if (displayVoronoiEdges) list.addAll(edges);
@@ -386,11 +426,20 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         for (FeatureAsEdge f : finalEdges) {
             f.setGeometry(TopologyPreservingSimplifier.simplify(f.getGeometry(), minWidth/5));
             EdgeNodes nodes = new EdgeNodes(graph, f);
+            String snapError;
             if (nodes.srcDegree == 1) {
-                f.setGeometry(snapStart(f.getGeometry(), geometry.getBoundary(), snapEnds));
+                try {
+                    f.setGeometry(snapStart(f.getGeometry(), geometry.getBoundary(), snapEnds));
+                } catch(Exception e) {
+                    userData[1] = "Snapping error";
+                }
             }
             if (nodes.tgtDegree == 1) {
-                f.setGeometry(snapEnd(f.getGeometry(), geometry.getBoundary(), snapEnds));
+                try {
+                    f.setGeometry(snapEnd(f.getGeometry(), geometry.getBoundary(), snapEnds));
+                } catch(Exception e) {
+                    userData[1] = "Snapping error";
+                }
             }
         }
 
@@ -399,7 +448,9 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         // 7 - Retourner une geometrie
         Geometry geom = graph2geometry(graph);
         geom = TopologyPreservingSimplifier.simplify(geom, minWidth/5);
-        geom.setUserData(i); // set the number of iteration used
+        userData[0] = i;
+        if (geom.isEmpty()) userData[1] = "Empty";
+        geom.setUserData(userData); // set the number of iteration used
         return geom;
     }
 
