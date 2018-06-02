@@ -1,0 +1,80 @@
+<project name="dxf-driver" default="compile" basedir=".">
+
+    <!--*************************************************************************
+    *****************************************************************************
+    **                                  PROPERTIES                             **
+    *****************************************************************************
+    **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"           value="src" />
+    <property name="bin"           value="bin" />
+    <property name="lib"           value="lib" />
+    <property name="build"         value="build" />
+    <property name="dist"          value="dist" />
+    <property name="doc"           value="doc" />
+    <property name="resources"     value="resources" />
+    <property name="javadoc"       value="javadoc" />
+    <!--property name="openjump-ext"  value="lib/openjump-1.6.0alpha/lib/ext" /-->
+    
+    <property name="dxf-version"        value="0.9.0" />
+    
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="clean" id="clean">
+        <delete dir="${build}"/>
+        <delete dir="${javadoc}"/>
+    </target>
+   
+    <target name="compile" id="compile" depends="clean">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <javac srcdir="${src}" destdir="${build}" 
+               debug="on" deprecation="false" nowarn="true"
+               source="1.7" target="1.7">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+             <!--include name="fr/michaelm/jump/drivers/geoconcept/**/*"/-->
+             <classpath refid="classpath"/>
+        </javac>
+        <copy todir="${build}">
+            <fileset dir="${src}" includes="**/*.txt,**/*.properties,**/*.png"/>
+            <fileset dir="${src}" includes="**/*.gif,**/*.properties,**/*.jpg"/>
+        </copy>
+    </target>
+    
+    <!--target name="all-jar" id="jar-all" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar basedir="${build}" jarfile="${dist}/geo-michaelm-${DSTAMP}.jar">
+        </jar>
+    </target-->
+
+    <target name="dxf-jar" id="dxf-jar" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar jarfile="${dist}/driver-dxf-${dxf-version}.jar">
+            <fileset dir="${build}">
+                <include name="fr/michaelm/jump/drivers/dxf/**/*.class"/>
+            </fileset>
+        </jar>
+        <!--copy file="${dist}/driver-dxf-${dxf-version}.jar" todir="${openjump-ext}"/-->
+    </target>
+
+    <target name="dxf-src" id="dxf-src" depends="dxf-jar">
+        <mkdir dir="${dist}"/>
+        <zip zipfile="${dist}/driver-dxf-src-${dxf-version}.zip">
+            <fileset dir="${dist}">
+                <include name="driver-dxf-${dxf-version}.jar"/>
+            </fileset>
+            <fileset dir=".">
+                <include name="${src}/fr/michaelm/jump/drivers/dxf/**/*.java"/>
+            </fileset>
+        </zip>
+    </target>
+
+</project>
