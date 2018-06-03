@@ -303,7 +303,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
             voronoiBuilder.setClipEnvelope(env);
             return voronoiBuilder.getDiagram(geometry.getFactory());
         } catch(Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             simplification = simplification * Math.sqrt(2.0);
             densification = densification * Math.sqrt(2.0);
             Geometry newGeometry = preprocess(geometry);
