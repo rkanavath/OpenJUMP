@@ -13,6 +13,7 @@ import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.feature.*;
 import com.vividsolutions.jump.geom.Angle;
 import com.vividsolutions.jump.task.TaskMonitor;
+import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
@@ -125,10 +126,11 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         dialog.addLayerComboBox(SOURCE_LAYER, context.getLayerManager().getLayer(layerName),
                 null, context.getLayerManager());
 
-        final JCheckBox autoWidthJcb = dialog.addCheckBox(AUTO_WIDTH_PARAMETER, autoWidth,AUTO_WIDTH_PARAMETER_TT);
+        final JCheckBox autoWidthJcb = dialog.addCheckBox(AUTO_WIDTH_PARAMETER, autoWidth, AUTO_WIDTH_PARAMETER_TT);
         final JTextField minWidthTF = dialog.addDoubleField(MIN_WIDTH, minWidth, 12, MIN_WIDTH_TT);
         minWidthTF.setEnabled(!autoWidth);
         final JTextField bufferThinerThanTF = dialog.addDoubleField(BUFFER_THINER_THAN, bufferThinerThan, 12, BUFFER_THINER_THAN_TT);
+        bufferThinerThanTF.setEnabled(autoWidth);
 
         final JTextField minForkLengthTF = dialog.addDoubleField(MIN_FORK_LENGTH, forkLengthMul, 12, MIN_FORK_LENGTH_TT);
         final JRadioButton mflFromMinWidthJRB = dialog.addRadioButton(MIN_FORK_LENGTH_FROM_MEAN_WIDTH,
@@ -139,7 +141,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         dialog.addCheckBox(SNAP_TO_BOUNDARY, snapEnds, SNAP_TO_BOUNDARY_TT);
         dialog.addCheckBox(DISPLAY_VORONOI_EDGES, displayVoronoiEdges);
 
-        minWidthTF.setEnabled(!autoWidthJcb.isSelected());
+        //minWidthTF.setEnabled(!autoWidthJcb.isSelected());
         autoWidthJcb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -272,14 +274,13 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     }
 
     // Simplification/densification of input geometry
-    private Geometry preprocess(Geometry geometry) {
+    private Geometry preprocess(Geometry geometry, int iteration) {
         // 0.5.8 : create a buffer if the min width is very small compared to mean width
         // to avoid very heavy calculation du to high densification of the outline
-        if (minWidth < bufferThinerThan) {
-            minWidth = bufferThinerThan;
-            geometry = geometry.buffer(minWidth);
-            simplification = minWidth/5.0;
-            densification = minWidth/2.0;
+        if (minWidth < bufferThinerThan || iteration > 0) {
+            geometry = geometry.buffer(bufferThinerThan/2);
+            simplification = bufferThinerThan/5.0;
+            densification = bufferThinerThan/2.0;
         }
         geometry = TopologyPreservingSimplifier.simplify(geometry, simplification);
         if (geometry.isEmpty() || Double.isNaN(minWidth)) {
@@ -292,8 +293,9 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
 
     // Build a voronoi diagram based on geometry vertices
     // (geometry must have been densified before)
-    private Geometry getVoronoiDiagram(Geometry geometry) throws Exception {
+    private Geometry getVoronoiDiagram(Geometry geometry, int iteration) throws Exception {
         if (geometry.isEmpty()) return geometry;
+        if (iteration > 32) return geometry.getFactory().createMultiPolygon(new Polygon[0]);
         VoronoiDiagramBuilder voronoiBuilder = new VoronoiDiagramBuilder();
         voronoiBuilder.setTolerance(Math.sqrt(geometry.getArea())/1000000);
         voronoiBuilder.setSites(geometry.getFactory().createMultiPoint(geometry.getCoordinates()));
@@ -301,16 +303,14 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         env.expandBy(env.getWidth()/3, env.getHeight()/3);
         try {
             voronoiBuilder.setClipEnvelope(env);
-            return voronoiBuilder.getDiagram(geometry.getFactory());
+            Geometry voronoi = voronoiBuilder.getDiagram(geometry.getFactory());
+            if (iteration > 0) {
+              voronoi.setUserData("Voronoi calculation problem");
+            }
+            return voronoi;
         } catch(Exception e) {
-            //e.printStackTrace();
-            simplification = simplification * Math.sqrt(2.0);
-            densification = densification * Math.sqrt(2.0);
-            Geometry newGeometry = preprocess(geometry);
-            //if (newGeometry.equals(geometry)) throw new Exception("Cannot process " + geometry);
-            if (minWidth > Math.sqrt(geometry.getArea())) throw new Exception("Cannot process " + geometry);
-            newGeometry.setUserData("Voronoi calculation problem");
-            return getVoronoiDiagram(newGeometry);
+            Geometry newGeometry = preprocess(geometry, iteration);
+            return getVoronoiDiagram(newGeometry, ++iteration);
         }
     }
 
@@ -386,7 +386,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         // 1 - Build voronoi diagram and extract the edges
         long t0 = System.currentTimeMillis();
         Set<LineString> edges = new HashSet<LineString>();
-        Geometry voronoi = getVoronoiDiagram(preprocess(geometry));
+        Geometry voronoi = getVoronoiDiagram(preprocess(geometry, 0), 0);
         userData[1] = voronoi.getUserData();
         getEdges(voronoi, edges);
         //System.out.println("voronoi : " + (System.currentTimeMillis()-t0)/1000);
