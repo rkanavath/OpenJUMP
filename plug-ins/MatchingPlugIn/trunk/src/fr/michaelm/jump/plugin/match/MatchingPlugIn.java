@@ -104,8 +104,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
     private String P_TRANSFER_BEST_MATCH_ONLY = "TransferBestMatchOnly";
     private String P_STRING_AGGREGATOR        = "StringAggregator";
     private String P_INTEGER_AGGREGATOR       = "IntegerAggregator";
+    private String P_LONG_AGGREGATOR          = "LongAggregator";
     private String P_DOUBLE_AGGREGATOR        = "DoubleAggregator";
     private String P_DATE_AGGREGATOR          = "DateAggregator";
+    private String P_BOOLEAN_AGGREGATOR       = "BooleanAggregator";
 
     
     private final String MATCHING                     = I18NPlug.getI18N("Matching");
@@ -153,8 +155,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
     
     private final String STRING_AGGREGATION           = I18NPlug.getI18N("String-aggregation");
     private final String INTEGER_AGGREGATION          = I18NPlug.getI18N("Integer-aggregation");
+    private final String LONG_AGGREGATION             = I18NPlug.getI18N("Long-aggregation");
     private final String DOUBLE_AGGREGATION           = I18NPlug.getI18N("Double-aggregation");
     private final String DATE_AGGREGATION             = I18NPlug.getI18N("Date-aggregation");
+    private final String BOOLEAN_AGGREGATION          = I18NPlug.getI18N("Boolean-aggregation");
 
     // Processing and Error messages
     private final String SEARCHING_MATCHES            = I18NPlug.getI18N("Searching-matches");
@@ -202,10 +206,14 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
             Aggregators.getAggregator(new Aggregators.ConcatenateUnique(true).getName());
     private Aggregator integer_aggregator =
             Aggregators.getAggregator(new Aggregators.IntSum().getName());
+    private Aggregator long_aggregator =
+            Aggregators.getAggregator(new Aggregators.LongSum().getName());
     private Aggregator double_aggregator =
             Aggregators.getAggregator(new Aggregators.DoubleMean(true).getName());
     private Aggregator date_aggregator =
             Aggregators.getAggregator(new Aggregators.DateMean(true).getName());
+    private Aggregator boolean_aggregator =
+            Aggregators.getAggregator(new Aggregators.BooleanMajority(true).getName());
 
     // initialisation of parameters
     {
@@ -233,10 +241,13 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
 
         addParameter(P_TRANSFER_ATTRIBUTES, transfer);
         addParameter(P_TRANSFER_BEST_MATCH_ONLY, transfer_best_match_only);
-        addParameter(P_STRING_AGGREGATOR, string_aggregator.getName());
+
+        addParameter(P_STRING_AGGREGATOR,  string_aggregator.getName());
         addParameter(P_INTEGER_AGGREGATOR, integer_aggregator.getName());
-        addParameter(P_DOUBLE_AGGREGATOR, double_aggregator.getName());
-        addParameter(P_DATE_AGGREGATOR, date_aggregator.getName());
+        addParameter(P_LONG_AGGREGATOR,    long_aggregator.getName());
+        addParameter(P_DOUBLE_AGGREGATOR,  double_aggregator.getName());
+        addParameter(P_DATE_AGGREGATOR,    date_aggregator.getName());
+        addParameter(P_BOOLEAN_AGGREGATOR, boolean_aggregator.getName());
     }
 
     public MatchingPlugIn() {
@@ -334,8 +345,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
             transfer_best_match_only = dialog.getBoolean(TRANSFER_BEST_MATCH_ONLY);
             string_aggregator        = (Aggregator)dialog.getComboBox(STRING_AGGREGATION).getSelectedItem();
             integer_aggregator       = (Aggregator)dialog.getComboBox(INTEGER_AGGREGATION).getSelectedItem();
+            long_aggregator          = (Aggregator)dialog.getComboBox(LONG_AGGREGATION).getSelectedItem();
             double_aggregator        = (Aggregator)dialog.getComboBox(DOUBLE_AGGREGATION).getSelectedItem();
             date_aggregator          = (Aggregator)dialog.getComboBox(DATE_AGGREGATION).getSelectedItem();
+            boolean_aggregator       = (Aggregator)dialog.getComboBox(BOOLEAN_AGGREGATION).getSelectedItem();
 
             System.out.println("start adding parameters");
 
@@ -365,8 +378,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
             addParameter(P_TRANSFER_BEST_MATCH_ONLY, transfer_best_match_only);
             addParameter(P_STRING_AGGREGATOR, string_aggregator.getName());
             addParameter(P_INTEGER_AGGREGATOR, integer_aggregator.getName());
+            addParameter(P_LONG_AGGREGATOR, long_aggregator.getName());
             addParameter(P_DOUBLE_AGGREGATOR, double_aggregator.getName());
             addParameter(P_DATE_AGGREGATOR, date_aggregator.getName());
+            addParameter(P_BOOLEAN_AGGREGATOR, boolean_aggregator.getName());
 
             if ((geometry_matcher instanceof MatchAllMatcher) && !use_attributes) {
                 context.getWorkbenchFrame().warnUser(CHOOSE_MATCHER);
@@ -531,6 +546,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
                 INTEGER_AGGREGATION, integer_aggregator,
                 Aggregators.getAggregators(AttributeType.INTEGER).values(), null
         );
+        final JComboBox jcb_long_aggregator = dialog.addComboBox(
+                LONG_AGGREGATION, long_aggregator,
+                Aggregators.getAggregators(AttributeType.LONG).values(), null
+        );
         final JComboBox jcb_double_aggregator = dialog.addComboBox(
                 DOUBLE_AGGREGATION, double_aggregator,
                 Aggregators.getAggregators(AttributeType.DOUBLE).values(), null
@@ -538,6 +557,10 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
         final JComboBox jcb_date_aggregator = dialog.addComboBox(
                 DATE_AGGREGATION, date_aggregator,
                 Aggregators.getAggregators(AttributeType.DATE).values(), null
+        );
+        final JComboBox jcb_boolean_aggregator = dialog.addComboBox(
+                BOOLEAN_AGGREGATION, boolean_aggregator,
+                Aggregators.getAggregators(AttributeType.BOOLEAN).values(), null
         );
         
         updateDialog(dialog);
@@ -675,10 +698,14 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
         string_aggregator.setIgnoreNull(true);
         integer_aggregator       = Aggregators.getAggregator(getStringParam(P_INTEGER_AGGREGATOR));
         integer_aggregator.setIgnoreNull(true);
+        long_aggregator          = Aggregators.getAggregator(getStringParam(P_LONG_AGGREGATOR));
+        long_aggregator.setIgnoreNull(true);
         double_aggregator        = Aggregators.getAggregator(getStringParam(P_DOUBLE_AGGREGATOR));
         double_aggregator.setIgnoreNull(true);
         date_aggregator          = Aggregators.getAggregator(getStringParam(P_DATE_AGGREGATOR));
         date_aggregator.setIgnoreNull(true);
+        boolean_aggregator       = Aggregators.getAggregator(getStringParam(P_BOOLEAN_AGGREGATOR));
+        boolean_aggregator.setIgnoreNull(true);
 
         
         Layer source_layer = context.getLayerManager().getLayer(source_layer_name);
@@ -776,6 +803,11 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
                         for (Feature mf : matches) integer_aggregator.addValue(mf.getAttribute(i));
                         bf.setAttribute("X_" + name, integer_aggregator.getResult());
                     }
+                    else if (type == AttributeType.LONG) {
+                      long_aggregator.reset();
+                      for (Feature mf : matches) long_aggregator.addValue(mf.getAttribute(i));
+                      bf.setAttribute("X_" + name, long_aggregator.getResult());
+                    }
                     else if (type == AttributeType.DOUBLE) {
                         double_aggregator.reset();
                         for (Feature mf : matches) double_aggregator.addValue(mf.getAttribute(i));
@@ -785,6 +817,11 @@ public class MatchingPlugIn extends ThreadedBasePlugIn {
                         date_aggregator.reset();
                         for (Feature mf : matches) date_aggregator.addValue(mf.getAttribute(i));
                         bf.setAttribute("X_" + name, date_aggregator.getResult());
+                    }
+                    else if (type == AttributeType.BOOLEAN) {
+                      boolean_aggregator.reset();
+                      for (Feature mf : matches) boolean_aggregator.addValue(mf.getAttribute(i));
+                      bf.setAttribute("X_" + name, boolean_aggregator.getResult());
                     }
                 }
                 new_dataset.add(bf);

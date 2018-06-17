@@ -28,10 +28,11 @@ import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 /**
  * Extension containing matching processing also known as join.
  * @author Michaël Michaud
- * @version 0.8.0 (2018-06-15)
+ * @version 0.8.0 (2018-06-17)
  */ 
 // History
-// 0.8.0 (2018-06-15) : refactor to use add/getParameter
+// 0.8.0 (2018-06-17) : refactor to use add/getParameter, the OJ aggregation
+//                      classes and long and boolean attribute types
 // 0.7.5 (2017-03-26) : clean headers and remove dead code before inclusion in
 //                      OpenJUMP PLUS version
 // 0.7.4 (2017-03-13) : overlapping method could not handle linear geometries
@@ -69,7 +70,7 @@ public class MatchingExtension extends Extension {
     }
 
     public String getVersion() {
-        return "0.8.0 (2018-06-15)";
+        return "0.8.0 (2018-06-17)";
     }
 
     public void configure(PlugInContext context) throws Exception {
