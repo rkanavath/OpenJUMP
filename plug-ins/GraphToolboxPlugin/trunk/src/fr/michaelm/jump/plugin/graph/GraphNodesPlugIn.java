@@ -54,13 +54,28 @@ import org.jgrapht.DirectedGraph;
  * (network dead-end), degree 2 nodes, degree 3+ nodes (intersection) or all
  * the nodes with their degree as attribute.
  * @author Micha&euml;l Michaud
- * @version 0.4.0 (2017-01-17)
+ * @version 0.5.0 (2018-06-17)
  */
+//version 0.5.0 (2018-06-17) use parameters to ease usage in beanshell
 //version 0.4.0 (2017-01-17) directedGraph support
 //version 0.1.2 (2011-07-16) typos and comments
 //version 0.1.1 (2010-04-22) first svn version
 //version 0.1 (2010-04-22)
 public class GraphNodesPlugIn extends ThreadedBasePlugIn {
+
+    private static String P_LAYER       = "Layer";
+
+    private static String P_ATTRIBUTE   = "Attribute";
+    private static String P_IGNORE_NULL = "IgnoreNull";
+
+    private static String P_GRAPH_3D    = "Graph3D";
+
+    private static String P_DEGREE_0     = "Degree0";
+    private static String P_DEGREE_1     = "Degree1";
+    private static String P_DEGREE_2     = "Degree2";
+    private static String P_DEGREE_3P    = "Degree3P";
+    private static String P_IN_DEGREE_0  = "InDegree0";
+    private static String P_OUT_DEGREE_0 = "OutDegree0";
 
     private static String LAYER;
 
@@ -97,17 +112,30 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
 
     private static String NO_NODE_FOUND;
     
-    Layer layer;
-    String attribute;
-    boolean use_attribute;
-    boolean ignore_empty;
-    boolean dim3;
-    boolean indegree0  = false;
-    boolean outdegree0 = false;
-    boolean degree0    = false;
-    boolean degree1    = true;
-    boolean degree2    = false;
-    boolean degree3p   = false;
+    private Layer layer;
+    private String attribute;
+    private boolean use_attribute;
+    private boolean ignore_empty;
+    private boolean dim3;
+    private boolean indegree0  = false;
+    private boolean outdegree0 = false;
+    private boolean degree0    = false;
+    private boolean degree1    = true;
+    private boolean degree2    = false;
+    private boolean degree3p   = false;
+
+    {
+        addParameter(P_LAYER, null);
+        addParameter(P_ATTRIBUTE, null);
+        addParameter(P_IGNORE_NULL, false);
+        addParameter(P_GRAPH_3D,    false);
+        addParameter(P_DEGREE_0,    false);
+        addParameter(P_DEGREE_1,    true);
+        addParameter(P_DEGREE_2,    false);
+        addParameter(P_DEGREE_3P,   false);
+        addParameter(P_IN_DEGREE_0, false);
+        addParameter(P_OUT_DEGREE_0,false);
+    }
 
     public String getName() {return "Graph nodes PlugIn";}
     
@@ -220,6 +248,18 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
             degree1    = dialog.getBoolean(DEGREE1);
             degree2    = dialog.getBoolean(DEGREE2);
             degree3p   = dialog.getBoolean(DEGREE3P);
+
+            addParameter(P_LAYER,       layer.getName());
+            addParameter(P_ATTRIBUTE,   (use_attribute ? attribute : null));
+            addParameter(P_IGNORE_NULL, ignore_empty);
+            addParameter(P_GRAPH_3D,    dim3);
+            addParameter(P_DEGREE_0,    degree0);
+            addParameter(P_DEGREE_1,    degree1);
+            addParameter(P_DEGREE_2,    degree2);
+            addParameter(P_DEGREE_3P,   degree3p);
+            addParameter(P_IN_DEGREE_0, indegree0);
+            addParameter(P_OUT_DEGREE_0,outdegree0);
+
             return true;
         }
         else return false;
@@ -229,13 +269,20 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
     public void run(TaskMonitor monitor, PlugInContext context) throws Exception {
         monitor.allowCancellationRequests();
         monitor.report(GRAPH_COMPUTATION + "...");
-        
+
+        if (getStringParam(P_LAYER) == null) throw new Exception("Layer parameter is undefined");
+        Layer layer = context.getLayerManager().getLayer(getStringParam(P_LAYER));
+        if (layer == null) throw new Exception("Layer " + layer.getName() + " has not been found");
         FeatureCollection fc = layer.getFeatureCollectionWrapper();
         
         // Creates the schema for the output dataset (nodes)
         FeatureSchema schemaNodes = new FeatureSchema();
         schemaNodes.addAttribute("GEOMETRY", AttributeType.GEOMETRY);
-        if (use_attribute) {
+        String attribute = getStringParam(P_ATTRIBUTE);
+        if (attribute != null && !fc.getFeatureSchema().hasAttribute(attribute)) {
+            throw new Exception("Layer " + layer.getName() + " has no attribute named " + attribute);
+        }
+        if (attribute != null) {
             schemaNodes.addAttribute(attribute, fc.getFeatureSchema().getAttributeType(attribute));
         }
         schemaNodes.addAttribute(IN_DEGREE, AttributeType.INTEGER);
@@ -249,15 +296,20 @@ public class GraphNodesPlugIn extends ThreadedBasePlugIn {
         Object key = "NO_ATTRIBUTE_USED";
         for (Iterator i = fc.iterator() ; i.hasNext() ; ) {
             Feature f = (Feature)i.next();
-            if (use_attribute) key = f.getAttribute(attribute);
-            if (use_attribute && ignore_empty &&
+            if (attribute != null) key = f.getAttribute(attribute);
+            if (attribute != null && getBooleanParam(P_IGNORE_NULL) &&
                 (key == null || key.toString().trim().length() == 0)) {continue;}
             else if (!map.containsKey(key)) {map.put(key, new ArrayList<Feature>());}
-            else {}
             map.get(key).add(f);
         }
         
         //int count = 1;
+        degree0    = getBooleanParam(P_DEGREE_0);
+        degree1    = getBooleanParam(P_DEGREE_1);
+        degree2    = getBooleanParam(P_DEGREE_2);
+        degree3p   = getBooleanParam(P_DEGREE_3P);
+        indegree0  = getBooleanParam(P_IN_DEGREE_0);
+        outdegree0 = getBooleanParam(P_OUT_DEGREE_0);
         for (Object k : map.keySet()) {
             monitor.report(GRAPH_COMPUTATION + " (" + k + ")");
             DirectedGraph graph = (DirectedGraph)GraphFactory.createDirectedPseudograph(map.get(k), dim3);
