@@ -1,0 +1,76 @@
+<project name="matching" default="compile" basedir=".">
+
+    <!--*************************************************************************
+    *****************************************************************************
+    **                                  PROPERTIES                             **
+    *****************************************************************************
+    **************************************************************************-->
+
+    <!-- PROPERTIES : MAIN ARCHITECTURE -->
+    <property name="src"           value="src" />
+    <property name="bin"           value="bin" />
+    <property name="lib"           value="lib" />
+    <property name="build"         value="build" />
+    <property name="dist"          value="dist" />
+    <property name="doc"           value="doc" />
+    <property name="resources"     value="resources" />
+    <property name="javadoc"       value="javadoc" />
+
+    <property name="matching-version"        value="0.8.0" />
+    
+    <!-- =================================================================== -->
+    <!-- Defines the classpath used for compilation and test.                -->
+    <!-- =================================================================== -->
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="clean" id="clean">
+        <delete dir="build"/>
+        <delete dir="${javadoc}"/>
+    </target>
+   
+    <target name="compile" id="compile" depends="clean">
+        <tstamp/>
+        <mkdir dir="build"/>
+        <javac srcdir="${src}" destdir="build"
+               debug="on" deprecation="false" nowarn="true"
+               source="1.7" target="1.7">
+            <!--compilerarg value="-Xlint:unchecked"/-->
+             <classpath refid="classpath"/>
+        </javac>
+        <copy todir="build">
+            <fileset dir="${src}" includes="**/*.txt"/>
+            <fileset dir="${src}" includes="**/*.properties"/>
+            <fileset dir="${src}" includes="**/*.png"/>
+            <fileset dir="${src}" includes="**/*.gif"/>
+            <fileset dir="${src}" includes="**/*.jpg"/>
+        </copy>
+    </target>
+
+
+    <target name="matching-jar" id="matching-jar" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar jarfile="${dist}/matching-${matching-version}.jar">
+            <fileset dir="build">
+                <include name="fr/michaelm/jump/plugin/match/**/*.class"/>
+                <include name="fr/michaelm/jump/plugin/match/**/*.properties"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="matching-src" id="matching-src" depends="matching-jar">
+        <mkdir dir="${dist}"/>
+        <zip zipfile="${dist}/matching-src-${matching-version}.zip">
+            <fileset dir="${dist}">
+                <include name="matching-${matching-version}.jar"/>
+            </fileset>
+            <fileset dir=".">
+                <include name="${src}/fr/michaelm/jump/plugin/match/**/*.java"/>
+            </fileset>
+        </zip>
+    </target>
+
+</project>
