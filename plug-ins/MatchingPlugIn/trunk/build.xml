@@ -16,7 +16,7 @@
     <property name="resources"     value="resources" />
     <property name="javadoc"       value="javadoc" />
 
-    <property name="matching-version"        value="0.8.0" />
+    <property name="matching-version"        value="0.8.1" />
     
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->
