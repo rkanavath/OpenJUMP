@@ -3,7 +3,6 @@ package es.unex.sextante.openjump.core;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.BufferedWriter;
@@ -11,7 +10,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -27,10 +25,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.openjump.core.rasterimage.GeoTiffConstants;
-import org.openjump.core.rasterimage.GridAscii;
-import org.openjump.core.rasterimage.GridFloat;
-import org.openjump.core.rasterimage.RasterImageIO;
-import org.openjump.core.rasterimage.RasterImageIO.CellSizeXY;
 import org.openjump.core.rasterimage.RasterImageLayer;
 import org.openjump.core.rasterimage.Stats;
 import org.openjump.core.rasterimage.TiffTags;
@@ -61,24 +55,18 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
     RasterImageLayer m_Layer;
 
     public void create(RasterImageLayer layer) throws IOException {
-        m_Layer = layer;
-        m_Raster = layer.getRasterData(null);
-        m_sName = layer.getName();
-        m_sFilename = layer.getImageFileName();
-        final Envelope env = layer.getWholeImageEnvelope();
-        m_LayerExtent = new AnalysisExtent();
-        m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX())
-                / m_Raster.getWidth());
-        m_LayerExtent.setXRange(env.getMinX(), env.getMaxX(), true);
-        m_LayerExtent.setYRange(env.getMinY(), env.getMaxY(), true);
-        m_dNoDataValue = layer.getNoDataValue();
+        this.m_Layer = layer;
+        this.m_Raster = layer.getRasterData(null);
+        this.m_sName = layer.getName();
+        this.m_sFilename = layer.getImageFileName();
+        Envelope env = layer.getWholeImageEnvelope();
+        this.m_LayerExtent = new AnalysisExtent();
+        this.m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX())
+                / this.m_Raster.getWidth());
+        this.m_LayerExtent.setXRange(env.getMinX(), env.getMaxX(), true);
+        this.m_LayerExtent.setYRange(env.getMinY(), env.getMaxY(), true);
+        this.m_dNoDataValue = layer.getNoDataValue();
 
-        
-        
-        // [Giuseppe Aruta 25 Aug. 2018] Moved raster file export to OpenJUMP
-        //inner methods (RasterImageIO class) so any enhencement in OJ raster
-        //output will affect Sextante raster output
-        // ------------------------------------------
         // [Giuseppe Aruta 30 Gen. 2018] deactivated as OJ calculate anyhow
         // statistics (and writes .xml file) when loads raster
         // m_Stats = stats(layer);
@@ -101,39 +89,39 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
     public void create(RasterImageLayer layer, boolean loadFromFile)
             throws IOException {
         if (!loadFromFile) {
-            m_Layer = layer;
+            this.m_Layer = layer;
 
             // [sstein 2 Aug 2010], changed so we work now with the raster and
             // not the image, which may be scaled for display.
             // m_Raster = layer.getImage().getData();
-            m_Raster = layer.getRasterData(null);
+            this.m_Raster = layer.getRasterData(null);
 
-            m_sName = layer.getName();
-            m_sFilename = layer.getImageFileName();
-            final Envelope env = layer.getWholeImageEnvelope();
-            m_LayerExtent = new AnalysisExtent();
+            this.m_sName = layer.getName();
+            this.m_sFilename = layer.getImageFileName();
+            Envelope env = layer.getWholeImageEnvelope();
+            this.m_LayerExtent = new AnalysisExtent();
             // [sstein 18 Mar 2013], set cell size first, and then the extent,
             // otherwise maxX and maxY will be reset
-            m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX())
-                    / m_Raster.getWidth());
-            m_LayerExtent.setXRange(env.getMinX(), env.getMaxX(), true);
-            m_LayerExtent.setYRange(env.getMinY(), env.getMaxY(), true);
+            this.m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX())
+                    / this.m_Raster.getWidth());
+            this.m_LayerExtent.setXRange(env.getMinX(), env.getMaxX(), true);
+            this.m_LayerExtent.setYRange(env.getMinY(), env.getMaxY(), true);
             // [Giuseppe Aruta 8 Oct. 2016] using selected rasterlayer no data
             // value instead
             // m_dNoDataValue = DEFAULT_NO_DATA_VALUE;
-            m_dNoDataValue = layer.getNoDataValue();
+            this.m_dNoDataValue = layer.getNoDataValue();
         } else {
-            final RasterImageLayer rasterLayer = new RasterImageLayer(
+            RasterImageLayer rasterLayer = new RasterImageLayer(
                     layer.getName(), layer.getLayerManager(),
                     layer.getImageFileName(), null,
                     layer.getWholeImageEnvelope());
-            m_Layer = rasterLayer;
-            m_Raster = rasterLayer.getRasterData(null);
+            this.m_Layer = rasterLayer;
+            this.m_Raster = rasterLayer.getRasterData(null);
 
-            m_sName = rasterLayer.getName();
-            m_sFilename = rasterLayer.getImageFileName();
-            final Envelope env = rasterLayer.getWholeImageEnvelope();
-            m_LayerExtent = new AnalysisExtent();
+            this.m_sName = rasterLayer.getName();
+            this.m_sFilename = rasterLayer.getImageFileName();
+            Envelope env = rasterLayer.getWholeImageEnvelope();
+            this.m_LayerExtent = new AnalysisExtent();
             // [sstein 18 Mar 2013], set cell size first, and then the extent,
             // otherwise maxX and maxY will be reset
             m_LayerExtent.setCellSize((env.getMaxX() - env.getMinX())
@@ -149,24 +137,24 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
 
     public void create(String name, String filename, AnalysisExtent ge,
             int dataType, int numBands, Object crs) {
-        m_Raster = RasterFactory.createBandedRaster(dataType, ge.getNX(),
+        this.m_Raster = RasterFactory.createBandedRaster(dataType, ge.getNX(),
                 ge.getNY(), numBands, null);
 
-        final OpenJUMPOutputFactory fact = (OpenJUMPOutputFactory) SextanteGUI
+        OpenJUMPOutputFactory fact = (OpenJUMPOutputFactory) SextanteGUI
                 .getOutputFactory();
 
-        final Envelope envelope = new Envelope();
+        Envelope envelope = new Envelope();
         envelope.init(ge.getXMin(), ge.getXMax(), ge.getYMin(), ge.getYMax());
-        final ColorModel colorModel = PlanarImage.createColorModel(m_Raster
+        ColorModel colorModel = PlanarImage.createColorModel(this.m_Raster
                 .getSampleModel());
-        final BufferedImage bufimg = new BufferedImage(colorModel,
-                (WritableRaster) m_Raster, false, null);
+        BufferedImage bufimg = new BufferedImage(colorModel,
+                (WritableRaster) this.m_Raster, false, null);
 
-        m_Layer = new RasterImageLayer(name, fact.getContext()
+        this.m_Layer = new RasterImageLayer(name, fact.getContext()
                 .getLayerManager(), filename, bufimg, envelope);
-        m_sName = name;
-        m_sFilename = filename;
-        m_LayerExtent = ge;
+        this.m_sName = name;
+        this.m_sFilename = filename;
+        this.m_LayerExtent = ge;
         // [Giuseppe Aruta 8 Oct. 2016] using Sextante GUI to get no data value
         // instead
         m_dNoDataValue = SextanteGUI.getOutputFactory().getDefaultNoDataValue();
@@ -175,123 +163,61 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
 
     @Override
     public int getBandsCount() {
-        if (m_Raster != null) {
-            return m_Raster.getNumBands();
+        if (this.m_Raster != null) {
+            return this.m_Raster.getNumBands();
         }
         return 0;
     }
 
-    // @Override
-    // public double getCellValueInLayerCoords(int x, int y, int band) {
-    // try {
-    // if (m_Raster != null) {
-    // return m_Raster.getSampleDouble(x, y, band);
-    // }
-    // return getNoDataValue();
-    // } catch (final Exception e) {
-    // }
-    // return getNoDataValue();
-    // }
-
     @Override
     public double getCellValueInLayerCoords(int x, int y, int band) {
-        final DataBuffer db = m_Raster.getDataBuffer();
         try {
-            switch (db.getDataType()) {
-            case 5:
-                return m_Raster.getSampleDouble(x, y, band);
-            case 4:
-                return m_Raster.getSampleFloat(x, y, band);
-            case 3:
-                return m_Raster.getSample(x, y, band);
-            case 1:
-            case 2:
-                return (short) m_Raster.getSampleDouble(x, y, band);
-            case 0:
-                return (byte) m_Raster.getSampleDouble(x, y, band) & 0xFF;
+            if (this.m_Raster != null) {
+                return this.m_Raster.getSampleDouble(x, y, band);
             }
-            return m_Layer.getNoDataValue();
-        } catch (final Exception e) {
-            throw new RuntimeException(
-                    "Interrupted while getting value of cell x = " + x
-                            + ", y = " + y + ", band = " + band, e);
+            return getNoDataValue();
+        } catch (Exception e) {
         }
+        return getNoDataValue();
     }
 
     @Override
     public int getDataType() {
-        if (m_Raster != null) {
-            return m_Raster.getDataBuffer().getDataType();
+        if (this.m_Raster != null) {
+            return this.m_Raster.getDataBuffer().getDataType();
         }
         return 5;
     }
 
     @Override
     public double getLayerCellSize() {
-        if (m_LayerExtent != null) {
-            return m_LayerExtent.getCellSize();
+        if (this.m_LayerExtent != null) {
+            return this.m_LayerExtent.getCellSize();
         }
         return 0.0D;
     }
 
     @Override
     public AnalysisExtent getLayerGridExtent() {
-        return m_LayerExtent;
+        return this.m_LayerExtent;
     }
 
     @Override
     public double getNoDataValue() {
-        return m_dNoDataValue;
+        return this.m_dNoDataValue;
     }
 
-    // public void setCellValue(int x, int y, int band, double value) {
-    // if (((this.m_Raster instanceof WritableRaster))
-    // && (getWindowGridExtent().containsCell(x, y))) {
-    // ((WritableRaster) this.m_Raster).setSample(x, y, band, value);
-    // }
-    // }
-
     @Override
-    public void setCellValue(int x, int y, int band, double dValue) {
-        if (((m_Raster instanceof WritableRaster))
+    public void setCellValue(int x, int y, int band, double value) {
+        if (((this.m_Raster instanceof WritableRaster))
                 && (getWindowGridExtent().containsCell(x, y))) {
-            final DataBuffer db = m_Raster.getDataBuffer();
-
-            try {
-                switch (db.getDataType()) {
-                case 5:
-                    ((WritableRaster) m_Raster).setSample(x, y, band, dValue);
-                    break;
-                case 4:
-                    ((WritableRaster) m_Raster).setSample(x, y, band,
-                            (float) dValue);
-                    break;
-                case 3:
-                    ((WritableRaster) m_Raster).setSample(x, y, band,
-                            (int) dValue);
-                    break;
-                case 1:
-                case 2:
-                    ((WritableRaster) m_Raster).setSample(x, y, band,
-                            (short) dValue);
-                    break;
-                case 0:
-                    ((WritableRaster) m_Raster).setSample(x, y, band,
-                            (byte) dValue);
-                }
-            } catch (final Exception e) {
-                throw new RuntimeException(
-                        "Interrupted while setting value of cell x = " + x
-                                + ", y = " + y + ", band = " + band
-                                + ", value = " + dValue, e);
-
-            }
+            ((WritableRaster) this.m_Raster).setSample(x, y, band, value);
         }
     }
 
     @Override
     public void setNoDataValue(double noDataValue) {
-        m_dNoDataValue = noDataValue;
+        this.m_dNoDataValue = noDataValue;
     }
 
     @Override
@@ -306,8 +232,8 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
      */
     @Override
     public Rectangle2D getFullExtent() {
-        if (m_Layer != null) {
-            final Envelope envelope = m_Layer.getWholeImageEnvelope();
+        if (this.m_Layer != null) {
+            Envelope envelope = this.m_Layer.getWholeImageEnvelope();
             return new Rectangle2D.Double(envelope.getMinX(),
                     envelope.getMinY(), envelope.getWidth(),
                     envelope.getHeight());
@@ -323,14 +249,15 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
     public void close() {
     }
 
-    public void postProcess_old() throws Exception {
+    @Override
+    public void postProcess() throws Exception {
 
         if (m_Layer != null) {
 
             final FileOutputStream tifOut = new FileOutputStream(m_sFilename);
             final TIFFEncodeParam param = new TIFFEncodeParam();
             param.setCompression(TIFFEncodeParam.COMPRESSION_NONE);
-            final TIFFField[] tiffFields = new TIFFField[2];
+            TIFFField[] tiffFields = new TIFFField[2];
 
             // [Giuseppe Aruta 8 Oct. 2016] the following parameters come from
             // RasterImageIO class
@@ -340,13 +267,13 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
             tiffFields[0] = new TIFFField(GeoTiffConstants.ModelPixelScaleTag,
                     TIFFField.TIFF_DOUBLE, 2, getLayerCellSize());
             // No data
-            final String noDataS = Double.toString(getNoDataValue());
-            final byte[] bytes = noDataS.getBytes();
-            tiffFields[1] = new TIFFField(TiffTags.TIFFTAG_GDAL_NODATA,
+            String noDataS = Double.toString(getNoDataValue());
+            byte[] bytes = noDataS.getBytes();
+            tiffFields[0] = new TIFFField(TiffTags.TIFFTAG_GDAL_NODATA,
                     TIFFField.TIFF_BYTE, noDataS.length(), bytes);
             // Tie point
             final Envelope envelope = m_Layer.getWholeImageEnvelope();
-            tiffFields[2] = new TIFFField(GeoTiffConstants.ModelTiepointTag,
+            tiffFields[1] = new TIFFField(GeoTiffConstants.ModelTiepointTag,
                     TIFFField.TIFF_DOUBLE, 6, new double[] { 0, 0, 0,
                             envelope.getMinX(), envelope.getMaxY(), 0 });
             param.setExtraFields(tiffFields);
@@ -382,112 +309,91 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
 
     }
 
-    @Override
-    public void postProcess() throws Exception {
-
-        if (m_Layer != null) {
-
-            exportToTIFF();
-
-            // Switch RAM mode of the RasterImage
-            m_Layer.setImageFileName(m_sFilename);
-            m_Layer.setNeedToKeepImage(false);
-
+    public boolean export(String sFilename) {
+        if (sFilename.endsWith("asc")) {
+            return exportToArcInfoASCIIFile(sFilename);
         }
-
+        if (sFilename.endsWith("tif")) {
+            return exportToGeoTIFFFile(sFilename);
+        }
+        return exportToGeoTIFFFile(sFilename);
     }
 
-    private void exportToTIFF() throws Exception {
-        if (m_Layer != null) {
+    private boolean exportToGeoTIFFFile(String sFilename) {
+        try {
+            FileOutputStream tifOut = new FileOutputStream(this.m_sFilename);
+            TIFFEncodeParam param = new TIFFEncodeParam();
+            param.setCompression(1);
+            TIFFField[] tiffFields = new TIFFField[3];
 
-            final RasterImageIO rasterImageIO = new RasterImageIO();
-            final Envelope env = m_Layer.getWholeImageEnvelope();
+            tiffFields[0] = new TIFFField(33550, 12, 2, new double[] {
+                    getLayerCellSize(), getLayerCellSize() });
 
-            final File file = new File(m_sFilename);
-            rasterImageIO.writeImage(
-                    file,
-                    m_Raster,
-                    env,
-                    rasterImageIO.new CellSizeXY(env.getWidth()
-                            / m_Raster.getWidth(), env.getHeight()
-                            / m_Raster.getHeight()), m_Layer.getNoDataValue());
+            String noDataS = Double.toString(getNoDataValue());
+            byte[] bytes = noDataS.getBytes();
+            tiffFields[1] = new TIFFField(42113, 1, noDataS.length(), bytes);
 
-            // Switch RAM mode of the RasterImage
-            m_Layer.setImageFileName(m_sFilename);
-            m_Layer.setNeedToKeepImage(false);
+            Envelope envelope = this.m_Layer.getWholeImageEnvelope();
+            tiffFields[2] = new TIFFField(33922, 12, 6, new double[] { 0.0D,
+                    0.0D, 0.0D, envelope.getMinX(), envelope.getMaxY(), 0.0D });
+            param.setExtraFields(tiffFields);
+            TIFFImageEncoder encoder = (TIFFImageEncoder) TIFFCodec
+                    .createImageEncoder("tiff", tifOut, param);
 
+            ColorModel colorModel = PlanarImage.createColorModel(this.m_Raster
+                    .getSampleModel());
+            BufferedImage image = new BufferedImage(colorModel,
+                    (WritableRaster) this.m_Raster, false, null);
+
+            encoder.encode(image);
+            tifOut.close();
+
+            WorldFileHandler worldFileHandler = new WorldFileHandler(
+                    this.m_sFilename, false);
+            worldFileHandler.writeWorldFile(envelope, image.getWidth(),
+                    image.getHeight());
+
+            this.m_Layer.setImageFileName(this.m_sFilename);
+            this.m_Layer.setNeedToKeepImage(false);
+        } catch (Exception e) {
+            return false;
         }
-
-    }
-
-    private void exportToASC() throws Exception {
-        if (m_Layer != null) {
-            final RasterImageIO rasterImageIO = new RasterImageIO();
-            final Envelope env = m_Layer.getWholeImageEnvelope();
-            final CellSizeXY cellsize = rasterImageIO.new CellSizeXY(
-                    env.getWidth() / m_Raster.getWidth(), env.getHeight()
-                            / m_Raster.getHeight());
-
-            final GridAscii ga = new GridAscii(m_sFilename,
-                    m_Raster.getWidth(), m_Raster.getHeight(), true,
-                    env.getMinX(), env.getMinY(),
-                    cellsize.getAverageCellSize(), m_Layer.getNoDataValue());
-            ga.setRas(m_Raster);
-            ga.writeGrid();
-        }
-
-    }
-
-    private void exportToFLT() throws Exception {
-        if (m_Layer != null) {
-            final RasterImageIO rasterImageIO = new RasterImageIO();
-            final Envelope env = m_Layer.getWholeImageEnvelope();
-            final CellSizeXY cellsize = rasterImageIO.new CellSizeXY(
-                    env.getWidth() / m_Raster.getWidth(), env.getHeight()
-                            / m_Raster.getHeight());
-
-            final GridFloat gf = new GridFloat(m_sFilename,
-                    m_Raster.getWidth(), m_Raster.getHeight(), true,
-                    env.getMinX(), env.getMinY(),
-                    cellsize.getAverageCellSize(), m_Layer.getNoDataValue(),
-                    ByteOrder.LITTLE_ENDIAN);
-            gf.setRas(m_Raster);
-            gf.writeGrid();
-        }
-
+        return true;
     }
 
     private boolean exportToArcInfoASCIIFile(String sFilename) {
         try {
-            final FileWriter f = new FileWriter(sFilename);
-            final BufferedWriter fout = new BufferedWriter(f);
-            final DecimalFormat df = new DecimalFormat("##.###");
+            FileWriter f = new FileWriter(sFilename);
+            BufferedWriter fout = new BufferedWriter(f);
+            DecimalFormat df = new DecimalFormat("##.###");
             df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
             df.setDecimalSeparatorAlwaysShown(true);
 
-            fout.write("ncols " + Integer.toString(m_LayerExtent.getNX()));
+            fout.write("ncols " + Integer.toString(this.m_LayerExtent.getNX()));
             fout.newLine();
-            fout.write("nrows " + Integer.toString(m_LayerExtent.getNY()));
+            fout.write("nrows " + Integer.toString(this.m_LayerExtent.getNY()));
             fout.newLine();
-            fout.write("xllcorner " + Double.toString(m_LayerExtent.getXMin()));
+            fout.write("xllcorner "
+                    + Double.toString(this.m_LayerExtent.getXMin()));
             fout.newLine();
-            fout.write("yllcorner " + Double.toString(m_LayerExtent.getYMin()));
+            fout.write("yllcorner "
+                    + Double.toString(this.m_LayerExtent.getYMin()));
             fout.newLine();
 
             fout.write("cellsize "
-                    + Double.toString(m_LayerExtent.getCellSize()));
+                    + Double.toString(this.m_LayerExtent.getCellSize()));
             fout.newLine();
             fout.write("nodata_value " + Double.toString(getNoDataValue()));
             fout.newLine();
-            for (int i = 0; i < m_LayerExtent.getNY(); i++) {
-                for (int j = 0; j < m_LayerExtent.getNX(); j++) {
+            for (int i = 0; i < this.m_LayerExtent.getNY(); i++) {
+                for (int j = 0; j < this.m_LayerExtent.getNX(); j++) {
                     fout.write(df.format(getCellValueAsDouble(j, i)) + " ");
                 }
                 fout.newLine();
             }
             fout.close();
             f.close();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             return false;
         }
         return true;
@@ -495,14 +401,14 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
 
     @Override
     public String getName() {
-        return m_sName;
+        return this.m_sName;
     }
 
     @Override
     public void setName(String sName) {
-        m_sName = sName;
-        if (m_Layer != null) {
-            m_Layer.setName(sName);
+        this.m_sName = sName;
+        if (this.m_Layer != null) {
+            this.m_Layer.setName(sName);
         }
     }
 
@@ -512,16 +418,16 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
 
     @Override
     public Object getBaseDataObject() {
-        return m_Layer;
+        return this.m_Layer;
     }
 
     @Override
     public IOutputChannel getOutputChannel() {
-        return new FileOutputChannel(m_sFilename);
+        return new FileOutputChannel(this.m_sFilename);
     }
 
     public String getFilename() {
-        return m_sFilename;
+        return this.m_sFilename;
     }
 
     // [Giuseppe Aruta 30 Gen. 2018] The following code is used to a) calculate
@@ -538,10 +444,10 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
     }
 
     public void writeXLM(File auxXmlFile) throws Exception {
-        final Stats stats = m_Stats;
-        final DocumentBuilderFactory docFactory = DocumentBuilderFactory
+        Stats stats = m_Stats;
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory
                 .newInstance();
-        final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc;
 
         Element pamDatasetElement;
@@ -549,19 +455,19 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
         doc = docBuilder.newDocument();
 
         // Check if PAMDataset element exists and, if not, create it
-        final String pamDatasetTagName = "PAMDataset";
+        String pamDatasetTagName = "PAMDataset";
         pamDatasetElement = (Element) doc.getElementsByTagName(
                 pamDatasetTagName).item(0);
         if (pamDatasetElement == null) {
             pamDatasetElement = doc.createElement(pamDatasetTagName);
         }
 
-        final String pamRasterBandTagName = "PAMRasterBand";
-        final String pamRasterSridTagName = "SRS";
-        final String bandAttribute = "band";
-        final String metadataElementName = "Metadata";
+        String pamRasterBandTagName = "PAMRasterBand";
+        String pamRasterSridTagName = "SRS";
+        String bandAttribute = "band";
+        String metadataElementName = "Metadata";
 
-        final String SRID = null;
+        String SRID = null;
         // String fileSourcePath = m_Layer.getImageFileName();
         // //// String srsCode = m_Layer.getSRSInfo().getCode();
 
@@ -599,9 +505,9 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
         if (pamRasterBandNodeList != null
                 && pamRasterBandNodeList.getLength() > 0) {
             for (int b = 0; b < pamRasterBandNodeList.getLength(); b++) {
-                final Element pamRasterBandElement = (Element) pamRasterBandNodeList
+                Element pamRasterBandElement = (Element) pamRasterBandNodeList
                         .item(b);
-                final int bandNr = Integer.parseInt(pamRasterBandElement
+                int bandNr = Integer.parseInt(pamRasterBandElement
                         .getAttribute(bandAttribute));
 
                 if (bandNr == b + 1) {
@@ -619,9 +525,9 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
         } else {
             for (int b = 0; b < stats.getBandCount(); b++) {
 
-                final Element pamRasterBandElement = doc
+                Element pamRasterBandElement = doc
                         .createElement(pamRasterBandTagName);
-                final Attr attr = doc.createAttribute(bandAttribute);
+                Attr attr = doc.createAttribute(bandAttribute);
                 attr.setValue(Integer.toString(b + 1));
                 pamRasterBandElement.setAttributeNode(attr);
 
@@ -637,21 +543,21 @@ public class OpenJUMPRasterLayer extends AbstractRasterLayer {
         }
 
         // write the content into xml file
-        final TransformerFactory transformerFactory = TransformerFactory
+        TransformerFactory transformerFactory = TransformerFactory
                 .newInstance();
-        final Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(
                 "{http://xml.apache.org/xslt}indent-amount", "2");
-        final DOMSource source = new DOMSource(doc);
-        final StreamResult result = new StreamResult(auxXmlFile);
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(auxXmlFile);
         transformer.transform(source, result);
 
     }
 
     private Element updateMetadataElement(Document doc,
             Element metadataElement, RasterImageLayer layer, int band) {
-        final Stats stats = m_Stats;
+        Stats stats = m_Stats;
         ;
         Element mdi = doc.createElement("MDI");
         mdi.setAttribute("key", "STATISTICS_MINIMUM");
