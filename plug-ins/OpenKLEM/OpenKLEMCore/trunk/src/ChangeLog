@@ -1,0 +1,15 @@
+# NOTE: <Adopted from OpenJUMP ChangeLog file>
+# 1. for display continuity sake please use 2 spaces instead of tabs
+# 2. make sure that lines break at 80 chars for constricted display situations
+#<-------------------------------- 80 chars ---------------------------------->#
+
+2018-13-07 Giuseppe Aruta
+  * Class: com.geomaticaeambiente.openjump.klem.slope.SlopeStripe
+    Added radians output
+  
+2018-07-26 Giuseppe Aruta. Ricompiled the libraries:
+  * Enabled project specific setting on Project/Java compiler/Error-Warning
+    to deactivated some warning on compiling
+  * Delate class it.geomaticaambiente.klem.klemDA as creating error on compiling
+ 
+

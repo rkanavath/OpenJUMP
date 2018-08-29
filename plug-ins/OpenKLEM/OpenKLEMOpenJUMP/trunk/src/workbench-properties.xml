@@ -1,0 +1,5 @@
+<workbench>
+  <extension>
+    com.geomaticaeambiente.klemgui.plugin.KlemExtension
+  </extension>
+</workbench>
