@@ -95,12 +95,13 @@ public class CoverageFeature {
      */
     public Geometry getAdjustedGeometry(double distanceTolerance, boolean interpolate_z, double scale) {
         Debug.println("      adjust shell");
-        Coordinate[] coord = shell.getAdjusted(distanceTolerance, interpolate_z, scale);
-        // check for a valid ring
-        if (coord.length <= 3) return null;
-        
+
         Polygon g = (Polygon) feature.getGeometry();
         GeometryFactory fact = new GeometryFactory(g.getPrecisionModel(), g.getSRID());
+
+        Coordinate[] coord = shell.getAdjusted(distanceTolerance, interpolate_z, scale);
+        // check for a valid ring
+        if (coord.length <= 3) return fact.createPolygon(new Coordinate[0]);
         
         // Holes processing
         List<LinearRing> rings = new ArrayList<LinearRing>();
