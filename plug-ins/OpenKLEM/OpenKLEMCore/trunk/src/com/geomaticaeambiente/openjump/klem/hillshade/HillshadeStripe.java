@@ -2,6 +2,7 @@ package com.geomaticaeambiente.openjump.klem.hillshade;
 
 import com.geomaticaeambiente.openjump.klem.grid.DoubleBasicGrid;
 import com.geomaticaeambiente.openjump.klem.parallel.Shifter;
+
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
@@ -50,10 +51,33 @@ public class HillshadeStripe implements Callable<DoubleBasicGrid> {
                     double slopeRad = Math.toRadians(slopeDegsGrid.getValue(col, row));
                     double aspectRad = Math.toRadians(aspectDegsGrid.getValue(col, row));
                     
-                    double hillshade = 255.0 *
-                            ((Math.cos(zenithRad) * Math.cos(slopeRad)) +
-                            (Math.sin(zenithRad) * Math.sin(slopeRad) * Math.cos(azimuthRad - aspectRad)));
-                    hillshadeGrid.setValue(col, row, Math.toDegrees(hillshade));
+                    double aspectRad2;
+                    /*
+                     * [Giuseppe Aruta =ct 4 2018] correctios from:
+                     * http://edndoc.esri.com/arcobjects/9.2/net/shared/
+                     * geoprocessing
+                     * /spatial_analyst_tools/how_hillshade_works.htm
+                     */
+                    //
+                    if (aspectRad < 0) {
+                        aspectRad2 = 2 * Math.PI + aspectRad;
+                    } else {
+                        aspectRad2 = aspectRad;
+                    }
+
+                    final double hillshade = 255.0 * ((Math.cos(zenithRad) * Math
+                            .cos(slopeRad)) + (Math.sin(zenithRad)
+                            * Math.sin(slopeRad) * Math.cos(azimuthRad
+                            - aspectRad2)));
+                    long hillshade2;
+                    if (hillshade < 0) {
+                        hillshade2 = 0;
+                    } else {
+                        hillshade2 = Math.round(hillshade);
+                    }
+                    // hillshadeGrid.setValue(col, row,
+                    // Math.toDegrees(hillshade));
+                    hillshadeGrid.setValue(col, row, hillshade2);
                 }
             }
         }
