@@ -27,7 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import org.jfree.chart.ChartUtilities;
-import org.openjump.core.apitools.IOTools;
+
 import org.openjump.core.rasterimage.ImageAndMetadata;
 import org.openjump.core.rasterimage.Metadata;
 import org.openjump.core.rasterimage.RasterImageIO;
@@ -47,6 +47,7 @@ import com.geomaticaeambiente.klemgui.utils.InitialData;
 import com.geomaticaeambiente.klemgui.utils.PersonalChartKlem;
 import com.geomaticaeambiente.klemgui.utils.PersonalTable;
 import com.geomaticaeambiente.klemgui.utils.PluginUtils;
+import com.geomaticaeambiente.klemgui.utils.TextUtils;
 import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.workbench.Logger;
@@ -252,14 +253,14 @@ public class OutputTab extends AbstractInputKlemPlugin {
                     jTable3 = new JTable();
                     jTable3.setModel(setSimulatedFlowParams());
 
-                    IOTools.saveCSV(jTable,
+                    TextUtils.saveCSV(jTable,
                             dir.concat(File.separator)
                                     .concat(basinDataFileName));
-                    IOTools.saveCSV(jTable1,
+                    TextUtils.saveCSV(jTable1,
                             dir.concat(File.separator).concat(tableFileName));
-                    IOTools.saveCSV(jTable2,
+                    TextUtils.saveCSV(jTable2,
                             dir.concat(File.separator).concat(simParFileName));
-                    IOTools.saveCSV(
+                    TextUtils.saveCSV(
                             jTable3,
                             dir.concat(File.separator).concat(
                                     simFlowParFileName));
