@@ -3,10 +3,23 @@
 # 2. make sure that lines break at 80 chars for constricted display situations
 #<-------------------------------- 80 chars ---------------------------------->#
 
-2018-10-04 Giuseppe Aruta.
+2018-10-04 Giuseppe Aruta. PluginUtils class - Kinematic Local Excess Model.
   *Export to csv: use "," instead of tab for data separation to facilitate 
    Excell import (as sugested by users)
 
+2018-07-26 Giuseppe Aruta. PluginUtils class - Kinematic Local Excess Model.
+   * loading project checkbox: added option to load project raster files 
+     into OpenJUMP view when loading project file
+   * Added ChangeLog file.
+     
+2018-07-12 Giuseppe Aruta. Kinematic Local Excess Model.
+  * Option: "Basin area km2", substituted scientific notation (2E-3) with 
+    numeric one (0.002)
+  * Sub-basin warning now shows also the range of area within the algorithm can 
+    be applied
+  * Substituted [m s.m.m.] with:  [m s.l.m]-Italian (metri sul livello marino)
+     and [m a.s.l.]-English (metre above sea level)
+     
 2018-06-18 Giuseppe Aruta.
   * General. Changed icons to famfamfam or OJ ones. Added gpl_2 file
   * General. Optimized icon view on Windows.
@@ -15,16 +28,5 @@
   * Kinematic Local Excess Model - Output. 
     Option "Export to .ods" (to libreoffice) activated only if OpenDoc libs
     are located into OJ/LIB/EXT
-  
-2018-07-12 Giuseppe Aruta. Kinematic Local Excess Model.
-  * Option: "Basin area km2", substituted scientific notation (2E-3) with 
-    numeric one (0.002)
-  * Sub-basin warning now shows also the range of area within the algorithm can 
-    be applied
-  * Substituted [m s.m.m.] with:  [m s.l.m]-Italian (metri sul livello marino)
-     and [m a.s.l.]-English (metre above sea level)
 
-2018-07-26 Giuseppe Aruta. PluginUtils class - Kinematic Local Excess Model.
-   * loading project checkbox: added option to load project raster files 
-     into OpenJUMP view when loading project file
-   * Added ChangeLog file.
+
