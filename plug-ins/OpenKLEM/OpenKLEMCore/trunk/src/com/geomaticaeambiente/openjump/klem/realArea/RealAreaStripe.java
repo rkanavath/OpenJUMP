@@ -12,12 +12,10 @@ import com.geomaticaeambiente.openjump.klem.grid.DoubleBasicGrid;
 public class RealAreaStripe implements Callable<DoubleBasicGrid> {
 
     public RealAreaStripe(int stripeEffectiveRows,
-            DoubleBasicGrid slopeDegsGrid, int yOffset, double zenithDegs,
-            double azimuthDegs) {
+            DoubleBasicGrid slopeDegsGrid, int yOffset) {
 
         this.stripeEffectiveRows = stripeEffectiveRows;
         this.slopeDegsGrid = slopeDegsGrid;
-
         this.yOffset = yOffset;
 
     }

@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 
 import com.geomaticaeambiente.openjump.klem.grid.DoubleBasicGrid;
 import com.geomaticaeambiente.openjump.klem.grid.GridDestriper;
-import com.geomaticaeambiente.openjump.klem.grid.GridStriper;
 import com.geomaticaeambiente.openjump.klem.parallel.ExecutorBuilder;
 
 /**
@@ -26,12 +25,9 @@ public class RealAreaCalculator {
      * @param zenithDegs
      * @param azimuthDegs
      */
-    public RealAreaCalculator(DoubleBasicGrid slopeDegsGrid, double zenithDegs,
-            double azimuthDegs) {
+    public RealAreaCalculator(DoubleBasicGrid slopeDegsGrid) {
         this.slopeDegsGrid = slopeDegsGrid;
 
-        this.zenithDegs = zenithDegs;
-        this.azimuthDegs = azimuthDegs;
     }
 
     /**
@@ -52,9 +48,6 @@ public class RealAreaCalculator {
 
         final List<Callable<DoubleBasicGrid>> asepectToDos_l = new ArrayList<Callable<DoubleBasicGrid>>();
 
-        final DoubleBasicGrid[] hillshadeDegStripes = GridStriper
-                .stripeDoubleGrid(slopeDegsGrid, stripeRowCount);
-
         /* Stripe */
         for (int s = 0; s < stripeCount; s++) {
 
@@ -66,10 +59,8 @@ public class RealAreaCalculator {
             }
 
             final int offset = s * stripeRowCount;
-
             final RealAreaStripe aspectStripe = new RealAreaStripe(
-                    stripeEffectiveRows, slopeDegsGrid, offset, zenithDegs,
-                    azimuthDegs);
+                    stripeEffectiveRows, slopeDegsGrid, offset);
 
             asepectToDos_l.add(aspectStripe);
 
@@ -88,8 +79,5 @@ public class RealAreaCalculator {
     }
 
     private final DoubleBasicGrid slopeDegsGrid;
-
-    private final double zenithDegs;
-    private final double azimuthDegs;
 
 }
