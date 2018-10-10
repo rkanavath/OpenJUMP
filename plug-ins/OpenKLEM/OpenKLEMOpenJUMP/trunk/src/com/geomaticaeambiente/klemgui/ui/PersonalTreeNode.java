@@ -2,6 +2,7 @@ package com.geomaticaeambiente.klemgui.ui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.geomaticaeambiente.klemgui.plugin.geomorphometry.SlopeAspectHillshadePlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.CurveNumberPlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.DemFillerPlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.FlowDirectionPlugIn;
@@ -9,7 +10,7 @@ import com.geomaticaeambiente.klemgui.plugin.hydrology.HydroDistPlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.HydrologyGroupsPlugin;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.HyetographPlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.RoutingTimePlugIn;
-import com.geomaticaeambiente.klemgui.plugin.hydrology.SlopeAspectHillshadePlugIn;
+//import com.geomaticaeambiente.klemgui.plugin.hydrology.SlopeAspectHillshadePlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.UpslopeAreaPlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.WatershedPlugIn;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.HydrographGeomorphologicalPlugin;
@@ -106,15 +107,22 @@ public class PersonalTreeNode {
         treeNode2.add(treeNode3);
 
         treeNode1.add(treeNode2);
+        treeNode2 = new DefaultMutableTreeNode(PluginUtils.getResources()
+                .getString("KlemGUI.TreeGeomorphometry.label"));
 
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(
+                new SlopeAspectHillshadePlugIn(context, initialDialog,
+                        layerablesList));
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
         treeNode2 = new DefaultMutableTreeNode(PluginUtils.getResources()
                 .getString("KlemGUI.HydrologyTools.label"));
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(
                 new DemFillerPlugIn(context, initialDialog, layerablesList));
         treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(
-                new SlopeAspectHillshadePlugIn(context, initialDialog,
-                        layerablesList));
+   //     treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(
+   //             new SlopeAspectHillshadePlugIn(context, initialDialog,
+   //                     layerablesList));
         treeNode2.add(treeNode3);
         treeNode3 = new javax.swing.tree.DefaultMutableTreeNode(
                 new FlowDirectionPlugIn(context, initialDialog, layerablesList));

@@ -1,4 +1,4 @@
-package com.geomaticaeambiente.klemgui.plugin.hydrology;
+package com.geomaticaeambiente.klemgui.plugin.geomorphometry;
 
 import java.awt.Dialog;
 import java.io.File;

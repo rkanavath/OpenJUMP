@@ -3,6 +3,9 @@
 # 2. make sure that lines break at 80 chars for constricted display situations
 #<-------------------------------- 80 chars ---------------------------------->#
 
+2018-10-04 Giuseppe Aruta. Moved SlopeAspectHillShadePlugin to Geomorphometry
+    tree node
+
 2018-10-04 Giuseppe Aruta. PluginUtils class - Kinematic Local Excess Model.
   *Export to csv: use "," instead of tab for data separation to facilitate 
    Excell import (as sugested by users)
