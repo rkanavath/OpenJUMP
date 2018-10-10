@@ -3,6 +3,9 @@
 # 2. make sure that lines break at 80 chars for constricted display situations
 #<-------------------------------- 80 chars ---------------------------------->#
 
+2018-10-10 Giuseppe Aruta.
+  * Added Real Area algorithm
+  
 2018-10-04 Giuseppe Aruta.
   * Correction on compute hillshade according ESRI definition 
    (http://edndoc.esri.com/arcobjects/9.2/net/shared/geoprocessing/
@@ -12,7 +15,7 @@
 2018-07-26 Giuseppe Aruta. Ricompiled the libraries:
   * Enabled project specific setting on Project/Java compiler/Error-Warning
     to deactivated some warning on compiling
-  * Delate class it.geomaticaambiente.klem.klemDA as creating error on compiling
+  * Delete class it.geomaticaambiente.klem.klemDA as creating error on compiling
     
 2018-07-13 Giuseppe Aruta
   * Class: com.geomaticaeambiente.openjump.klem.slope.SlopeStripe
