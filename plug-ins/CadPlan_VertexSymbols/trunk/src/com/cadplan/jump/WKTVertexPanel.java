@@ -1,8 +1,11 @@
 package com.cadplan.jump;
 
+import com.cadplan.jump.VertexParams;
+import com.cadplan.jump.WKTVertexStyle;
 import com.vividsolutions.jump.workbench.ui.renderer.style.VertexStyle;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 /**
@@ -22,6 +25,9 @@ public class WKTVertexPanel extends JPanel
         double scale = ((WKTVertexStyle)symbol).getScale();
         int size = ((WKTVertexStyle)symbol).wktShape.extent;
         ((WKTVertexStyle)symbol).setSize((int)((double)size/scale));
+        ((WKTVertexStyle) symbol).setColors(VertexParams.selectedLayer
+                .getBasicStyle().getLineColor(), VertexParams.selectedLayer
+                .getBasicStyle().getFillColor());
     }
 
     public void paint(Graphics g)
