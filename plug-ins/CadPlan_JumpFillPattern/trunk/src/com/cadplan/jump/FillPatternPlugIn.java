@@ -61,7 +61,9 @@ public class FillPatternPlugIn extends AbstractPlugIn {
         final String newline = "\n";
 
         final String text = newline
-                + "JumpFillPattern allows users to create and use their own fill patterns. "
+                + "JumpFillPattern allows users to create and use their own file fill patterns"
+                + newline
+                + "Patterns must be located into OpenJUMP/lib/ext/FillPattern folder"
                 + newline
                 + "The plugin is loaded on launching OpenJump. New patterns appear in the OpenJump Change Styles dialog"
                 + newline
@@ -77,7 +79,7 @@ public class FillPatternPlugIn extends AbstractPlugIn {
                 + newline
                 + "Each file contains just one pattern, with format: <Line width>:<Extent size of the tile>:<WKT Specification>"
                 + newline
-                + "Example: 1:12:LINESTRING(5 5, 5 -5, -5 -5, 5 5 "
+                + "Example: 1:12:LINESTRING(5 5, 5 -5, -5 -5, 5 5) "
                 + newline
                 + newline
                 + "Image Patterns"
