@@ -34,7 +34,7 @@ public class VertexNotePlugin extends AbstractPlugIn {
 
         final String menuName = MenuNames.PLUGINS; // iPlug.get("VertexSymbols.MenuName");
         context.getFeatureInstaller().addMainMenuPlugin(this,
-                new String[] { menuName }, getName(), false, getIcon(), mcheck);
+                new String[] {menuName, MenuNames.STYLE}, getName(), false, getIcon(), mcheck);
         context.getWorkbenchFrame()
                 .getToolBar()
                 .addPlugIn(getIcon(), this, mcheck,

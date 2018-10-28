@@ -22,9 +22,11 @@
 
 package com.cadplan.jump;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import java.util.Collection;
 
+import javax.swing.Icon;
+
+import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
@@ -34,64 +36,58 @@ import com.vividsolutions.jump.workbench.ui.MenuNames;
 /**
  * User: geoff Date: 28/04/2007 Time: 09:40:22 Copyright 2007 Geoffrey G Roy.
  */
-public class VertexSymbolsPlugIn extends AbstractPlugIn {
-
+public class AddRemoveLabelsPlugIn extends AbstractPlugIn {
     private I18NPlug iPlug;
 
     @Override
     public void initialize(PlugInContext context) throws Exception {
-        iPlug = new I18NPlug("VertexSymbols", "language.VertexSymbolsPlugin");
+
         final EnableCheckFactory check = new EnableCheckFactory(
                 context.getWorkbenchContext());
         final MultiEnableCheck mcheck = new MultiEnableCheck();
         mcheck.add(check.createAtLeastNLayersMustExistCheck(1));
         mcheck.add(check.createAtLeastNLayersMustBeEditableCheck(1));
-
-        final String menuName = MenuNames.PLUGINS; // iPlug.get("VertexSymbols.MenuName");
+        final String menuName = MenuNames.PLUGINS;
         // final String menuItem = iPlug.get("VertexSymbols.MenuItem");
         context.getFeatureInstaller().addMainMenuPlugin(this,
-                new String[] { menuName, MenuNames.STYLE}, getName(), false, getIcon(), mcheck);
-        context.getWorkbenchFrame()
-                .getToolBar()
-                .addPlugIn(getIcon(), this, mcheck,
-                        context.getWorkbenchContext());
-
-        // context.getFeatureInstaller().addMainMenuItem(this, new String[]
-        // {menuName},
-        // menuItem, false, null, mcheck);
-
-        // String dirName =
-        // context.getWorkbenchContext().getWorkbench().getPlugInManager().getPlugInDirectory().getAbsolutePath();
-        // IconLoader loader = new IconLoader(dirName,"VertexSymbols");
-        // Image image = loader.loadImage("vsicon.gif");
-        // ImageIcon icon = new ImageIcon(image);
-        // System.out.println("Symbols Resource path: "+this.getClass().getResource("/Resources/vsicon.gif"));
-        // ImageIcon icon = new
-        // ImageIcon(this.getClass().getResource("/Resources/vsicon.gif"));
-
-        // WorkbenchToolBar toolBar = context.getWorkbenchFrame().getToolBar();
-
-        // JButton button =
-        // toolBar.addPlugIn(icon,this,mcheck,context.getWorkbenchContext());
-        final LoadImages imageLoader = new LoadImages(context);
-        // System.out.println("Initialize plugin");
-        VertexParams.context = context.getWorkbenchContext();
+                new String[] { menuName, MenuNames.STYLE }, getName(), false,
+                getIcon(), mcheck);
 
     }
 
     public Icon getIcon() {
-        return new ImageIcon(getClass().getResource("/Resources/vsicon.gif"));
+        return null;
     }
 
     @Override
     public String getName() {
         iPlug = new I18NPlug("VertexSymbols", "language.VertexSymbolsPlugin");
-        return iPlug.get("VertexSymbols.MenuItem");
+        return iPlug.get("AddRemoveLabelsPlugIn.MenuItem");
     }
 
     @Override
     public boolean execute(PlugInContext context) throws Exception {
-        final VertexSymbols vs = new VertexSymbols(context, iPlug);
+        @SuppressWarnings("unchecked")
+        final Collection<Layer> vlayers = context.getLayerNamePanel()
+                .selectedNodes(Layer.class);
+        for (final Layer layer : vlayers) {
+
+            if (layer.getVertexStyle().isEnabled()
+                    && !layer.getLabelStyle().isEnabled()) {
+                final ExternalSymbolsType vertexStyle = (ExternalSymbolsType) layer
+                        .getVertexStyle();
+
+                if (vertexStyle.getTextEnabled()) {
+                    vertexStyle.setTextEnabled(false);
+
+                } else {
+                    vertexStyle.setTextEnabled(true);
+
+                }
+
+            }
+            layer.fireAppearanceChanged();
+        }
         return true;
     }
 }

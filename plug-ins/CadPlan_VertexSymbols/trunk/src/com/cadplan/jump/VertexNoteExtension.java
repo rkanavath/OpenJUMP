@@ -1,5 +1,6 @@
 package com.cadplan.jump;
 
+import com.cadplan.jump.AddRemoveLabelsPlugIn;
 import com.vividsolutions.jump.workbench.plugin.Extension;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 
@@ -14,5 +15,6 @@ public class VertexNoteExtension extends Extension
     public void configure(PlugInContext context) throws Exception
     {
         new VertexNotePlugin().initialize(context);
+        new AddRemoveLabelsPlugIn().initialize(context);
     }
 }
