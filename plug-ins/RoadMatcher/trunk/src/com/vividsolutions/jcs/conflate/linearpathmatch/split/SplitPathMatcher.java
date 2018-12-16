@@ -189,8 +189,8 @@ public class SplitPathMatcher
       }
       Debug.println("found matched split edge parent index mismatch: "
                          + matchIndexStr);
-      Debug.println(splitPath[0].getGeometry());
-      Debug.println(splitPath[1].getGeometry());
+      //Debug.println(splitPath[0].getGeometry());
+      //Debug.println(splitPath[1].getGeometry());
     }
   }
 

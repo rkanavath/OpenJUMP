@@ -162,9 +162,9 @@ public class SplitPath
   {
     for (Iterator i = splitEdges.iterator(); i.hasNext(); ) {
       SplitEdge e = (SplitEdge) i.next();
-      System.out.println("splitedge[" + e.getEdgeIndex() + "] "
-                         + " src edge: " + e.getSourceEdgeIndex()
-                         + " splitting edge: " + e.getSplittingEdgeIndex());
+      //System.out.println("splitedge[" + e.getEdgeIndex() + "] "
+      //                   + " src edge: " + e.getSourceEdgeIndex()
+      //                   + " splitting edge: " + e.getSplittingEdgeIndex());
     }
   }
 }

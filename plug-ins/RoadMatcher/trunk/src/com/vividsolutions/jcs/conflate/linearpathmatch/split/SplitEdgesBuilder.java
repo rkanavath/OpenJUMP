@@ -32,7 +32,10 @@ public class SplitEdgesBuilder
     for (int i = 0; i < allPathNodes.size() - 1; i++) {
       SplitEdgeNode node0 = (SplitEdgeNode) allPathNodes.get(i);
       SplitEdgeNode node1 = (SplitEdgeNode) allPathNodes.get(i + 1);
-      splitEdges.add(buildSplitEdge(i, splitPath, node0, node1, node0.splittingEdgeIndex));
+      SplitEdge edge = buildSplitEdge(i, splitPath, node0, node1, node0.splittingEdgeIndex);
+      if (edge.getGeometry() != null) {
+        splitEdges.add(edge);
+      }
     }
     return splitEdges;
   }

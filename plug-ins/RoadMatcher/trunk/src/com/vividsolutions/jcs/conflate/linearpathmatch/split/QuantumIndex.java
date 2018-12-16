@@ -71,7 +71,7 @@ public class QuantumIndex
   }
 
   /**
-   * Computes the index of the next quantum in order along this path.
+   * Computes the index of the previous quantum in order along this path.
    *
    * @return the index of the previous quantum
    *

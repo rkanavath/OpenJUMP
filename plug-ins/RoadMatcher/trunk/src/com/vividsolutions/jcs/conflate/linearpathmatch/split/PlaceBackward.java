@@ -120,7 +120,12 @@ public class PlaceBackward {
         indexToShift--;
         // no hole - keep shifting back
       }
+      // added on 2018-12-16 to prevent an exception reported on openjum-users forum
+      else if (thisIndex.isFirst()) {
+        break;
+      }
       else {
+        System.out.println("thisIndex = " + thisIndex);
         splitNodes[indexToShift].setPlace(thisIndex.prev());
         foundHole = true;
       }
