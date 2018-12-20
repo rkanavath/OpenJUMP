@@ -3,6 +3,10 @@
 # 2. make sure that lines break at 80 chars for constricted display situations
 #<-------------------------------- 80 chars ---------------------------------->#
 
+2018-12-20 Giuseppe Aruta. RasterHistogramPlugIn. Changed rightButton() action to 
+    OpenJUMP AbstractPlugIn action in order to interupt the process if it takes 
+    too much time
+
 2018-10-04 Giuseppe Aruta. Moved SlopeAspectHillShadePlugin to Geomorphometry
     tree node
 
