@@ -24,6 +24,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.geomaticaeambiente.klemgui.exceptions.WarningException;
+import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.klem.KlemUtils;
+import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.klem.OutputTab;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.klem.KlemProperties.RainfallType;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
 import com.geomaticaeambiente.klemgui.ui.InitialDialog;
@@ -35,9 +37,13 @@ import com.geomaticaeambiente.klemgui.utils.CombinationComponents;
 import com.geomaticaeambiente.klemgui.utils.ComponentsTreeMap;
 import com.geomaticaeambiente.klemgui.utils.InitialData;
 import com.geomaticaeambiente.klemgui.utils.PluginUtils;
+import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.util.StringUtil;
+import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
+import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
 /**
  *
@@ -65,6 +71,33 @@ public class ParamsTab extends AbstractInputKlemPlugin {
         return setParamsTabComponentsTreeMap(personalTreeMap);
     }
 
+    public void calculateParameters(
+            final ComponentsTreeMap componentsWithActions)
+            throws ParserConfigurationException, IOException, WarningException,
+            Exception {
+        KlemUtils.checkParams(componentsWithActions, klemProps,
+                rainfallParamType);
+        final Klem klem = KlemUtils.buildKlem(klemProps);
+
+        //  super.getInitialDialog().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        klem.run();
+
+        final SimulationOutput simOut = klem.getSimulationOutput();
+
+        final JTabbedPane mainTabelPane = super.getInitialDialog()
+                .getTabbedPane();
+        final OutputTab outputPanel = new OutputTab(context,
+                super.getInitialDialog(), layerablesList, simOut, klem);
+        outputPanel.setKlemProperties(klemProps);
+        mainTabelPane.setComponentAt(3, outputPanel.getTabPluginComponents());
+
+        mainTabelPane.setEnabledAt(3, true);
+        // mainTabelPane.setEnabledAt(2, true);
+        mainTabelPane.setSelectedIndex(3);
+    }
+    
+    
+    
     @Override
     public JPanel buildPluginPanel(final ComponentsTreeMap componentsWithActions) {
 
@@ -87,40 +120,39 @@ public class ParamsTab extends AbstractInputKlemPlugin {
             public void rightButton() { // OUTPUT
                 try {
 
-                    KlemUtils.checkParams(componentsWithActions, klemProps,
-                            rainfallParamType);
-                    final Klem klem = KlemUtils.buildKlem(klemProps);
+                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
+                        @Override
+                        public String getName() {
+                            return null;
+                        }
 
-                    super.getInitialDialog().setCursor(
-                            new Cursor(Cursor.WAIT_CURSOR));
-                    klem.run();
+                        @Override
+                        public boolean execute(PlugInContext context)
+                                throws Exception {
+                            return true;
+                        }
 
-                    final SimulationOutput simOut = klem.getSimulationOutput();
+                        @Override
+                        public void run(TaskMonitor monitor,
+                                PlugInContext context) throws Exception {
+                            monitor.report(PluginUtils.getResources()
+                                    .getString("OpenKlem.executing-process"));
+                            reportNothingToUndoYet(context);
+                            try {
+                                calculateParameters(componentsWithActions);
+                            } catch (final Exception ex) {
+                                JOptionPane.showMessageDialog(
+                                        getInitialDialog().getTabbedPane(),
+                                        PluginUtils.getResources().getString(
+                                                "Process interrupted"),
+                                        PluginUtils.plugInName,
+                                        JOptionPane.INFORMATION_MESSAGE);
 
-                    final JTabbedPane mainTabelPane = super.getInitialDialog()
-                            .getTabbedPane();
-                    final OutputTab outputPanel = new OutputTab(context,
-                            super.getInitialDialog(), layerablesList, simOut,
-                            klem);
-                    outputPanel.setKlemProperties(klemProps);
-                    mainTabelPane.setComponentAt(3,
-                            outputPanel.getTabPluginComponents());
-
-                    mainTabelPane.setEnabledAt(3, true);
-                    // mainTabelPane.setEnabledAt(2, true);
-                    mainTabelPane.setSelectedIndex(3);
-
-                    super.getInitialDialog().setCursor(
-                            new Cursor(Cursor.DEFAULT_CURSOR));
-
-                } catch (final WarningException ex) {
-                    JOptionPane.showMessageDialog(super.getInitialDialog(),
-                            ex.getMessage(), PluginUtils.plugInName,
-                            JOptionPane.WARNING_MESSAGE);
+                            }
+                        }
+                    }, context.getWorkbenchContext(), new TaskMonitorManager())
+                            .actionPerformed(null);
                 } catch (final Exception ex) {
-                    ex.printStackTrace(System.out);
-                    super.getInitialDialog().setCursor(
-                            new Cursor(Cursor.DEFAULT_CURSOR));
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
