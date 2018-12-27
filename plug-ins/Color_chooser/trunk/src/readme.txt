@@ -1,3 +1,7 @@
+Color Chooser Plugin 1.2  (Dicember 2017)
+-------------------------------------- 
+correct bug on repository
+
 Color Chooser Plugin 1.0  (Dicember 2017)
 -------------------------------------- 
 Added recent color submenu
