@@ -6,8 +6,8 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -67,11 +67,10 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
             @Override
             public void setBounds(int x, int y, int width, int height) {
-                super.setBounds(x, y,
-                        FeatureColorChooserPlugIn.this.buttonWidth, height);
+                super.setBounds(x, y, buttonWidth, height);
             }
         };
-        this.colorChooserButton = new ComboButton(0) {
+        colorChooserButton = new ComboButton(0) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -80,54 +79,70 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
                         buttonWidth, height);
             }
         };
-        colorSetbutton.addMouseListener(new MouseListener() {
+
+        colorSetbutton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                FeatureColorChooserPlugIn.this.setFeatureColor(colorSetbutton
-                        .getColor());
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
+                setFeatureColor(colorSetbutton.getColor());
             }
         });
 
-        colorChooserButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int x = colorSetbutton.getLocation().x;
-                int y = colorSetbutton.getLocation().y
-                        + colorSetbutton.getHeight();
-                FeatureColorChooserPlugIn.this.colorPickerPopup.show(
-                        colorSetbutton.getParent(), x, y);
-            }
+        /*    colorSetbutton.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    setFeatureColor(colorSetbutton.getColor());
+                }
 
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                }
+            }); 
+
+            colorChooserButton.addMouseListener(new MouseListener() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    final int x = colorSetbutton.getLocation().x;
+                    final int y = colorSetbutton.getLocation().y
+                            + colorSetbutton.getHeight();
+                    colorPickerPopup.show(colorSetbutton.getParent(), x, y);
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                }
+            });*/
+
+        colorChooserButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
+                final int x = colorSetbutton.getLocation().x;
+                final int y = colorSetbutton.getLocation().y
+                        + colorSetbutton.getHeight();
+                colorPickerPopup.show(colorSetbutton.getParent(), x, y);
             }
         });
 
@@ -146,30 +161,28 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
         cm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color color = cm.getColor();
+                final Color color = cm.getColor();
                 if (color != null) {
                     colorSetbutton.setColor(color);
                     setFeatureColor(color);
                     cm.addActionListener(new ColorPickerActionListener(color));
 
-                    FeatureColorChooserPlugIn.this.colorSetbutton
-                            .setColor(color);
-                    FeatureColorChooserPlugIn.this.setFeatureColor(color);
-                    String hex = ColorUtils.colorRGBToHex(color);
-                    String acad = ColorUtils.getColorFromRegistry(hex);
-                    String msg = "Index color: " + acad;
+                    colorSetbutton.setColor(color);
+                    setFeatureColor(color);
+                    final String hex = ColorUtils.colorRGBToHex(color);
+                    final String acad = ColorUtils.getColorIndexRegistry(hex);
+                    final String msg = "Index color: " + acad;
 
-                    String text = "Hex: " + hex + "   RGB: " + color.getRed()
-                            + "," + color.getGreen() + "," + color.getBlue();
-                    JMenuItem mis = new JMenuItem(text,
+                    final String text = "Hex: " + hex + "   RGB: "
+                            + color.getRed() + "," + color.getGreen() + ","
+                            + color.getBlue();
+                    final JMenuItem mis = new JMenuItem(text,
                             new FeatureColorChooserPlugIn.ColorIcon(color));
                     mis.setToolTipText(msg);
                     mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
                             color));
                     recent.add(mis);
-                    FeatureColorChooserPlugIn.this.colorPickerPopup.insert(
-                            recent,
-                            FeatureColorChooserPlugIn.this.customIndex++);
+                    colorPickerPopup.insert(recent, customIndex++);
                     popup.revalidate();
                     popup.repaint();
                 }
@@ -183,31 +196,29 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
             @Override
             public void actionPerformed(ActionEvent paramAnonymousActionEvent) {
                 new JColorChooser();
-                Color color = JColorChooser.showDialog(context
+                final Color color = JColorChooser.showDialog(context
                         .getWorkbenchContext().getWorkbench().getFrame(),
                         I18NPlug.getI18N("choose-color"), new Color(0, 0, 0));
                 if (color != null) {
                     colorSetbutton.setColor(color);
                     setFeatureColor(color);
-                    FeatureColorChooserPlugIn.this.colorSetbutton
-                            .setColor(color);
-                    FeatureColorChooserPlugIn.this.setFeatureColor(color);
-                    String hex = ColorUtils.colorRGBToHex(color);
-                    String acad = ColorUtils.getColorFromRegistry(hex);
+                    colorSetbutton.setColor(color);
+                    setFeatureColor(color);
+                    final String hex = ColorUtils.colorRGBToHex(color);
+                    final String acad = ColorUtils.getColorIndexRegistry(hex);
 
-                    String msg = "Index color: " + acad;
+                    final String msg = "Index color: " + acad;
 
-                    String text = "Hex: " + hex + "   RGB: " + color.getRed()
-                            + "," + color.getGreen() + "," + color.getBlue();
-                    JMenuItem mis = new JMenuItem(text,
+                    final String text = "Hex: " + hex + "   RGB: "
+                            + color.getRed() + "," + color.getGreen() + ","
+                            + color.getBlue();
+                    final JMenuItem mis = new JMenuItem(text,
                             new FeatureColorChooserPlugIn.ColorIcon(color));
                     mis.setToolTipText(msg);
                     mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
                             color));
                     recent.add(mis);
-                    FeatureColorChooserPlugIn.this.colorPickerPopup.insert(
-                            recent,
-                            FeatureColorChooserPlugIn.this.customIndex++);
+                    colorPickerPopup.insert(recent, customIndex++);
                     popup.revalidate();
                     popup.repaint();
                 }
@@ -217,7 +228,7 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
         // popup.addSeparator();
         mi = new JMenuItem(I18NPlug.getI18N("picker-color"), getPickColorIcon());
-        PickColorPlugIn pick = new PickColorPlugIn();
+        final PickPlugIn pick = new PickPlugIn();
         mi.setToolTipText(I18NPlug.getI18N("msg2"));
         final ActionListener listener = AbstractPlugIn.toActionListener(pick,
                 context.getWorkbenchContext(), taskMonitorManager);
@@ -233,66 +244,69 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
         //
         popup.add(recent);
 
-        this.colorPickerPopup = popup;
+        colorPickerPopup = popup;
         colorSetbutton.setToolTipText(I18NPlug.getI18N("set-color-Tool"));
         colorChooserButton.setToolTipText(I18NPlug.getI18N("pick-color-tools"));
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .addSeparator();
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .add(colorSetbutton);
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .add(colorChooserButton);
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .addSeparator();
+        /*     context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                     .addSeparator();
+             context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                     .add(colorSetbutton);
+             context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                     .add(colorChooserButton);
+             context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                     .addSeparator();*/
 
     }
 
     public Icon getColorIcon() {
-        ImageIcon icon = new ImageIcon(getClass().getResource(
+        final ImageIcon icon = new ImageIcon(getClass().getResource(
                 "color-swatch.png"));
         return GUIUtil.toSmallIcon(icon);
     }
 
     public Icon getColorIcon_2() {
-        ImageIcon icon = IconLoader.icon("color_wheel.png");
+        final ImageIcon icon = IconLoader.icon("color_wheel.png");
         return GUIUtil.toSmallIcon(icon);
     }
 
     public Icon getPickColorIcon() {
-        ImageIcon icon2 = new ImageIcon(getClass().getResource("pipette.png"));
+        final ImageIcon icon2 = new ImageIcon(getClass().getResource(
+                "pipette.png"));
         return GUIUtil.toSmallIcon(icon2);
     }
 
     private void setFeatureColor(Color color) {
-        LayerViewPanel layerViewPanel = this.context.getWorkbenchContext()
+        final LayerViewPanel layerViewPanel = context.getWorkbenchContext()
                 .getLayerViewPanel();
-        if (layerViewPanel == null)
+        if (layerViewPanel == null) {
             return;
-        Collection<Layer> layers = layerViewPanel.getSelectionManager()
+        }
+        final Collection<Layer> layers = layerViewPanel.getSelectionManager()
                 .getLayersWithSelectedItems();
 
-        for (Iterator<Layer> i = layers.iterator(); i.hasNext();) {
-            Layer layer = i.next();
-            if (layer.isEditable())
+        for (final Layer layer : layers) {
+            if (layer.isEditable()) {
                 continue;
+            }
             layerViewPanel.getContext().warnUser(
                     I18NPlug.getI18N("selected-items-layers-must-be-editable")
                             + " (" + layer.getName() + ")");
             return;
         }
-
-        for (Iterator<Layer> i = layers.iterator(); i.hasNext();) {
-            Layer layer = i.next();
+        String colorS = "";
+        for (final Layer layer : layers) {
             layer.setFeatureCollectionModified(true);
-            FeatureCollectionWrapper fcw = layer.getFeatureCollectionWrapper();
-            FeatureSchema schema = fcw.getFeatureSchema();
+            final FeatureCollectionWrapper fcw = layer
+                    .getFeatureCollectionWrapper();
+            final FeatureSchema schema = fcw.getFeatureSchema();
 
             if (!schema.hasAttribute(R_G_B)) {
                 schema.addAttribute(R_G_B, AttributeType.STRING);
 
-                for (Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
-                    Feature feature = j.next();
-                    Object[] attributes = new Object[schema.getAttributeCount()];
+                for (final Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
+                    final Feature feature = j.next();
+                    final Object[] attributes = new Object[schema
+                            .getAttributeCount()];
 
                     for (int k = 0; k < attributes.length - 1; k++) {
                         attributes[k] = feature.getAttribute(k);
@@ -302,9 +316,10 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
             }
             if (!schema.hasAttribute(COLOR)) {
                 schema.addAttribute(COLOR, AttributeType.STRING); // .INTEGER);
-                for (Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
-                    Feature feature = j.next();
-                    Object[] attributes = new Object[schema.getAttributeCount()];
+                for (final Iterator<Feature> j = fcw.iterator(); j.hasNext();) {
+                    final Feature feature = j.next();
+                    final Object[] attributes = new Object[schema
+                            .getAttributeCount()];
 
                     for (int k = 0; k < attributes.length - 1; k++) {
                         attributes[k] = feature.getAttribute(k);
@@ -312,50 +327,49 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
                     feature.setAttributes(attributes);
                 }
             }
+            colorS = ColorUtils.colorRGBToHex(color);
         }
-        Collection<Feature> features = layerViewPanel.getSelectionManager()
-                .getFeaturesWithSelectedItems();
-        setRGB(layers, features, ColorUtils.colorRGBToHex(color));
+        final Collection<Feature> features = layerViewPanel
+                .getSelectionManager().getFeaturesWithSelectedItems();
+        setRGB(layers, features, colorS);
     }
 
-    public static FeatureSchema createFeatureSchema() {
-        return new FeatureSchema() {
+    /*   public static FeatureSchema createFeatureSchema() {
+           return new FeatureSchema() {
 
-            private static final long serialVersionUID = 1L;
-        };
-    }
+               private static final long serialVersionUID = 1L;
+           };
+       }*/
 
     protected void setRGB(final Collection<Layer> layers,
             final Collection<Feature> features, String RGB) {
-        if (layers.isEmpty())
+        if (layers.isEmpty()) {
             return;
+        }
         final String newRGB = RGB;
         final ArrayList<Object> RGBs = new ArrayList<Object>();
         final ArrayList<Object> Colors = new ArrayList<Object>();
 
-        for (Iterator<Feature> f = features.iterator(); f.hasNext();) {
-            Feature feature = f.next();
+        for (final Feature feature : features) {
             RGBs.add(feature.getAttribute(R_G_B));
             Colors.add(feature.getAttribute(COLOR));
         }
 
-        final LayerManager layerManager = layers.iterator().next()
-                .getLayerManager();
+        final LayerManager layerManager = context.getLayerManager();//layers.iterator().next().getLayerManager();
         layerManager.getUndoableEditReceiver().startReceiving();
 
         try {
-            UndoableCommand command = new UndoableCommand("Edit R_G_B") {
+            final UndoableCommand command = new UndoableCommand("Edit R_G_B") {
                 @Override
                 public void execute() {
-                    for (Iterator<Feature> f = features.iterator(); f.hasNext();) {
-                        Feature feature = f.next();
+                    for (final Feature feature : features) {
                         feature.setAttribute(R_G_B, newRGB);
                         feature.setAttribute(COLOR,
-                                ColorUtils.getColorFromRegistry(newRGB));
+                                ColorUtils.getColorIndexRegistry(newRGB));
+
                     }
 
-                    for (Iterator<Layer> i = layers.iterator(); i.hasNext();) {
-                        Layer layer = i.next();
+                    for (final Layer layer : layers) {
                         layer.fireAppearanceChanged();
                         layerManager.fireFeaturesChanged(features,
                                 FeatureEventType.ATTRIBUTES_MODIFIED, layer);
@@ -366,17 +380,16 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
                 @Override
                 public void unexecute() {
                     int i = 0;
-                    for (Iterator<Feature> f = features.iterator(); f.hasNext();) {
-                        Feature feature = f.next();
-                        Object ob = RGBs.get(i++);
+                    for (final Feature feature : features) {
+                        final Object ob = RGBs.get(i++);
                         feature.setAttribute(R_G_B, ob);
-                        String oldRGB = ob.toString();
+                        final String oldRGB = ob.toString();
                         feature.setAttribute(COLOR,
-                                ColorUtils.getColorFromRegistry(oldRGB));
+
+                        ColorUtils.getColorIndexRegistry(oldRGB));
                     }
 
-                    for (Iterator<Layer> j = layers.iterator(); j.hasNext();) {
-                        Layer layer = j.next();
+                    for (final Layer layer : layers) {
                         layer.fireAppearanceChanged();
                         layerManager.fireFeaturesChanged(features,
                                 FeatureEventType.ATTRIBUTES_MODIFIED, layer);
@@ -391,13 +404,6 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
         }
     }
 
-    /*
-     * public static FeatureSchema getSchema(FeatureSchema featureSchema) {
-     * featureSchema.addAttribute(R_G_B, AttributeType.STRING);
-     * featureSchema.addAttribute(COLOR, AttributeType.INTEGER); return
-     * featureSchema; }
-     */
-
     @Override
     public boolean execute(PlugInContext context) throws Exception {
         return true;
@@ -405,7 +411,7 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
     public static EnableCheck createEnableCheck(
             WorkbenchContext workbenchContext, boolean b) {
-        EnableCheckFactory checkFactory = new EnableCheckFactory(
+        final EnableCheckFactory checkFactory = new EnableCheckFactory(
                 workbenchContext);
 
         return new MultiEnableCheck().add(
@@ -432,20 +438,20 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
         @Override
         public void paintIcon(Component comp, Graphics g, int x, int y) {
-            Color oldColor = g.getColor();
+            final Color oldColor = g.getColor();
 
             int j = 0;
-            int size = Math.max(getIconHeight(), 2);
+            final int size = Math.max(getIconHeight(), 2);
             g.translate(x, y);
 
-            if (this.color == null)
+            if (color == null) {
                 g.setColor(new Color(0, 0, 0));
-            else {
-                g.setColor(this.color);
+            } else {
+                g.setColor(color);
             }
             j = 0;
 
-            if (this.color == null) {
+            if (color == null) {
                 g.drawLine(0, 8, 5, 8);
                 g.drawLine(5, 8, 5, 7);
                 g.drawLine(1, 8, 1, 1);
@@ -470,13 +476,13 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            colorSetbutton.setColor(this.color);
-            String hex = ColorUtils.colorRGBToHex(this.color);
-            String acad = ColorUtils.getColorFromRegistry(hex);
+            colorSetbutton.setColor(color);
+            final String hex = ColorUtils.colorRGBToHex(color);
+            final String acad = ColorUtils.getColorIndexRegistry(hex);
             colorSetbutton.setToolTipText("Index color: " + acad + "  Hex:"
-                    + hex + "   RGB: " + this.color.getRed() + ","
-                    + this.color.getGreen() + "," + this.color.getBlue());
-            setFeatureColor(this.color);
+                    + hex + "   RGB: " + color.getRed() + ","
+                    + color.getGreen() + "," + color.getBlue());
+            setFeatureColor(color);
         }
     }
 
