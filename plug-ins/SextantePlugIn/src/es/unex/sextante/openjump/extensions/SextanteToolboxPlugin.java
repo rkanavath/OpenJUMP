@@ -12,13 +12,10 @@ import java.util.zip.ZipFile;
 
 import javax.swing.ImageIcon;
 
-import org.apache.log4j.Logger;
-import org.saig.jump.lang.I18N;
-
 import com.vividsolutions.jump.workbench.JUMPWorkbench;
+import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.plugin.PlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.ui.WorkbenchFrame;
 
 import es.unex.sextante.core.Sextante;
 import es.unex.sextante.gui.core.IAlgorithmProvider;
@@ -31,7 +28,7 @@ import es.unex.sextante.openjump.gui.OpenJUMPPostProcessTaskFactory;
 import es.unex.sextante.openjump.language.I18NPlug;
 
 public class SextanteToolboxPlugin implements PlugIn {
-    static WorkbenchFrame wFrame = JUMPWorkbench.getInstance().getFrame();
+    //   static WorkbenchFrame wFrame = JUMPWorkbench.getInstance().getFrame();
 
     @Override
     public boolean execute(final PlugInContext context) throws Exception {
@@ -94,11 +91,8 @@ public class SextanteToolboxPlugin implements PlugIn {
                 .getWorkbenchContext()));
         SextanteGUI
                 .setPostProcessTaskFactory(new OpenJUMPPostProcessTaskFactory());
-
-        LOGGER.info(I18N
-                .getMessage(
-                        "es.unex.sextante.kosmo.extensions.SextanteToolboxPlugin.Help-files-placed-on-{0}",
-                        new Object[] { getJarsFolder() + "/help" }));
+        Logger.info("Sextante help file in folder: "
+                + getJarsFolder().concat(File.separator).concat("help"));
 
         context.getFeatureInstaller().addMainMenuPlugin(this,
                 new String[] { "Sextante" }, getName(), false, getIcon(), null);
@@ -107,11 +101,11 @@ public class SextanteToolboxPlugin implements PlugIn {
 
     private String getJarsFolder() {
         final String path = JUMPWorkbench.getInstance().getPlugInManager()
-              .getPlugInDirectory().getAbsolutePath();
-     final String sPath = path.concat(File.separator).concat("sextante");
-      LOGGER.info("Sextante jar folder: " + sPath);
-       return sPath;
-  }
+                .getPlugInDirectory().getAbsolutePath();
+        final String sPath = path.concat(File.separator).concat("sextante");
+        //   LOGGER.info("Sextante jar folder: " + sPath);
+        return sPath;
+    }
 
     // [Giuseppe Aruta 2018-04-08] Activated connection to external providers (Grass, Saga, R...)
     private boolean containsProvider(IAlgorithmProvider provider) {
@@ -159,6 +153,7 @@ public class SextanteToolboxPlugin implements PlugIn {
                     }
                 }
             } catch (final Exception ex) {
+                Logger.error("Error on loading Sextante algorithm provider: ", ex);
             }
         }
         return providers;
@@ -184,7 +179,7 @@ public class SextanteToolboxPlugin implements PlugIn {
             }
             return algorithmProviders;
         } catch (final Exception e) {
-            LOGGER.error("", e);
+            Logger.error("Error on adding Sextante algorithm provider: ", e);
         } finally {
             if (zip != null) {
                 try {
@@ -195,8 +190,5 @@ public class SextanteToolboxPlugin implements PlugIn {
         }
         return algorithmProviders;
     }
-
-    private static final Logger LOGGER = Logger
-            .getLogger(SextanteToolboxPlugin.class);
 
 }
