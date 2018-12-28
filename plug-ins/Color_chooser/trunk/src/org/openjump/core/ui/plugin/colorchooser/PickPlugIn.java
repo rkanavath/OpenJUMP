@@ -36,52 +36,38 @@ package org.openjump.core.ui.plugin.colorchooser;
 
 import javax.swing.Icon;
 
-import com.vividsolutions.jump.I18N;
+import language.I18NPlug;
+
+import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.ui.MenuNames;
-import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 
 public class PickPlugIn extends AbstractPlugIn {
 
-    private final static String sErrorSeeOutputWindow = I18N
-            .get("org.openjump.core.ui.plugin.tools.MeasureM_FPlugIn.Error-see-output-window");
-
+    @Override
     public void initialize(PlugInContext context) throws Exception {
-
-        context.getFeatureInstaller()
-                .addMainMenuPlugin(
-                        this,
-                        new String[] { MenuNames.RASTER },
-                        // new String[] {MenuNames.PLUGINS,
-                        // I18NPlug.getI18N("RasterInfo_Extension")},
-                        I18N.get("org.openjump.core.ui.plugin.raster.RasterQueryPlugIn"),
-                        false, getIcon(), null);
-
+        super.initialize(context);
     }
 
+    @Override
     public boolean execute(PlugInContext context) throws Exception {
         try {
 
             context.getLayerViewPanel().setCurrentCursorTool(new PickTool());
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            context.getWorkbenchFrame().warnUser(sErrorSeeOutputWindow);
-            context.getWorkbenchFrame().getOutputFrame().createNewDocument();
-            context.getWorkbenchFrame().getOutputFrame()
-                    .addText("MeasureM_FPlugIn Exception:" + e.toString());
+        } catch (final Exception e) {
+            Logger.error(e);
             return false;
         }
     }
 
-    /*
-     * private Icon getIcon() {
-     * 
-     * return IconLoader.icon("Raster_Info.png"); }
-     */
     public Icon getIcon() {
-        return IconLoader.icon("grid_info.png");
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return I18NPlug.getI18N("picker-color");
     }
 
 }

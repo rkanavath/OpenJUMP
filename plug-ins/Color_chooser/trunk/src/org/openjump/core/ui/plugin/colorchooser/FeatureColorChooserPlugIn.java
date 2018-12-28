@@ -1,5 +1,7 @@
 package org.openjump.core.ui.plugin.colorchooser;
 
+import images.ColorChooserIconLoader;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -247,20 +249,19 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
         colorPickerPopup = popup;
         colorSetbutton.setToolTipText(I18NPlug.getI18N("set-color-Tool"));
         colorChooserButton.setToolTipText(I18NPlug.getI18N("pick-color-tools"));
-        /*     context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                     .addSeparator();
-             context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                     .add(colorSetbutton);
-             context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                     .add(colorChooserButton);
-             context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                     .addSeparator();*/
+        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                .addSeparator();
+        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                .add(colorSetbutton);
+        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                .add(colorChooserButton);
+        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
+                .addSeparator();
 
     }
 
     public Icon getColorIcon() {
-        final ImageIcon icon = new ImageIcon(getClass().getResource(
-                "color-swatch.png"));
+        final ImageIcon icon = ColorChooserIconLoader.icon("color-swatch.png");
         return GUIUtil.toSmallIcon(icon);
     }
 
@@ -270,8 +271,7 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
     }
 
     public Icon getPickColorIcon() {
-        final ImageIcon icon2 = new ImageIcon(getClass().getResource(
-                "pipette.png"));
+        final ImageIcon icon2 = ColorChooserIconLoader.icon("pipette.png");
         return GUIUtil.toSmallIcon(icon2);
     }
 

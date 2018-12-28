@@ -1,5 +1,7 @@
 package org.openjump.core.ui.plugin.colorchooser;
 
+import images.ColorChooserIconLoader;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.geom.NoninvertibleTransformException;
@@ -9,7 +11,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import language.I18NPlug;
 
@@ -20,10 +21,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jump.feature.Feature;
-import com.vividsolutions.jump.feature.FeatureCollectionWrapper;
-import com.vividsolutions.jump.feature.FeatureSchema;
 import com.vividsolutions.jump.geom.EnvelopeUtil;
-import com.vividsolutions.jump.workbench.WorkbenchContext;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.ui.cursortool.NClickTool;
 import com.vividsolutions.jump.workbench.ui.cursortool.SpecifyFeaturesTool;
@@ -47,28 +45,26 @@ public class PickTool extends NClickTool {
                 .get(0));
     }
 
+    @Override
     protected void gestureFinished() throws Exception {
         reportNothingToUndoYet();
         try {
-            final WorkbenchContext wbcontext = this.getWorkbench().getContext();
-            Layer layer = wbcontext.createPlugInContext().getSelectedLayer(0);
-            FeatureCollectionWrapper fcw = layer.getFeatureCollectionWrapper();
-            FeatureSchema schema = fcw.getFeatureSchema();
-            Coordinate coord = (Coordinate) getCoordinates().get(0);
-            Point2D point = getPanel().getViewport().toViewPoint(coord);
-            int PIXEL_BUFFER = 2;
+            final Coordinate coord = (Coordinate) getCoordinates().get(0);
+            final Point2D point = getPanel().getViewport().toViewPoint(coord);
+            final int PIXEL_BUFFER = 2;
             // if (schema.hasAttribute(R_G_B)) {
-            Map map = SpecifyFeaturesTool.layerToSpecifiedFeaturesMap(panel
-                    .getLayerManager().iterator(), EnvelopeUtil.expand(
-                    new Envelope(panel.getViewport().toModelCoordinate(point)),
-                    PIXEL_BUFFER / panel.getViewport().getScale()));
+            final Map map = SpecifyFeaturesTool.layerToSpecifiedFeaturesMap(
+                    panel.getLayerManager().iterator(), EnvelopeUtil.expand(
+                            new Envelope(panel.getViewport().toModelCoordinate(
+                                    point)), PIXEL_BUFFER
+                                    / panel.getViewport().getScale()));
 
-            String hex = findValue(R_G_B, map);
-            Color color = ColorUtils.hexToColorRGB(hex);
+            final String hex = findValue(R_G_B, map);
+            final Color color = ColorUtils.hexToColorRGB(hex);
             FeatureColorChooserPlugIn.colorSetbutton.setColor(color);
 
-            String acad = ColorUtils.getColorIndexRegistry(hex);
-            this.getWorkbench()
+            final String acad = ColorUtils.getColorIndexRegistry(hex);
+            getWorkbench()
                     .getContext()
                     .getWorkbench()
                     .getFrame()
@@ -78,10 +74,15 @@ public class PickTool extends NClickTool {
                                     + color.getRed() + "," + color.getGreen()
                                     + "," + color.getBlue(), 5000);
 
-        } catch (Exception e) {
-            this.getWorkbench().getContext().getWorkbench().getFrame()
+        } catch (final Exception e) {
+            getWorkbench().getContext().getWorkbench().getFrame()
                     .setStatusMessage(I18NPlug.getI18N("msg1"), 5000);
         }
+    }
+
+    @Override
+    public String getName() {
+        return I18NPlug.getI18N("picker-color");
     }
 
     @Override
@@ -92,15 +93,14 @@ public class PickTool extends NClickTool {
 
     @Override
     public Cursor getCursor() {
-        return createCursor(new ImageIcon(getClass().getResource(
-                "pick-color-cursor.gif")).getImage()); //$NON-NLS-1$
+        return createCursor(ColorChooserIconLoader.image("pipette-cursor.gif")); //$NON-NLS-1$
     }
 
     private String findValue(String attributeName,
             Map layerToSpecifiedFeaturesMap) {
-        for (Iterator i = layerToSpecifiedFeaturesMap.keySet().iterator(); i
+        for (final Iterator i = layerToSpecifiedFeaturesMap.keySet().iterator(); i
                 .hasNext();) {
-            Layer layer = (Layer) i.next();
+            final Layer layer = (Layer) i.next();
             for (int j = 0; j < layer.getFeatureCollectionWrapper()
                     .getFeatureSchema().getAttributeCount(); j++) {
                 if ("fid".equalsIgnoreCase(attributeName)) {
