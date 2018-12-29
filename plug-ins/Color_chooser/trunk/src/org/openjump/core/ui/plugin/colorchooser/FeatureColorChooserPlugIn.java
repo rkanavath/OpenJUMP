@@ -1,7 +1,5 @@
 package org.openjump.core.ui.plugin.colorchooser;
 
-import images.ColorChooserIconLoader;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -20,6 +18,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import language.I18NPlug;
 
@@ -47,13 +46,15 @@ import com.vividsolutions.jump.workbench.ui.images.IconLoader;
 import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
+import images.ColorChooserIconLoader;
+
 public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
     private static int buttonWidth = 25;
     private PlugInContext context;
     public ComboButton colorChooserButton;
     public static ComboButton colorSetbutton;
-    private JPopupMenu colorPickerPopup = new JPopupMenu();
+    private JPopupMenu colorPickerPopup = null;
 
     public static JMenuItem mi;
     public static final String COLOR = "COLOR";
@@ -63,216 +64,173 @@ public class FeatureColorChooserPlugIn extends AbstractPlugIn {
 
     @Override
     public void initialize(final PlugInContext context) throws Exception {
-        this.context = context;
-        colorSetbutton = new ComboButton(1) {
-            private static final long serialVersionUID = 1L;
+      this.context = context;
+      colorSetbutton = new ComboButton(1) {
+        private static final long serialVersionUID = 1L;
+  
+        @Override
+        public void setBounds(int x, int y, int width, int height) {
+          super.setBounds(x, y, buttonWidth, height);
+        }
+      };
+      colorChooserButton = new ComboButton(0) {
+        private static final long serialVersionUID = 1L;
+  
+        @Override
+        public void setBounds(int x, int y, int width, int height) {
+          super.setBounds(colorSetbutton.getX() + buttonWidth, y, buttonWidth, height);
+        }
+      };
+  
+      colorSetbutton.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          setFeatureColor(colorSetbutton.getColor());
+        }
+      });
+  
+      // init popup takes a long time, defer it after workbench is shown
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          colorPickerPopup = initPopupLazily();
+        }
+      });
 
-            @Override
-            public void setBounds(int x, int y, int width, int height) {
-                super.setBounds(x, y, buttonWidth, height);
-            }
-        };
-        colorChooserButton = new ComboButton(0) {
-            private static final long serialVersionUID = 1L;
+      colorChooserButton.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          final int x = colorSetbutton.getLocation().x;
+          final int y = colorSetbutton.getLocation().y + colorSetbutton.getHeight();
+          if (colorPickerPopup == null) {
+            colorPickerPopup = initPopupLazily();
+          }
+          colorPickerPopup.show(colorSetbutton.getParent(), x, y);
+        }
+      });
+  
+      colorSetbutton.setToolTipText(I18NPlug.getI18N("set-color-Tool"));
+      colorChooserButton.setToolTipText(I18NPlug.getI18N("pick-color-tools"));
+  
+      context.getWorkbenchContext().getWorkbench().getFrame().getToolBar().addSeparator();
+      context.getWorkbenchContext().getWorkbench().getFrame().getToolBar().add(colorSetbutton);
+      context.getWorkbenchContext().getWorkbench().getFrame().getToolBar().add(colorChooserButton);
+      context.getWorkbenchContext().getWorkbench().getFrame().getToolBar().addSeparator();
+    }
 
-            @Override
-            public void setBounds(int x, int y, int width, int height) {
-                super.setBounds(colorSetbutton.getX() + buttonWidth, y,
-                        buttonWidth, height);
-            }
-        };
+    private JPopupMenu initPopupLazily() {
+      final JPopupMenu popup = new JPopupMenu();
+      popup.setLayout(new GridLayout(0, 1));
+      mi = new JMenuItem(I18NPlug.getI18N("use-layer-style-color"),
+              new ColorIcon(null));
 
-        colorSetbutton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                setFeatureColor(colorSetbutton.getColor());
-            }
-        });
+      final JMenu recent = new JMenu(I18NPlug.getI18N("recent-color") + "...");
 
-        /*    colorSetbutton.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    setFeatureColor(colorSetbutton.getColor());
-                }
+      mi.addActionListener(new ColorPickerActionListener(null));
+      popup.add(mi);
+      final ColorMenu cm = new ColorMenu(I18NPlug.getI18N("choose-color"));
+      cm.setIcon(getColorIcon());
 
-                @Override
-                public void mousePressed(MouseEvent e) {
-                }
+      cm.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              final Color color = cm.getColor();
+              if (color != null) {
+                  colorSetbutton.setColor(color);
+                  setFeatureColor(color);
+                  cm.addActionListener(new ColorPickerActionListener(color));
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                }
+                  colorSetbutton.setColor(color);
+                  setFeatureColor(color);
+                  final String hex = ColorUtils.colorRGBToHex(color);
+                  final String acad = ColorUtils.getColorIndexRegistry(hex);
+                  final String msg = "Index color: " + acad;
 
-                @Override
-                public void mouseExited(MouseEvent e) {
-                }
+                  final String text = "Hex: " + hex + "   RGB: "
+                          + color.getRed() + "," + color.getGreen() + ","
+                          + color.getBlue();
+                  final JMenuItem mis = new JMenuItem(text,
+                          new FeatureColorChooserPlugIn.ColorIcon(color));
+                  mis.setToolTipText(msg);
+                  mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
+                          color));
+                  recent.add(mis);
+                  colorPickerPopup.insert(recent, customIndex++);
+                  popup.revalidate();
+                  popup.repaint();
+              }
+          }
+      });
 
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                }
-            }); 
+      popup.add(cm);
 
-            colorChooserButton.addMouseListener(new MouseListener() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    final int x = colorSetbutton.getLocation().x;
-                    final int y = colorSetbutton.getLocation().y
-                            + colorSetbutton.getHeight();
-                    colorPickerPopup.show(colorSetbutton.getParent(), x, y);
-                }
+      mi = new JMenuItem(I18NPlug.getI18N("other-color"), getColorIcon_2());
+      mi.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent paramAnonymousActionEvent) {
+              new JColorChooser();
+              final Color color = JColorChooser.showDialog(context
+                      .getWorkbenchContext().getWorkbench().getFrame(),
+                      I18NPlug.getI18N("choose-color"), new Color(0, 0, 0));
+              if (color != null) {
+                  colorSetbutton.setColor(color);
+                  setFeatureColor(color);
+                  colorSetbutton.setColor(color);
+                  setFeatureColor(color);
+                  final String hex = ColorUtils.colorRGBToHex(color);
+                  final String acad = ColorUtils.getColorIndexRegistry(hex);
 
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                }
+                  final String msg = "Index color: " + acad;
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                }
+                  final String text = "Hex: " + hex + "   RGB: "
+                          + color.getRed() + "," + color.getGreen() + ","
+                          + color.getBlue();
+                  final JMenuItem mis = new JMenuItem(text,
+                          new FeatureColorChooserPlugIn.ColorIcon(color));
+                  mis.setToolTipText(msg);
+                  mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
+                          color));
+                  recent.add(mis);
+                  colorPickerPopup.insert(recent, customIndex++);
+                  popup.revalidate();
+                  popup.repaint();
+              }
+          }
+      });
+      popup.add(mi);
 
-                @Override
-                public void mouseExited(MouseEvent e) {
-                }
+      // popup.addSeparator();
+      mi = new JMenuItem(I18NPlug.getI18N("picker-color"), getPickColorIcon());
+      final PickPlugIn pick = new PickPlugIn();
+      mi.setToolTipText(I18NPlug.getI18N("msg2"));
+      final ActionListener listener = AbstractPlugIn.toActionListener(pick,
+              context.getWorkbenchContext(), taskMonitorManager);
+      mi.addActionListener(new ActionListener() {
 
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                }
-            });*/
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              listener.actionPerformed(e);
+          }
+      });
+      popup.add(mi);
 
-        colorChooserButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                final int x = colorSetbutton.getLocation().x;
-                final int y = colorSetbutton.getLocation().y
-                        + colorSetbutton.getHeight();
-                colorPickerPopup.show(colorSetbutton.getParent(), x, y);
-            }
-        });
-
-        final JPopupMenu popup = new JPopupMenu();
-        popup.setLayout(new GridLayout(0, 1));
-        mi = new JMenuItem(I18NPlug.getI18N("use-layer-style-color"),
-                new ColorIcon(null));
-
-        final JMenu recent = new JMenu(I18NPlug.getI18N("recent-color") + "...");
-
-        mi.addActionListener(new ColorPickerActionListener(null));
-        popup.add(mi);
-        final ColorMenu cm = new ColorMenu(I18NPlug.getI18N("choose-color"));
-        cm.setIcon(getColorIcon());
-
-        cm.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final Color color = cm.getColor();
-                if (color != null) {
-                    colorSetbutton.setColor(color);
-                    setFeatureColor(color);
-                    cm.addActionListener(new ColorPickerActionListener(color));
-
-                    colorSetbutton.setColor(color);
-                    setFeatureColor(color);
-                    final String hex = ColorUtils.colorRGBToHex(color);
-                    final String acad = ColorUtils.getColorIndexRegistry(hex);
-                    final String msg = "Index color: " + acad;
-
-                    final String text = "Hex: " + hex + "   RGB: "
-                            + color.getRed() + "," + color.getGreen() + ","
-                            + color.getBlue();
-                    final JMenuItem mis = new JMenuItem(text,
-                            new FeatureColorChooserPlugIn.ColorIcon(color));
-                    mis.setToolTipText(msg);
-                    mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
-                            color));
-                    recent.add(mis);
-                    colorPickerPopup.insert(recent, customIndex++);
-                    popup.revalidate();
-                    popup.repaint();
-                }
-            }
-        });
-
-        popup.add(cm);
-
-        mi = new JMenuItem(I18NPlug.getI18N("other-color"), getColorIcon_2());
-        mi.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent paramAnonymousActionEvent) {
-                new JColorChooser();
-                final Color color = JColorChooser.showDialog(context
-                        .getWorkbenchContext().getWorkbench().getFrame(),
-                        I18NPlug.getI18N("choose-color"), new Color(0, 0, 0));
-                if (color != null) {
-                    colorSetbutton.setColor(color);
-                    setFeatureColor(color);
-                    colorSetbutton.setColor(color);
-                    setFeatureColor(color);
-                    final String hex = ColorUtils.colorRGBToHex(color);
-                    final String acad = ColorUtils.getColorIndexRegistry(hex);
-
-                    final String msg = "Index color: " + acad;
-
-                    final String text = "Hex: " + hex + "   RGB: "
-                            + color.getRed() + "," + color.getGreen() + ","
-                            + color.getBlue();
-                    final JMenuItem mis = new JMenuItem(text,
-                            new FeatureColorChooserPlugIn.ColorIcon(color));
-                    mis.setToolTipText(msg);
-                    mis.addActionListener(new FeatureColorChooserPlugIn.ColorPickerActionListener(
-                            color));
-                    recent.add(mis);
-                    colorPickerPopup.insert(recent, customIndex++);
-                    popup.revalidate();
-                    popup.repaint();
-                }
-            }
-        });
-        popup.add(mi);
-
-        // popup.addSeparator();
-        mi = new JMenuItem(I18NPlug.getI18N("picker-color"), getPickColorIcon());
-        final PickPlugIn pick = new PickPlugIn();
-        mi.setToolTipText(I18NPlug.getI18N("msg2"));
-        final ActionListener listener = AbstractPlugIn.toActionListener(pick,
-                context.getWorkbenchContext(), taskMonitorManager);
-        mi.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.actionPerformed(e);
-            }
-        });
-        popup.add(mi);
-
-        //
-        popup.add(recent);
-
-        colorPickerPopup = popup;
-        colorSetbutton.setToolTipText(I18NPlug.getI18N("set-color-Tool"));
-        colorChooserButton.setToolTipText(I18NPlug.getI18N("pick-color-tools"));
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .addSeparator();
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .add(colorSetbutton);
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .add(colorChooserButton);
-        context.getWorkbenchContext().getWorkbench().getFrame().getToolBar()
-                .addSeparator();
-
+      popup.add(recent);
+      
+      return popup;
     }
 
     public Icon getColorIcon() {
-        final ImageIcon icon = ColorChooserIconLoader.icon("color-swatch.png");
-        return GUIUtil.toSmallIcon(icon);
+      final ImageIcon icon = ColorChooserIconLoader.icon("color-swatch.png");
+      return GUIUtil.toSmallIcon(icon);
     }
-
+  
     public Icon getColorIcon_2() {
-        final ImageIcon icon = IconLoader.icon("color_wheel.png");
-        return GUIUtil.toSmallIcon(icon);
+      final ImageIcon icon = IconLoader.icon("color_wheel.png");
+      return GUIUtil.toSmallIcon(icon);
     }
-
+  
     public Icon getPickColorIcon() {
-        final ImageIcon icon2 = ColorChooserIconLoader.icon("pipette.png");
-        return GUIUtil.toSmallIcon(icon2);
+      final ImageIcon icon2 = ColorChooserIconLoader.icon("pipette.png");
+      return GUIUtil.toSmallIcon(icon2);
     }
 
     private void setFeatureColor(Color color) {
