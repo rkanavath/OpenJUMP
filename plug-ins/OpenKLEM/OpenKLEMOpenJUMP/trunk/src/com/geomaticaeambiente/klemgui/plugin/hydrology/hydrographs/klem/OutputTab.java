@@ -487,7 +487,7 @@ public class OutputTab extends AbstractInputKlemPlugin {
                 BASE_FLOW, TOT_RAINFALL, EFF_RAINFALL };
 
         final String[][] data = new String[simOut.getSimulationRainfall()
-                .getTotalRain().length][col.length];
+                .getTotalRain().length/2][col.length];
         for (int r = 0; r < data.length; r++) {
             data[r][0] = PluginUtils.getTwoDecimalFormatToString(simOut
                     .getSimulationDischarge().getTimeInterval()
