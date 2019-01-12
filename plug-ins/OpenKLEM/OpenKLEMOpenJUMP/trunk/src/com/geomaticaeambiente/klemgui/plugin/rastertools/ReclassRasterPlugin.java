@@ -21,6 +21,7 @@ import com.geomaticaeambiente.openjump.klem.rastertools.ReclassTuple;
 import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -36,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
 import org.openjump.core.rasterimage.RasterImageLayer;
 
 /**
@@ -61,7 +64,9 @@ public class ReclassRasterPlugin extends AbstractInputKlemPlugin {
             INTERVAL_METHOD,
             UNIQUE_METHOD
         };
-        Integer[] classes = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        final Integer[] classes = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+                26, 26, 28, 29, 30 };
         Integer[] stDevClasses = new Integer[]{1, 2, 3, 4, 5};
 
         PersonalTable personalTable = new PersonalTable(reclassTableModel(), null,
