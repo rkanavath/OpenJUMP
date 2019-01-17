@@ -30,10 +30,15 @@ import com.geomaticaeambiente.openjump.klem.slope.SlopeCalculator;
 import com.geomaticaeambiente.openjump.klem.slope.SlopeStripe.SlopeAlgo;
 import com.geomaticaeambiente.openjump.klem.slope.SlopeStripe.SlopeUnits;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.util.StringUtil;
+import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.model.Layer;
+import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
+import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
 /**
  *
@@ -192,6 +197,137 @@ public class SlopeAspectHillshadePlugIn extends AbstractInputKlemPlugin {
 
     }
 
+    public void SlopeAspectHillshadeCommand(
+            final ComponentsTreeMap componentsWithActions) throws Exception {
+        // DEM
+        final String demFileFullName = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("00",
+                        GUIUtils.INPUT, 1));
+
+        // Bluelines
+        final Layer bluelinesLayer = PluginUtils
+                .getLayerSelected((CustomComboBox.LayerComboBox) componentsWithActions
+                        .getComponent("01", GUIUtils.INPUT, 1));
+        LineString[] bluelines = null;
+        if (bluelinesLayer != null) {
+            bluelines = GeometryUtils.getLineStringsFromFeatures(bluelinesLayer
+                    .getFeatureCollectionWrapper());
+        }
+
+        // Slope algo
+        final boolean slopeAlgoHorn = GUIUtils
+                .componentIsSelected(componentsWithActions.getComponent("01",
+                        GUIUtils.OTHER, 0));
+
+        // Slope units
+        final boolean slopeUnitsPercent = GUIUtils
+                .componentIsSelected(componentsWithActions.getComponent("03",
+                        GUIUtils.OTHER, 0));
+
+        // Zenith
+        final String zenith = GUIUtils.getStringValue(componentsWithActions
+                .getComponent("05", GUIUtils.OTHER, 1));
+
+        // Azimuth
+        final String azimuth = GUIUtils.getStringValue(componentsWithActions
+                .getComponent("06", GUIUtils.OTHER, 1));
+
+        // Out rasters
+        final String slopeRasterName = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("00",
+                        GUIUtils.OUTPUT, 1));
+        final String aspectRasterName = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("01",
+                        GUIUtils.OUTPUT, 1));
+        final String hillshadeRasterName = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("02",
+                        GUIUtils.OUTPUT, 1));
+
+        checkValues(demFileFullName, zenith, azimuth, slopeRasterName,
+                aspectRasterName, hillshadeRasterName);
+
+        // Retrieve inputs
+        final DoubleBasicGrid demGrid = RasterUtils
+                .getDoubleBasicGrid((CustomComboBox.RasterComboBox) componentsWithActions
+                        .getComponent("00", GUIUtils.INPUT, 1));
+
+        // Execute
+        DoubleBasicGrid slopeGrid = null;
+        DoubleBasicGrid aspectGrid = null;
+        if (!slopeRasterName.equals("") || !hillshadeRasterName.equals("")) {
+            // Calcualte slope: used also for hillshade
+            SlopeAlgo slopeAlgo = SlopeAlgo.HORN;
+            SlopeUnits slopeUnits = SlopeUnits.PERCENT;
+            if (!slopeAlgoHorn) {
+                slopeAlgo = SlopeAlgo.LOCAL;
+            }
+            if (!slopeUnitsPercent) {
+                slopeUnits = SlopeUnits.DEGREES;
+            }
+            final SlopeCalculator sc = new SlopeCalculator(demGrid, bluelines,
+                    100d, slopeAlgo, slopeUnits);
+            slopeGrid = sc.calculate();
+            RasterUtils.saveOutputRasterAsTiff(slopeGrid, new File(
+                    slopeRasterName));
+        }
+
+        if (!aspectRasterName.equals("") || !hillshadeRasterName.equals("")) {
+            // Aspect
+            final AspectCalculator ac = new AspectCalculator(demGrid,
+                    bluelines, 100d);
+            aspectGrid = ac.calculate();
+            RasterUtils.saveOutputRasterAsTiff(aspectGrid, new File(
+                    aspectRasterName));
+        }
+
+        if (!hillshadeRasterName.equals("") && slopeGrid != null
+                && aspectGrid != null) {
+            // Hillshade
+            final double zenithDegs = Double.parseDouble(zenith);
+            final double azimuthDegs = Double.parseDouble(azimuth);
+
+            if (slopeUnitsPercent) {
+
+                for (int r = 0; r < slopeGrid.getRowCount(); r++) {
+                    for (int c = 0; c < slopeGrid.getColumnCount(); c++) {
+                        if (slopeGrid.isNoData(slopeGrid.getValue(c, r))) {
+                            continue;
+                        }
+                        final double slopeDegs = Math.toDegrees(Math
+                                .atan(slopeGrid.getValue(c, r) / 100));
+                        slopeGrid.setValue(c, r, slopeDegs);
+                    }
+                }
+
+            }
+
+            final HillshadeCalculator hc = new HillshadeCalculator(slopeGrid,
+                    aspectGrid, zenithDegs, azimuthDegs);
+            final DoubleBasicGrid hillshadeGrid = hc.calculate();
+            RasterUtils.saveOutputRasterAsTiff(hillshadeGrid, new File(
+                    hillshadeRasterName));
+        }
+
+        // Display raster on OJ from file
+        if (!slopeRasterName.equals("")) {
+            RasterUtils.displayRasterFileOnOJ(context.getWorkbenchContext(),
+                    new File(slopeRasterName), null);
+        }
+        if (!aspectRasterName.equals("")) {
+            RasterUtils.displayRasterFileOnOJ(context.getWorkbenchContext(),
+                    new File(aspectRasterName), null);
+        }
+        if (!hillshadeRasterName.equals("")) {
+            RasterUtils.displayRasterFileOnOJ(context.getWorkbenchContext(),
+                    new File(hillshadeRasterName), null);
+        }
+
+        JOptionPane.showMessageDialog(super.getInitialDialog(), PluginUtils
+                .getResources().getString("SetWorkspacePlugin.Done.message"),
+                PluginUtils.plugInName, JOptionPane.INFORMATION_MESSAGE);
+
+    }
+
     @Override
     public JPanel buildPluginPanel(final ComponentsTreeMap componentsWithActions) {
         if (mainPanel != null) {
@@ -211,151 +347,41 @@ public class SlopeAspectHillshadePlugIn extends AbstractInputKlemPlugin {
             public void rightButton() {
                 try {
 
-                    // DEM
-                    final String demFileFullName = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "00", GUIUtils.INPUT, 1));
+                    AbstractPlugIn
+                            .toActionListener(
+                                    new ThreadedBasePlugIn() {
+                                        @Override
+                                        public String getName() {
+                                            return null;
+                                        }
 
-                    // Bluelines
-                    final Layer bluelinesLayer = PluginUtils
-                            .getLayerSelected((CustomComboBox.LayerComboBox) componentsWithActions
-                                    .getComponent("01", GUIUtils.INPUT, 1));
-                    LineString[] bluelines = null;
-                    if (bluelinesLayer != null) {
-                        bluelines = GeometryUtils
-                                .getLineStringsFromFeatures(bluelinesLayer
-                                        .getFeatureCollectionWrapper());
-                    }
+                                        @Override
+                                        public boolean execute(
+                                                PlugInContext context)
+                                                throws Exception {
+                                            return true;
+                                        }
 
-                    // Slope algo
-                    final boolean slopeAlgoHorn = GUIUtils
-                            .componentIsSelected(componentsWithActions
-                                    .getComponent("01", GUIUtils.OTHER, 0));
+                                        @Override
+                                        public void run(TaskMonitor monitor,
+                                                PlugInContext context)
+                                                throws Exception {
+                                            monitor.report(PluginUtils
+                                                    .getResources()
+                                                    .getString(
+                                                            "OpenKlem.executing-process"));
+                                            // monitor.allowCancellationRequests();
+                                            reportNothingToUndoYet(context);
+                                            try {
+                                                SlopeAspectHillshadeCommand(componentsWithActions);
+                                            } catch (final Exception ex) {
+                                                Logger.error(getName(), ex);
+                                            }
+                                        }
+                                    }, context.getWorkbenchContext(),
+                                    new TaskMonitorManager())
+                            .actionPerformed(null);
 
-                    // Slope units
-                    final boolean slopeUnitsPercent = GUIUtils
-                            .componentIsSelected(componentsWithActions
-                                    .getComponent("03", GUIUtils.OTHER, 0));
-
-                    // Zenith
-                    final String zenith = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "05", GUIUtils.OTHER, 1));
-
-                    // Azimuth
-                    final String azimuth = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "06", GUIUtils.OTHER, 1));
-
-                    // Out rasters
-                    final String slopeRasterName = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "00", GUIUtils.OUTPUT, 1));
-                    final String aspectRasterName = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "01", GUIUtils.OUTPUT, 1));
-                    final String hillshadeRasterName = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "02", GUIUtils.OUTPUT, 1));
-
-                    checkValues(demFileFullName, zenith, azimuth,
-                            slopeRasterName, aspectRasterName,
-                            hillshadeRasterName);
-
-                    // Retrieve inputs
-                    final DoubleBasicGrid demGrid = RasterUtils
-                            .getDoubleBasicGrid((CustomComboBox.RasterComboBox) componentsWithActions
-                                    .getComponent("00", GUIUtils.INPUT, 1));
-
-                    // Execute
-                    DoubleBasicGrid slopeGrid = null;
-                    DoubleBasicGrid aspectGrid = null;
-                    if (!slopeRasterName.equals("")
-                            || !hillshadeRasterName.equals("")) {
-                        // Calcualte slope: used also for hillshade
-                        SlopeAlgo slopeAlgo = SlopeAlgo.HORN;
-                        SlopeUnits slopeUnits = SlopeUnits.PERCENT;
-                        if (!slopeAlgoHorn) {
-                            slopeAlgo = SlopeAlgo.LOCAL;
-                        }
-                        if (!slopeUnitsPercent) {
-                            slopeUnits = SlopeUnits.DEGREES;
-                        }
-                        final SlopeCalculator sc = new SlopeCalculator(demGrid,
-                                bluelines, 100d, slopeAlgo, slopeUnits);
-                        slopeGrid = sc.calculate();
-                        RasterUtils.saveOutputRasterAsTiff(slopeGrid, new File(
-                                slopeRasterName));
-                    }
-
-                    if (!aspectRasterName.equals("")
-                            || !hillshadeRasterName.equals("")) {
-                        // Aspect
-                        final AspectCalculator ac = new AspectCalculator(
-                                demGrid, bluelines, 100d);
-                        aspectGrid = ac.calculate();
-                        RasterUtils.saveOutputRasterAsTiff(aspectGrid,
-                                new File(aspectRasterName));
-                    }
-
-                    if (!hillshadeRasterName.equals("") && slopeGrid != null
-                            && aspectGrid != null) {
-                        // Hillshade
-                        final double zenithDegs = Double.parseDouble(zenith);
-                        final double azimuthDegs = Double.parseDouble(azimuth);
-
-                        if (slopeUnitsPercent) {
-
-                            for (int r = 0; r < slopeGrid.getRowCount(); r++) {
-                                for (int c = 0; c < slopeGrid.getColumnCount(); c++) {
-                                    if (slopeGrid.isNoData(slopeGrid.getValue(
-                                            c, r))) {
-                                        continue;
-                                    }
-                                    final double slopeDegs = Math
-                                            .toDegrees(Math.atan(slopeGrid
-                                                    .getValue(c, r) / 100));
-                                    slopeGrid.setValue(c, r, slopeDegs);
-                                }
-                            }
-
-                        }
-
-                        final HillshadeCalculator hc = new HillshadeCalculator(
-                                slopeGrid, aspectGrid, zenithDegs, azimuthDegs);
-                        final DoubleBasicGrid hillshadeGrid = hc.calculate();
-                        RasterUtils.saveOutputRasterAsTiff(hillshadeGrid,
-                                new File(hillshadeRasterName));
-                    }
-
-                    // Display raster on OJ from file
-                    if (!slopeRasterName.equals("")) {
-                        RasterUtils.displayRasterFileOnOJ(context
-                                .getWorkbenchContext(), new File(
-                                slopeRasterName), null);
-                    }
-                    if (!aspectRasterName.equals("")) {
-                        RasterUtils.displayRasterFileOnOJ(context
-                                .getWorkbenchContext(), new File(
-                                aspectRasterName), null);
-                    }
-                    if (!hillshadeRasterName.equals("")) {
-                        RasterUtils.displayRasterFileOnOJ(context
-                                .getWorkbenchContext(), new File(
-                                hillshadeRasterName), null);
-                    }
-
-                    JOptionPane.showMessageDialog(
-                            super.getInitialDialog(),
-                            PluginUtils.getResources().getString(
-                                    "SetWorkspacePlugin.Done.message"),
-                            PluginUtils.plugInName,
-                            JOptionPane.INFORMATION_MESSAGE);
-
-                } catch (final WarningException ex) {
-                    JOptionPane.showMessageDialog(super.getInitialDialog(),
-                            ex.getMessage(), PluginUtils.plugInName,
-                            JOptionPane.WARNING_MESSAGE);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
