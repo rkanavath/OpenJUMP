@@ -60,21 +60,34 @@ public class SlopeStripe implements Callable<DoubleBasicGrid> {
                 final double[] elev = new double[8];
                 for (int i = 0; i < 8; i++) {
 
+                    //[Giuseppe Aruta 2019-1-17] added correction to slopes of borders
+                    //in the Travis at al algorithm
                     final int c1 = c + Shifter.getColShift(i);
                     final int r1 = r + Shifter.getRowShift(i);
                     if (c1 >= 0 && c1 < nCols && r1 >= 0 && r1 < nRows) {
                         if (!demStripe.isNoData(demStripe.getData()[r1][c1])) {
                             elev[i] = demStripe.getData()[r1][c1];
+                        } else {
+                            elev[i] = demStripe.getData()[r][c];
                         }
                     } else if (c1 >= 0 && c1 < nCols && r1 < 0) {
                         if (!demStripe.isNoData(upRow[c1])) {
                             elev[i] = upRow[c1];
+                        } else {
+                            elev[i] = demStripe.getData()[r][c];
                         }
                     } else if (c1 >= 0 && c1 < nCols && r1 == nRows) {
                         if (!demStripe.isNoData(bottomRow[c1])) {
                             elev[i] = bottomRow[c1];
+                        } else {
+                            elev[i] = demStripe.getData()[r][c];
                         }
                     }
+
+                    if (c1 < 0 || c1 == nCols) {
+                        elev[i] = demStripe.getData()[r][c];
+                    }
+
 
                     if (bluelinesGrid != null) {
                         if (c1 > 0 && c1 < nCols && r1 > 0 && r1 < nRows
@@ -90,7 +103,7 @@ public class SlopeStripe implements Callable<DoubleBasicGrid> {
 
                 if (!demStripe.isNoData(demStripe.getData()[r][c])) {
 
-                    // Horn's
+                    // Horn's method
                     if (slopeAlgo == SlopeAlgo.HORN) {
                         final double[] z = new double[9];
                         int cellCount = 0;
@@ -148,7 +161,7 @@ public class SlopeStripe implements Callable<DoubleBasicGrid> {
                             slopeGrid.setValue(c, r, Math.atan(slopeRatio));
                         }
 
-                        // Local
+                        // Travis et al. 1975. Local Maximun Slope
                     } else if (slopeAlgo == SlopeAlgo.LOCAL) {
 
                         double maxLocalSlope = -Double.MAX_VALUE;
