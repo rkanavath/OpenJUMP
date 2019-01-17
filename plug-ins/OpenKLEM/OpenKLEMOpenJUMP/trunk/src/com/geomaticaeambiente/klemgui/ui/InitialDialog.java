@@ -371,9 +371,12 @@ public class InitialDialog extends JDialog {
                             getClass()
                                     .getResource(
                                             "/com/geomaticaeambiente/klemgui/images/Raster_01.png")));
-                } else if (value.toString().equals(
+                }  else if (value.toString().equals(
                         PluginUtils.getResources().getString(
-                                "KlemGUI.HydrologyTools.label"))) {
+                                "KlemGUI.HydrologyTools.label"))
+                        || value.toString().equals(
+                                PluginUtils.getResources().getString(
+                                        "KlemGUI.TreeGeomorphometry.label"))) {
                     label.setIcon(new ImageIcon(getClass().getResource(
                             "/com/geomaticaeambiente/klemgui/images/cog.png")));
                 } else if (value.toString().equals(
