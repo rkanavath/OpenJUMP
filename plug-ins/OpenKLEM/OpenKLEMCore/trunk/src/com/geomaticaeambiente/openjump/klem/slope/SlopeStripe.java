@@ -68,24 +68,24 @@ public class SlopeStripe implements Callable<DoubleBasicGrid> {
                         if (!demStripe.isNoData(demStripe.getData()[r1][c1])) {
                             elev[i] = demStripe.getData()[r1][c1];
                         } else {
-                            elev[i] = demStripe.getData()[r][c];
+                            elev[i] = demStripe.getNoData();
                         }
                     } else if (c1 >= 0 && c1 < nCols && r1 < 0) {
                         if (!demStripe.isNoData(upRow[c1])) {
                             elev[i] = upRow[c1];
                         } else {
-                            elev[i] = demStripe.getData()[r][c];
+                            elev[i] = demStripe.getNoData();
                         }
                     } else if (c1 >= 0 && c1 < nCols && r1 == nRows) {
                         if (!demStripe.isNoData(bottomRow[c1])) {
                             elev[i] = bottomRow[c1];
                         } else {
-                            elev[i] = demStripe.getData()[r][c];
+                            elev[i] = demStripe.getNoData();
                         }
                     }
 
                     if (c1 < 0 || c1 == nCols) {
-                        elev[i] = demStripe.getData()[r][c];
+                        elev[i] = demStripe.getNoData();
                     }
 
 
@@ -164,8 +164,8 @@ public class SlopeStripe implements Callable<DoubleBasicGrid> {
                         // Travis et al. 1975. Local Maximun Slope
                     } else if (slopeAlgo == SlopeAlgo.LOCAL) {
 
-                        double maxLocalSlope = -Double.MAX_VALUE;
-
+                       // double maxLocalSlope = -Double.MAX_VALUE;
+                        double maxLocalSlope = 0.0D;
                         for (int i = 0; i < 8; i++) {
 
                             if (!demStripe.isNoData(elev[i])) {
