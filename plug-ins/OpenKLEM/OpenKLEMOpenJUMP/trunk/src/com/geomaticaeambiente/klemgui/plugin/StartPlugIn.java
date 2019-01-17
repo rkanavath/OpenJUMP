@@ -78,8 +78,10 @@ public class StartPlugIn extends AbstractPlugIn {
             PluginUtils.setWorkspacePath(folder);
         }
 
-        final List<Layerable> layerables_l = context.getWorkbenchContext()
+        final List<Layerable> layerables_l = context.getTask()
                 .getLayerManager().getLayerables(Layerable.class);
+   //     final List<Layerable> layerables_l = context.getWorkbenchContext()
+   //             .getLayerManager().getLayerables(Layerable.class);
         if (layerablesList == null) {
             layerablesList = new LayerablesList(
                     layerables_l.toArray(new Layerable[layerables_l.size()]));
