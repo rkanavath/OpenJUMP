@@ -1,5 +1,6 @@
 package com.geomaticaeambiente.klemgui.plugin.rastertools;
 
+import com.geomaticaeambiente.klemgui.plugin.rastertools.RasterConverter;
 import com.geomaticaeambiente.klemgui.utils.PluginUtils;
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox.RasterComboBox;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
@@ -13,13 +14,16 @@ import com.geomaticaeambiente.klemgui.utils.InitialData;
 import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
+
 import java.awt.Cursor;
 import java.io.File;
 import java.io.IOException;
+
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
 import org.openjump.core.rasterimage.RasterImageLayer;
 
 /**
@@ -71,55 +75,80 @@ public class RasterConversionsPlugIn extends AbstractInputKlemPlugin {
     @Override
     public JPanel buildPluginPanel(final ComponentsTreeMap componentsWithActions) {
 
-        if(this.mainPanel != null) {
-            return this.mainPanel;
+        if (mainPanel != null) {
+            return mainPanel;
         }
-        this.mainPanel = new MainPanel(super.getInitialDialog(), componentsWithActions, false, false, true,
-                PluginUtils.getResources().getString("MainPanel.ExecuteButton.text"), layerablesList) {
+        mainPanel = new MainPanel(super.getInitialDialog(),
+                componentsWithActions, false, false, true, PluginUtils
+                        .getResources().getString(
+                                "MainPanel.ExecuteButton.text"), layerablesList) {
+
+            /**
+                     * 
+                     */
+            private static final long serialVersionUID = 1L;
 
             @Override
             public void rightButton() {
 
                 try {
 
-                    super.getInitialDialog().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    
+                    super.getInitialDialog().setCursor(
+                            new Cursor(Cursor.WAIT_CURSOR));
+
                     // Input values 
-                    String rasterSelected = GUIUtils.getStringValue(componentsWithActions.getComponent("00", GUIUtils.INPUT, 1));
-                    String toSelected = GUIUtils.getStringValue(componentsWithActions.getComponent("01", GUIUtils.INPUT, 1));
+                    final String rasterSelected = GUIUtils
+                            .getStringValue(componentsWithActions.getComponent(
+                                    "00", GUIUtils.INPUT, 1));
+                    final String toSelected = GUIUtils
+                            .getStringValue(componentsWithActions.getComponent(
+                                    "01", GUIUtils.INPUT, 1));
 
                     // Get output raster name
-                    String outRasterName = GUIUtils.getStringValue(componentsWithActions.getComponent("00", GUIUtils.OUTPUT, 1));
+                    final String outRasterName = GUIUtils
+                            .getStringValue(componentsWithActions.getComponent(
+                                    "00", GUIUtils.OUTPUT, 1));
 
                     // Check input and output values
                     checkValues(rasterSelected, outRasterName);
 
                     //extract raster selected from combobox
-                    RasterImageLayer inputRasterSelected = PluginUtils.getRasterImageLayerSelected((RasterComboBox) componentsWithActions.getComponent("00", GUIUtils.INPUT, 1));
-                    File inputFile = new  File(inputRasterSelected.getImageFileName());
-                    
-                    File outputFile = new File(outRasterName);
-                    
-                    RasterConverter.convert(
-                            inputFile,
-                            outputFile,
-                            RasterConverter.Format.valueOf(toSelected));
+                    final RasterImageLayer inputRasterSelected = PluginUtils
+                            .getRasterImageLayerSelected((RasterComboBox) componentsWithActions
+                                    .getComponent("00", GUIUtils.INPUT, 1));
+                    final File inputFile = new File(
+                            inputRasterSelected.getImageFileName());
 
-                    JOptionPane.showMessageDialog(super.getInitialDialog(),
-                            PluginUtils.getResources().getString("SetWorkspacePlugin.Done.message"), PluginUtils.plugInName, JOptionPane.INFORMATION_MESSAGE);
+                    final File outputFile = new File(outRasterName);
+                    if (!toSelected.isEmpty()) {
+                        RasterConverter.convert(inputFile, outputFile,
+                                RasterConverter.Format.valueOf(toSelected));
+                    } else {
+                        //Added TIF if no extension is choosen
+                        RasterConverter.convert(inputFile, outputFile,
+                                RasterConverter.Format.TIFF);
+                    }
 
-                } catch (Exception ex) {
-                    super.getInitialDialog().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    ex.printStackTrace(System.out);
-                    ErrorDialog.show(
+                    JOptionPane.showMessageDialog(
                             super.getInitialDialog(),
+                            PluginUtils.getResources().getString(
+                                    "SetWorkspacePlugin.Done.message"),
                             PluginUtils.plugInName,
-                            ex.toString(),
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                } catch (final Exception ex) {
+                    super.getInitialDialog().setCursor(
+                            new Cursor(Cursor.DEFAULT_CURSOR));
+                    ex.printStackTrace(System.out);
+                    ErrorDialog.show(super.getInitialDialog(),
+                            PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
                 } finally {
-                    super.getInitialDialog().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    super.getInitialDialog().setCursor(
+                            new Cursor(Cursor.DEFAULT_CURSOR));
                 }
             }
+            
             
             @Override
             public void leftButton() {
