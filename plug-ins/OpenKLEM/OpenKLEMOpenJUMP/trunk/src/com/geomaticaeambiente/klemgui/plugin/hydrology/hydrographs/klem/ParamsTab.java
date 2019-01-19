@@ -4,7 +4,6 @@ import it.geomaticaeambiente.klem.Klem;
 import it.geomaticaeambiente.klem.LsppCalculator;
 import it.geomaticaeambiente.klem.SimulationOutput;
 
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,8 +23,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.geomaticaeambiente.klemgui.exceptions.WarningException;
-import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.klem.KlemUtils;
-import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.klem.OutputTab;
 import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.klem.KlemProperties.RainfallType;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
 import com.geomaticaeambiente.klemgui.ui.InitialDialog;
@@ -95,9 +92,7 @@ public class ParamsTab extends AbstractInputKlemPlugin {
         // mainTabelPane.setEnabledAt(2, true);
         mainTabelPane.setSelectedIndex(3);
     }
-    
-    
-    
+
     @Override
     public JPanel buildPluginPanel(final ComponentsTreeMap componentsWithActions) {
 
@@ -120,37 +115,48 @@ public class ParamsTab extends AbstractInputKlemPlugin {
             public void rightButton() { // OUTPUT
                 try {
 
-                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
+                    AbstractPlugIn
+                            .toActionListener(
+                                    new ThreadedBasePlugIn() {
+                                        @Override
+                                        public String getName() {
+                                            return null;
+                                        }
 
-                        @Override
-                        public boolean execute(PlugInContext context)
-                                throws Exception {
-                            return true;
-                        }
+                                        @Override
+                                        public boolean execute(
+                                                PlugInContext context)
+                                                throws Exception {
+                                            return true;
+                                        }
 
-                        @Override
-                        public void run(TaskMonitor monitor,
-                                PlugInContext context) throws Exception {
-                            monitor.report(PluginUtils.getResources()
-                                    .getString("OpenKlem.executing-process"));
-                            reportNothingToUndoYet(context);
-                            try {
-                                calculateParameters(componentsWithActions);
-                            } catch (final Exception ex) {
-                                JOptionPane.showMessageDialog(
-                                        getInitialDialog().getTabbedPane(),
-                                        PluginUtils.getResources().getString(
-                                                "Process interrupted"),
-                                        PluginUtils.plugInName,
-                                        JOptionPane.INFORMATION_MESSAGE);
+                                        @Override
+                                        public void run(TaskMonitor monitor,
+                                                PlugInContext context)
+                                                throws Exception {
+                                            monitor.report(PluginUtils
+                                                    .getResources()
+                                                    .getString(
+                                                            "OpenKlem.executing-process"));
+                                            reportNothingToUndoYet(context);
+                                            try {
+                                                calculateParameters(componentsWithActions);
+                                            } catch (final Exception ex) {
+                                                JOptionPane
+                                                        .showMessageDialog(
+                                                                getInitialDialog()
+                                                                        .getTabbedPane(),
+                                                                PluginUtils
+                                                                        .getResources()
+                                                                        .getString(
+                                                                                "OpenKlem.process-interrupted"),
+                                                                PluginUtils.plugInName,
+                                                                JOptionPane.INFORMATION_MESSAGE);
 
-                            }
-                        }
-                    }, context.getWorkbenchContext(), new TaskMonitorManager())
+                                            }
+                                        }
+                                    }, context.getWorkbenchContext(),
+                                    new TaskMonitorManager())
                             .actionPerformed(null);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),

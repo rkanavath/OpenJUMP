@@ -55,10 +55,15 @@ import com.geomaticaeambiente.openjump.klem.grid.DoubleBasicGrid;
 import com.geomaticaeambiente.openjump.klem.grid.FlowDirBasicGrid;
 import com.geomaticaeambiente.openjump.klem.upslopearea.UpslopeAreaCalculator;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.util.StringUtil;
+import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.model.Layer;
+import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
+import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
 /**
  *
@@ -102,10 +107,44 @@ public class HydrographKlemPlugin extends AbstractInputKlemPlugin {
                                 "MainPanel.ExecuteButton.text"), true,
                 MainPanel.ExtraSubPanelPosition.INITIAL, layerablesList) {
 
+            /**
+                     * 
+                     */
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void rightButton() {
                 try {
-                    setNextButton(componentsWithActions);
+
+                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
+                        @Override
+                        public String getName() {
+                            return null;
+                        }
+
+                        @Override
+                        public boolean execute(PlugInContext context)
+                                throws Exception {
+                            return true;
+                        }
+
+                        @Override
+                        public void run(TaskMonitor monitor,
+                                PlugInContext context) throws Exception {
+                            monitor.report(PluginUtils.getResources()
+                                    .getString("OpenKlem.executing-process"));
+                            // monitor.allowCancellationRequests();
+                            reportNothingToUndoYet(context);
+                            try {
+                                setNextButton(componentsWithActions);
+                            } catch (final Exception ex) {
+                                Logger.error(getName(), ex);
+                            }
+                        }
+                    }, context.getWorkbenchContext(), new TaskMonitorManager())
+                            .actionPerformed(null);
+
+                    //    setNextButton(componentsWithActions);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
