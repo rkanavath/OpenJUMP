@@ -80,6 +80,7 @@ public class StartPlugIn extends AbstractPlugIn {
 
         final List<Layerable> layerables_l = context.getTask()
                 .getLayerManager().getLayerables(Layerable.class);
+
    //     final List<Layerable> layerables_l = context.getWorkbenchContext()
    //             .getLayerManager().getLayerables(Layerable.class);
         if (layerablesList == null) {
