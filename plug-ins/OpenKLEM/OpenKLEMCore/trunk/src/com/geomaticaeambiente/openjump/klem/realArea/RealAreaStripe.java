@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import com.geomaticaeambiente.openjump.klem.grid.DoubleBasicGrid;
+import com.geomaticaeambiente.openjump.klem.slope.SlopeCalculator;
+import com.geomaticaeambiente.openjump.klem.slope.SlopeStripe.SlopeAlgo;
+import com.geomaticaeambiente.openjump.klem.slope.SlopeStripe.SlopeUnits;
 
 /**
  *
@@ -11,12 +14,11 @@ import com.geomaticaeambiente.openjump.klem.grid.DoubleBasicGrid;
  */
 public class RealAreaStripe implements Callable<DoubleBasicGrid> {
 
-    public RealAreaStripe(int stripeEffectiveRows,
-            DoubleBasicGrid slopeDegsGrid, int yOffset) {
+    public RealAreaStripe(int stripeEffectiveRows, DoubleBasicGrid Grid,
+            int yOffset) {
 
         this.stripeEffectiveRows = stripeEffectiveRows;
-        this.slopeDegsGrid = slopeDegsGrid;
-        this.yOffset = yOffset;
+        this.Grid = Grid;
 
     }
 
@@ -28,39 +30,48 @@ public class RealAreaStripe implements Callable<DoubleBasicGrid> {
     private DoubleBasicGrid calcAspect() throws IOException {
 
         final int nRows = stripeEffectiveRows;
-        final int nCols = slopeDegsGrid.getColumnCount();
+        final int nCols = Grid.getColumnCount();
 
         final DoubleBasicGrid realAreaGrid = new DoubleBasicGrid(
-                new byte[nRows][nCols], slopeDegsGrid.getCellSize(), -9999,
-                slopeDegsGrid.getLowerLeftCoord());
+                new byte[nRows][nCols], Grid.getCellSize(), Grid.getNoData(),
+                Grid.getLowerLeftCoord());
+
+        DoubleBasicGrid slopeGrid = new DoubleBasicGrid(new byte[nRows][nCols],
+                Grid.getCellSize(), Grid.getNoData(), Grid.getLowerLeftCoord());
 
         for (int row = 0; row < nRows; row++) {
             for (int col = 0; col < nCols; col++) {
 
-                realAreaGrid.setValue(col, row, slopeDegsGrid.getNoData());
+                realAreaGrid.setValue(col, row, Grid.getNoData());
 
-                final java.awt.Point cell = new java.awt.Point(col, row
-                        + yOffset);
-
-                if (!slopeDegsGrid.isNoData(slopeDegsGrid.getValue(cell))) {
-
-                    final double area = slopeDegsGrid.getCellSize()
-                            * slopeDegsGrid.getCellSize();
-                    final double slopeRad = Math.toRadians(slopeDegsGrid
-                            .getValue(col, row));
-
-                    final double realArea = area / Math.cos(slopeRad);
-
-                    if (!Double.isInfinite(realArea)) {
-                        realAreaGrid.setValue(col, row, realArea);
-                    } else {
-                        realAreaGrid.setValue(col, row,
-                                slopeDegsGrid.getNoData());
-                    }
-                    // hillshadeGrid.setValue(col, row,
-                    // Math.toDegrees(hillshade));
-
+                final SlopeAlgo slopeAlgo = SlopeAlgo.HORN;
+                final SlopeUnits slopeUnits = SlopeUnits.RADIANS;
+                try {
+                    final SlopeCalculator sc = new SlopeCalculator(Grid, null,
+                            100d, slopeAlgo, slopeUnits);
+                    slopeGrid = sc.calculate();
+                } catch (final Exception e) {
                 }
+
+                //     final java.awt.Point cell = new java.awt.Point(col, row
+                //             + yOffset);
+
+                //      if (!slopeDegsGrid.isNoData(slopeDegsGrid.getValue(cell))) {
+
+                final double area = Grid.getCellSize() * Grid.getCellSize();
+                final double slopeRad = slopeGrid.getValue(col, row);
+
+                final double realArea = area / Math.cos(slopeRad);
+
+                if (!Double.isInfinite(realArea)) {
+                    realAreaGrid.setValue(col, row, realArea);
+                } else {
+                    realAreaGrid.setValue(col, row, Grid.getNoData());
+                }
+                // hillshadeGrid.setValue(col, row,
+                // Math.toDegrees(hillshade));
+
+                //   }
             }
         }
 
@@ -69,8 +80,6 @@ public class RealAreaStripe implements Callable<DoubleBasicGrid> {
     }
 
     private final int stripeEffectiveRows;
-    private final DoubleBasicGrid slopeDegsGrid;
-
-    private final int yOffset;
+    private final DoubleBasicGrid Grid;
 
 }
