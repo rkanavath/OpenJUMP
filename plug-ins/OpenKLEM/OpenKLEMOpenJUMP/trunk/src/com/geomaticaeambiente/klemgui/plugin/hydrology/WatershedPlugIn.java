@@ -20,6 +20,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.openjump.core.rasterimage.RasterImageLayer;
+import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
 
 import com.geomaticaeambiente.klemgui.plugin.hydrology.hydrographs.klem.WatershedInformation;
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox;
@@ -52,7 +53,6 @@ import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
@@ -373,189 +373,39 @@ public class WatershedPlugIn extends AbstractInputKlemPlugin {
             public void rightButton() {
                 try {
 
-                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
+                    AbstractPlugIn.toActionListener(
+                            new AbstractThreadedUiPlugIn() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
 
-                        @Override
-                        public boolean execute(PlugInContext context)
-                                throws Exception {
-                            return true;
-                        }
+                                @Override
+                                public boolean execute(PlugInContext context)
+                                        throws Exception {
+                                    return true;
+                                }
 
-                        @Override
-                        public void run(TaskMonitor monitor,
-                                PlugInContext context) throws Exception {
-                            monitor.report(PluginUtils.getResources()
-                                    .getString("OpenKlem.executing-process"));
-                            // monitor.allowCancellationRequests();
-                            reportNothingToUndoYet(context);
-                            try {
-                                watershedCommand(componentsWithActions);
-                            } catch (final Exception ex) {
-                                Logger.error(getName(), ex);
-                            }
-                        }
-                    }, context.getWorkbenchContext(), new TaskMonitorManager())
-                            .actionPerformed(null);
+                                @Override
+                                public void run(TaskMonitor monitor,
+                                        PlugInContext context) throws Exception {
+                                    monitor.report(PluginUtils
+                                            .getResources()
+                                            .getString(
+                                                    "OpenKlem.executing-process"));
+                                    reportNothingToUndoYet(context);
+                                    monitor.allowCancellationRequests();
+                                    watershedCommand(componentsWithActions);
 
-                    //get input raster names
-                    /*           final String flowDirRaster = GUIUtils
-                                       .getStringValue(componentsWithActions.getComponent(
-                                               "00", GUIUtils.INPUT, 1));
+                                }
+                            }, context.getWorkbenchContext(),
+                            new TaskMonitorManager()).actionPerformed(null);
 
-                               //get other information 
-                               final boolean selectionMouse = GUIUtils
-                                       .componentIsSelected(componentsWithActions
-                                               .getComponent("01", GUIUtils.OTHER, 0));
-                               String xCoord = null;
-                               String yCoord = null;
-                               String layerSelected = null;
-
-                               if (selectionMouse) {
-                                   xCoord = GUIUtils.getStringValue(componentsWithActions
-                                           .getComponent("02", GUIUtils.OTHER, 1));//xCoord value
-                                   yCoord = GUIUtils.getStringValue(componentsWithActions
-                                           .getComponent("03", GUIUtils.OTHER, 1));//yCoord value
-                               } else {
-                                   layerSelected = GUIUtils
-                                           .getStringValue(componentsWithActions
-                                                   .getComponent("04", GUIUtils.OTHER, 1)); //layer 
-                               }
-
-                               //get output raster name
-                               final boolean clipOutput = GUIUtils
-                                       .getBooleanValue(componentsWithActions
-                                               .getComponent("00", GUIUtils.OUTPUT, 0));
-                               final String outRasterName = GUIUtils
-                                       .getStringValue(componentsWithActions.getComponent(
-                                               "01", GUIUtils.OUTPUT, 1));//output raster name
-
-                               //ckeck
-                               checkValues(this, flowDirRaster, selectionMouse, xCoord,
-                                       yCoord, layerSelected, outRasterName);
-
-                               final List coords = new ArrayList<Coordinate>();
-
-                               //convert string values in correct objects
-                               //get input flow dir                    
-                               final DoubleBasicGrid demGrid = RasterUtils
-                                       .getDoubleBasicGrid((RasterComboBox) componentsWithActions
-                                               .getComponent("00", GUIUtils.INPUT, 1));
-                               //Calculate flow dir envelope
-                               final double xMax = demGrid.getLowerLeftCoord().x
-                                       + (demGrid.getCellSize() * demGrid.getColumnCount());
-                               final double yMax = demGrid.getLowerLeftCoord().y
-                                       + (demGrid.getCellSize() * demGrid.getRowCount());
-
-                               final Envelope env = new Envelope(
-                                       demGrid.getLowerLeftCoord().x, xMax,
-                                       demGrid.getLowerLeftCoord().y, yMax);
-
-                               if (selectionMouse) {
-
-                                   coords.add(new Coordinate(Double.parseDouble(xCoord),
-                                           Double.parseDouble(yCoord)));
-
-                               } else { //get Layer
-                                   //from name to Layer
-                                   final Layer layer = PluginUtils
-                                           .getLayerSelected((LayerComboBox) componentsWithActions
-                                                   .getComponent("04", GUIUtils.OTHER, 1));
-
-                                   // Get selected features, or all features if none selected, or return error if none present
-                                   Collection features = context.getLayerViewPanel()
-                                           .getSelectionManager().getFeatureSelection()
-                                           .getFeaturesWithSelectedItems(layer);
-
-                                   if (features.isEmpty()) {
-                                       features = layer.getFeatureCollectionWrapper()
-                                               .getFeatures();
-                                   }
-
-                                   Feature feature;
-                                   final Iterator iter = features.iterator();
-                                   final int count = 0;
-                                   while (iter.hasNext()) {
-                                       feature = (Feature) iter.next();
-                                       // Check feature to be point
-                                       if (feature.getGeometry().getGeometryType()
-                                               .toUpperCase().equals("POINT")) {
-                                           final Point point = (Point) feature
-                                                   .getGeometry();
-                                           //check if coordinate is inside raster. Only inside coordinate are added to the list
-                                           if (env.contains(point.getCoordinate())) {
-                                               coords.add(new Coordinate(point
-                                                       .getCoordinate().x, point
-                                                       .getCoordinate().y));
-                                           }
-                                           break;
-                                       }
-                                   }
-                               }
-
-                               if (coords.isEmpty()) {
-                                   throw new NullPointerException(
-                                           PluginUtils
-                                                   .getResources()
-                                                   .getString(
-                                                           "WatershedPlugin.CoordinateOutside.label"));
-                               }
-
-                               //convert arrayList to array
-                               final Coordinate[] ar_coords = new Coordinate[coords.size()];
-                               for (int n = 0; n < coords.size(); n++) {
-                                   ar_coords[n] = (Coordinate) coords.get(n);
-                               }
-
-                               //execute
-                               final WatershedExtractor watershedExtractor = new WatershedExtractor();
-
-                               final Layer bluelinesLayer = PluginUtils
-                                       .getLayerSelected((CustomComboBox.LayerComboBox) componentsWithActions
-                                               .getComponent("01", GUIUtils.INPUT, 1));
-                               LineString[] bluelines = null;
-                               if (bluelinesLayer != null) {
-                                   bluelines = GeometryUtils
-                                           .getLineStringsFromFeatures(bluelinesLayer
-                                                   .getFeatureCollectionWrapper());
-                               }
-
-                               final FlowDirsCalculator flowDirCalc = new FlowDirsCalculator(
-                                       demGrid, FlowDirsStripe.FlowDirAlgorithm.D8,
-                                       bluelines, 100d);
-                               final FlowDirBasicGrid flowDirGrid = flowDirCalc
-                                       .calculate();
-
-                               final DoubleBasicGrid watershedGrid = watershedExtractor
-                                       .extract(flowDirGrid, ar_coords, clipOutput);
-
-                               //Create the output file and display on OJ 
-                               //Save grid as tiff
-                               RasterUtils.saveOutputRasterAsTiff(watershedGrid, new File(
-                                       outRasterName));
-                               //Display raster on OJ from file                
-                               RasterUtils.displayRasterFileOnOJ(context
-                                       .getWorkbenchContext(), new File(outRasterName),
-                                       null);
-
-                               JOptionPane.showMessageDialog(
-                                       super.getInitialDialog(),
-                                       PluginUtils.getResources().getString(
-                                               "SetWorkspacePlugin.Done.message"),
-                                       PluginUtils.plugInName,
-                                       JOptionPane.INFORMATION_MESSAGE);
-
-                           } catch (final WarningException ex) {
-                               JOptionPane.showMessageDialog(super.getInitialDialog(),
-                                       ex.getMessage(), PluginUtils.plugInName,
-                                       JOptionPane.WARNING_MESSAGE);*/
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
+                    Logger.error(PluginUtils.plugInName, ex);
                 }
             }
 

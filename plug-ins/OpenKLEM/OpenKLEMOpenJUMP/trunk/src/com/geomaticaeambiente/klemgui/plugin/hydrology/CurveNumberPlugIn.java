@@ -17,6 +17,8 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
+
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
 import com.geomaticaeambiente.klemgui.ui.InitialDialog;
@@ -35,9 +37,13 @@ import com.geomaticaeambiente.openjump.klem.cn.LandUseSoilGroupTuple;
 import com.geomaticaeambiente.openjump.klem.cn.SoilGroupLandUseTable;
 import com.geomaticaeambiente.openjump.klem.cn.ValuesRange;
 import com.geomaticaeambiente.openjump.klem.grid.DoubleBasicGrid;
+import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.util.StringUtil;
+import com.vividsolutions.jump.workbench.Logger;
+import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
+import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
 /**
  *
@@ -125,6 +131,61 @@ public class CurveNumberPlugIn extends AbstractInputKlemPlugin {
         return personalTreeMap;
     }
 
+    public void curveNumberCommand(final ComponentsTreeMap componentsWithActions)
+            throws Exception {
+        // input values
+        final String landUseRaster = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("00",
+                        GUIUtils.INPUT, 1));
+        final String hydroGroupsRaster = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("01",
+                        GUIUtils.INPUT, 1));
+
+        // Other values
+        final String groupsTableValues = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("00",
+                        GUIUtils.OTHER, 0));
+
+        // Output
+        final String cnRasterOut = GUIUtils
+                .getStringValue(componentsWithActions.getComponent("00",
+                        GUIUtils.OUTPUT, 1));
+
+        checksValues(landUseRaster, hydroGroupsRaster, cnRasterOut);
+
+        // Get values
+        final DoubleBasicGrid landUserGrid = RasterUtils
+                .getDoubleBasicGrid((CustomComboBox.RasterComboBox) componentsWithActions
+                        .getComponent("00", GUIUtils.INPUT, 1));
+        final DoubleBasicGrid hydroGroupGrid = RasterUtils
+                .getDoubleBasicGrid((CustomComboBox.RasterComboBox) componentsWithActions
+                        .getComponent("01", GUIUtils.INPUT, 1));
+
+        final ValueRangeGroup[] valRangeGroup = getValueRangeGroupFromString(groupsTableValues);
+
+        final String table = GUIUtils.getStringValue(componentsWithActions
+                .getComponent("02", GUIUtils.OTHER, 0));
+        final SoilGroupLandUseTable soilGroup = fromTableToSoilGroup(table,
+                valRangeGroup);
+
+        // Calculate raster
+        final CurveNumberCalculator curveNumberCalculator = new CurveNumberCalculator();
+        final DoubleBasicGrid curveNumberGrid = curveNumberCalculator
+                .calculateCn(landUserGrid, hydroGroupGrid, soilGroup);
+
+        // display raster on TOC
+        // Save grid as tiff
+        RasterUtils.saveOutputRasterAsTiff(curveNumberGrid, new File(
+                cnRasterOut));
+        // Display raster on OJ from file
+        RasterUtils.displayRasterFileOnOJ(context.getWorkbenchContext(),
+                new File(cnRasterOut), null);
+
+        JOptionPane.showMessageDialog(super.getInitialDialog(), PluginUtils
+                .getResources().getString("SetWorkspacePlugin.Done.message"),
+                PluginUtils.plugInName, JOptionPane.INFORMATION_MESSAGE);
+    }
+
     @Override
     public JPanel buildPluginPanel(final ComponentsTreeMap componentsWithActions) {
         if (mainPanel != null) {
@@ -144,68 +205,39 @@ public class CurveNumberPlugIn extends AbstractInputKlemPlugin {
             public void rightButton() {
                 try {
 
-                    // input values
-                    final String landUseRaster = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "00", GUIUtils.INPUT, 1));
-                    final String hydroGroupsRaster = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "01", GUIUtils.INPUT, 1));
+                    AbstractPlugIn.toActionListener(
+                            new AbstractThreadedUiPlugIn() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
 
-                    // Other values
-                    final String groupsTableValues = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "00", GUIUtils.OTHER, 0));
+                                @Override
+                                public boolean execute(PlugInContext context)
+                                        throws Exception {
+                                    return true;
+                                }
 
-                    // Output
-                    final String cnRasterOut = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "00", GUIUtils.OUTPUT, 1));
+                                @Override
+                                public void run(TaskMonitor monitor,
+                                        PlugInContext context) throws Exception {
+                                    monitor.report(PluginUtils
+                                            .getResources()
+                                            .getString(
+                                                    "OpenKlem.executing-process"));
+                                    reportNothingToUndoYet(context);
+                                    monitor.allowCancellationRequests();
+                                    curveNumberCommand(componentsWithActions);
 
-                    checksValues(landUseRaster, hydroGroupsRaster, cnRasterOut);
-
-                    // Get values
-                    final DoubleBasicGrid landUserGrid = RasterUtils
-                            .getDoubleBasicGrid((CustomComboBox.RasterComboBox) componentsWithActions
-                                    .getComponent("00", GUIUtils.INPUT, 1));
-                    final DoubleBasicGrid hydroGroupGrid = RasterUtils
-                            .getDoubleBasicGrid((CustomComboBox.RasterComboBox) componentsWithActions
-                                    .getComponent("01", GUIUtils.INPUT, 1));
-
-                    final ValueRangeGroup[] valRangeGroup = getValueRangeGroupFromString(groupsTableValues);
-
-                    final String table = GUIUtils
-                            .getStringValue(componentsWithActions.getComponent(
-                                    "02", GUIUtils.OTHER, 0));
-                    final SoilGroupLandUseTable soilGroup = fromTableToSoilGroup(
-                            table, valRangeGroup);
-
-                    // Calculate raster
-                    final CurveNumberCalculator curveNumberCalculator = new CurveNumberCalculator();
-                    final DoubleBasicGrid curveNumberGrid = curveNumberCalculator
-                            .calculateCn(landUserGrid, hydroGroupGrid,
-                                    soilGroup);
-
-                    // display raster on TOC
-                    // Save grid as tiff
-                    RasterUtils.saveOutputRasterAsTiff(curveNumberGrid,
-                            new File(cnRasterOut));
-                    // Display raster on OJ from file
-                    RasterUtils.displayRasterFileOnOJ(
-                            context.getWorkbenchContext(),
-                            new File(cnRasterOut), null);
-
-                    JOptionPane.showMessageDialog(
-                            super.getInitialDialog(),
-                            PluginUtils.getResources().getString(
-                                    "SetWorkspacePlugin.Done.message"),
-                            PluginUtils.plugInName,
-                            JOptionPane.INFORMATION_MESSAGE);
+                                }
+                            }, context.getWorkbenchContext(),
+                            new TaskMonitorManager()).actionPerformed(null);
 
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
+                    Logger.error(PluginUtils.plugInName, ex);
                 }
             }
 

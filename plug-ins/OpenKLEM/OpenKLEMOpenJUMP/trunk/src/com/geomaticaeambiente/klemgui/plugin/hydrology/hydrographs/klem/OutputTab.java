@@ -27,7 +27,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import org.jfree.chart.ChartUtilities;
-
 import org.openjump.core.rasterimage.ImageAndMetadata;
 import org.openjump.core.rasterimage.Metadata;
 import org.openjump.core.rasterimage.RasterImageIO;
@@ -253,17 +252,14 @@ public class OutputTab extends AbstractInputKlemPlugin {
                     jTable3 = new JTable();
                     jTable3.setModel(setSimulatedFlowParams());
 
-                    TextUtils.saveCSV(jTable,
-                            dir.concat(File.separator)
-                                    .concat(basinDataFileName));
-                    TextUtils.saveCSV(jTable1,
-                            dir.concat(File.separator).concat(tableFileName));
-                    TextUtils.saveCSV(jTable2,
-                            dir.concat(File.separator).concat(simParFileName));
-                    TextUtils.saveCSV(
-                            jTable3,
-                            dir.concat(File.separator).concat(
-                                    simFlowParFileName));
+                    TextUtils.saveCSV(jTable, dir.concat(File.separator)
+                            .concat(basinDataFileName));
+                    TextUtils.saveCSV(jTable1, dir.concat(File.separator)
+                            .concat(tableFileName));
+                    TextUtils.saveCSV(jTable2, dir.concat(File.separator)
+                            .concat(simParFileName));
+                    TextUtils.saveCSV(jTable3, dir.concat(File.separator)
+                            .concat(simFlowParFileName));
 
                     JOptionPane.showMessageDialog(
                             context.getActiveInternalFrame(),
@@ -487,7 +483,7 @@ public class OutputTab extends AbstractInputKlemPlugin {
                 BASE_FLOW, TOT_RAINFALL, EFF_RAINFALL };
 
         final String[][] data = new String[simOut.getSimulationRainfall()
-                .getTotalRain().length/2][col.length];
+                .getTotalRain().length / 20][col.length];
         for (int r = 0; r < data.length; r++) {
             data[r][0] = PluginUtils.getTwoDecimalFormatToString(simOut
                     .getSimulationDischarge().getTimeInterval()

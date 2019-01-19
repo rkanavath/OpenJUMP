@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.openjump.core.rasterimage.RasterImageLayer;
+import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
 
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
@@ -27,7 +28,6 @@ import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
@@ -140,38 +140,39 @@ public class DemFillerPlugIn extends AbstractInputKlemPlugin {
             public void rightButton() {
                 try {
 
-                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
+                    AbstractPlugIn.toActionListener(
+                            new AbstractThreadedUiPlugIn() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
 
-                        @Override
-                        public boolean execute(PlugInContext context)
-                                throws Exception {
-                            return true;
-                        }
+                                @Override
+                                public boolean execute(PlugInContext context)
+                                        throws Exception {
+                                    return true;
+                                }
 
-                        @Override
-                        public void run(TaskMonitor monitor,
-                                PlugInContext context) throws Exception {
-                            monitor.report(PluginUtils.getResources()
-                                    .getString("OpenKlem.executing-process"));
-                            // monitor.allowCancellationRequests();
-                            reportNothingToUndoYet(context);
-                            try {
-                                demFillerCommand(componentsWithActions);
-                            } catch (final Exception ex) {
-                                Logger.error(getName(), ex);
-                            }
-                        }
-                    }, context.getWorkbenchContext(), new TaskMonitorManager())
-                            .actionPerformed(null);
+                                @Override
+                                public void run(TaskMonitor monitor,
+                                        PlugInContext context) throws Exception {
+                                    monitor.report(PluginUtils
+                                            .getResources()
+                                            .getString(
+                                                    "OpenKlem.executing-process"));
+                                    reportNothingToUndoYet(context);
+                                    monitor.allowCancellationRequests();
+                                    demFillerCommand(componentsWithActions);
+
+                                }
+                            }, context.getWorkbenchContext(),
+                            new TaskMonitorManager()).actionPerformed(null);
 
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
+                    Logger.error(PluginUtils.plugInName, ex);
                 }
             }
 
