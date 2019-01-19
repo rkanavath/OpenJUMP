@@ -1,5 +1,6 @@
 package com.geomaticaeambiente.klemgui.plugin.rastertools;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -18,6 +19,7 @@ import javax.swing.JTextField;
 
 import org.openjump.core.rasterimage.RasterImageLayer;
 
+import com.geomaticaeambiente.klemgui.exceptions.WarningException;
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
 import com.geomaticaeambiente.klemgui.ui.InitialDialog;

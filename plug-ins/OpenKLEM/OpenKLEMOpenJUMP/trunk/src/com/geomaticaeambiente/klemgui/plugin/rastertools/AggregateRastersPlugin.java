@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
+
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
 import com.geomaticaeambiente.klemgui.ui.InitialDialog;
 import com.geomaticaeambiente.klemgui.ui.LayerablesList;
@@ -37,7 +39,6 @@ import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
@@ -199,126 +200,40 @@ public class AggregateRastersPlugin extends AbstractInputKlemPlugin {
 
             @Override
             public void rightButton() {
-
                 try {
-                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
+                    AbstractPlugIn.toActionListener(
+                            new AbstractThreadedUiPlugIn() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
 
-                        @Override
-                        public boolean execute(PlugInContext context)
-                                throws Exception {
-                            return true;
-                        }
+                                @Override
+                                public boolean execute(PlugInContext context)
+                                        throws Exception {
+                                    return true;
+                                }
 
-                        @Override
-                        public void run(TaskMonitor monitor,
-                                PlugInContext context) throws Exception {
-                            monitor.report(PluginUtils.getResources()
-                                    .getString("OpenKlem.executing-process"));
-                            // monitor.allowCancellationRequests();
-                            reportNothingToUndoYet(context);
-                            try {
-                                aggregateRastersCommand(componentsWithActions);
-                            } catch (final Exception ex) {
-                                Logger.error(getName(), ex);
-                            }
-                        }
-                    }, context.getWorkbenchContext(), new TaskMonitorManager())
-                            .actionPerformed(null);
+                                @Override
+                                public void run(TaskMonitor monitor,
+                                        PlugInContext context) throws Exception {
+                                    monitor.report(PluginUtils
+                                            .getResources()
+                                            .getString(
+                                                    "OpenKlem.executing-process"));
+                                    reportNothingToUndoYet(context);
+                                    monitor.allowCancellationRequests();
+                                    aggregateRastersCommand(componentsWithActions);
+                                }
+                            }, context.getWorkbenchContext(),
+                            new TaskMonitorManager()).actionPerformed(null);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
+                    Logger.error(PluginUtils.plugInName, ex);
                 }
-                /*              
-                     try {
-
-                         //input values 
-                         final String newValuesTable = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "00", GUIUtils.INPUT, 0)); //TODO: CHECK
-                         final String[] fileNames = newValuesTable.split("_;");
-
-                         final String aggregMethod = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "01", GUIUtils.INPUT, 1));
-                         final String overlayMethod = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "02", GUIUtils.INPUT, 1));
-                         final String cellSize = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "03", GUIUtils.INPUT, 1));
-
-                         //get output raster name
-                         final String outRasterName = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "00", GUIUtils.OUTPUT, 1));
-
-                         //check input and output values
-                         checkValues(fileNames, aggregMethod, overlayMethod,
-                                 cellSize, outRasterName);
-
-                         //extract raster selected from combobox
-                         //                    RasterImageLayer inputRasterSelected = PluginUtils.getRasterImageLayerSelected((RasterComboBox) componentsWithActions.getComponent("00", GUIUtils.INPUT, 1));
-                         //                    DoubleBasicGrid rasterDBG = RasterUtils.getDoubleBasicGrid(inputRasterSelected);
-
-                         super.getInitialDialog().setCursor(
-                                 new Cursor(Cursor.WAIT_CURSOR));
-
-                         final List<DoubleBasicGrid> inputGrids_l = new ArrayList<DoubleBasicGrid>();
-                         for (final String fileName : fileNames) {
-                             inputGrids_l
-                                     .add(RasterUtils
-                                             .getDoubleBasicGridFromFile(new File(
-                                                     fileName)));
-                         }
-
-                         final DoubleBasicGrid outputGrid = RasterAggregator
-                                 .aggregateRasters(inputGrids_l
-                                         .toArray(new DoubleBasicGrid[inputGrids_l
-                                                 .size()]), Double
-                                         .parseDouble(cellSize), AggregationMethod
-                                         .valueOf(aggregMethod), OverlayMethod
-                                         .valueOf(overlayMethod));
-
-                         //extract values from table     
-
-                         //                    //exceute reclassification
-                         //                    RasterReclassifier reclassifier = new RasterReclassifier();
-                         //                    DoubleBasicGrid reclassRaster = reclassifier.reclassify(rasterDBG, reclasPair);
-                         //
-                         //                    ///Create the output rasterImageLayer and display on OJ    
-                         //Save grid as tiff
-                         RasterUtils.saveOutputRasterAsTiff(outputGrid, new File(
-                                 outRasterName));
-                         //Display raster on OJ from file                
-                         RasterUtils.displayRasterFileOnOJ(context
-                                 .getWorkbenchContext(), new File(outRasterName),
-                                 null);
-
-                         JOptionPane.showMessageDialog(
-                                 super.getInitialDialog(),
-                                 PluginUtils.getResources().getString(
-                                         "SetWorkspacePlugin.Done.message"),
-                                 PluginUtils.plugInName,
-                                 JOptionPane.INFORMATION_MESSAGE);
-
-                         //                } catch (NoninvertibleTransformException ex) {
-                         //                    JOptionPane.showMessageDialog(super.getInitialDialog(), "Error:" + ex, PluginUtils.plugInName, JOptionPane.ERROR_MESSAGE);
-                     } catch (final Exception ex) {
-                         ErrorDialog.show(super.getInitialDialog(),
-                                 PluginUtils.plugInName, ex.toString(),
-                                 StringUtil.stackTrace(ex));
-                     } finally {
-                         super.getInitialDialog().setCursor(
-                                 new Cursor(Cursor.DEFAULT_CURSOR));
-                     }*/
             }
-
-            ;
 
             @Override
             public void leftButton() {

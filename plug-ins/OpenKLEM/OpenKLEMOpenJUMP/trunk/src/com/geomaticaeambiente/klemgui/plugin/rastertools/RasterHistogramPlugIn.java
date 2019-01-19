@@ -4,6 +4,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
+
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
 import com.geomaticaeambiente.klemgui.ui.InitialDialog;
@@ -26,7 +28,6 @@ import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
@@ -79,8 +80,8 @@ public class RasterHistogramPlugIn extends AbstractInputKlemPlugin {
 
     private String selectedAlgo;
 
-    public void histogramCommand(final ComponentsTreeMap componentsWithActions)
-            throws Exception {
+    public void rasterHistogramCommand(
+            final ComponentsTreeMap componentsWithActions) throws Exception {
 
         // input values
         final String inRaster = GUIUtils.getStringValue(componentsWithActions
@@ -149,109 +150,40 @@ public class RasterHistogramPlugIn extends AbstractInputKlemPlugin {
 
             @Override
             public void rightButton() {
-
                 try {
-                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
+                    AbstractPlugIn.toActionListener(
+                            new AbstractThreadedUiPlugIn() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
 
-                        @Override
-                        public boolean execute(PlugInContext context)
-                                throws Exception {
-                            return true;
-                        }
+                                @Override
+                                public boolean execute(PlugInContext context)
+                                        throws Exception {
+                                    return true;
+                                }
 
-                        @Override
-                        public void run(TaskMonitor monitor,
-                                PlugInContext context) throws Exception {
-                            monitor.report(PluginUtils.getResources()
-                                    .getString("OpenKlem.executing-process"));
-                            // monitor.allowCancellationRequests();
-                            reportNothingToUndoYet(context);
-                            try {
-                                histogramCommand(componentsWithActions);
-                            } catch (final Exception ex) {
-                                Logger.error(getName(), ex);
-                            }
-                        }
-                    }, context.getWorkbenchContext(), new TaskMonitorManager())
-                            .actionPerformed(null);
+                                @Override
+                                public void run(TaskMonitor monitor,
+                                        PlugInContext context) throws Exception {
+                                    monitor.report(PluginUtils
+                                            .getResources()
+                                            .getString(
+                                                    "OpenKlem.executing-process"));
+                                    reportNothingToUndoYet(context);
+                                    monitor.allowCancellationRequests();
+                                    rasterHistogramCommand(componentsWithActions);
+                                }
+                            }, context.getWorkbenchContext(),
+                            new TaskMonitorManager()).actionPerformed(null);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
+                    Logger.error(PluginUtils.plugInName, ex);
                 }
-
             }
-
-            /*      @Override
-                public void rightButton() {
-                     try {
-
-                         // input values
-                         final String inRaster = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "00", GUIUtils.INPUT, 1));
-
-                         final JComboBox jComboBox_Algo = (JComboBox) componentsWithActions
-                                 .getComponent("01", GUIUtils.INPUT, 1);
-                         final String selectedAlgo = jComboBox_Algo
-                                 .getSelectedItem().toString();
-
-                         final String interval = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "02", GUIUtils.INPUT, 1));
-                         final String base = GUIUtils
-                                 .getStringValue(componentsWithActions.getComponent(
-                                         "03", GUIUtils.INPUT, 1));
-
-                         checksValues(inRaster, selectedAlgo, interval, base);
-
-                         final DoubleBasicGrid rasterGrid = RasterUtils
-                                 .getDoubleBasicGrid((CustomComboBox.RasterComboBox) componentsWithActions
-                                         .getComponent("00", GUIUtils.INPUT, 1));
-
-                         final HistogramCalculator rasterHisto = new HistogramCalculator();
-                         Histogram histo = null;
-
-                         if (selectedAlgo.equalsIgnoreCase(AUTO)) {
-                             histo = rasterHisto.calcStatsContinuous(rasterGrid,
-                                     new Autoscale(rasterGrid));
-                         } else if (selectedAlgo.equalsIgnoreCase(UNIQUE_VALS)) {
-                             histo = rasterHisto.calcStatsUnique(rasterGrid);
-                         } else if (selectedAlgo.equalsIgnoreCase(GIVEN_INTERVAL)) {
-
-                             final double intervalVal = Double.parseDouble(interval);
-                             final double baseVal = Double.parseDouble(base);
-
-                             histo = rasterHisto.calcStatsContinuous(rasterGrid,
-                                     new GivenIntervals(rasterGrid, intervalVal,
-                                             baseVal));
-                         }
-
-                         if (histo == null) {
-                             return;
-                         }
-
-                         final JTabbedPane mainTabelPane = super.getInitialDialog()
-                                 .getTabbedPane();
-
-                         final PersonalChartHistogram persChartHisto = new PersonalChartHistogram();
-
-                         mainTabelPane.setComponentAt(1, persChartHisto
-                                 .buildHistogramPanel(getInitialDialog()
-                                         .getTabbedPane(), histo));
-                         mainTabelPane.setEnabledAt(1, true);
-                         mainTabelPane.setSelectedIndex(1);
-
-                     } catch (final Exception ex) {
-                         ErrorDialog.show(super.getInitialDialog(),
-                                 PluginUtils.plugInName, ex.toString(),
-                                 StringUtil.stackTrace(ex));
-                     }
-                 }*/
 
             @Override
             public void leftButton() {

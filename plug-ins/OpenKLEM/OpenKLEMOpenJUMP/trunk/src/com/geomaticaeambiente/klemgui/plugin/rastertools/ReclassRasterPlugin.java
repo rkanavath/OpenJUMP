@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import org.openjump.core.rasterimage.RasterImageLayer;
+import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
 
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox;
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox.RasterComboBox;
@@ -42,7 +43,6 @@ import com.vividsolutions.jump.util.StringUtil;
 import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
 import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
@@ -257,107 +257,40 @@ public class ReclassRasterPlugin extends AbstractInputKlemPlugin {
 
             @Override
             public void rightButton() {
-
                 try {
+                    AbstractPlugIn.toActionListener(
+                            new AbstractThreadedUiPlugIn() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
 
-                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
+                                @Override
+                                public boolean execute(PlugInContext context)
+                                        throws Exception {
+                                    return true;
+                                }
 
-                        @Override
-                        public boolean execute(PlugInContext context)
-                                throws Exception {
-                            return true;
-                        }
-
-                        @Override
-                        public void run(TaskMonitor monitor,
-                                PlugInContext context) throws Exception {
-                            monitor.report(PluginUtils.getResources()
-                                    .getString("OpenKlem.executing-process"));
-                            // monitor.allowCancellationRequests();
-                            reportNothingToUndoYet(context);
-                            try {
-                                reclassRasterCommand(componentsWithActions);
-                            } catch (final Exception ex) {
-                                Logger.error(getName(), ex);
-                            }
-                        }
-                    }, context.getWorkbenchContext(), new TaskMonitorManager())
-                            .actionPerformed(null);
-
-                    //input values 
-                    /*      final String rasterSelected = GUIUtils
-                                  .getStringValue(componentsWithActions.getComponent(
-                                          "00", GUIUtils.INPUT, 1));
-                          final String methodSelected = GUIUtils
-                                  .getStringValue(componentsWithActions.getComponent(
-                                          "01", GUIUtils.INPUT, 1));
-                          final String classesSelected = GUIUtils
-                                  .getStringValue(componentsWithActions.getComponent(
-                                          "02", GUIUtils.INPUT, 1));
-                          final String stDevSelected = GUIUtils
-                                  .getStringValue(componentsWithActions.getComponent(
-                                          "03", GUIUtils.INPUT, 1));
-                          final String intervalSelected = GUIUtils
-                                  .getStringValue(componentsWithActions.getComponent(
-                                          "04", GUIUtils.INPUT, 1));
-
-                          //get output raster name
-                          final String outRasterName = GUIUtils
-                                  .getStringValue(componentsWithActions.getComponent(
-                                          "00", GUIUtils.OUTPUT, 1));
-
-                          //check input and output values
-                          checkValues(rasterSelected, methodSelected,
-                                  classesSelected, stDevSelected, intervalSelected,
-                                  outRasterName);
-
-                          //extract raster selected from combobox
-                          final RasterImageLayer inputRasterSelected = PluginUtils
-                                  .getRasterImageLayerSelected((RasterComboBox) componentsWithActions
-                                          .getComponent("00", GUIUtils.INPUT, 1));
-                          final DoubleBasicGrid rasterDBG = RasterUtils
-                                  .getDoubleBasicGrid(inputRasterSelected);
-
-                          //extract values from table     
-                          final String newValuesTable = GUIUtils
-                                  .getStringValue(componentsWithActions.getComponent(
-                                          "05", GUIUtils.INPUT, 0)); //TODO: CHECK
-                          final ReclassTuple[] reclassPair = PluginUtils
-                                  .getReclassPairFromString(newValuesTable);
-
-                          //exceute reclassification
-                          final RasterReclassifier reclassifier = new RasterReclassifier();
-                          final DoubleBasicGrid reclassRaster = reclassifier
-                                  .reclassify(rasterDBG, reclassPair);
-
-                          ///Create the output rasterImageLayer and display on OJ    
-                          //Save grid as tiff
-                          RasterUtils.saveOutputRasterAsTiff(reclassRaster, new File(
-                                  outRasterName));
-                          //Display raster on OJ from file                
-                          RasterUtils.displayRasterFileOnOJ(context
-                                  .getWorkbenchContext(), new File(outRasterName),
-                                  null);
-
-                          JOptionPane.showMessageDialog(
-                                  super.getInitialDialog(),
-                                  PluginUtils.getResources().getString(
-                                          "SetWorkspacePlugin.Done.message"),
-                                  PluginUtils.plugInName,
-                                  JOptionPane.INFORMATION_MESSAGE);*/
-
+                                @Override
+                                public void run(TaskMonitor monitor,
+                                        PlugInContext context) throws Exception {
+                                    monitor.report(PluginUtils
+                                            .getResources()
+                                            .getString(
+                                                    "OpenKlem.executing-process"));
+                                    reportNothingToUndoYet(context);
+                                    monitor.allowCancellationRequests();
+                                    reclassRasterCommand(componentsWithActions);
+                                }
+                            }, context.getWorkbenchContext(),
+                            new TaskMonitorManager()).actionPerformed(null);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
+                    Logger.error(PluginUtils.plugInName, ex);
                 }
             }
-
-            ;
 
             @Override
             public void leftButton() {

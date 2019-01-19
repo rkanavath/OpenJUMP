@@ -16,6 +16,7 @@ import org.openjump.core.rasterimage.RasterImageLayer;
 import org.openjump.core.rasterimage.algorithms.VectorizeAlgorithm;
 import org.openjump.core.rasterimage.sextante.OpenJUMPSextanteRasterLayer;
 import org.openjump.core.rasterimage.sextante.rasterWrappers.GridWrapperNotInterpolated;
+import org.openjump.core.ui.plugin.AbstractThreadedUiPlugIn;
 
 import com.geomaticaeambiente.klemgui.exceptions.WarningException;
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox.RasterComboBox;
@@ -115,23 +116,38 @@ public class PolygonsVectorizerPlugIn extends AbstractInputKlemPlugin {
 
             @Override
             public void rightButton() {
-
                 try {
+                    AbstractPlugIn.toActionListener(
+                            new AbstractThreadedUiPlugIn() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
 
-                    polygonsVectorizerCommand(componentsWithActions);
+                                @Override
+                                public boolean execute(PlugInContext context)
+                                        throws Exception {
+                                    return true;
+                                }
 
-                } catch (final WarningException ex) {
-                    JOptionPane
-                            .showMessageDialog(this, ex.getMessage(),
-                                    PluginUtils.plugInName,
-                                    JOptionPane.WARNING_MESSAGE);
+                                @Override
+                                public void run(TaskMonitor monitor,
+                                        PlugInContext context) throws Exception {
+                                    monitor.report(PluginUtils
+                                            .getResources()
+                                            .getString(
+                                                    "OpenKlem.executing-process"));
+                                    reportNothingToUndoYet(context);
+                                    monitor.allowCancellationRequests();
+                                    polygonsVectorizerCommand(componentsWithActions);
+                                }
+                            }, context.getWorkbenchContext(),
+                            new TaskMonitorManager()).actionPerformed(null);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
-                } finally {
-                    super.getInitialDialog().setCursor(
-                            new Cursor(Cursor.DEFAULT_CURSOR));
+                    Logger.error(PluginUtils.plugInName, ex);
                 }
             }
 
