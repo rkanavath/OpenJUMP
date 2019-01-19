@@ -263,7 +263,35 @@ public class HydrographKlemPlugin extends AbstractInputKlemPlugin {
 
                 try {
 
-                    setLoadProjectButton(personalTreeMap, null);
+                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
+                        @Override
+                        public String getName() {
+                            return null;
+                        }
+
+                        @Override
+                        public boolean execute(PlugInContext context)
+                                throws Exception {
+                            return true;
+                        }
+
+                        @Override
+                        public void run(TaskMonitor monitor,
+                                PlugInContext context) throws Exception {
+                            monitor.report(PluginUtils.getResources()
+                                    .getString("OpenKlem.executing-process"));
+                            // monitor.allowCancellationRequests();
+                            reportNothingToUndoYet(context);
+                            try {
+                                setLoadProjectButton(personalTreeMap, null);
+                            } catch (final Exception ex) {
+                                Logger.error(getName(), ex);
+                            }
+                        }
+                    }, context.getWorkbenchContext(), new TaskMonitorManager())
+                            .actionPerformed(null);
+
+                    // setLoadProjectButton(personalTreeMap, null);
                     // TODO: deactivate next button
 
                 } catch (final Exception ex) {
@@ -282,7 +310,35 @@ public class HydrographKlemPlugin extends AbstractInputKlemPlugin {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                setCreateNewProjectButton(personalTreeMap);
+                AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
+                    @Override
+                    public String getName() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean execute(PlugInContext context)
+                            throws Exception {
+                        return true;
+                    }
+
+                    @Override
+                    public void run(TaskMonitor monitor, PlugInContext context)
+                            throws Exception {
+                        monitor.report(PluginUtils.getResources().getString(
+                                "OpenKlem.executing-process"));
+                        // monitor.allowCancellationRequests();
+                        reportNothingToUndoYet(context);
+                        try {
+                            setCreateNewProjectButton(personalTreeMap);
+                        } catch (final Exception ex) {
+                            Logger.error(getName(), ex);
+                        }
+                    }
+                }, context.getWorkbenchContext(), new TaskMonitorManager())
+                        .actionPerformed(null);
+
+                //   setCreateNewProjectButton(personalTreeMap);
                 // TODO: activate next button
             }
         });
