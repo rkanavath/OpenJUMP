@@ -37,10 +37,15 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.feature.FeatureSchema;
+import com.vividsolutions.jump.task.TaskMonitor;
 import com.vividsolutions.jump.util.StringUtil;
+import com.vividsolutions.jump.workbench.Logger;
 import com.vividsolutions.jump.workbench.model.Layer;
+import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
+import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
+import com.vividsolutions.jump.workbench.ui.task.TaskMonitorManager;
 
 /**
  *
@@ -290,79 +295,34 @@ public class RasterizeVectorLayerPlugIn extends AbstractInputKlemPlugin {
             public void rightButton() {
 
                 try {
-                    rasterizeCommand(componentsWithActions);
-                    /*        super.getInitialDialog().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                            
-                            //get input information     
-                            String layerSelected = GUIUtils.getStringValue(componentsWithActions.getComponent("00", GUIUtils.INPUT, 1));
-                            String attributeSelected = GUIUtils.getStringValue(componentsWithActions.getComponent("01", GUIUtils.INPUT, 1));
-                            double cellDimension = GUIUtils.getDoubleValue(componentsWithActions.getComponent("02", GUIUtils.INPUT, 1));
 
-                            // Snapping
-                            Envelope clipEnvelope = null;
-                            boolean snap = GUIUtils.getBooleanValue(componentsWithActions.getComponent("03", GUIUtils.INPUT, 0));
-                            String snapRasterName = null;
-                            if(snap) {
-                                snapRasterName = GUIUtils.getStringValue(componentsWithActions.getComponent("04", GUIUtils.INPUT, 1));
+                    AbstractPlugIn.toActionListener(new ThreadedBasePlugIn() {
+                        @Override
+                        public String getName() {
+                            return null;
+                        }
+
+                        @Override
+                        public boolean execute(PlugInContext context)
+                                throws Exception {
+                            return true;
+                        }
+
+                        @Override
+                        public void run(TaskMonitor monitor,
+                                PlugInContext context) throws Exception {
+                            monitor.report(PluginUtils.getResources()
+                                    .getString("OpenKlem.executing-process"));
+                            // monitor.allowCancellationRequests();
+                            reportNothingToUndoYet(context);
+                            try {
+                                rasterizeCommand(componentsWithActions);
+                            } catch (final Exception ex) {
+                                Logger.error(getName(), ex);
                             }
-                            
-                            //get output raster name
-                            String outRasterName = GUIUtils.getStringValue(componentsWithActions.getComponent("00", GUIUtils.OUTPUT, 1));
-                            
-                            // Check input and output values
-                            checksValues(layerSelected, attributeSelected, snapRasterName, outRasterName);
-
-                            if(snap) {
-                                RasterImageLayer ril = PluginUtils.getRasterImageLayerSelected((CustomComboBox.RasterComboBox) componentsWithActions.getComponent("04", GUIUtils.INPUT, 1));
-                                clipEnvelope = ril.getActualImageEnvelope();
-                            }
-                            
-                            //from name to Layer
-                            Layer layer = PluginUtils.getLayerSelected((CustomComboBox.LayerComboBox) componentsWithActions.getComponent("00", GUIUtils.INPUT, 1));
-
-                            // Get selected features, or all features if none selected, or return error if none present
-                            Collection<Feature> features = context.getLayerViewPanel().getSelectionManager().getFeatureSelection().getFeaturesWithSelectedItems(layer);
-
-                            if (features.isEmpty()) {
-                                features = layer.getFeatureCollectionWrapper().getFeatures();
-                            }
-
-                            Feature[] ar_features = new Feature[features.size()];
-                            Iterator<Feature> iter = features.iterator();
-                            int count = 0;
-                            while (iter.hasNext()) {
-                                ar_features[count] = (Feature) iter.next();
-                                count++;
-                            }
-
-                            //get information about attribute selected             
-                            FeatureSchema featureSchema = layer.getFeatureCollectionWrapper().getFeatureSchema();
-                            int fieldsCount = featureSchema.getAttributeIndex(attributeSelected);
-
-                            Geometry[] ar_geoms = new Geometry[ar_features.length];
-                            double[] ar_attributes = new double[ar_features.length];
-                            
-                            for(int f=0; f<ar_features.length; f++) {
-                                ar_geoms[f] = ar_features[f].getGeometry();
-                                ar_attributes[f] = Double.parseDouble(ar_features[f].getString(fieldsCount));
-                            }
-                            
-                            // Rasterize
-                            DoubleBasicGrid rasterized = Rasterizer.rasterize(
-                                    ar_geoms, ar_attributes, clipEnvelope, cellDimension);
-
-                            //Create the output file and display on OJ  
-                            //Save grid as tiff
-                            RasterUtils.saveOutputRasterAsTiff(rasterized, new File(outRasterName));
-                            //Display raster on OJ from file                
-                            RasterUtils.displayRasterFileOnOJ(
-                                    context.getWorkbenchContext(),
-                                    new File(outRasterName),
-                                    null);
-
-                            JOptionPane.showMessageDialog(super.getInitialDialog(), 
-                                    PluginUtils.getResources().getString("SetWorkspacePlugin.Done.message"), PluginUtils.plugInName, JOptionPane.INFORMATION_MESSAGE);
-                      */
+                        }
+                    }, context.getWorkbenchContext(), new TaskMonitorManager())
+                            .actionPerformed(null);
                 } catch (final OutOfMemoryError out) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, out.toString(),
