@@ -1,6 +1,5 @@
 package com.geomaticaeambiente.klemgui.plugin.rastertools;
 
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,7 +18,6 @@ import javax.swing.JTextField;
 
 import org.openjump.core.rasterimage.RasterImageLayer;
 
-import com.geomaticaeambiente.klemgui.exceptions.WarningException;
 import com.geomaticaeambiente.klemgui.ui.CustomComboBox;
 import com.geomaticaeambiente.klemgui.ui.GUIUtils;
 import com.geomaticaeambiente.klemgui.ui.InitialDialog;
@@ -327,17 +325,10 @@ public class RasterizeVectorLayerPlugIn extends AbstractInputKlemPlugin {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, out.toString(),
                             StringUtil.stackTrace(out));
-                } catch (final WarningException ex) {
-                    JOptionPane.showMessageDialog(super.getInitialDialog(),
-                            ex.getMessage(), PluginUtils.plugInName,
-                            JOptionPane.WARNING_MESSAGE);
                 } catch (final Exception ex) {
                     ErrorDialog.show(super.getInitialDialog(),
                             PluginUtils.plugInName, ex.toString(),
                             StringUtil.stackTrace(ex));
-                } finally {
-                    super.getInitialDialog().setCursor(
-                            new Cursor(Cursor.DEFAULT_CURSOR));
                 }
             }
 
