@@ -100,13 +100,12 @@ public class RasterUtils {
         // #################################
         final MetaInformationHandler mih = new MetaInformationHandler(ril);
 
-        mih.addMetaInformation(I18N.get("file-name"), "");
-        mih.addMetaInformation(I18N.get("resolution"), "" + " (px) x " + ""
-                + " (px)");
-        mih.addMetaInformation(I18N.get("real-world-width"), ril
-                .getWholeImageEnvelope().getWidth());
-        mih.addMetaInformation(I18N.get("real-world-height"), ril
-                .getWholeImageEnvelope().getHeight());
+        mih.addMetaInformation("file-name", "");
+        mih.addMetaInformation("resolution", "" + " (px) x " + "" + " (px)");
+        mih.addMetaInformation("real-world-width", ril.getWholeImageEnvelope()
+                .getWidth());
+        mih.addMetaInformation("real-world-height", ril.getWholeImageEnvelope()
+                .getHeight());
         // ###################################
         context.getLayerManager().addLayerable(catName, ril);
 
