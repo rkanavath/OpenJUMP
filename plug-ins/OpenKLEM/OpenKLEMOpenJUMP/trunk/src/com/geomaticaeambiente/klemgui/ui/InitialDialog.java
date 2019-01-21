@@ -199,6 +199,10 @@ public class InitialDialog extends JDialog {
 
     private void jButton_CloseActionPerformed(ActionEvent evt) {// GEN-FIRST:event_jButton_CloseActionPerformed
 
+        for (int i = 0; i < layerablesList.getLayerables().length; i++) {
+            layerablesList.getLayerables()[i] = null;
+        }
+
         dispose();
 
     }// GEN-LAST:event_jButton_CloseActionPerformed
@@ -276,7 +280,7 @@ public class InitialDialog extends JDialog {
                                                 .getString(
                                                         "HydrographKlemPlugin.AdvancedParams.label"));
                         jTabbedPane2.add(new JScrollPane(), "Output"); // NOI18N
-                        jTabbedPane2.add(new JScrollPane(), "Output2"); // NOI18N
+                        jTabbedPane2.add(new JScrollPane(), "Output2");
                         jTabbedPane2.setEnabledAt(1, false);
                         jTabbedPane2.setEnabledAt(2, false);
                         jTabbedPane2.setEnabledAt(3, false);
@@ -371,7 +375,7 @@ public class InitialDialog extends JDialog {
                             getClass()
                                     .getResource(
                                             "/com/geomaticaeambiente/klemgui/images/Raster_01.png")));
-                }  else if (value.toString().equals(
+                } else if (value.toString().equals(
                         PluginUtils.getResources().getString(
                                 "KlemGUI.HydrologyTools.label"))
                         || value.toString().equals(

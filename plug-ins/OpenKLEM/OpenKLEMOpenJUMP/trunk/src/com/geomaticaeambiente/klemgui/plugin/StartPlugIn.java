@@ -1,11 +1,14 @@
 package com.geomaticaeambiente.klemgui.plugin;
 
 import static com.geomaticaeambiente.klemgui.plugin.setting.SetWorkspacePlugin.FILE_CHOOSER_DIRECTORY_KEY;
+import static com.vividsolutions.jump.I18N.get;
+import static com.vividsolutions.jump.I18N.getMessage;
 
 import java.io.File;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 
 import org.openjump.core.model.TaskEvent;
 import org.openjump.core.model.TaskListener;
@@ -19,8 +22,10 @@ import com.vividsolutions.jump.workbench.model.FeatureEvent;
 import com.vividsolutions.jump.workbench.model.LayerEvent;
 import com.vividsolutions.jump.workbench.model.LayerEventType;
 import com.vividsolutions.jump.workbench.model.LayerListener;
+import com.vividsolutions.jump.workbench.model.LayerManager;
 import com.vividsolutions.jump.workbench.model.Layerable;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
+import com.vividsolutions.jump.workbench.plugin.EnableCheck;
 import com.vividsolutions.jump.workbench.plugin.EnableCheckFactory;
 import com.vividsolutions.jump.workbench.plugin.MultiEnableCheck;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
@@ -81,15 +86,12 @@ public class StartPlugIn extends AbstractPlugIn {
         final List<Layerable> layerables_l = context.getTask()
                 .getLayerManager().getLayerables(Layerable.class);
 
-   //     final List<Layerable> layerables_l = context.getWorkbenchContext()
-   //             .getLayerManager().getLayerables(Layerable.class);
         if (layerablesList == null) {
             layerablesList = new LayerablesList(
                     layerables_l.toArray(new Layerable[layerables_l.size()]));
+
         }
 
-        // layerablesList = new
-        // LayerablesList(PluginUtils.getLayerables(context));
         if (context.getWorkbenchFrame().getTaskListeners().isEmpty()) {
 
             context.getWorkbenchFrame().addTaskListener(new TaskListener() {
@@ -135,8 +137,30 @@ public class StartPlugIn extends AbstractPlugIn {
             final WorkbenchContext workbenchContext) {
         final EnableCheckFactory checkFactory = new EnableCheckFactory(
                 workbenchContext);
-        return new MultiEnableCheck().add(checkFactory
-                .createTaskWindowMustBeActiveCheck());
+        return new MultiEnableCheck()
+
+        .add(checkFactory.createTaskWindowMustBeActiveCheck());
+    }
+
+    public EnableCheck atLeastNLRastersMustExistCheck(
+            final WorkbenchContext workbenchContext, final int n) {
+        return new EnableCheck() {
+            @Override
+            public String check(JComponent component) {
+                final LayerManager layerManager = workbenchContext
+                        .getLayerManager();
+                String msg;
+                if (n == 1) {
+                    msg = get("com.vividsolutions.jump.workbench.plugin.At-least-one-layer-must-exist");
+                } else {
+                    msg = getMessage(
+                            "com.vividsolutions.jump.workbench.plugin.At-least-n-layers-must-exist",
+                            n);
+                }
+                return (layerManager == null || n > layerManager
+                        .getRasterImageLayers().size()) ? msg : null;
+            }
+        };
     }
 
     private void addListeners(final PlugInContext context) {
