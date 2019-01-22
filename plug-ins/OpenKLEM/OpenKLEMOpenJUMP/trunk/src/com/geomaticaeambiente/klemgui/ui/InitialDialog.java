@@ -199,10 +199,6 @@ public class InitialDialog extends JDialog {
 
     private void jButton_CloseActionPerformed(ActionEvent evt) {// GEN-FIRST:event_jButton_CloseActionPerformed
 
-        for (int i = 0; i < layerablesList.getLayerables().length; i++) {
-            layerablesList.getLayerables()[i] = null;
-        }
-
         dispose();
 
     }// GEN-LAST:event_jButton_CloseActionPerformed
