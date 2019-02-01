@@ -5,9 +5,9 @@ import java.awt.Cursor;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -43,7 +43,6 @@ import com.vividsolutions.jump.workbench.model.Layer;
 import com.vividsolutions.jump.workbench.model.StandardCategoryNames;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
-import com.vividsolutions.jump.workbench.plugin.ThreadedBasePlugIn;
 import com.vividsolutions.jump.workbench.ui.ErrorDialog;
 import com.vividsolutions.jump.workbench.ui.renderer.style.BasicStyle;
 import com.vividsolutions.jump.workbench.ui.renderer.style.ColorScheme;
@@ -318,98 +317,52 @@ public class PolygonsVectorizerPlugIn extends AbstractInputKlemPlugin {
                         .getComponent("00", GUIUtils.INPUT, 1));
         //    final File inputFile = new File(rLayer.getImageFileName());
 
-        try {
-            AbstractPlugIn
-                    .toActionListener(new ThreadedBasePlugIn() {
-                        @Override
-                        public String getName() {
-                            return null;
-                        }
+        final OpenJUMPSextanteRasterLayer rstLayer = new OpenJUMPSextanteRasterLayer();
+        // [mmichaud 2013-05-25] false : this is a temporary image not a file based image
+        rstLayer.create(rLayer, false);
+        final GridWrapperNotInterpolated gwrapper = new GridWrapperNotInterpolated(
+                rstLayer, rstLayer.getLayerGridExtent());
 
-                        @Override
-                        public boolean execute(PlugInContext context)
-                                throws Exception {
-                            return true;
-                        }
+        FeatureCollection featDataset = null;
 
-                        @Override
-                        public void run(TaskMonitor monitor,
-                                PlugInContext context) throws Exception {
-                            monitor.report(PluginUtils.getResources()
-                                    .getString("OpenKlem.executing-process"));
-                            // monitor.allowCancellationRequests();
-                            reportNothingToUndoYet(context);
-                            try {
-                                final OpenJUMPSextanteRasterLayer rstLayer = new OpenJUMPSextanteRasterLayer();
-                                // [mmichaud 2013-05-25] false : this is a temporary image not a file based image
-                                rstLayer.create(rLayer, false);
-                                final GridWrapperNotInterpolated gwrapper = new GridWrapperNotInterpolated(
-                                        rstLayer, rstLayer.getLayerGridExtent());
+        if (multipolygons) {
 
-                                FeatureCollection featDataset = null;
+            featDataset = VectorizeAlgorithm.toPolygons(gwrapper, false,
+                    ATTRIBUTE_NAME, 0);
 
-                                if (multipolygons) {
+        } else {
+            featDataset = VectorizeAlgorithm.toPolygons(gwrapper, true,
+                    ATTRIBUTE_NAME, 0);
+        }
+        context.getLayerViewPanel().repaint();
+        final Layer layer = context
+                .getWorkbenchContext()
+                .getLayerManager()
+                .addLayer(StandardCategoryNames.WORKING, outLayerName,
+                        featDataset);
+        zoom(context, rLayer);
+        if (style) {
+            final ColorScheme colorScheme = ColorUtil
+                    .createRandomColorSchema(featDataset.size());
 
-                                    featDataset = VectorizeAlgorithm
-                                            .toPolygons(gwrapper, false,
-                                                    ATTRIBUTE_NAME, 0);
-
-                                } else {
-                                    featDataset = VectorizeAlgorithm
-                                            .toPolygons(gwrapper, true,
-                                                    ATTRIBUTE_NAME, 0);
-                                }
-                                context.getLayerViewPanel().repaint();
-                                final Layer layer = context
-                                        .getWorkbenchContext()
-                                        .getLayerManager()
-                                        .addLayer(
-                                                StandardCategoryNames.WORKING,
-                                                outLayerName, featDataset);
-                                zoom(context, rLayer);
-                                if (style) {
-                                    final ColorScheme colorScheme = ColorUtil
-                                            .createRandomColorSchema(featDataset
-                                                    .size());
-
-                                    //new ColorScheme("test",
-                                    //arrayColor);
-                                    final Map<Object, BasicStyle> attributeToStyleMap = new HashMap<Object, BasicStyle>();
-                                    for (final Iterator<Feature> i = featDataset
-                                            .iterator(); i.hasNext();) {
-                                        final Feature feature = i.next();
-                                        attributeToStyleMap
-                                                .put(feature
-                                                        .getAttribute(ATTRIBUTE_NAME),
-                                                        new BasicStyle(
-                                                                colorScheme
-                                                                        .next()));
-                                    }
-                                    layer.getBasicStyle().setEnabled(false);
-                                    final ColorThemingStyle themeStyle = new ColorThemingStyle(
-                                            ATTRIBUTE_NAME,
-                                            attributeToStyleMap,
-                                            new BasicStyle(Color.gray));
-                                    themeStyle.setEnabled(true);
-                                    layer.addStyle(themeStyle);
-                                    ColorThemingStyle.get(layer).setEnabled(
-                                            true);
-                                    layer.removeStyle(ColorThemingStyle
-                                            .get(layer));
-                                    ColorThemingStyle.get(layer).setEnabled(
-                                            true);
-                                    layer.getBasicStyle().setEnabled(false);
-                                    //     context.getWorkbenchFrame().setStatusMessage(PROCESS_FINALIZED); 
-                                }
-                            } catch (final Exception ex) {
-                                Logger.error(getName(), ex);
-                            }
-                        }
-                    }, context.getWorkbenchContext(), new TaskMonitorManager())
-                    .actionPerformed(null);
-        } catch (final Exception ex) {
-            ErrorDialog.show(super.getInitialDialog(), PluginUtils.plugInName,
-                    ex.toString(), StringUtil.stackTrace(ex));
+            final Map<Object, BasicStyle> attributeToStyleMap = new TreeMap<Object, BasicStyle>();
+            for (final Iterator<Feature> i = featDataset.iterator(); i
+                    .hasNext();) {
+                final Feature feature = i.next();
+                attributeToStyleMap.put(feature.getAttribute(ATTRIBUTE_NAME),
+                        new BasicStyle(colorScheme.next()));
+            }
+            layer.getBasicStyle().setEnabled(false);
+            final ColorThemingStyle themeStyle = new ColorThemingStyle(
+                    ATTRIBUTE_NAME, attributeToStyleMap, new BasicStyle(
+                            Color.gray));
+            themeStyle.setEnabled(true);
+            layer.addStyle(themeStyle);
+            ColorThemingStyle.get(layer).setEnabled(true);
+            layer.removeStyle(ColorThemingStyle.get(layer));
+            ColorThemingStyle.get(layer).setEnabled(true);
+            layer.getBasicStyle().setEnabled(false);
+            //     context.getWorkbenchFrame().setStatusMessage(PROCESS_FINALIZED); 
         }
 
     }
