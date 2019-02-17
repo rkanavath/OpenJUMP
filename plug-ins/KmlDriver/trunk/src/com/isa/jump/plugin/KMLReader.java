@@ -345,6 +345,7 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
    */
   public void endElement(String uri, String name, String qName)
       throws SAXException {
+    //System.out.println("endElement: "+qName);
     try {
       int index;
 
@@ -568,7 +569,7 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
   public void startElement(String uri, String name, String qName,
       Attributes atts) throws SAXException {
     try {
-      // System.out.println("Start element: " + qName);
+      //System.out.println("Start element: " + qName+"/"+STATE);
       tagBody = new StringBuffer();
       lastStartTag_uri = uri;
       lastStartTag_name = name;
@@ -582,16 +583,16 @@ public class KMLReader extends DefaultHandler implements JUMPReader {
       if ((STATE == STATE_WAIT_COLLECTION_TAG)
           && (qName.compareToIgnoreCase(collectionElement) == 0)) {
         // found the collection tag
-        // System.out.println("found collection");
+        //System.out.println("found collection");
         STATE = STATE_WAIT_FEATURE_TAG;
 
         return;
       }
 
-      if ((STATE == STATE_WAIT_FEATURE_TAG)
+      if ( ( STATE == STATE_WAIT_FEATURE_TAG  || STATE == STATE_WAIT_COLLECTION_TAG )
           && (qName.compareToIgnoreCase(featureElement) == 0)) {
         // found the feature tag
-        // System.out.println("found feature");
+        //System.out.println("found feature");
         currentFeature = new BasicFeature(fcmd);
         STATE = STATE_PARSE_GEOM_SIMPLE; // STATE_FOUND_FEATURE_TAG;
         recursivegeometry = new ArrayList();

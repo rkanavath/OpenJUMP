@@ -1,5 +1,5 @@
 History
-
+0.2.5 (2019-02-17) also read <placemark> if no <Folder> exists
 0.2.4 (2015-04-05) reenable loading of kmz files, reformatting removing tabs
                    move version variable to build.xml header
                    move changes into this dedicated file
