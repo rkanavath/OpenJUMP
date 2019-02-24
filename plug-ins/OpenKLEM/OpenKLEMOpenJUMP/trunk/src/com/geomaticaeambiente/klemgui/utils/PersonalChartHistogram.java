@@ -65,7 +65,7 @@ public class PersonalChartHistogram {
 
         String zeros = "0";
 
-        if (firstMaxVal < 1) {
+        if (firstMaxVal > 0 && firstMaxVal < 1) {
 
             zeros = zeros.concat(".");
             while (firstMaxVal < 1) {
