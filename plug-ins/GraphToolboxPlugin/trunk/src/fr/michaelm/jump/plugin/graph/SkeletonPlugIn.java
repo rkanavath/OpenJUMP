@@ -47,6 +47,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     private static String P_MIN_FORK_LENGTH          = "MinForkLength";
     private static String P_RELATIVE_MIN_FORK_LENGTH = "MinForkLengthRelative";
     private static String P_SNAP_TO_BOUNDARY         = "SnapToBoundary";
+    private static String P_MEAN_WIDTH               = "MeanWidth"; // Internal intermediate result
 
     private static String GRAPH                   = I18NPlug.getI18N("Graph");
     private static String CENTRAL_SKELETON        = I18NPlug.getI18N("SkeletonPlugIn");
@@ -163,6 +164,12 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
         displayVoronoiEdges = dialog.getBoolean(DISPLAY_VORONOI_EDGES);
     }
 
+    private double getMinForkLength() {
+        return getBooleanParam(P_RELATIVE_MIN_FORK_LENGTH) ?
+                getDoubleParam(P_MIN_FORK_LENGTH) * getDoubleParam(P_MEAN_WIDTH)
+                : getDoubleParam(P_MIN_FORK_LENGTH);
+    }
+
     public void run(TaskMonitor monitor, PlugInContext context) {
         monitor.report(SKELETONIZE);
         LayerManager layerManager = context.getLayerManager();
@@ -199,7 +206,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
                     }
                     newFeature.setAttribute("mean_width", meanWidth);
                     newFeature.setAttribute("min_width",  getDoubleParam(P_MIN_WIDTH));
-                    newFeature.setAttribute("min_fork_length", getDoubleParam(P_MIN_FORK_LENGTH));
+                    newFeature.setAttribute("min_fork_length", getMinForkLength());
                     g = skeletonize(g, edges);
                     newFeature.setGeometry(g);
                     newFeature.setAttribute("iteration_number", ((Object[])g.getUserData())[0]);
@@ -255,9 +262,10 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
             }
             addParameter(P_MIN_WIDTH, semiMinWidth);
         }
-        if (getBooleanParam(P_RELATIVE_MIN_FORK_LENGTH)) {
-            addParameter(P_MIN_FORK_LENGTH, getDoubleParam(P_MIN_FORK_LENGTH)*meanWidth);
-        }
+        addParameter(P_MEAN_WIDTH, meanWidth);
+        //if (getBooleanParam(P_RELATIVE_MIN_FORK_LENGTH)) {
+        //    addParameter(P_MIN_FORK_LENGTH, getDoubleParam(P_MIN_FORK_LENGTH)*meanWidth);
+        //}
         simplification = getDoubleParam(P_MIN_WIDTH)/5.0;
         densification = getDoubleParam(P_MIN_WIDTH)/2.0;
         return geometry;
@@ -598,7 +606,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
                     if (nodes.nbOfDegreeN()==2) nonTerminalSegmentNumber++;
                     if (nonTerminalSegmentNumber>1 && iterative) break;
                     if (nodes.nbOfDegree1() != 1) continue;
-                    if (e.getGeometry().getLength() > getDoubleParam(P_MIN_FORK_LENGTH)) continue;
+                    if (e.getGeometry().getLength() > getMinForkLength()) continue;
                     PointPairDistance ppd = new PointPairDistance();
                     DistanceToPoint.computeDistance(boundary, nodes.getDegree1().getCoordinate(), ppd);
                     double coeff = ppd.getDistance() / e.getGeometry().getLength();
