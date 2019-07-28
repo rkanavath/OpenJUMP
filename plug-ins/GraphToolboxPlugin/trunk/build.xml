@@ -17,7 +17,7 @@
     <property name="dist"    value="dist" />
     <property name="javadoc" value="javadoc" />
 
-    <property name="version" value="0.6.2" />
+    <property name="version" value="0.6.3" />
     
     <!-- =================================================================== -->
     <!-- Defines the classpath used for compilation and test.                -->

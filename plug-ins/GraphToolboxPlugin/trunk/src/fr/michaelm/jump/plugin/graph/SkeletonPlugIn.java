@@ -1,6 +1,7 @@
 package fr.michaelm.jump.plugin.graph;
 
 import com.vividsolutions.jts.algorithm.MCPointInRing;
+import com.vividsolutions.jts.algorithm.MinimumDiameter;
 import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
 import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
 import com.vividsolutions.jts.densify.Densifier;
@@ -65,6 +66,8 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     private static String SNAP_TO_BOUNDARY_TT     = I18NPlug.getI18N("SkeletonPlugIn.snap-to_boundary-tooltip");
     private static String DISPLAY_VORONOI_EDGES   = I18NPlug.getI18N("SkeletonPlugIn.display-voronoi-edges");
     private static String DESCRIPTION             = I18NPlug.getI18N("SkeletonPlugIn.description");
+
+    double SQRT2 = Math.sqrt(2.0);
 
     // default external parameters
     {
@@ -204,7 +207,7 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
                     } catch (Exception e) {
                         context.getWorkbenchFrame().warnUser(e.getMessage());
                     }
-                    newFeature.setAttribute("mean_width", meanWidth);
+                    newFeature.setAttribute("mean_width", getDoubleParam(P_MEAN_WIDTH));
                     newFeature.setAttribute("min_width",  getDoubleParam(P_MIN_WIDTH));
                     newFeature.setAttribute("min_fork_length", getMinForkLength());
                     g = skeletonize(g, edges);
@@ -234,7 +237,6 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
     // This method must be called only once per object
     private Geometry computeParams(Geometry geometry) {
         meanWidth = getMeanWidth(geometry);
-        double SQRT2 = Math.sqrt(2.0);
         if (meanWidth==0) meanWidth = geometry.getLength()/geometry.getNumPoints()/5;
         if (getBooleanParam(P_AUTO_WIDTH)) {
             // Iterative function to find the minimal width of the polygon
@@ -282,7 +284,12 @@ public class SkeletonPlugIn extends AbstractThreadedUiPlugIn {
                 return ((length / 2.0) - Math.sqrt(val)) / 2.0;
             } else {
                 //diamètre du disque de même surface, sur une surface ramassée
-                return 2.0 * Math.sqrt(area / Math.PI);
+                //return 2.0 * Math.sqrt(area / Math.PI);
+                //improve width calculation for compact geometries
+                MinimumDiameter diameter = new MinimumDiameter(g);
+                Geometry minRectangle = diameter.getMinimumRectangle();
+                double ratio = Math.sqrt(minRectangle.getArea()/g.getArea());
+                return diameter.getLength()/ratio;
             }
         } else return 0d;
     }
