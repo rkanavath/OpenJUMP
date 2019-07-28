@@ -77,6 +77,8 @@ public class ConcaveHullPlugin extends AbstractPlugIn implements ThreadedPlugIn 
 
 	// dialog interface
 	private static MultiInputDialog dialog;
+
+	private double threshold = 10.0;
 	
 	/** 
 	 * Initialisation.
@@ -142,7 +144,7 @@ public class ConcaveHullPlugin extends AbstractPlugIn implements ThreadedPlugIn 
 		
 		dialog.addDoubleField(
 				THRESHOLD, 
-				10,
+				threshold,
 				10,
 				THRESHOLD
 				);
@@ -207,7 +209,7 @@ public class ConcaveHullPlugin extends AbstractPlugIn implements ThreadedPlugIn 
 	 */
 	private boolean createConcaveHull(PlugInContext context, Layer layer, FeatureCollection collection) {
 
-		double threshold = dialog.getDouble(THRESHOLD);
+		threshold = dialog.getDouble(THRESHOLD);
 
 		int size = collection.size();
 		

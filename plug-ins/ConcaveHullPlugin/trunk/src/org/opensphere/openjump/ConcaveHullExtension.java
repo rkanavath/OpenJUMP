@@ -44,7 +44,7 @@ public class ConcaveHullExtension extends Extension {
 	
 	@Override
 	public String getVersion() {
-		return "0.2 (2014-11-25)";
+		return "0.3 (2019-07-28)";
 	}
 
 	/**
